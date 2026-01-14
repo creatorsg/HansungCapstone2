@@ -2,57 +2,35 @@ using UnityEngine;
 
 namespace PlayFab.Internal
 {
-    //public to be accessible by Unity engine
-    public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
+    public class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {
-        private static T _instance;
+        public static T instance { get; private set; }
 
-        public static T instance
-        {
-            get
-            {
-                CreateInstance();
-                return _instance;
-            }
-        }
-
+        // 기존 SDK에서 사용하던 CreateInstance 유지
         public static void CreateInstance()
         {
-            if (_instance == null)
+            if (instance != null) return;
+
+            instance = FindFirstObjectByType<T>();
+            if (instance == null)
             {
-                //find existing instance
-                _instance = FindObjectOfType<T>();
-                if (_instance == null)
-                {
-                    //create new instance
-                    var go = new GameObject(typeof(T).Name);
-                    _instance = go.AddComponent<T>();
-                }
-                //initialize instance if necessary
-                if (!_instance.initialized)
-                {
-                    _instance.Initialize();
-                    _instance.initialized = true;
-                }
+                var go = new GameObject(typeof(T).Name);
+                instance = go.AddComponent<T>();
+                DontDestroyOnLoad(go);
             }
         }
 
-        public virtual void Awake ()
+        protected virtual void Awake()
         {
-            if (Application.isPlaying)
+            if (instance == null)
             {
-                DontDestroyOnLoad(this);
+                instance = this as T;
+                DontDestroyOnLoad(gameObject);
             }
-
-            //check if instance already exists when reloading original scene
-            if (_instance != null)
+            else if (instance != this)
             {
-                DestroyImmediate (gameObject);
+                Destroy(gameObject);
             }
         }
-
-        protected bool initialized;
-
-        protected virtual void Initialize() { }
     }
 }
