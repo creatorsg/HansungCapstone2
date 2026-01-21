@@ -1,143 +1,829 @@
 fileFormatVersion: 2
 guid: 3f7bb7bd35d576d41bc75266541a640b
-TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 6864204444119061735
-    second: Glue_0
+importerOverride:
+  nativeImporterType: 2089858483
+  scriptedImporterType:
+    serializedVersion: 2
+    Hash: b10b55a1aa6a1aa32521bc0cab59632e
+ScriptedImporter:
+  internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 13
-  mipmaps:
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: b2a9591990af98743ba3ff7cf1000886, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
     mipMapMode: 0
-    enableMipMap: 0
-    sRGBTexture: 1
-    linearTexture: 0
+    enableMipMap: 1
     fadeOut: 0
     borderMipMap: 0
     mipMapsPreserveCoverage: 0
     alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
     mipMapFadeDistanceEnd: 3
-  bumpmap:
     convertToNormalMap: 0
-    externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
-  streamingMipmaps: 0
-  streamingMipmapsPriority: 0
-  vTOnly: 0
-  ignoreMipmapLimit: 0
-  grayScaleToAlpha: 0
-  generateCubemap: 6
-  cubemapConvolution: 0
-  seamlessCubemap: 0
-  textureFormat: 1
-  maxTextureSize: 2048
-  textureSettings:
-    serializedVersion: 2
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
-  nPOTScale: 0
-  lightmap: 0
-  compressionQuality: 50
-  spriteMode: 2
-  spriteExtrude: 1
-  spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
-  alphaUsage: 1
-  alphaIsTransparency: 1
-  spriteTessellationDetail: -1
-  textureType: 8
-  textureShape: 1
-  singleChannelComponent: 0
-  flipbookRows: 1
-  flipbookColumns: 1
-  maxTextureSizeSet: 0
-  compressionQualitySet: 0
-  textureFormatSet: 0
-  ignorePngGamma: 0
-  applyGammaDecoding: 0
-  swizzle: 50462976
-  cookieLightType: 0
-  platformSettings:
-  - serializedVersion: 4
-    buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Standalone
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  spriteSheet:
-    serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: Glue_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 2048
-        height: 2048
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7e4df55e29d824f50800000000000000
-      internalID: 6864204444119061735
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    outline: []
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
-    physicsShape: []
-    bones: []
-    spriteID: 
-    internalID: 0
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 1e1dd09e50b9b88438c38252d4b55445
+    spriteBone: []
+    spriteOutline: []
     vertices: []
+    spritePhysicsOutline: []
     indices: 
     edges: []
-    weights: []
-    secondaryTextures: []
-    spriteCustomMetadata:
-      entries: []
-    nameFileIdTable:
-      Glue_0: 6864204444119061735
-  mipmapLimitGroupName: 
-  pSDRemoveMatte: 0
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
+  multiSpriteImportData: []
+  layeredSpriteImportData:
+  - name: Glue_shield
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1236
+      y: 1051
+      width: 643
+      height: 1313
+    spriteID: 5165d7240afee2c4ba68d146a3766603
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1236, y: 1051}
+    spritePosition: {x: 1385, y: 253}
+  - name: Glue_head
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1236
+      y: 3119
+      width: 471
+      height: 565
+    spriteID: 4d10b1844535feb4090556941ddc3250
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1236, y: 3119}
+    spritePosition: {x: 908, y: 1284}
+  - name: Glue_shoulder_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 3200
+      width: 672
+      height: 683
+    spriteID: b2f0b9005f688164d8498c2080f51dac
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 3200}
+    spritePosition: {x: 238, y: 1108}
+  - name: Glue_arm_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 759
+      width: 436
+      height: 514
+    spriteID: 021d33df6761d9b4e9c2ff52a52da216
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 759}
+    spritePosition: {x: 87, y: 765}
+  - name: Glue_hand_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1715
+      y: 3119
+      width: 399
+      height: 640
+    spriteID: 5764d9cb491f55c409b06baaf4145854
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1715, y: 3119}
+    spritePosition: {x: 103, y: 508}
+  - name: Glue_shoulder_R
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 684
+      y: 3200
+      width: 432
+      height: 730
+    spriteID: ff90bc032d32f214aab1d6e3cdcf95b8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 684, y: 3200}
+    spritePosition: {x: 1329, y: 1047}
+  - name: Glue_arm_R
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2663
+      y: 314
+      width: 386
+      height: 411
+    spriteID: 996c2b256ec2f1a42b1f3e04aced5ded
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2663, y: 314}
+    spritePosition: {x: 1471, y: 787}
+  - name: Glue_hand_R
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1715
+      y: 3767
+      width: 323
+      height: 317
+    spriteID: 08fadb3a14285e344a6e1ef1a130f3de
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1715, y: 3767}
+    spritePosition: {x: 1510, y: 568}
+  - name: Glue_pocket
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 4
+      width: 940
+      height: 302
+    spriteID: cb5d2f19a48c09d48be42a368a3374cb
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 4}
+    spritePosition: {x: 500, y: 848}
+  - name: Glue_cloth
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 1224
+      height: 1660
+    spriteID: ea7c7f641d26a164ab5fdc9de2d6b0ac
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 357, y: 206}
+  - name: Glue_body
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1236
+      y: 4
+      width: 893
+      height: 1039
+    spriteID: a737175554639694c995220c8daac5ae
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1236, y: 4}
+    spritePosition: {x: 551, y: 826}
+  - name: Glue_pants2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1236
+      y: 2372
+      width: 582
+      height: 739
+    spriteID: 631a7cc5d0fb4ae49b6154596a9f0227
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1236, y: 2372}
+    spritePosition: {x: 715, y: 336}
+  - name: Glue_thighs_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 314
+      width: 518
+      height: 437
+    spriteID: 4512ed2a7f0e00143bd70ad2f126ad41
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 314}
+    spritePosition: {x: 472, y: 529}
+  - name: Glue_calf_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 1711
+      width: 399
+      height: 373
+    spriteID: 93a0ea7bfd0ef2045b9b6103b72c6b5f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 1711}
+    spritePosition: {x: 418, y: 358}
+  - name: Glue_feet_L
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2581
+      y: 759
+      width: 374
+      height: 461
+    spriteID: e9c7298b37bd933429a5cd10fad9bce8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2581, y: 759}
+    spritePosition: {x: 400, y: 55}
+  - name: Glue_calf_r
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 2092
+      width: 412
+      height: 348
+    spriteID: e1559a3d4394e404db9e8fd54628a188
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 2092}
+    spritePosition: {x: 1166, y: 413}
+  - name: Glue_thighs_r
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2137
+      y: 1281
+      width: 509
+      height: 422
+    spriteID: fbe3d983428953a458bcaf27288c5c50
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2137, y: 1281}
+    spritePosition: {x: 1030, y: 597}
+  - name: Glue_feet_r
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1236
+      y: 3692
+      width: 454
+      height: 335
+    spriteID: ec8e8536c5d8f034f96941f1f0e14dd0
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1236, y: 3692}
+    spritePosition: {x: 1162, y: 140}
+  - name: Glue_back_cloth
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 1672
+      width: 1149
+      height: 1520
+    spriteID: dc20f5e6659364e4fb571f0e3c4064cb
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 1672}
+    spritePosition: {x: 421, y: 269}
+  spriteImportData: []
+  rigSpriteImportData: []
+  sharedRigSpriteImportData: []
+  mosaicSpriteImportData: []
+  sharedRigCharacterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  characterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  platformSettings: []
+  mosaicLayers: 1
+  characterMode: 1
+  documentPivot: {x: 0, y: 0}
+  documentAlignment: 7
+  importHiddenLayers: 0
+  layerMappingOption: 2
+  generatePhysicsShape: 0
+  paperDollMode: 0
+  keepDupilcateSpriteName: 1
+  generateTileAssets: 0
+  tilePaletteCellLayout: 0
+  tilePaletteHexagonLayout: 0
+  tilePaletteCellSize: {x: 1, y: 1, z: 0}
+  tilePaletteCellSizing: 0
+  transparencySortMode: 0
+  transparencySortAxis: {x: 0, y: 0, z: 1}
+  tileTemplate: {instanceID: 0}
+  padding: 4
+  spriteSizeExpand: 0
+  skeletonAssetReferenceID: 
+  pipeline: {instanceID: 0}
+  pipelineVersion: 
+  spriteCategoryList:
+    categories: []
+  spritePackingTag: 
+  resliceFromLayer: 0
+  pSDLayerImportSetting: []
+  psdLayers:
+  - name: Glue_shield
+    spriteName: Glue_shield
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 5165d7240afee2c4ba68d146a3766603
+    layerID: 0
+    mosaicPosition: {x: 1236, y: 1051}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uB808\uC774\uC5B4 2"
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 7f64a594db7973348b817d069c7ad8de
+    layerID: 1553084320
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: Glue_head
+    spriteName: Glue_head
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 4d10b1844535feb4090556941ddc3250
+    layerID: 832181058
+    mosaicPosition: {x: 1236, y: 3119}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uC67C\uCABD\uD314"
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: 8842b77f07acbae4e8a8d03b10555461
+    layerID: -997299611
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: Glue_shoulder_L
+    spriteName: Glue_shoulder_L
+    isGroup: 0
+    parentIndex: 3
+    spriteID: b2f0b9005f688164d8498c2080f51dac
+    layerID: 668062445
+    mosaicPosition: {x: 4, y: 3200}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_arm_L
+    spriteName: Glue_arm_L
+    isGroup: 0
+    parentIndex: 3
+    spriteID: 021d33df6761d9b4e9c2ff52a52da216
+    layerID: 2112480353
+    mosaicPosition: {x: 2137, y: 759}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_hand_L
+    spriteName: Glue_hand_L
+    isGroup: 0
+    parentIndex: 3
+    spriteID: 5764d9cb491f55c409b06baaf4145854
+    layerID: 999909226
+    mosaicPosition: {x: 1715, y: 3119}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uC624\uB978\uCABD"
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: 7a166d983f01c064e9bfcce1aa43a177
+    layerID: -753714355
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: Glue_shoulder_R
+    spriteName: Glue_shoulder_R
+    isGroup: 0
+    parentIndex: 7
+    spriteID: ff90bc032d32f214aab1d6e3cdcf95b8
+    layerID: 668062447
+    mosaicPosition: {x: 684, y: 3200}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_arm_R
+    spriteName: Glue_arm_R
+    isGroup: 0
+    parentIndex: 7
+    spriteID: 996c2b256ec2f1a42b1f3e04aced5ded
+    layerID: -1375917889
+    mosaicPosition: {x: 2663, y: 314}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_hand_R
+    spriteName: Glue_hand_R
+    isGroup: 0
+    parentIndex: 7
+    spriteID: 08fadb3a14285e344a6e1ef1a130f3de
+    layerID: 999909256
+    mosaicPosition: {x: 1715, y: 3767}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_pocket
+    spriteName: Glue_pocket
+    isGroup: 0
+    parentIndex: -1
+    spriteID: cb5d2f19a48c09d48be42a368a3374cb
+    layerID: -1449618502
+    mosaicPosition: {x: 2137, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_cloth
+    spriteName: Glue_cloth
+    isGroup: 0
+    parentIndex: -1
+    spriteID: ea7c7f641d26a164ab5fdc9de2d6b0ac
+    layerID: -281151144
+    mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_body
+    spriteName: Glue_body
+    isGroup: 0
+    parentIndex: -1
+    spriteID: a737175554639694c995220c8daac5ae
+    layerID: 1598602192
+    mosaicPosition: {x: 1236, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_pants2
+    spriteName: Glue_pants2
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 631a7cc5d0fb4ae49b6154596a9f0227
+    layerID: 842229332
+    mosaicPosition: {x: 1236, y: 2372}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uC67C\uBC1C"
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: ca785ecf58ae0b64f9a352b459458a8f
+    layerID: -1464877866
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: Glue_thighs_L
+    spriteName: Glue_thighs_L
+    isGroup: 0
+    parentIndex: 15
+    spriteID: 4512ed2a7f0e00143bd70ad2f126ad41
+    layerID: 932764406
+    mosaicPosition: {x: 2137, y: 314}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_calf_L
+    spriteName: Glue_calf_L
+    isGroup: 0
+    parentIndex: 15
+    spriteID: 93a0ea7bfd0ef2045b9b6103b72c6b5f
+    layerID: 1946417711
+    mosaicPosition: {x: 2137, y: 1711}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_feet_L
+    spriteName: Glue_feet_L
+    isGroup: 0
+    parentIndex: 15
+    spriteID: e9c7298b37bd933429a5cd10fad9bce8
+    layerID: -252602267
+    mosaicPosition: {x: 2581, y: 759}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uC624\uB978\uBC1C"
+    spriteName: 
+    isGroup: 1
+    parentIndex: -1
+    spriteID: d563b528c78b51e4daf015803cee0536
+    layerID: -753700370
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 1
+  - name: Glue_calf_r
+    spriteName: Glue_calf_r
+    isGroup: 0
+    parentIndex: 19
+    spriteID: e1559a3d4394e404db9e8fd54628a188
+    layerID: 1946417705
+    mosaicPosition: {x: 2137, y: 2092}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_thighs_r
+    spriteName: Glue_thighs_r
+    isGroup: 0
+    parentIndex: 19
+    spriteID: fbe3d983428953a458bcaf27288c5c50
+    layerID: 932764356
+    mosaicPosition: {x: 2137, y: 1281}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_feet_r
+    spriteName: Glue_feet_r
+    isGroup: 0
+    parentIndex: 19
+    spriteID: ec8e8536c5d8f034f96941f1f0e14dd0
+    layerID: -252602309
+    mosaicPosition: {x: 1236, y: 3692}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Glue_back_cloth
+    spriteName: Glue_back_cloth
+    isGroup: 0
+    parentIndex: -1
+    spriteID: dc20f5e6659364e4fb571f0e3c4064cb
+    layerID: -1958370856
+    mosaicPosition: {x: 4, y: 1672}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: "\uC6A9\uC9C0"
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 7f66ceec3191a3b4aa847cad4ff13c4c
+    layerID: -834642459
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  mosaicPSDLayers: []
+  rigPSDLayers: []
+  sharedRigPSDLayers: []
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  spriteSizeExpandChanged: 0
+  generateGOHierarchy: 0
+  textureAssetName: 
+  prefabAssetName: 
+  spriteLibAssetName: 
+  skeletonAssetName: 
+  secondarySpriteTextures: []
