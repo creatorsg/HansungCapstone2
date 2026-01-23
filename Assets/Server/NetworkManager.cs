@@ -1,26 +1,31 @@
+using insoen.Server.Playfab.Network;
 using Mirror;
 using UnityEngine;
 
-public class MyNetworkManager : NetworkManager
+
+namespace insoen.Server.Mirrror.Network
 {
-    [HideInInspector] public string PlayerName;
-
-    public override void OnClientConnect()
+    public class MyNetworkManager : NetworkManager
     {
-        base.OnClientConnect();
-        NetManager.Instance.OnConnected();
-    }
+        [HideInInspector] public string PlayerName;
 
-    public override void OnClientDisconnect()
-    {
-        base.OnClientDisconnect();
-        NetManager.Instance.OnDisconnected();
-    }
+        public override void OnClientConnect()
+        {
+            base.OnClientConnect();
+            NetManager.Instance.OnConnected();
+        }
 
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        GameObject player = Instantiate(playerPrefab);
-        player.GetComponent<Player>().SetPlayerName(PlayerName);
-        NetworkServer.AddPlayerForConnection(conn, player);
+        public override void OnClientDisconnect()
+        {
+            base.OnClientDisconnect();
+            NetManager.Instance.OnDisconnected();
+        }
+
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            GameObject player = Instantiate(playerPrefab);
+            player.GetComponent<Player>().SetPlayerName(PlayerName);
+            NetworkServer.AddPlayerForConnection(conn, player);
+        }
     }
 }
