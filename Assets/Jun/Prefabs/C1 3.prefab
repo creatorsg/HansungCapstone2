@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 1510496185234292729}
   - component: {fileID: 7164029956429766526}
   - component: {fileID: 9092271224387874383}
+  - component: {fileID: 6067355202114708083}
+  - component: {fileID: 7171714211247795584}
   - component: {fileID: 5414607659692622014}
   - component: {fileID: -3012602584503498457}
-  - component: {fileID: 7171714211247795584}
-  - component: {fileID: 6067355202114708083}
   m_Layer: 0
   m_Name: C1 3
   m_TagString: Untagged
@@ -133,11 +133,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _model: {fileID: 6067355202114708083}
   _view: {fileID: 7171714211247795584}
-  finalHeroIndex: 0
-  finalHeroPos: 0
+  FinalHeroIndex: -1
+  FinalHeroPos: -1
   Info:
     Id: 3
+    Skills:
+    - Name: a
+      Type: 0
+      anim: Attack
+      TagetNum: 1
+    Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
@@ -152,6 +159,54 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+--- !u!114 &6067355202114708083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1495ac33d530de498e80860b1e1f05f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.UnitModel
+  _controller: {fileID: 9092271224387874383}
+  _info:
+    Id: 0
+    Skills: []
+    Items: []
+    Lvl: 0
+    Exp: 0
+    Hp: 0
+    Atk: 0
+    Def: 0
+    Spd: 0
+    Mad: 0
+    Cpt: 0
+    Ctm: 0
+    Ddg: 0
+    WpnId: 0
+    ArmId: 0
+    Trk1: 0
+    Trk2: 0
+  _inventory: []
+--- !u!114 &7171714211247795584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e75763f7cb522b498bdd5c7dced84a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.PlayerView
+  SkillBtn: []
+  ItemBtn: []
+  EnemyBtn: []
+  HpBar: {fileID: 0}
 --- !u!114 &5414607659692622014
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,49 +258,3 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
---- !u!114 &7171714211247795584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220359351675498512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e75763f7cb522b498bdd5c7dced84a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jun.PlayerView
-  SkillBtn: []
-  ItemBtn: []
-  EnemyBtn: []
-  HpBar: {fileID: 0}
---- !u!114 &6067355202114708083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220359351675498512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1495ac33d530de498e80860b1e1f05f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jun.UnitModel
-  _info:
-    Id: 0
-    Lvl: 0
-    Exp: 0
-    Hp: 0
-    Atk: 0
-    Def: 0
-    Spd: 0
-    Mad: 0
-    Cpt: 0
-    Ctm: 0
-    Ddg: 0
-    WpnId: 0
-    ArmId: 0
-    Trk1: 0
-    Trk2: 0
-  _skills: []
-  _inventory: []

@@ -1,33 +1,32 @@
 using Jun;
+using Mirror;
 using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 서버를 만들기전에 만들어둔 배틀로직을 관리하는 스크립
 namespace Jun
 {
-    // 아마 이부분은 서버쪽에서 계산되게끔 하는게 좋을수도?
-    //내 생각으로는 클라쪽에서 BattleAction으로 필요한 정보를 서버쪽으로 보내면 서버쪽에서 계산하고 클라에게 결과 값 보내주는 게 좋을 것 같음 
     public class BattleLogic : MonoBehaviour
     {
-        public static BattleLogic Instance;
-
-        private void Awake() => Instance = this;
-
-        public void BattleAction(SkillInfo skill, ItemInfo item, UnitModel attacker, List<int> targets)
+        // 나중에는 적도 쓸수있게끔 변경 예정
+        [Server]
+        public void BattleAction(GamePlayerController caster, int skillIndex, int itemIndex, List<int> targets)
         {
             // 배틀 로직 구현(플레이어, 적 둘 다 사용가능하게끔)
-        }
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
-        {
+            if (skillIndex != -1)
+            {
+                SkillInfo skill = caster.Info.Skills[skillIndex];
 
+                foreach (int targetIdx in targets)
+                {
+                    // 타겟 공격등 실제 배틀 로직
+                }
+
+                // 공격자의 애니메이션 호출
+                caster.RpcPlaySkillAnim(skill.anim);
+                //적들의 정보 업데이트
+            }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

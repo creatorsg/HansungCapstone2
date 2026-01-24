@@ -1,5 +1,6 @@
+using NUnit.Framework;
 using UnityEngine;
-
+using System.Collections.Generic;
 namespace Jun
 {
     public enum SkillType //스킬 종류
@@ -22,6 +23,8 @@ namespace Jun
     public class PlayerInfo //플레이어 정보
     {
         public int Id;      //플레이어 id
+        public List<SkillInfo> Skills;
+        public List<ItemInfo> Items;
         public int Lvl;     //레벨
         public int Exp;     //경험치
         public int Hp;      //체력

@@ -1,65 +1,84 @@
 using Jun;
 using Mirror;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Jun
 {
     public class GamePlayerController : NetworkBehaviour
     {
+        [SerializeField] private UnitModel _model;
         [SerializeField] private PlayerView _view;
 
         [SyncVar] public int FinalHeroIndex = -1;
-        [SyncVar] public int FinalHeroPos;
+        [SyncVar(hook = nameof(OnPosIndexChanged))] public int FinalHeroPos = -1;
         [SyncVar] public PlayerInfo Info;
-        public override void OnStartClient()
-        {
-            base.OnStartClient();
-            if (BattleManager.Instance != null)
-            {
-                BattleManager.Instance.RegisterPlayer(this); // 나도 등록하고 남도 등록함
 
-                if (isLocalPlayer)
-                {
-                    var buttons = BattleManager.Instance.SkillBTN;
-                    for (int i = 0; i < buttons.Count; i++)
-                    {
-                        int index = i; // 복사본 생성
-                        buttons[i].onClick.AddListener(() => OnClickSkillBtn(index));
-                    }
-                }
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            BattleManager.Instance.RegisterPlayer(this);
+        }
+        // 위치를 잡는 로직을 별도 함수로 분리해서 호출
+        void OnPosIndexChanged(int oldPos, int newPos)
+        {
+            Transform targetPoint = BattleManager.Instance.SpawnPoints[newPos];
+            if (targetPoint != null)
+            {
+                transform.position = targetPoint.position;
+                Debug.Log($"{gameObject.name}가 {newPos}번 위치로 배치되었습니다.");
             }
         }
+
 
         public void Start()
         {
             _view.EndMyTurn += EndMyTurn;
+            _model.SetUp(Info);
+
         }
 
         public void OnClickSkillBtn(int index) //스킬버튼
         {
-            // 내 버튼인지 확인
-            if (isLocalPlayer)
+            if (isOwned)
             {
-                CmdCastSkill(index);
+                _model.SelectedSkill(index);
+                _view.SetButtonsInteractable(true, _view.EnemyBtn);
+            }
+
+        }
+        public void OnClickItemBtn(int index) //아이템 버튼
+        {
+            if (isOwned)
+            {
+                _model.SelectedItem(index);
+                _view.SetButtonsInteractable(true, _view.EnemyBtn);
+            }
+        }
+
+        public void OnClickEnemyBtn(int index) //적버튼
+        {
+            if (isOwned)
+            {
+                _model.SelectedEnemy(index);
             }
         }
 
         //스킬 사용을 서버에 요청
+        //배틀 매니저에게 무결성 검사 요청
         [Command]
-        void CmdCastSkill(int skillIndex)
+        public void CMDSelectionComplete(int skillIndex, int itemIndex, List<int> tagets)
         {
-            // 여기서 BattleManager를 통해 실제 데미지 계산 등의 로직 실행예정
-            // BattleManager.instance.ServerExecuteSkill(this, skillIndex);
-
-            RpcPlaySkillAnim("Attack");
+            BattleManager.Instance.VerifyClientRequest(this, skillIndex, itemIndex, tagets);
         }
+
 
         // 애니메이션 실행
         [ClientRpc]
-        void RpcPlaySkillAnim(string animName)
+        public void RpcPlaySkillAnim(string animName)
         {
-            // 서버를 포함한 모든 클라이언트에서 실행됨
+            //굳이 스킬로 한정 안해도 될듯
             _view.SkillAnim(animName);
         }
 

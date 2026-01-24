@@ -13,7 +13,7 @@ namespace Jun
         public void ChoiceChar(int index)
         {
             var player = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
-            player.CMDChangeHero(index);
+            player.CMDChoiceHero(index);
         }
 
     }

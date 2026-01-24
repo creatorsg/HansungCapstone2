@@ -133,11 +133,30 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _model: {fileID: 330207675683210629}
   _view: {fileID: 3670633370672280034}
-  finalHeroIndex: 0
-  finalHeroPos: 0
+  FinalHeroIndex: -1
+  FinalHeroPos: -1
   Info:
     Id: 0
+    Skills:
+    - Name: a
+      Type: 0
+      anim: Attack
+      TagetNum: 1
+    - Name: 
+      Type: 0
+      anim: 
+      TagetNum: 0
+    - Name: 
+      Type: 0
+      anim: 
+      TagetNum: 0
+    - Name: 
+      Type: 0
+      anim: 
+      TagetNum: 0
+    Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
@@ -164,8 +183,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1495ac33d530de498e80860b1e1f05f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Jun.UnitModel
+  _controller: {fileID: 2808384062215202789}
   _info:
     Id: 0
+    Skills: []
+    Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
@@ -180,7 +202,6 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
-  _skills: []
   _inventory: []
 --- !u!114 &3670633370672280034
 MonoBehaviour:
