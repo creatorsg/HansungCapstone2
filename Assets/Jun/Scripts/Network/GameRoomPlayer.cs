@@ -14,12 +14,17 @@ namespace Jun
     public class GameRoomPlayer : NetworkRoomPlayer
     {
         public readonly SyncList<Charater> CharaterNum = new SyncList<Charater>();
-
+        
         private bool isChoiced = false;
         public override void OnStartClient()
         {
             base.OnStartClient();
+
             CharaterNum.OnChange += OnCharaterListChanged;
+            //플레이어 수 업데이트
+            LobbyManager.Instance.UpdatePlayerNum(true);
+            //준비 or 시작버튼 활성화
+            LobbyManager.Instance.ActiveBTN(isServer);
 
             // 접속 당시 이미 선택된 캐릭터들 표시
             foreach (var item in CharaterNum)
@@ -27,8 +32,11 @@ namespace Jun
                 UpdateLobbyUI(SyncList<Charater>.Operation.OP_ADD, item);
             }
         }
+        private void OnDestroy()
+        {
+            LobbyManager.Instance.UpdatePlayerNum(false);
 
-
+        }
         //선택한 정보로 영웅정보 추가
         [Command]
         public void CMDChoiceHero(int index)
@@ -71,7 +79,7 @@ namespace Jun
 
         private void UpdateLobbyUI(SyncList<Charater>.Operation op, Charater item)
         {
-            var lobby = GameObject.Find("LobbyManager")?.GetComponent<LobbyManager>();
+            var lobby = LobbyManager.Instance;
             if (lobby == null || item == null) return;
 
             switch (op)

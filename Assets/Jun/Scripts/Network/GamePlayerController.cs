@@ -31,13 +31,16 @@ namespace Jun
             }
         }
 
-
         public void Start()
         {
             _view.EndMyTurn += EndMyTurn;
             _model.SetUp(Info);
 
         }
+        // 스킬 버튼을 누르면 선택한 스킬의 정보가 저장이 되고 (만약 전에 아이템을 선택했다면 지우기, 타겟들도 지우기)
+        // 선택한 스킬의 타겟 수에 따라 선택 가능한 타겟 수 변경
+        // 타겟 버튼 활성화
+        // 아이템 버튼도 과정은 동일
 
         public void OnClickSkillBtn(int index) //스킬버튼
         {

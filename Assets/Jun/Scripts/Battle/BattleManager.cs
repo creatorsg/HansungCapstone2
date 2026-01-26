@@ -43,10 +43,11 @@ namespace Jun
         //접속 후 플레이어 추가(관리하기 위해)
         public void RegisterPlayer(GamePlayerController pl)
         {
+            var manager = NetworkManager.singleton as GameRoomManager;
             // 현재 플레이어 추가
             _players.Add(pl);
             pl.gameObject.SetActive(true);
-            if (isServer && _players.Count == 4)
+            if (isServer && _players.Count == manager.HeroNum)
             {
                 NextTurn();
             }

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 namespace Jun {
     public class GameRoomManager : NetworkRoomManager
     {
+        //게임에 참여중인 영웅의 수
+        public int HeroNum = 0;
         // 로비에서 본게임으로 넘어갈 때 서버에서 실행되는 함수
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
@@ -16,6 +18,7 @@ namespace Jun {
             GameObject mainPlayer = null;
             for (int i = 0; i < roomPlayerCharaterNum.Count; i++)
             {
+                HeroNum++;
                 int index = roomPlayerCharaterNum[i].HeroIndex;
                 int pos = roomPlayerCharaterNum[i].HeroPos;
 
