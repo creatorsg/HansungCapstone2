@@ -3,9 +3,9 @@
   <Project Path="Edgegap.csproj" />
   <Project Path="kcp2k.csproj" />
   <Project Path="Mirror.Examples.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="PlayFab.csproj" />
   <Project Path="Mirror.Transports.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.Editor.csproj" />
   <Project Path="Mirror.csproj" />
   <Project Path="SimpleWebTransport.csproj" />
