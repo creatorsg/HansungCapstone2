@@ -2919,7 +2919,6 @@ namespace PlayFab.AdminModels
         ExperimentationExclusionGroupInvalidTrafficAllocation,
         ExperimentationExclusionGroupInvalidName,
         ExperimentationLegacyExperimentInvalidOperation,
-        ExperimentationExperimentStopFailed,
         MaxActionDepthExceeded,
         TitleNotOnUpdatedPricingPlan,
         SegmentManagementTitleNotInFlight,
