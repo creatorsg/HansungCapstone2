@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 95f64d3a1cb64ce4590ba15ad4255a6f
+guid: 2d44bc9354e6d774ba7f2ed9b8d17c4c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4515827934099423949
-    second: "\uC544\uC9C0\uD2B8_0"
+      213: -8337281393119725202
+    second: blacksmith_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -24,7 +24,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uC544\uC9C0\uD2B8_0"
+      name: blacksmith_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
+        x: 558
+        y: 209
+        width: 1294
+        height: 1984
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 33db7397b6e8451c0800000000000000
-      internalID: -4515827934099423949
+      spriteID: e69ff9aeeb60c4c80800000000000000
+      internalID: -8337281393119725202
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uC544\uC9C0\uD2B8_0": -4515827934099423949
+      blacksmith_0: -8337281393119725202
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
