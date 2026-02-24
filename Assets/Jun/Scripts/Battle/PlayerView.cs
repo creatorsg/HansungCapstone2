@@ -14,8 +14,8 @@ namespace Jun
         public List<Button> SkillBtn;
         public List<Button> ItemBtn;
         public List<Button> EnemyBtn;  //적 버튼
-        public Button HpBar;
-
+        public Slider HpBar;
+        public Image Sel; //자신의 차례일때 나타내는 이미지
         void Awake()
         {
             anim = GetComponent<Animator>();
@@ -28,12 +28,21 @@ namespace Jun
             SetButtonsInteractable(false, EnemyBtn);
         }
 
+        public void SetSel(bool IsMyTurn)
+        {
+            Sel.gameObject.SetActive(IsMyTurn);
+        }
         public void SetButtonsInteractable(bool state, List<Button> Btn) // 버튼 활성화 선택
         {
             foreach (var btn in Btn)
             {
                 btn.interactable = state;
             }
+        }
+        public void PlDamaged(float currentHp)
+        {
+            HpBar.value = currentHp;
+
         }
 
         public void SkillAnim(string skill)

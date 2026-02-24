@@ -1129,10 +1129,10 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-  - {fileID: 9220359351675498512, guid: 3281b236f82f2774cb8b5292f9a5d3b7, type: 3}
-  - {fileID: 9220359351675498512, guid: 25956209e6c2f7349ae7cc400eb6b85b, type: 3}
-  - {fileID: 9220359351675498512, guid: 53771fc242abb174aba2aa9d7ffe0c8b, type: 3}
+  - {fileID: 706195926600873745, guid: 774a9522715bb9e47980ab056fdf1ed4, type: 3}
+  - {fileID: 352818516547447885, guid: 55427d98700ac58418be5b0a24c0546d, type: 3}
+  - {fileID: 7383094001891227147, guid: b437288243f56894d87ca1f54c290dfa, type: 3}
+  - {fileID: 8982849762600532283, guid: b860b63d920b507468deb4507a3b5d48, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -1155,6 +1155,7 @@ MonoBehaviour:
   GameplayScene: Assets/Jun/Scenes/GamePlay.unity
   _allPlayersReady: 0
   clientIndex: 0
+  HeroNum: 0
 --- !u!4 &1680990011
 Transform:
   m_ObjectHideFlags: 0

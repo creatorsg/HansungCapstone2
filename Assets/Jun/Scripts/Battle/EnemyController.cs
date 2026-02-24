@@ -7,10 +7,18 @@ namespace Jun
 {
     public class EnemyController : MonoBehaviour
     {
-        [SerializeField] private UnitModel _model;
+        [SerializeField] private EnemyModel _model;
+        [SerializeField] private EnemyView _view;
+        public PlayerInfo Info;
         //[SerializeField] private EnemyView _view;
 
         public UnitState State = UnitState.Waiting;
+
+        private void Start()
+        {
+            _model.SetUp(Info);
+            _model.IsDamaged += _view.Damaged;
+        }
         public void IsMyTurn(int index)
         {
             bool isMyTurn = _model.Info.Id == index ? true : false;

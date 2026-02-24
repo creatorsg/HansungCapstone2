@@ -2,7 +2,9 @@ using Jun;
 using Mirror;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Jun
 {
@@ -18,6 +20,7 @@ namespace Jun
         public override void OnStartServer()
         {
             base.OnStartServer();
+            _model.SetUp(Info);
             BattleManager.Instance.RegisterPlayer(this);
         }
         // 위치를 잡는 로직을 별도 함수로 분리해서 호출
@@ -34,8 +37,11 @@ namespace Jun
         public void Start()
         {
             _view.EndMyTurn += EndMyTurn;
-            _model.SetUp(Info);
+        }
 
+        public void MyTurn(bool IsMyTurn)
+        {
+            _view.SetSel(IsMyTurn);
         }
         // 스킬 버튼을 누르면 선택한 스킬의 정보가 저장이 되고 (만약 전에 아이템을 선택했다면 지우기, 타겟들도 지우기)
         // 선택한 스킬의 타겟 수에 따라 선택 가능한 타겟 수 변경
@@ -62,18 +68,32 @@ namespace Jun
 
         public void OnClickEnemyBtn(int index) //적버튼
         {
+            BattleManager.Instance.UpdateEnemyUI(index);
             if (isOwned)
             {
                 _model.SelectedEnemy(index);
             }
         }
 
+        void OnMouseDown()
+        {
+            Debug.Log("OnClick");
+            BattleManager.Instance.UpdateUnitUI(this);
+        }
+
+        // 피해 받음
+        public void PlDamaged(float Attack)
+        {
+            _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
+            
+        }
+
         //스킬 사용을 서버에 요청
         //배틀 매니저에게 무결성 검사 요청
         [Command]
-        public void CMDSelectionComplete(int skillIndex, int itemIndex, List<int> tagets)
+        public void CMDSelectionComplete(int skillIndex, int itemIndex, bool isEnemy, List<int> tagets)
         {
-            BattleManager.Instance.VerifyClientRequest(this, skillIndex, itemIndex, tagets);
+            BattleManager.Instance.VerifyClientRequest(this, skillIndex, itemIndex, isEnemy, tagets);
         }
 
 
