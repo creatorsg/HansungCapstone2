@@ -12,6 +12,7 @@
   <Project Path="Mirror.Authenticators.csproj" />
   <Project Path="Mirror.Transports.csproj" />
   <Project Path="EncryptionTransportEditor.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Telepathy.csproj" />
   <Project Path="PlayFabSDKEditor.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
