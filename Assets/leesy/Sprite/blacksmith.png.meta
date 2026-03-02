@@ -1,10 +1,19 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
 guid: 2d44bc9354e6d774ba7f2ed9b8d17c4c
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -8337281393119725202
     second: blacksmith_0
+========
+guid: 37f31d074c58f014ea9be35e1878884d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6672990557300740791
+    second: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0"
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,6 +122,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
       name: blacksmith_0
       rect:
         serializedVersion: 2
@@ -120,6 +130,15 @@ TextureImporter:
         y: 209
         width: 1294
         height: 1984
+========
+      name: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 133
+        height: 141
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +147,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
+<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
       spriteID: e69ff9aeeb60c4c80800000000000000
       internalID: -8337281393119725202
+========
+      spriteID: 7b2527d8e893b9c50800000000000000
+      internalID: 6672990557300740791
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
       vertices: []
       indices: 
       edges: []
@@ -148,7 +172,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
       blacksmith_0: -8337281393119725202
+========
+      "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0": 6672990557300740791
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

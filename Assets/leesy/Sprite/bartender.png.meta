@@ -1,10 +1,19 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/bartender.png.meta
 guid: f8b691f2b445e6c44bd62719a23b6790
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -2339032837426595097
     second: bartender_0
+========
+guid: d7f188449241f0b4bbe2257c14fbc107
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2650255088926332012
+    second: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020138_0"
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020138.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,6 +122,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/bartender.png.meta
       name: bartender_0
       rect:
         serializedVersion: 2
@@ -120,6 +130,15 @@ TextureImporter:
         y: 158
         width: 938
         height: 3192
+========
+      name: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020138_0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 119
+        height: 136
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020138.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +147,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
+<<<<<<<< HEAD:Assets/leesy/Sprite/bartender.png.meta
       spriteID: 7eab63fe6061a8fd0800000000000000
       internalID: -2339032837426595097
+========
+      spriteID: c6410a336f897c420800000000000000
+      internalID: 2650255088926332012
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020138.png.meta
       vertices: []
       indices: 
       edges: []
@@ -148,7 +172,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+<<<<<<<< HEAD:Assets/leesy/Sprite/bartender.png.meta
       bartender_0: -2339032837426595097
+========
+      "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020138_0": 2650255088926332012
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020138.png.meta
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
