@@ -22,7 +22,7 @@ namespace inseon.Server.Playfab.Login
         {
             Debug.Log("Login OK. SessionTicket: " + result.SessionTicket);
 
-            inseon.Playfab.Login.PlayFabInitAndProfile.InitAndGetProfile(
+            inseon.Playfab.Login.PlayFabUserProfile.InitAndGetProfile(
                 onOk: data =>
                 {
                     Debug.Log("Profile OK: " + (data?.profile?.Rank ?? "null"));

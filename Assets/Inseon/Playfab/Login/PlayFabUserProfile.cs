@@ -6,7 +6,7 @@ using PlayFab.Json;
 
 namespace inseon.Playfab.Login
 {
-    public static class PlayFabInitAndProfile
+    public static class PlayFabUserProfile
     {
         public static void InitAndGetProfile(Action<InitProfileResponse> onOk, Action<PlayFabError> onError)
         {

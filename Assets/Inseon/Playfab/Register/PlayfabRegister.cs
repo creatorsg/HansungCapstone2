@@ -19,6 +19,7 @@ namespace inseon.Playfab.Register.Authentication
         public static void RegisterPlayFabUser(
             string id, 
             string pw, 
+            string nickname,
             Action<RegisterPlayFabUserResult> onOk, 
             Action<PlayFabError> onError)
         {
@@ -26,6 +27,7 @@ namespace inseon.Playfab.Register.Authentication
             {
                 Username = id,
                 Password = pw,
+                DisplayName = nickname,
                 RequireBothUsernameAndEmail = false
             };
 
@@ -44,7 +46,6 @@ namespace inseon.Playfab.Register.Authentication
 
             PlayFabClientAPI.UpdateUserTitleDisplayName(request, onOk, onError);
         }
-
 
         public static void InitializePlayerData(
             Action<string> onOkJson,

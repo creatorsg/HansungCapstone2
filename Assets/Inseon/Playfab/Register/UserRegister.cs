@@ -15,6 +15,11 @@ namespace inseon.Server.Playfab.Register
 
         private bool _inProgress;
 
+        private void Awake()
+        {
+            SetState("정보를 입력해주세요.");
+        }
+
         public void CheckRegister()
         {
             if (_inProgress) return;
@@ -24,9 +29,22 @@ namespace inseon.Server.Playfab.Register
             var pw2 = PW_Check.text;
             var nickname = Nickname.text?.Trim();
 
-            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(pw) || string.IsNullOrEmpty(nickname))
+
+            if(string.IsNullOrEmpty(id))
             {
-                SetState("ID/PW/닉네임을 입력하세요.");
+                SetState("ID를 입력해주세요.");
+                return;
+            }
+
+            if(string.IsNullOrEmpty(pw))
+            {
+                SetState("PW를 입력해주세요.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(nickname))
+            {
+                SetState("nickName을 입력해주세요.");
                 return;
             }
 
@@ -39,7 +57,6 @@ namespace inseon.Server.Playfab.Register
             OnClickRegister(ID.text, PW.text, Nickname.text);
         }
 
-
         private void OnClickRegister(string id, string pw, string nickname)
         {
             _inProgress = true;
@@ -47,47 +64,31 @@ namespace inseon.Server.Playfab.Register
             SetState("가입 중...");
 
             inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayFabUser(
-                id, pw,
+                id,
+                pw,
+                nickname,
                 onOk: _ =>
                 {
-                    SetState("로그인 중...");
+                    SetState("데이터 초기화 중...");
 
-                    inseon.Playfab.Login.PlayfabAuth.LoginWithPlayFab(
-                        id, pw,
-                        onOk: __ =>
+                    inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
+                        onOkJson: json =>
                         {
-                            SetState("닉네임 설정 중...");
-
-                            inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayerNickname(
-                                nickname,
-                                onOk: ___ =>
-                                {
-                                    SetState("데이터 초기화 중...");
-
-                                    inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
-                                        onOkJson: json =>
-                                        {
-                                            Debug.Log("Init OK: " + json);
-                                            SetState("가입 완료!");
-                                            EndProgress();
-                                        },
-                                        onCloudScriptError: csErr =>
-                                        {
-                                            SetState($"서버 초기화 실패: {csErr.message}");
-                                            EndProgress();
-                                        },
-                                        onTransportError: pfErr =>
-                                        {
-                                            Debug.LogError(pfErr.GenerateErrorReport());
-                                            SetState("네트워크/인증 오류로 초기화 실패");
-                                            EndProgress();
-                                        }
-                                    );
-                                },
-                                onError: e => Fail(e, "닉네임 설정 실패 (계정은 생성됨)")
-                            );
+                            Debug.Log("Init OK: " + json);
+                            SetState("가입 완료!");
+                            EndProgress();
                         },
-                        onError: e => Fail(e, "로그인 실패")
+                        onCloudScriptError: csErr =>
+                        {
+                            SetState($"서버 초기화 실패: {csErr.message}");
+                            EndProgress();
+                        },
+                        onTransportError: pfErr =>
+                        {
+                            Debug.LogError(pfErr.GenerateErrorReport());
+                            SetState("네트워크/인증 오류로 초기화 실패");
+                            EndProgress();
+                        }
                     );
                 },
                 onError: e => Fail(e, "가입 실패")
@@ -112,11 +113,6 @@ namespace inseon.Server.Playfab.Register
         {
             if (RegisterState != null) RegisterState.text = msg;
             Debug.Log(msg);
-        }
-
-        private void OnPlayFabError(PlayFabError e)
-        {
-            Debug.LogError(e.GenerateErrorReport());
         }
     }
 }
