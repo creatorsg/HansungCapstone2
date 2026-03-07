@@ -34,19 +34,6 @@ namespace inseon.Playfab.Register.Authentication
             PlayFabClientAPI.RegisterPlayFabUser(request, onOk, onError);
         }
 
-        public static void RegisterPlayerNickname(
-            string nickname, 
-            Action<UpdateUserTitleDisplayNameResult> onOk, 
-            Action<PlayFabError> onError)
-        {
-            var request = new UpdateUserTitleDisplayNameRequest
-            {
-                DisplayName = nickname
-            };
-
-            PlayFabClientAPI.UpdateUserTitleDisplayName(request, onOk, onError);
-        }
-
         public static void InitializePlayerData(
             Action<string> onOkJson,
             Action<CloudScriptFailure> onCloudScriptError,

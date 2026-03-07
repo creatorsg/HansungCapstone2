@@ -1382,5 +1382,6 @@ namespace Mirror
         // allows runtime & tests to check if a type was weaved.
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual bool Weaved() => false;
+
     }
 }

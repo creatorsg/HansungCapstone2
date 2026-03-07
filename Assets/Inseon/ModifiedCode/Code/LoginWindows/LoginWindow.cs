@@ -14,6 +14,12 @@ namespace inseon.Playfab.User.Login
             var ID = id.text?.Trim();
             var PW = pw.text;
 
+            if (string.IsNullOrEmpty(ID) || string.IsNullOrEmpty(PW))
+            {
+                Debug.Log("Invalid Login Input");
+                return;
+            }
+
             PlayfabUserManage.Login(ID, PW, 
                 PlayfabUserManage.SuccessLogin, 
                 PlayfabUserManage.FailureLogin);
