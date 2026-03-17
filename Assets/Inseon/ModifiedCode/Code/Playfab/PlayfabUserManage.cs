@@ -1,3 +1,4 @@
+using Mirror;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
@@ -83,7 +84,7 @@ namespace inseon.Playfab.User
             if (_player != null)
                 return;
 
-            GameObject g = new GameObject("Player");
+            GameObject g = new GameObject("PlayerSession");
             _player = g.AddComponent<Player>();
 
             UnityEngine.Object.DontDestroyOnLoad(g);

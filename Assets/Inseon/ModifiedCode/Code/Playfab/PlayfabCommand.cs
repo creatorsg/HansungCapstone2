@@ -59,61 +59,61 @@ public static class PlayfabCommand
         string ip,
         int port,
         int maxPlayers,
-        string password,
-        Action<object> callback)
+        bool isPrivate,
+        string password)
     {
-        var args = new Dictionary<string, object>()
+        var request = new ExecuteCloudScriptRequest
         {
-            { "roomId", roomId },
-            { "roomName", roomName },
-            { "ip", ip },
-            { "port", port },
-            { "maxPlayers", maxPlayers },
-            { "password", password } 
+            FunctionName = "CreateRoom",
+            FunctionParameter = new
+            {
+                roomId = roomId,
+                roomName = roomName,
+                ip = ip,
+                port = port,
+                maxPlayers = maxPlayers,
+                isPrivate = isPrivate,
+                password = password
+            }
         };
 
-        ExecuteCloudScript(
-            "CreateRoom",
-            args,
-            callback
+        PlayFabClientAPI.ExecuteCloudScript(
+            request,
+            r => Debug.Log("Room registered"),
+            e => Debug.LogError(e.GenerateErrorReport())
         );
     }
 
-    public static void GetRoomList(Action<object> callback)
+    public static void GetRooms(Action<string> onResult)
     {
-        ExecuteCloudScript(
-            "GetRoomList",
-            null,
-            callback
+        var request = new ExecuteCloudScriptRequest
+        {
+            FunctionName = "GetRoomList"
+        };
+
+        PlayFabClientAPI.ExecuteCloudScript(
+            request,
+            r =>
+            {
+                if (r.FunctionResult != null)
+                    onResult?.Invoke(r.FunctionResult.ToString());
+            },
+            e => Debug.LogError(e.GenerateErrorReport())
         );
     }
 
-    public static void GetRoomById(string roomId, Action<object> callback)
+    public static void RemoveRoom(string roomId)
     {
-        var args = new Dictionary<string, object>()
+        var request = new ExecuteCloudScriptRequest
         {
-            { "roomId", roomId }
+            FunctionName = "RemoveRoom",
+            FunctionParameter = new
+            {
+                roomId = roomId
+            }
         };
 
-        ExecuteCloudScript(
-            "GetRoomById",
-            args,
-            callback
-        );
-    }
-
-    public static void RemoveRoom(string roomId, Action<object> callback)
-    {
-        var args = new Dictionary<string, object>()
-        {
-            { "roomId", roomId }
-        };
-
-        ExecuteCloudScript(
-            "RemoveRoom",
-            args,
-            callback
-        );
+        PlayFabClientAPI.ExecuteCloudScript(request, null, null);
     }
 
 }

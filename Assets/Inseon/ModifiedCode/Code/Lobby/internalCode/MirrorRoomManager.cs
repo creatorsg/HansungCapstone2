@@ -5,19 +5,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class RoomInfo
-{
-    public string roomId;
-    public string hostPlayFabId;
-    public string ip;
-    public int port;
-    public string roomName;
-    public int playerCount;
-    public int maxPlayers;
-    public bool hasPassword;
-}
-
 public static class MirrorRoomManager
 {
     public static void CreateRoom(string roomId)
