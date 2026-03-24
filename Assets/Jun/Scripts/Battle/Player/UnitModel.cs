@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using UnityEditorInternal;
+
 
 namespace Jun
 {
@@ -14,8 +14,8 @@ namespace Jun
         Animator anim;
         public PlayerInfo Info => _info; //읽기전용
 
-        private int _selectedSkill = -1;   //선택된 skill
-        private int _selectedItem = -1;     //선택된 아이템    
+        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //선택된 skill
+        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //선택된 아이템    
         private List<int> _selectedTarget = new List<int>();   // 타겟들
         private bool _isEnemy = true;//타겟이 적인지 아군인지
         private int _targetNum = -1;   //적용할 타겟의 수
@@ -31,7 +31,7 @@ namespace Jun
             _currentHp = info.Hp;
         }
 
-        public void SelectedSkill(int index)
+        public void SelectSkill(int index)
         {
             Debug.Log("스킬선택 " + index);
             _selectedSkill = index;
@@ -41,7 +41,7 @@ namespace Jun
             _targetNum = _info.Skills[index].TagetNum;
             
         }
-        public void SelectedItem(int index)
+        public void SelectItem(int index)
         {
             Debug.Log("아이템 선택");
 
@@ -51,7 +51,7 @@ namespace Jun
 
             _targetNum = _info.Items[index].TagetNum;
         }
-        public void SelectedEnemy(int index)
+        public void SelectEnemy(int index)
         {
             Debug.Log("타겟 선택");
 
@@ -67,6 +67,12 @@ namespace Jun
         {
             _currentHp -= Attack;
             return _currentHp;
+        }
+        public void Reset()
+        {
+            _selectedItem = -1;
+            _selectedSkill = -1;
+            _targetNum = -1;
         }
     }
 

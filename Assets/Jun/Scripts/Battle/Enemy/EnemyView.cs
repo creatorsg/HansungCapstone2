@@ -1,6 +1,7 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
-public class EnemyView : MonoBehaviour
+public class EnemyView : NetworkBehaviour
 {
     [SerializeField] private Slider HpBar;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -10,7 +11,6 @@ public class EnemyView : MonoBehaviour
 
     public void Damaged(float _currentHp)
     {
-        Debug.Log("EnmeyDamaged");
         HpBar.value = _currentHp;
     }
 }
