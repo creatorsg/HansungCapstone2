@@ -36,7 +36,7 @@ public static class PlayfabCommand
     public static void InitAndGetProfile(Action<object> callback)
     {
         ExecuteCloudScript(
-            "InitAndGetProfile",
+            "PlayerProfileLoad",
             null,
             callback
         );
@@ -45,7 +45,7 @@ public static class PlayfabCommand
     public static void CheckPlayerCharacterData(Action<object> callback)
     {
         ExecuteCloudScript(
-            "CheckPlayerCharacterData",
+            "LoadCharacterState",
             null,
             callback
         );
@@ -54,31 +54,31 @@ public static class PlayfabCommand
     // ========================= Room =========================
 
     public static void CreateRoom(
-        string roomId,
-        string roomName,
-        string ip,
-        int port,
-        int maxPlayers,
-        bool isPrivate,
-        string password)
+    string roomId,
+    string roomName,
+    string ip,
+    int port,
+    int maxPlayers,
+    bool isPrivate,
+    string password,
+    string sessionId)
     {
-        var request = new ExecuteCloudScriptRequest
-        {
-            FunctionName = "CreateRoom",
-            FunctionParameter = new
-            {
-                roomId = roomId,
-                roomName = roomName,
-                ip = ip,
-                port = port,
-                maxPlayers = maxPlayers,
-                isPrivate = isPrivate,
-                password = password
-            }
-        };
-
         PlayFabClientAPI.ExecuteCloudScript(
-            request,
+            new ExecuteCloudScriptRequest
+            {
+                FunctionName = "CreateRoom",
+                FunctionParameter = new
+                {
+                    roomId = roomId,
+                    roomName = roomName,
+                    ip = ip,
+                    port = port,
+                    maxPlayers = maxPlayers,
+                    isPrivate = isPrivate,
+                    password = password,
+                    sessionId = sessionId  
+                }
+            },
             r => Debug.Log("Room registered"),
             e => Debug.LogError(e.GenerateErrorReport())
         );
@@ -99,6 +99,20 @@ public static class PlayfabCommand
                     onResult?.Invoke(r.FunctionResult.ToString());
             },
             e => Debug.LogError(e.GenerateErrorReport())
+        );
+    }
+
+    public static void JoinRoom(string roomId, string password, Action<RoomInfo> onSuccess)
+    {
+        ExecuteCloudScript(
+            "JoinRoom",
+            new { roomId = roomId, password = password },
+            result =>
+            {
+                var json = result.ToString();
+                var room = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomInfo>(json);
+                onSuccess?.Invoke(room);
+            }
         );
     }
 

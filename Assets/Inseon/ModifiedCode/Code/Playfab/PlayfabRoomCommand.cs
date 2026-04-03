@@ -3,11 +3,20 @@ using Mirror;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public static class PlayfabRoomCommand
 {
-    public static void CreateRoom(string roomId, string roomName, bool isPrivate, string password, int maxPlayers)
+    public static void CreateRoom(
+        string roomId,
+        string roomName,
+        bool isPrivate,
+        string password,
+        int maxPlayers,
+        string ip,
+        int port,
+        string sessionId)
     {
         var manager = NetworkManager.singleton as MirrorNetworkManager;
 
@@ -19,12 +28,6 @@ public static class PlayfabRoomCommand
 
         manager.maxConnections = maxPlayers;
 
-        string ip = GetPublicIP();
-
-        var transport = manager.GetComponent<KcpTransport>();
-
-        int port = transport != null ? transport.Port : 7777;
-
         PlayfabCommand.CreateRoom(
             roomId,
             roomName,
@@ -32,33 +35,29 @@ public static class PlayfabRoomCommand
             port,
             maxPlayers,
             isPrivate,
-            password
+            password,
+            sessionId 
         );
     }
 
-    public static void GetRoomList()
-    {
-
-    }
-
-
-    static string GetPublicIP()
+    public static async Task<string> GetPublicIPAsync()
     {
         try
         {
             var request = WebRequest.Create("https://api.ipify.org");
-
-            using (var response = request.GetResponse())
-            using (var stream = response.GetResponseStream())
-            using (var reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            using var response = await Task.Factory.FromAsync(
+                request.BeginGetResponse,
+                request.EndGetResponse,
+                null
+            );
+            using var stream = response.GetResponseStream();
+            using var reader = new StreamReader(stream);
+            return await reader.ReadToEndAsync();
         }
-        catch
+        catch (Exception e)
         {
+            Debug.LogError($"공인 IP 가져오기 실패: {e.Message}");
             return "0.0.0.0";
         }
     }
-
 }

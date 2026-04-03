@@ -1,3 +1,4 @@
+using Edgegap;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,17 +47,39 @@ namespace inseon.Lobby.Server.Room.CreateWindow
                 SetRoomNumber(_currentRoomNumber - 1);
         }
 
-        public void CreateRoom()
+        public async void CreateRoom()
         {
-            var manager = UnityEngine.Object.FindFirstObjectByType<MirrorNetworkManager>();
+            _roomCreateButton.interactable = false;
 
+            var manager = UnityEngine.Object.FindFirstObjectByType<MirrorNetworkManager>();
             if (manager == null)
             {
-                Debug.LogError("MirrorNetworkManager not found in scene.");
+                Debug.LogError("MirrorNetworkManager not found");
+                _roomCreateButton.interactable = true;
                 return;
             }
 
             string roomId = CreateRoomID();
+
+            // 공인 IP 가져오기
+            string hostIp = await PlayfabRoomCommand.GetPublicIPAsync();
+
+            // 릴레이 세션 생성
+            var relay = await EdgegapRelayManager.CreateSession(hostIp);
+            if (relay == null)
+            {
+                Debug.LogError("릴레이 세션 생성 실패");
+                _roomCreateButton.interactable = true;
+                return;
+            }
+
+            // Transport 설정
+            var transport = manager.GetComponent<EdgegapKcpTransport>();
+            transport.relayAddress = relay.relayAddress;    
+            transport.relayGameServerPort = relay.serverPort;
+            transport.relayGameClientPort = relay.clientPort;
+            transport.sessionId = relay.sessionAuthToken;
+            transport.userId = relay.userAuthToken;
 
             manager.RoomId = roomId;
             manager.StartHost();
@@ -66,8 +89,13 @@ namespace inseon.Lobby.Server.Room.CreateWindow
                 _roomName.text,
                 _privateRoomSetting.isOn,
                 _password.text,
-                _currentRoomNumber
+                _currentRoomNumber,
+                relay.relayAddress,
+                relay.clientPort,
+                relay.sessionId 
             );
+
+            _roomCreateButton.interactable = true;
         }
 
         public void GetRoomList()

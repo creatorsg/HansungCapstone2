@@ -1,16 +1,15 @@
 using System;
+using Edgegap;
+using Mirror;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
     [SerializeField] private Text _playerNickname;
     [SerializeField] private GameObject _createRoomWindow;
-    [SerializeField] private InputField _roomCode;
 
     private Player _player;
-
     public static LobbyManager Instance;
 
     private void Awake()
@@ -23,48 +22,59 @@ public class LobbyManager : MonoBehaviour
     {
         if (_player == null)
         {
-            Debug.LogError("Player component not found on LobbyManager.");
+            Debug.LogError("Player not found.");
             return;
         }
 
         _playerNickname.text = _player.Nickname;
+
+        // 로비 진입 시 자동으로 방 목록 갱신
+        RefreshRoomList();
     }
 
-    public void CreateRoom()
-    {
-        string roomId = Guid.NewGuid().ToString();
-
-        var manager = Mirror.NetworkManager.singleton as MirrorNetworkManager;
-        manager.RoomId = roomId;
-
-        manager.StartHost();
-
-        PlayfabRoomService.CreateRoom(roomId);
-    }
-
-    public void OpenCreateRoomWindow()
-    {
-        _createRoomWindow.SetActive(true);
-    }
-
-    public void CloseCreateRoomWindow()
-    {
-        _createRoomWindow.SetActive(false);
-    }
+    public void OpenCreateRoomWindow() => _createRoomWindow.SetActive(true);
+    public void CloseCreateRoomWindow() => _createRoomWindow.SetActive(false);
 
     public void RefreshRoomList()
     {
-        PlayfabRoomService.GetRoomList(rooms =>
+        PlayfabCommand.GetRooms(json =>
         {
+            var rooms = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<RoomInfo>>(json);
             RoomListUI.Instance.UpdateList(rooms);
         });
     }
-    public void JoinRoom(RoomInfo room)
+
+    public async void JoinRoom(RoomInfo room)
     {
-        var manager = Mirror.NetworkManager.singleton;
+        var manager = Mirror.NetworkManager.singleton as MirrorNetworkManager;
 
-        manager.networkAddress = room.ip;
+        if (manager == null)
+        {
+            Debug.LogError("MirrorNetworkManager not found");
+            return;
+        }
 
-        manager.StartClient();
+        PlayfabCommand.JoinRoom(room.roomId, null, async joinedRoom =>
+        {
+            // 2. 클라이언트용 유저 토큰 발급
+            string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
+            uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId.ToString(), clientIp);
+            // 3. Transport에 릴레이 정보 설정
+            var transport = manager.GetComponent<EdgegapKcpTransport>();
+            if (transport == null)
+            {
+                Debug.LogError("EdgegapKcpTransport not found");
+                return;
+            }
+
+            transport.relayAddress = room.ip;
+            transport.relayGameClientPort = (ushort)room.port;
+            transport.sessionId = room.sessionId;
+            transport.userId = userToken;
+
+            // 4. 클라이언트 접속
+            manager.networkAddress = room.ip;
+            manager.StartClient();
+        });
     }
 }

@@ -1,6 +1,4 @@
-using System;
-
-[Serializable]
+[System.Serializable]
 public class RoomInfo
 {
     public string roomId;
@@ -8,6 +6,11 @@ public class RoomInfo
     public string hostName;
     public string ip;
     public int port;
+    public string roomName;
     public int playerCount;
     public int maxPlayers;
+    public bool isPrivate;
+    public long createdAt;
+    public uint sessionId;     
+    public uint sessionToken;  
 }
