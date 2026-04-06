@@ -22,8 +22,8 @@ namespace Jun
                 foreach (int targetIdx in targets)
                 {
                     // 타겟 공격등 실제 배틀 로직
-                    var target = manager.Enemys[targetIdx].GetComponent<EnemyModel>();
-                    target.Info.Hp -= caster.Info.Atk;
+                    var target = manager.Enemys[manager.StageNum-1].Enemys[targetIdx].GetComponent<EnemyModel>();
+                    target.Damaged(caster.Info.Atk);
                 }
 
                 // 공격자의 애니메이션 호출

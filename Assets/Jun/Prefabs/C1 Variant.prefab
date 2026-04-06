@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_LayerOverridePriority
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 197622066061297333, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -24,6 +28,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 2650255088926332012, guid: d7f188449241f0b4bbe2257c14fbc107, type: 3}
+    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: Info.Atk
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: Info.Name
       value: aa
@@ -66,6 +74,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3199968498827224327, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5148489984695023724, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5148489984695023724, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7458667269418483121, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}

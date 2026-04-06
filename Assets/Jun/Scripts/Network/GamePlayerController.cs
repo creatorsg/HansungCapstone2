@@ -23,6 +23,17 @@ namespace Jun
             _model.SetUp(Info);
             BattleManager.Instance.RegisterPlayer(this);
         }
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            // 만약 내가 서버(호스트)라면 OnStartServer에서 이미 셋업을 했으므로 중복 실행을 막아줍니다.
+            if (!isServer)
+            {
+                // 클라이언트도 자기 화면에서 스킬 데이터를 정상적으로 로드합니다!
+                _model.SetUp(Info);
+            }
+        }
         // 위치를 잡는 로직을 별도 함수로 분리해서 호출
         void OnPosIndexChanged(int oldPos, int newPos)
         {
@@ -38,10 +49,10 @@ namespace Jun
         {
             _view.EndMyTurn += EndMyTurn;
         }
-
+        [Command]
         public void MyTurn(bool IsMyTurn)
         {
-            _view.SetSel(IsMyTurn);
+            _view.RpcSetSel(IsMyTurn);
         }
         // 스킬 버튼을 누르면 선택한 스킬의 정보가 저장이 되고 (만약 전에 아이템을 선택했다면 지우기, 타겟들도 지우기)
         // 선택한 스킬의 타겟 수에 따라 선택 가능한 타겟 수 변경
@@ -52,7 +63,7 @@ namespace Jun
         {
             if (isOwned)
             {
-                _model.SelectedSkill(index);
+                _model.SelectSkill(index);
                 _view.SetButtonsInteractable(true, _view.EnemyBtn);
             }
 
@@ -61,21 +72,25 @@ namespace Jun
         {
             if (isOwned)
             {
-                _model.SelectedItem(index);
+                _model.SelectItem(index);
                 _view.SetButtonsInteractable(true, _view.EnemyBtn);
             }
         }
 
         public void OnClickEnemyBtn(int index) //적버튼
         {
-            BattleManager.Instance.UpdateEnemyUI(index);
+            if (_model.SelectedItem == -1 && _model.SelectedSkill == -1)
+            {
+                Debug.Log("적UI패널 나오기 "+ index);
+                BattleManager.Instance.UpdateEnemyUI(index);
+            }
             if (isOwned)
             {
-                _model.SelectedEnemy(index);
+                _model.SelectEnemy(index);
             }
         }
 
-        void OnMouseDown()
+        public void OnClickedUnit()
         {
             Debug.Log("OnClick");
             BattleManager.Instance.UpdateUnitUI(this);
@@ -109,6 +124,7 @@ namespace Jun
         [Command]
         public void EndMyTurn()
         {
+            _model.Reset();
             BattleManager.Instance.NextTurn();
         }
     }

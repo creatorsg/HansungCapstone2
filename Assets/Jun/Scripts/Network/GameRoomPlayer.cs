@@ -34,7 +34,11 @@ namespace Jun
         }
         private void OnDestroy()
         {
-            LobbyManager.Instance.UpdatePlayerNum(false);
+            // LobbyManager.Instance가 아직 파괴되지 않고 살아있을 때만 함수를 호출합니다.
+            if (LobbyManager.Instance != null)
+            {
+                LobbyManager.Instance.UpdatePlayerNum(false);
+            }
 
         }
         //선택한 정보로 영웅정보 추가

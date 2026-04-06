@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1.33
+      objectReference: {fileID: 0}
+    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1.41
+      objectReference: {fileID: 0}
     - target: {fileID: 1109338203283845972, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: _assetId
       value: 4043161892
@@ -30,7 +38,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: Info.Atk
-      value: 3
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: Info.Ctm
@@ -71,6 +79,18 @@ PrefabInstance:
     - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: Info.Dodge
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: Info.Skills.Array.data[1].Name
+      value: b
+      objectReference: {fileID: 0}
+    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: Info.Skills.Array.data[1].anim
+      value: Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: Info.Skills.Array.data[1].TagetNum
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3199968498827224327, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_LocalPosition.x

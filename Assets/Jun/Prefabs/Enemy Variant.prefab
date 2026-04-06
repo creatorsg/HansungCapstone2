@@ -104,6 +104,10 @@ PrefabInstance:
       propertyPath: Info.Dodge
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8264270597871423408, guid: fa368164e9146a94b874dc38f023f338, type: 3}
+      propertyPath: _assetId
+      value: 4146042395
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7610539627369618907, guid: fa368164e9146a94b874dc38f023f338, type: 3}
     m_RemovedGameObjects: []

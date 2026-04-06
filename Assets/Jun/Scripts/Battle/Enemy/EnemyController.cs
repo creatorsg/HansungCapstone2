@@ -1,11 +1,12 @@
 using Jun;
+using Mirror;
 using UnityEditor;
 using UnityEngine;
 
 // 멀티서버 만들기전에 만든 적 컨트롤러
 namespace Jun
 {
-    public class EnemyController : MonoBehaviour
+    public class EnemyController : NetworkBehaviour
     {
         [SerializeField] private EnemyModel _model;
         [SerializeField] private EnemyView _view;
@@ -47,6 +48,12 @@ namespace Jun
 
                     break;
             }
+        }
+        [Command(requiresAuthority = false)]
+        public void CMDDead()
+        {
+            Debug.Log("E");
+            BattleManager.Instance.RcpEnemyDead(gameObject);
         }
     }
 }

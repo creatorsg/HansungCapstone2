@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Jun
 {
-    public class PlayerView : MonoBehaviour
+    public class PlayerView : NetworkBehaviour
     {
         public event Action EndMyTurn;
         Animator anim;
@@ -27,8 +27,8 @@ namespace Jun
             SetButtonsInteractable(false, ItemBtn);
             SetButtonsInteractable(false, EnemyBtn);
         }
-
-        public void SetSel(bool IsMyTurn)
+        [ClientRpc]
+        public void RpcSetSel(bool IsMyTurn)
         {
             Sel.gameObject.SetActive(IsMyTurn);
         }

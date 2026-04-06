@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 namespace Jun
 {
     public enum SkillType //스킬 종류
@@ -77,12 +78,19 @@ namespace Jun
         public int speed;
         public int num;
 
-
+        public TurnData() { }
         public TurnData(string type, int speed, int num)
         {
             this.type = type;
             this.speed = speed;
             this.num = num;
         }
+    }
+
+    [System.Serializable]
+    public class BattleEnemyInfo
+    {
+        public string BattleStage;
+        public List<Button> Enemys;
     }
 }
