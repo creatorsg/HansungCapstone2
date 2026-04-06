@@ -1,5 +1,4 @@
 using Mirror;
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ¹èÆ²À» Àü¹ÝÀûÀ¸·Î ¿î¿µÇÏ´Â ¼­¹ö
+// ï¿½ï¿½Æ²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¿µï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
 namespace Jun
 {
     public class BattleManager : NetworkBehaviour
@@ -16,16 +15,16 @@ namespace Jun
         [SerializeField] private BattleLogic _logic;
         public static BattleManager Instance;
 
-        [Header("ÀüÅõ À¯´Ö ¸®½ºÆ®")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®")]
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
-        [Header("¿µ¿õ »ý¼º À§Ä¡")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("Ä³¸¯ÅÍµéÀÇ ÀÌ¹ÌÁö")]
+        [Header("Ä³ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½")]
         [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
-        [Header("Ä³¸¯ÅÍ Á¤º¸ Ã¢")]
+        [Header("Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¢")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
-        [Header("Ä³¸¯ÅÍ °ü·Ã UIµé")]
+        [Header("Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
         [SerializeField] private List<Button> _items; public List<Button> Items => _items;
@@ -39,7 +38,7 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _dodge; public TextMeshProUGUI Dodge => _dodge;
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
-        [Header("Àû")]// ½ÇÇèÀ» À§ÇØ Àá½Ã ¹öÆ°À¸·Î ¸¸µë, ÈÄ¿¡ GameObject·Î ¹Ù²Ü ¿¹Á¤
+        [Header("ï¿½ï¿½")]// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ä¿ï¿½ GameObjectï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½ï¿½
         [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
@@ -48,7 +47,7 @@ namespace Jun
 
         public int EnemyNum;
 
-        [Header("ÅÏ Á¤º¸")]
+        [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         [SerializeField] private Transform _turnPanel;
         [SerializeField] private TextMeshProUGUI _turnUI;
         [SerializeField] private GameObject _turnUi;
@@ -62,7 +61,7 @@ namespace Jun
         private void Awake()
         {
             Instance = this;
-            //  ÆÐ³Î ºñÈ°¼º Ã³¸®
+            //  ï¿½Ð³ï¿½ ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha =  0.5f;
@@ -72,29 +71,29 @@ namespace Jun
         {
             base.OnStartServer();
 
-            // ±âÁ¸¿¡ ½×ÀÎ ¾²·¹±â µ¥ÀÌÅÍ ÃÊ±âÈ­ 
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ 
             _players.Clear();
             _turnList.Clear();
             Order = -1;
 
-            // ¼­¹ö¿¡¼­¸¸ Àû ÅÏ µ¥ÀÌÅÍ Ãß°¡.
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
             for (int i = 0; i < _enemys[StageNum - 1].Enemys.Count; i++)
             {
                 _turnList.Add(new TurnData("Enemy", _enemys[StageNum - 1].Enemys[i].GetComponent<EnemyController>().Info.Spd, i));
             }
         }
-        //Á¢¼Ó ÈÄ ÇÃ·¹ÀÌ¾î Ãß°¡(°ü¸®ÇÏ±â À§ÇØ)
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ß°ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½)
         public void RegisterPlayer(GamePlayerController pl)
         {
             var manager = NetworkManager.singleton as GameRoomManager;
-            // ÇöÀç ÇÃ·¹ÀÌ¾î Ãß°¡
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ß°ï¿½
             _players.Add(pl);
             _turnList.Add(new TurnData("Player", pl.Info.Spd, _players.Count-1));
             
             pl.gameObject.SetActive(true);
             if (isServer && _players.Count == manager.HeroNum)
             {
-                // ÀÌ¹Ì ½ÇÇà ÁßÀÎ Invoke°¡ ÀÖ´Ù¸é Ãë¼ÒÇØ¼­ Áßº¹ ¹æÁö
+                // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Invokeï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½
                 CancelInvoke(nameof(StartFirstTurn));
                 Invoke(nameof(StartFirstTurn), 0.5f);
             }
@@ -102,20 +101,20 @@ namespace Jun
         [Server]
         private void StartFirstTurn()
         {
-            Order = -1; // È®½ÇÇÏ°Ô ÃÊ±âÈ­
+            Order = -1; // È®ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ê±ï¿½È­
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             NextTurn();
         }
-        // ´ÙÀ½ ÅÏÀ¸·Î ÁøÇà
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         [Server]
         public void NextTurn()
         {
             Order = (Order + 1) % _turnList.Count;
             Debug.Log(Order);
-            // ÀÌ¹ø ÅÏÀÇ Å¸ÀÔ°ú ¹øÈ£¸¦ ¼­¹ö°¡ È®ÀÎ
+            // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ô°ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
-            Debug.Log("ÇöÀç ÀûÀÇ ¼ö: " + EnemyNum);
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: " + EnemyNum);
             if (EnemyNum == 0)
             {
                 Debug.Log("EndStage");
@@ -125,15 +124,15 @@ namespace Jun
 
             RpcChangeTurn(currentType, currentNum);
         }
-        // ÅÏ º¯°æ
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         [ClientRpc]
         public void RpcChangeTurn(string typeTurn, int turnNum)
         {
             if (typeTurn == "Enemy")
             {
-                CurrentTurnUnit = null; // Àû ÅÏÀÌ´Ï±î 
+                CurrentTurnUnit = null; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´Ï±ï¿½ 
                 _turnUI.text = "Enemy" + turnNum.ToString();
-                //  ÆÐ³Î ºñÈ°¼º Ã³¸®
+                //  ï¿½Ð³ï¿½ ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
                 _unitPanel.interactable = false;
                 _unitPanel.blocksRaycasts = false;
                 _unitPanel.alpha = 0.5f;
@@ -142,7 +141,7 @@ namespace Jun
             else
             {
                 var targetPlayer = _players[turnNum];
-                CurrentTurnUnit = targetPlayer; //ÇöÀç ÅÏ À¯´Ö Á¤º¸ ÀúÀå
+                CurrentTurnUnit = targetPlayer; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 _turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
 
                 bool isMyTurn = targetPlayer.isOwned && (CurrentTurnUnit != null && targetPlayer.Info.Id == CurrentTurnUnit.Info.Id);
@@ -151,13 +150,13 @@ namespace Jun
                     UpdateUnitUI(targetPlayer);
                 }
                 targetPlayer.MyTurn(isMyTurn);
-                // ³»ÅÏÀÎÁö¿¡ µû¶ó ÆÐ³Î È°¼º/ºñÈ°¼º Ã³¸®
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ È°ï¿½ï¿½/ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
                 _unitPanel.interactable = isMyTurn;
                 _unitPanel.blocksRaycasts = isMyTurn;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
         }
-        // Àû ÅÏÀÏ‹š Àá½Ã ÄÚ·çÆ¾À¸·Î ³Ñ±â±â
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½Ï‹ï¿½ ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½Æ¾ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½
         IEnumerator EnemyTurn()
         {
             yield return new WaitForSeconds(1.0f);
@@ -167,11 +166,11 @@ namespace Jun
         {
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
-            // ¼±ÅÃµÈ À¯´ÖÀÇ Â÷·Ê¿Í ³» ¼ÒÀ¯ÀÎÁö¿¡ µû¶ó ÆÐ³Î È°¼º/ºñÈ°¼º Ã³¸®
+            // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð³ï¿½ È°ï¿½ï¿½/ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
             _unitPanel.interactable = isUnitTurn;
             _unitPanel.blocksRaycasts = isUnitTurn;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
-            // ¼±ÅÃµÈ À¯´ÖÀÇ Á¤º¸·Î ±³Ã¼
+            // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
             _hp.text = unit.Info.Hp.ToString();
             _san.text = unit.Info.San.ToString();
@@ -182,14 +181,14 @@ namespace Jun
             _res.text = unit.Info.Hp.ToString();
             _dodge.text = unit.Info.Dodge.ToString();
 
-            // ½ºÅ³ ¹öÆ° ÀÌº¥Æ® Àç¿¬°á
+            // ï¿½ï¿½Å³ ï¿½ï¿½Æ° ï¿½Ìºï¿½Æ® ï¿½ç¿¬ï¿½ï¿½
             for (int i = 0; i < _skillBTN.Count; i++)
             {
                 int index = i;
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
 
-                // ½ºÅ³ ¾ÆÀÌÄÜµµ À¯´Ö¿¡ ¸Â°Ô º¯°æ °¡´É
+                // ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ ï¿½ï¿½ï¿½Ö¿ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 // _skillBTN[i].image.sprite = unit.SkillSprites[i];
 
             }
@@ -201,17 +200,17 @@ namespace Jun
                 EnemyBTN.onClick.AddListener(() => unit.OnClickEnemyBtn(index));
             }
         }
-        //Àû ¼±ÅÃ ÀÌ¹ÌÁö º¯°æ
+        //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         public void UpdateEnemyUI(int index)
         {
             var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
             _enemyPanel.SetActive(true);
             _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
         }
-        //¹«°á¼º °Ë»ç
+        //ï¿½ï¿½ï¿½á¼º ï¿½Ë»ï¿½
         public void VerifyClientRequest(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy,List<int> targets)
         {
-            // ±ÔÄ¢ È®ÀÎ ÈÄ(¾ÆÁ÷ »ý°¢¾ÈÇØµÒ)
+            // ï¿½ï¿½Ä¢ È®ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½)
 
 
 
@@ -227,7 +226,7 @@ namespace Jun
         public void NextStage()
         {
             Debug.Log("NextStage");
-            //  ÆÐ³Î ºñÈ°¼º Ã³¸®
+            //  ï¿½Ð³ï¿½ ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;

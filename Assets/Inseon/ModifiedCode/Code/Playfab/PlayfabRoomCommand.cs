@@ -18,11 +18,11 @@ public static class PlayfabRoomCommand
         int port,
         string sessionId)
     {
-        var manager = NetworkManager.singleton as MirrorNetworkManager;
+        var manager = NetworkManager.singleton as Jun.GameRoomManager;
 
         if (manager == null)
         {
-            Debug.LogError("MirrorNetworkManager missing");
+            Debug.LogError("GameRoomManager를 찾을 수 없습니다. Scene에 GameRoomManager가 있는지 확인하세요.");
             return;
         }
 

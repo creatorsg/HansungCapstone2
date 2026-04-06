@@ -130,4 +130,17 @@ public static class PlayfabCommand
         PlayFabClientAPI.ExecuteCloudScript(request, null, null);
     }
 
+    public static void LoadCharacterCatalog(System.Action onComplete)
+    {
+        PlayFabClientAPI.GetCatalogItems(
+            new GetCatalogItemsRequest { CatalogVersion = "Characters" },
+            result =>
+            {
+                CharacterDatabase.Load(result.Catalog);
+                onComplete?.Invoke();
+            },
+            error => Debug.LogError("Catalog Load Failed: " + error.GenerateErrorReport())
+        );
+    }
+
 }

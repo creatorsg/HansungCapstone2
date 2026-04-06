@@ -1,17 +1,29 @@
 using UnityEngine;
 using Mirror;
-using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Jun {
     public class GameRoomManager : NetworkRoomManager
     {
-        //°ÔÀÓ¿¡ Âü¿©ÁßÀÎ ¿µ¿õÀÇ ¼ö
+        // í˜„ì¬ ë°©ì˜ ê³ ìœ  ID (PlayFabì— ë“±ë¡ëœ roomId)
+        public string RoomId;
+
+        // ê²Œì„ì— ì°¸ì—¬í•˜ëŠ” ìºë¦­í„°ì˜ ìˆ˜
         public int HeroNum = 0;
-        // ·Îºñ¿¡¼­ º»°ÔÀÓÀ¸·Î ³Ñ¾î°¥ ¶§ ¼­¹ö¿¡¼­ ½ÇÇàµÇ´Â ÇÔ¼ö
+
+        public override void OnStopHost()
+        {
+            base.OnStopHost();
+            if (!string.IsNullOrEmpty(RoomId))
+            {
+                PlayfabCommand.RemoveRoom(RoomId);
+                Debug.Log($"[GameRoomManager] ë°© ì œê±° ìš”ì²­: {RoomId}");
+            }
+        }
+        // ï¿½Îºñ¿¡¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾î°¥ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
-            // ·Îºñ ÇÃ·¹ÀÌ¾î¿¡¼­ ¼±ÅÃÇß´ø Á¤º¸¸¦ ²¨³»±â
+            // ï¿½Îºï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             var roomPlayerScript = roomPlayer.GetComponent<GameRoomPlayer>();
             var roomPlayerCharaterNum = roomPlayerScript.CharaterNum;
 
@@ -22,30 +34,30 @@ namespace Jun {
                 int index = roomPlayerCharaterNum[i].HeroIndex;
                 int pos = roomPlayerCharaterNum[i].HeroPos;
 
-                // º»°ÔÀÓ¿ë ÇÃ·¹ÀÌ¾î ÇÁ¸®ÆÕÀ» »ı¼º
+                // ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 GameObject gamePlayer = Instantiate(spawnPrefabs[index]);
 
-                // »ı¼ºµÈ °ÔÀÓ ÇÃ·¹ÀÌ¾î ½ºÅ©¸³Æ®¿¡ µ¥ÀÌÅÍ¸¦ ÁÖÀÔ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
                 var gamePlayerScript = gamePlayer.GetComponent<GamePlayerController>();
                 gamePlayerScript.FinalHeroIndex = index;
                 gamePlayerScript.FinalHeroPos = pos;
                 gamePlayerScript.Info = spawnPrefabs[index].GetComponent<GamePlayerController>().Info;
 
-                // ´ÙÁß Ä³¸¯ÅÍ ¼ÒÈ¯ Ã³¸®
+                // ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ Ã³ï¿½ï¿½
                 if (i == 0)
                 {
-                    // Ã¹ ¹øÂ° Ä³¸¯ÅÍ´Â ÇÔ¼öÀÇ ¸®ÅÏ°ªÀ¸·Î ÁöÁ¤ (Mirror°¡ ÀÚµ¿ ¼ÒÈ¯)
+                    // Ã¹ ï¿½ï¿½Â° Ä³ï¿½ï¿½ï¿½Í´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (Mirrorï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½È¯)
                     mainPlayer = gamePlayer;
                 }
                 else
                 {
-                    // µÎ ¹øÂ° Ä³¸¯ÅÍºÎÅÍ´Â ¼öµ¿À¸·Î NetworkServer.Spawn È£Ãâ
-                    // connÀ» Àü´ŞÇØ¾ß ÇØ´ç Å¬¶óÀÌ¾ğÆ®°¡ ÀÌ Ä³¸¯ÅÍÀÇ ±ÇÇÑ(isLocalPlayer)À» °¡Áı´Ï´Ù.
+                    // ï¿½ï¿½ ï¿½ï¿½Â° Ä³ï¿½ï¿½ï¿½Íºï¿½ï¿½Í´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ NetworkServer.Spawn È£ï¿½ï¿½
+                    // connï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(isLocalPlayer)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
                     NetworkServer.Spawn(gamePlayer, conn);
                 }
             }
 
-            // Ã¹ ¹øÂ°·Î »ı¼ºµÈ Ä³¸¯ÅÍ¸¦ ¹İÈ¯ÇÏ¿© ¿¬°áÀÇ ¸ŞÀÎ À¯´ÖÀ¸·Î ¼³Á¤
+            // Ã¹ ï¿½ï¿½Â°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             return mainPlayer;
         }
 

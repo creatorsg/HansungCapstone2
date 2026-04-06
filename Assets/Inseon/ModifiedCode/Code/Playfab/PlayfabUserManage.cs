@@ -55,23 +55,21 @@ namespace inseon.Playfab.User
         public static void SuccessLogin(LoginResult result)
         {
             LoadPlayer();
-
             var nickname = result.InfoResultPayload?.PlayerProfile?.DisplayName;
-
-            if (string.IsNullOrEmpty(nickname))
-                nickname = result.PlayFabId;
-
+            if (string.IsNullOrEmpty(nickname)) nickname = result.PlayFabId;
             _player.initPlayerData(nickname, result.PlayFabId);
 
             PlayfabCommand.InitAndGetProfile(profile =>
             {
                 PlayfabCommand.CheckPlayerCharacterData(chars =>
                 {
-                    Debug.Log("Login Complete");
+                    PlayfabCommand.LoadCharacterCatalog(() =>   
+                    {
+                        Debug.Log("모든 초기 데이터 로드 완료 → 로비 이동");
+                        SceneManager.LoadScene("Lobby");
+                    });
                 });
             });
-
-            SceneManager.LoadScene("Lobby");
         }
 
         public static void FailureLogin(PlayFabError err)

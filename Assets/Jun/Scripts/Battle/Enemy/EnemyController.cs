@@ -1,9 +1,8 @@
 using Jun;
 using Mirror;
-using UnityEditor;
 using UnityEngine;
 
-// ¸ÖÆ¼¼­¹ö ¸¸µé±âÀü¿¡ ¸¸µç Àû ÄÁÆ®·Ñ·¯
+// ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½
 namespace Jun
 {
     public class EnemyController : NetworkBehaviour
@@ -37,14 +36,14 @@ namespace Jun
             switch (State)
             {
                 case UnitState.Waiting:
-                    break;// ¸ðµç Çàµ¿ Á¤Áö
+                    break;// ï¿½ï¿½ï¿½ ï¿½àµ¿ ï¿½ï¿½ï¿½ï¿½
                 case UnitState.Incapacitated:
 
-                    //³ªÁß¿¡ Çàµ¿ºÒ´É ÅÏ¼ö Á¦¾îÇØ¼­ ÇÒ°Í
+                    //ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½àµ¿ï¿½Ò´ï¿½ ï¿½Ï¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Ò°ï¿½
                     break;
 
                 case UnitState.Acting:
-                    // Çàµ¿ °¡´É
+                    // ï¿½àµ¿ ï¿½ï¿½ï¿½ï¿½
 
                     break;
             }

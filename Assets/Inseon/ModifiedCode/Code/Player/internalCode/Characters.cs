@@ -2,20 +2,20 @@ using UnityEngine;
 
 public struct Character
 {
-    string characterCode;
-    CharacterEquipment equipment;
-    int level;
-    int hp;
-    int mana;
-    int stress;
-    int effectResistance;
-    int stunResistance;
-    int attack;
-    int defense;
-    int critical;
-    int accuracy;
-    int evasion;
-    int speed;
+    public string characterCode;
+    public CharacterEquipment equipment;
+    public int level;
+    public int hp;
+    public int mana;
+    public int stress;
+    public int effectResistance;
+    public int stunResistance;
+    public int attack;
+    public int defense;
+    public int critical;
+    public int accuracy;
+    public int evasion;
+    public int speed;
 }
 
 public struct CharacterEquipment

@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
@@ -12,13 +11,13 @@ namespace Jun
         [SerializeField] private PlayerInfo _info;
         [SerializeField] private List<ItemInfo> _inventory = new List<ItemInfo>();
         Animator anim;
-        public PlayerInfo Info => _info; //ÀÐ±âÀü¿ë
+        public PlayerInfo Info => _info; //ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //¼±ÅÃµÈ skill
-        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //¼±ÅÃµÈ ¾ÆÀÌÅÛ    
-        private List<int> _selectedTarget = new List<int>();   // Å¸°Ùµé
-        private bool _isEnemy = true;//Å¸°ÙÀÌ ÀûÀÎÁö ¾Æ±ºÀÎÁö
-        private int _targetNum = -1;   //Àû¿ëÇÒ Å¸°ÙÀÇ ¼ö
+        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //ï¿½ï¿½ï¿½Ãµï¿½ skill
+        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    
+        private List<int> _selectedTarget = new List<int>();   // Å¸ï¿½Ùµï¿½
+        private bool _isEnemy = true;//Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ±ï¿½ï¿½ï¿½ï¿½ï¿½
+        private int _targetNum = -1;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
         private float _currentHp;
         public void Start()
@@ -33,7 +32,7 @@ namespace Jun
 
         public void SelectSkill(int index)
         {
-            Debug.Log("½ºÅ³¼±ÅÃ " + index);
+            Debug.Log("ï¿½ï¿½Å³ï¿½ï¿½ï¿½ï¿½ " + index);
             _selectedSkill = index;
             _selectedItem = -1;
             _selectedTarget.Clear();
@@ -43,7 +42,7 @@ namespace Jun
         }
         public void SelectItem(int index)
         {
-            Debug.Log("¾ÆÀÌÅÛ ¼±ÅÃ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
 
             _selectedItem = index;
             _selectedSkill = -1;
@@ -53,7 +52,7 @@ namespace Jun
         }
         public void SelectEnemy(int index)
         {
-            Debug.Log("Å¸°Ù ¼±ÅÃ");
+            Debug.Log("Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
 
             _selectedTarget.Add(index);
             if (_targetNum > 0 && _targetNum == _selectedTarget.Count)

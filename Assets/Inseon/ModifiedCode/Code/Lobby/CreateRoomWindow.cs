@@ -51,10 +51,10 @@ namespace inseon.Lobby.Server.Room.CreateWindow
         {
             _roomCreateButton.interactable = false;
 
-            var manager = UnityEngine.Object.FindFirstObjectByType<MirrorNetworkManager>();
+            var manager = UnityEngine.Object.FindFirstObjectByType<Jun.GameRoomManager>();
             if (manager == null)
             {
-                Debug.LogError("MirrorNetworkManager not found");
+                Debug.LogError("GameRoomManager를 찾을 수 없습니다. Scene에 GameRoomManager가 있는지 확인하세요.");
                 _roomCreateButton.interactable = true;
                 return;
             }

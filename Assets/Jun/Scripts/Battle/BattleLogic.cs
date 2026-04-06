@@ -1,6 +1,5 @@
 using Jun;
 using Mirror;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,29 +8,29 @@ namespace Jun
 {
     public class BattleLogic : MonoBehaviour
     {
-        // ³ªÁß¿¡´Â Àûµµ ¾µ¼öÀÖ°Ô²û º¯°æ ¿¹Á¤
+        // ï¿½ï¿½ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö°Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         [Server]
         public void BattleAction(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy, List<int>targets)
         {
             var manager = BattleManager.Instance;
-            // ¹èÆ² ·ÎÁ÷ ±¸Çö(ÇÃ·¹ÀÌ¾î, Àû µÑ ´Ù »ç¿ë°¡´ÉÇÏ°Ô²û)
+            // ï¿½ï¿½Æ² ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½Ã·ï¿½ï¿½Ì¾ï¿½, ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ë°¡ï¿½ï¿½ï¿½Ï°Ô²ï¿½)
             if (skillIndex != -1)
             {
                 SkillInfo skill = caster.Info.Skills[skillIndex];
 
                 foreach (int targetIdx in targets)
                 {
-                    // Å¸°Ù °ø°Ýµî ½ÇÁ¦ ¹èÆ² ·ÎÁ÷
+                    // Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½Ýµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ² ï¿½ï¿½ï¿½ï¿½
                     var target = manager.Enemys[manager.StageNum-1].Enemys[targetIdx].GetComponent<EnemyModel>();
                     target.Damaged(caster.Info.Atk);
                 }
 
-                // °ø°ÝÀÚÀÇ ¾Ö´Ï¸ÞÀÌ¼Ç È£Ãâ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ È£ï¿½ï¿½
                 caster.RpcPlaySkillAnim(skill.anim);
                 caster.MyTurn(false);
-                //ÀûµéÀÇ Á¤º¸ ¾÷µ¥ÀÌÆ®
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 
-                //Àû ÆÐ³Î Áö¿ì±â
+                //ï¿½ï¿½ ï¿½Ð³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
                 BattleManager.Instance.EnemyPanel.SetActive(false);
             }
         }
