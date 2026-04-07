@@ -20,6 +20,19 @@ namespace Jun {
                 Debug.Log($"[GameRoomManager] 방 제거 요청: {RoomId}");
             }
         }
+
+        // 모든 플레이어가 Ready → 게임 씬으로 전환 직전에 호출됨
+        // 방이 로비 목록에서 사라져야 새 플레이어가 들어오지 않음
+        public override void OnRoomServerPlayersReady()
+        {
+            if (!string.IsNullOrEmpty(RoomId))
+            {
+                PlayfabCommand.RemoveRoom(RoomId);
+                Debug.Log($"[GameRoomManager] 게임 시작 - 방 목록에서 제거: {RoomId}");
+            }
+
+            base.OnRoomServerPlayersReady(); // 씬 전환 실행
+        }
         // �κ񿡼� ���������� �Ѿ �� �������� ����Ǵ� �Լ�
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {

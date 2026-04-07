@@ -1,4 +1,5 @@
 using Edgegap;
+using Mirror;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -82,6 +83,17 @@ namespace inseon.Lobby.Server.Room.CreateWindow
             transport.userId = relay.userAuthToken;
 
             manager.RoomId = roomId;
+
+            // 이미 연결 중이면 먼저 정리
+            if (NetworkServer.active || NetworkClient.active)
+            {
+                Debug.LogWarning("[CreateRoom] 기존 연결 감지 → 정리 후 재시작");
+                manager.StopHost();
+            }
+
+            // 새 방 생성 = 이전 세이브 데이터 초기화
+            PlayfabCommand.ResetSaveData();
+
             manager.StartHost();
 
             PlayfabRoomCommand.CreateRoom(
@@ -92,7 +104,8 @@ namespace inseon.Lobby.Server.Room.CreateWindow
                 _currentRoomNumber,
                 relay.relayAddress,
                 relay.clientPort,
-                relay.sessionId 
+                relay.sessionId,
+                relay.sessionAuthToken   // ← 클라이언트가 transport.sessionId에 쓸 값
             );
 
             _roomCreateButton.interactable = true;

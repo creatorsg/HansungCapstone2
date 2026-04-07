@@ -11,6 +11,6 @@ public class RoomInfo
     public int maxPlayers;
     public bool isPrivate;
     public long createdAt;
-    public uint sessionId;     
+    public string sessionId;
     public uint sessionToken;  
 }

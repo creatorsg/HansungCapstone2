@@ -61,7 +61,8 @@ public static class PlayfabCommand
     int maxPlayers,
     bool isPrivate,
     string password,
-    string sessionId)
+    string sessionId,
+    uint sessionToken)          // 클라이언트가 transport.sessionId에 쓸 인증 토큰
     {
         PlayFabClientAPI.ExecuteCloudScript(
             new ExecuteCloudScriptRequest
@@ -76,7 +77,8 @@ public static class PlayfabCommand
                     maxPlayers = maxPlayers,
                     isPrivate = isPrivate,
                     password = password,
-                    sessionId = sessionId  
+                    sessionId = sessionId,
+                    sessionToken = sessionToken   // ← PlayFab에 저장
                 }
             },
             r => Debug.Log("Room registered"),
@@ -140,6 +142,67 @@ public static class PlayfabCommand
                 onComplete?.Invoke();
             },
             error => Debug.LogError("Catalog Load Failed: " + error.GenerateErrorReport())
+        );
+    }
+
+    // ========================= Save / Load =========================
+
+    /// <summary>
+    /// 현재 게임 상태를 PlayFab에 저장합니다. Host만 호출해야 합니다.
+    /// </summary>
+    public static void SaveGameState(SaveData data, Action onComplete = null)
+    {
+        var json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+        var args = Newtonsoft.Json.JsonConvert.DeserializeObject<object>(json);
+
+        ExecuteCloudScript(
+            "SaveGameState",
+            args,
+            _ =>
+            {
+                Debug.Log("[Save] 저장 완료");
+                onComplete?.Invoke();
+            }
+        );
+    }
+
+    /// <summary>
+    /// PlayFab에서 저장된 게임 상태를 불러옵니다.
+    /// </summary>
+    public static void LoadGameState(Action<SaveData> onResult)
+    {
+        ExecuteCloudScript(
+            "LoadGameState",
+            null,
+            result =>
+            {
+                if (result == null)
+                {
+                    Debug.Log("[Save] 저장된 데이터 없음 (새 게임)");
+                    onResult?.Invoke(null);
+                    return;
+                }
+
+                var json = result.ToString();
+                var data = Newtonsoft.Json.JsonConvert.DeserializeObject<SaveData>(json);
+                onResult?.Invoke(data);
+            }
+        );
+    }
+
+    /// <summary>
+    /// 세이브 데이터를 초기화합니다. 새 방 생성 시 Host가 호출합니다.
+    /// </summary>
+    public static void ResetSaveData(Action onComplete = null)
+    {
+        ExecuteCloudScript(
+            "ResetSaveData",
+            null,
+            _ =>
+            {
+                Debug.Log("[Save] 세이브 초기화 완료");
+                onComplete?.Invoke();
+            }
         );
     }
 

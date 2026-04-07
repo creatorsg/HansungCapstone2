@@ -41,7 +41,7 @@ public class LobbyManager : MonoBehaviour
         {
             var rooms = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<RoomInfo>>(json);
             RoomListUI.Instance.UpdateList(rooms);
-        });
+        }); 
     }
 
     public async void JoinRoom(RoomInfo room)
@@ -58,7 +58,7 @@ public class LobbyManager : MonoBehaviour
         {
             // 2. 클라이언트용 유저 토큰 발급
             string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
-            uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId.ToString(), clientIp);
+            uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId, clientIp);
             // 3. Transport에 릴레이 정보 설정
             var transport = manager.GetComponent<EdgegapKcpTransport>();
             if (transport == null)
@@ -69,8 +69,15 @@ public class LobbyManager : MonoBehaviour
 
             transport.relayAddress = room.ip;
             transport.relayGameClientPort = (ushort)room.port;
-            transport.sessionId = room.sessionId;
+            transport.sessionId = room.sessionToken;
             transport.userId = userToken;
+
+            // 이미 연결 중이면 먼저 정리
+            if (NetworkClient.active)
+            {
+                Debug.LogWarning("[JoinRoom] 기존 클라이언트 연결 감지 → 정리 후 재접속");
+                manager.StopClient();
+            }
 
             // 4. 클라이언트 접속
             manager.networkAddress = room.ip;

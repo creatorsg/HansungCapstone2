@@ -130,14 +130,15 @@ public static class EdgegapRelayManager
     {
         try
         {
+            // Edgegap Relay API: POST /v1/relays/sessions/{session_id}:authorize-user
+            // session_id를 URL 경로에 포함시켜야 합니다.
             var body = JsonConvert.SerializeObject(new
             {
-                session_id = sessionId,
-                user_ip = clientIp
+                ip = clientIp
             });
 
             var request = new UnityWebRequest(
-                $"{API_URL}:authorize-user", "POST");
+                $"{API_URL}/{sessionId}:authorize-user", "POST");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");

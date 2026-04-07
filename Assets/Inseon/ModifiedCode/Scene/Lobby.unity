@@ -3789,9 +3789,9 @@ MonoBehaviour:
   timeInterpolationGui: 0
   showRoomGUI: 1
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 0}
-  RoomScene: 
-  GameplayScene: 
+  roomPlayerPrefab: {fileID: 533732390135692344, guid: d475829a97723554196f969e9179d0b8, type: 3}
+  RoomScene: Assets/Inseon/ModifiedCode/Scene/Room.unity
+  GameplayScene: Assets/Inseon/ModifiedCode/Scene/Room.unity
   _allPlayersReady: 0
   clientIndex: 0
   RoomId: 

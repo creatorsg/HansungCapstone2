@@ -16,7 +16,8 @@ public static class PlayfabRoomCommand
         int maxPlayers,
         string ip,
         int port,
-        string sessionId)
+        string sessionId,
+        uint sessionToken)      // 릴레이 세션 인증 토큰 (클라이언트 접속 시 필요)
     {
         var manager = NetworkManager.singleton as Jun.GameRoomManager;
 
@@ -36,7 +37,8 @@ public static class PlayfabRoomCommand
             maxPlayers,
             isPrivate,
             password,
-            sessionId 
+            sessionId,
+            sessionToken
         );
     }
 
