@@ -14,34 +14,79 @@ namespace Jun
     public class GameRoomPlayer : NetworkRoomPlayer
     {
         public readonly SyncList<Charater> CharaterNum = new SyncList<Charater>();
-        
+
+        // ë‹‰ë„¤ì„ - ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— ìë™ ë™ê¸°í™”
+        [SyncVar(hook = nameof(OnNicknameChanged))]
+        public string PlayerNickname = "";
+
         private bool isChoiced = false;
+
+        // â”€â”€ ë¡œì»¬ í”Œë ˆì´ì–´ë§Œ: ì„œë²„ì— ë‹‰ë„¤ì„ ë“±ë¡ â”€â”€
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            string nick = inseon.Playfab.User.PlayfabUserManage.Player?.Nickname ?? "Unknown";
+            CmdSetNickname(nick);
+        }
+
+        [Command]
+        void CmdSetNickname(string nickname)
+        {
+            PlayerNickname = nickname;
+        }
+
+        void OnNicknameChanged(string _, string __)
+        {
+            LobbyManager.Instance?.RefreshPlayerSlots();
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();
 
             CharaterNum.OnChange += OnCharaterListChanged;
-            //ÇÃ·¹ÀÌ¾î ¼ö ¾÷µ¥ÀÌÆ®
-            LobbyManager.Instance.UpdatePlayerNum(true);
-            //ÁØºñ or ½ÃÀÛ¹öÆ° È°¼ºÈ­
-            LobbyManager.Instance.ActiveBTN(isServer);
 
-            // Á¢¼Ó ´ç½Ã ÀÌ¹Ì ¼±ÅÃµÈ Ä³¸¯ÅÍµé Ç¥½Ã
+            // í”Œë ˆì´ì–´ ìˆ˜ ì—…ë°ì´íŠ¸
+            LobbyManager.Instance.UpdatePlayerNum(true);
+            // ì¤€ë¹„ or ì‹œì‘ë²„íŠ¼ í™œì„±í™”
+            LobbyManager.Instance.ActiveBTN(isServer);
+            // í”Œë ˆì´ì–´ ìŠ¬ë¡¯ ê°±ì‹ 
+            LobbyManager.Instance?.RefreshPlayerSlots();
+
+            // ì´ë¯¸ ì„ íƒëœ ìºë¦­í„°ë„ í‘œì‹œ
             foreach (var item in CharaterNum)
-            {
                 UpdateLobbyUI(SyncList<Charater>.Operation.OP_ADD, item);
-            }
         }
+
         private void OnDestroy()
         {
-            // LobbyManager.Instance°¡ ¾ÆÁ÷ ÆÄ±«µÇÁö ¾Ê°í »ì¾ÆÀÖÀ» ¶§¸¸ ÇÔ¼ö¸¦ È£ÃâÇÕ´Ï´Ù.
             if (LobbyManager.Instance != null)
             {
                 LobbyManager.Instance.UpdatePlayerNum(false);
+                LobbyManager.Instance.RefreshPlayerSlots();
             }
-
         }
-        //¼±ÅÃÇÑ Á¤º¸·Î ¿µ¿õÁ¤º¸ Ãß°¡
+
+        // â”€â”€ ì±„íŒ… â”€â”€
+
+        /// <summary>
+        /// ë¡œì»¬ì—ì„œ ì±„íŒ… ë©”ì‹œì§€ ì „ì†¡. ì„œë²„ë¥¼ í†µí•´ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— ì „íŒŒë©ë‹ˆë‹¤.
+        /// </summary>
+        [Command]
+        public void CmdSendChat(string message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            RpcReceiveChat($"[{PlayerNickname}]: {message}");
+        }
+
+        [ClientRpc]
+        void RpcReceiveChat(string message)
+        {
+            LobbyManager.Instance?.AddChatMessage(message);
+        }
+
+        // â”€â”€ ìºë¦­í„° ì„ íƒ â”€â”€
+
         [Command]
         public void CMDChoiceHero(int index)
         {
@@ -54,7 +99,8 @@ namespace Jun
                     return;
                 }
             }
-            // ´Ù¸¥ »ç¶÷ÀÌ ÀÌ¹Ì ¼±ÅÃÇß´ÂÁö È®ÀÎ
+
+            // ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ ì´ë¯¸ ì„ íƒí–ˆëŠ”ì§€ í™•ì¸
             foreach (var player in ((GameRoomManager)NetworkManager.singleton).roomSlots)
             {
                 GameRoomPlayer roomPlayer = player as GameRoomPlayer;
@@ -64,18 +110,15 @@ namespace Jun
                 {
                     if (charInfo.HeroIndex == index)
                     {
-                        Debug.Log("ÀÌ¹Ì ´Ù¸¥ ÇÃ·¹ÀÌ¾î°¡ ¼±ÅÃÇÑ Ä³¸¯ÅÍÀÔ´Ï´Ù.");
+                        Debug.Log("ì´ë¯¸ ë‹¤ë¥¸ í”Œë ˆì´ì–´ê°€ ì„ íƒí•œ ìºë¦­í„°ì…ë‹ˆë‹¤.");
                         return;
                     }
                 }
             }
 
             CharaterNum.Add(new Charater { HeroIndex = index, HeroPos = index });
-
         }
 
-
-        // Mirror ¹öÀü(3°³ ¸Å°³º¯¼ö)¿¡ ¸ÂÃá Äİ¹é
         private void OnCharaterListChanged(SyncList<Charater>.Operation op, int itemIndex, Charater item)
         {
             UpdateLobbyUI(op, item);
@@ -90,8 +133,6 @@ namespace Jun
             {
                 case SyncList<Charater>.Operation.OP_ADD:
                     lobby.Go[item.HeroIndex].SetActive(true);
-                    // ¿©±â¿¡ "´©°¡ ¼±ÅÃÇß´ÂÁö" Ç¥½ÃÇÏ´Â ·ÎÁ÷ÀÌ ÀÖÀ¸¸é ´õ ÁÁ½À´Ï´Ù.
-                    // ¿¹: lobby.NameText[item.HeroIndex].text = this.playerName;
                     break;
 
                 case SyncList<Charater>.Operation.OP_REMOVEAT:
@@ -99,6 +140,5 @@ namespace Jun
                     break;
             }
         }
-
     }
 }

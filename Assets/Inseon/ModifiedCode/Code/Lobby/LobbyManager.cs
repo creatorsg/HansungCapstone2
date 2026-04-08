@@ -56,9 +56,27 @@ public class LobbyManager : MonoBehaviour
 
         PlayfabCommand.JoinRoom(room.roomId, null, async joinedRoom =>
         {
+            // ── 진단 로그 ──
+            Debug.Log($"[JoinRoom] PlayFab에서 받은 방 정보:\n" +
+                      $"  ip          = {room.ip}\n" +
+                      $"  port        = {room.port}\n" +
+                      $"  sessionId   = {room.sessionId}\n" +
+                      $"  sessionToken= {room.sessionToken}");
+
+            // sessionToken이 0이면 CloudScript가 아직 업데이트 안 된 것
+            if (room.sessionToken == 0)
+                Debug.LogWarning("[JoinRoom] sessionToken이 0입니다! PlayFab CloudScript가 업데이트됐는지 확인하세요.");
+
             // 2. 클라이언트용 유저 토큰 발급
             string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
+            Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
+
             uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId, clientIp);
+            Debug.Log($"[JoinRoom] GetUserToken 결과: {userToken}");
+
+            if (userToken == 0)
+                Debug.LogWarning("[JoinRoom] userToken이 0입니다! Edgegap GetUserToken API 호출이 실패했을 수 있습니다.");
+
             // 3. Transport에 릴레이 정보 설정
             var transport = manager.GetComponent<EdgegapKcpTransport>();
             if (transport == null)
@@ -67,10 +85,16 @@ public class LobbyManager : MonoBehaviour
                 return;
             }
 
-            transport.relayAddress = room.ip;
+            transport.relayAddress       = room.ip;
             transport.relayGameClientPort = (ushort)room.port;
-            transport.sessionId = room.sessionToken;
-            transport.userId = userToken;
+            transport.sessionId          = room.sessionToken;
+            transport.userId             = userToken;
+
+            Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
+                      $"  relayAddress       = {transport.relayAddress}\n" +
+                      $"  relayGameClientPort= {transport.relayGameClientPort}\n" +
+                      $"  sessionId          = {transport.sessionId}\n" +
+                      $"  userId             = {transport.userId}");
 
             // 이미 연결 중이면 먼저 정리
             if (NetworkClient.active)

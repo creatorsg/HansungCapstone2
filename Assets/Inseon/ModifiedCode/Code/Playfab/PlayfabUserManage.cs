@@ -87,7 +87,7 @@ namespace inseon.Playfab.User
             Action<PlayFabError> onError)
         {
             string randomNum = UnityEngine.Random.Range(0, 1000).ToString("D3"); 
-            string displayName = "Guest"+ "${randomNum}";
+            string displayName = $"Guest{randomNum}";
 
             var request = new UpdateUserTitleDisplayNameRequest
             {
