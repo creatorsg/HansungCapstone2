@@ -52,6 +52,54 @@ namespace inseon.Playfab.User
             PlayFabClientAPI.RegisterPlayFabUser(request, onOk, onError);
         }
 
+        public static void LoginAsGuest(
+            Action<LoginResult> onOk,
+            Action<PlayFabError> onError)
+        {
+            string customId = SystemInfo.deviceUniqueIdentifier; 
+
+            var request = new LoginWithCustomIDRequest
+            {
+                CustomId = customId,
+                CreateAccount = true,
+                InfoRequestParameters = new GetPlayerCombinedInfoRequestParams
+                {
+                    GetPlayerProfile = true
+                }
+            };
+
+            PlayFabClientAPI.LoginWithCustomID(request, result =>
+            {
+                if (result.NewlyCreated)
+                {
+                    SetGuestDisplayName(result, onOk, onError);
+                }
+                else
+                {
+                    onOk?.Invoke(result);
+                }
+            }, onError);
+        }
+
+        private static void SetGuestDisplayName(
+            LoginResult loginResult,
+            Action<LoginResult> onOk,
+            Action<PlayFabError> onError)
+        {
+            string randomNum = UnityEngine.Random.Range(0, 1000).ToString("D3"); 
+            string displayName = "Guest"+ "${randomNum}";
+
+            var request = new UpdateUserTitleDisplayNameRequest
+            {
+                DisplayName = displayName
+            };
+
+            PlayFabClientAPI.UpdateUserTitleDisplayName(request, _ =>
+            {
+                onOk?.Invoke(loginResult); 
+            }, onError);
+        }
+
         public static void SuccessLogin(LoginResult result)
         {
             LoadPlayer();

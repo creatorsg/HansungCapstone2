@@ -6,13 +6,13 @@ namespace inseon.Playfab.User.Login
 {
     public class LoginWindow : MonoBehaviour
     {
-        [SerializeField] private InputField id;
-        [SerializeField] private InputField pw;
-
+        [SerializeField] private InputField _id;
+        [SerializeField] private InputField _pw;
+        [SerializeField] private GameObject _registerWindow;
         public void LoginWithPlayFab()
         {
-            var ID = id.text?.Trim();
-            var PW = pw.text;
+            var ID = _id.text?.Trim();
+            var PW = _pw.text;
 
             if (string.IsNullOrEmpty(ID) || string.IsNullOrEmpty(PW))
             {
@@ -20,9 +20,25 @@ namespace inseon.Playfab.User.Login
                 return;
             }
 
-            PlayfabUserManage.Login(ID, PW, 
-                PlayfabUserManage.SuccessLogin, 
+            PlayfabUserManage.Login(ID, PW,
+                PlayfabUserManage.SuccessLogin,
                 PlayfabUserManage.FailureLogin);
+        }
+
+        public void LoginWithGuest()
+        {
+            PlayfabUserManage.LoginAsGuest(PlayfabUserManage.SuccessLogin,
+                PlayfabUserManage.FailureLogin);
+        }
+
+        public void OpenRegisterWindow()
+        {
+            _registerWindow.SetActive(true);
+        }
+
+        public void CloseRegisterWindow()
+        {
+            _registerWindow.SetActive(false);
         }
     }
 }

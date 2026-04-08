@@ -62,7 +62,7 @@ public static class PlayfabCommand
     bool isPrivate,
     string password,
     string sessionId,
-    uint sessionToken)          // 클라이언트가 transport.sessionId에 쓸 인증 토큰
+    uint sessionToken)         
     {
         PlayFabClientAPI.ExecuteCloudScript(
             new ExecuteCloudScriptRequest
@@ -78,7 +78,7 @@ public static class PlayfabCommand
                     isPrivate = isPrivate,
                     password = password,
                     sessionId = sessionId,
-                    sessionToken = sessionToken   // ← PlayFab에 저장
+                    sessionToken = sessionToken   
                 }
             },
             r => Debug.Log("Room registered"),

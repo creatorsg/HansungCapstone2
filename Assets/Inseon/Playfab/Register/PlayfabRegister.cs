@@ -41,7 +41,7 @@ namespace inseon.Playfab.Register.Authentication
         {
             var req = new ExecuteCloudScriptRequest
             {
-                FunctionName = "InitPlayerData",
+                FunctionName = "PlayerProfileLoad",
                 FunctionParameter = new { },
                 GeneratePlayStreamEvent = true
             };
