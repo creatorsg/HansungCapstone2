@@ -1,16 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerRoomManager : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+{   
+    private Player _players;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
