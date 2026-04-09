@@ -130,15 +130,15 @@ public static class EdgegapRelayManager
     {
         try
         {
-            // Edgegap Relay API: POST /v1/relays/sessions/{session_id}:authorize-user
-            // session_id를 URL 경로에 포함시켜야 합니다.
             var body = JsonConvert.SerializeObject(new
             {
                 ip = clientIp
             });
 
-            var request = new UnityWebRequest(
-                $"{API_URL}/{sessionId}:authorize-user", "POST");
+            string url = $"{API_URL}/{sessionId}:authorize-user";
+            Debug.Log($"[GetUserToken] 요청: POST {url}\n  body: {body}");
+
+            var request = new UnityWebRequest(url, "POST");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
@@ -146,15 +146,21 @@ public static class EdgegapRelayManager
 
             await request.SendWebRequest();
 
-            var response = JsonConvert.DeserializeObject<AuthorizeUserResponse>(
-                request.downloadHandler.text
-            );
+            string responseText = request.downloadHandler.text;
+            Debug.Log($"[GetUserToken] 응답 (HTTP {request.responseCode}): {responseText}");
 
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"[GetUserToken] API 오류: {request.error}\n응답: {responseText}");
+                return 0;
+            }
+
+            var response = JsonConvert.DeserializeObject<AuthorizeUserResponse>(responseText);
             return response.authorization_token ?? 0;
         }
         catch (Exception e)
         {
-            Debug.LogError($"유저 토큰 가져오기 실패: {e.Message}");
+            Debug.LogError($"[GetUserToken] 예외 발생: {e.Message}\n{e.StackTrace}");
             return 0;
         }
     }
