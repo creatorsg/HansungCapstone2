@@ -44,7 +44,7 @@ public class LobbyManager : MonoBehaviour
         }); 
     }
 
-    public async void JoinRoom(RoomInfo room)
+    public void JoinRoom(RoomInfo room)
     {
         var manager = Mirror.NetworkManager.singleton as Jun.GameRoomManager;
 
@@ -54,40 +54,48 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
-        PlayfabCommand.JoinRoom(room.roomId, null, async joinedRoom =>
+        PlayfabCommand.JoinRoom(room.roomId, null, joinedRoom =>
         {
-            // ── 진단 로그 ──
+            // joinedRoom은 JoinRoom CloudScript가 반환한 데이터 (sessionToken 포함)
+            // room (목록에서 가져온 데이터)에는 sessionToken이 보안상 삭제되어 0임
             Debug.Log($"[JoinRoom] PlayFab에서 받은 방 정보:\n" +
-                      $"  ip          = {room.ip}\n" +
-                      $"  port        = {room.port}\n" +
-                      $"  sessionId   = {room.sessionId}\n" +
-                      $"  sessionToken= {room.sessionToken}");
+                      $"  ip          = {joinedRoom.ip}\n" +
+                      $"  port        = {joinedRoom.port}\n" +
+                      $"  sessionId   = {joinedRoom.sessionId}\n" +
+                      $"  sessionToken= {joinedRoom.sessionToken}");
 
-            // sessionToken이 0이면 CloudScript가 아직 업데이트 안 된 것
-            if (room.sessionToken == 0)
+            if (joinedRoom.sessionToken == 0)
                 Debug.LogWarning("[JoinRoom] sessionToken이 0입니다! PlayFab CloudScript가 업데이트됐는지 확인하세요.");
 
-            // 2. 클라이언트용 유저 토큰 발급
+            ConnectToRoom(manager, joinedRoom);
+        });
+    }
+
+    private async void ConnectToRoom(Jun.GameRoomManager manager, RoomInfo joinedRoom)
+    {
+        try
+        {
+            // 1. 클라이언트용 유저 토큰 발급
             string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
             Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
 
-            uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId, clientIp);
+            uint userToken = await EdgegapRelayManager.GetUserToken(joinedRoom.sessionId, clientIp);
             Debug.Log($"[JoinRoom] GetUserToken 결과: {userToken}");
 
             if (userToken == 0)
                 Debug.LogWarning("[JoinRoom] userToken이 0입니다! Edgegap GetUserToken API 호출이 실패했을 수 있습니다.");
 
-            // 3. Transport에 릴레이 정보 설정
+            // 2. Transport에 릴레이 정보 설정
             var transport = manager.GetComponent<EdgegapKcpTransport>();
             if (transport == null)
             {
-                Debug.LogError("EdgegapKcpTransport not found");
+                Debug.LogError("[JoinRoom] EdgegapKcpTransport not found");
                 return;
             }
 
-            transport.relayAddress       = room.ip;
-            transport.relayGameClientPort = (ushort)room.port;
-            transport.sessionId          = room.sessionToken;
+            transport.relayAddress       = joinedRoom.ip;
+            transport.relayGameClientPort = (ushort)joinedRoom.port;
+            transport.sessionId          = joinedRoom.sessionToken;
             transport.userId             = userToken;
 
             Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
@@ -103,9 +111,14 @@ public class LobbyManager : MonoBehaviour
                 manager.StopClient();
             }
 
-            // 4. 클라이언트 접속
-            manager.networkAddress = room.ip;
+            // 3. 클라이언트 접속
+            manager.networkAddress = joinedRoom.ip;
             manager.StartClient();
-        });
+            Debug.Log("[JoinRoom] StartClient 호출 완료");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[JoinRoom] 방 접속 중 오류 발생: {e.Message}\n{e.StackTrace}");
+        }
     }
 }
