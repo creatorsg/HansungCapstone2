@@ -161,19 +161,21 @@ function createRoomInfo(args)
     var hostName = getPlayerDisplayName(currentPlayerId);
 
     return {
-        roomId:       args.roomId,
+        roomId:        args.roomId,
         hostPlayFabId: currentPlayerId,
-        hostName:     hostName,
-        ip:           args.ip,
-        port:         args.port,
-        roomName:     args.roomName,
-        playerCount:  1,
-        maxPlayers:   args.maxPlayers,
-        isPrivate:    args.isPrivate    || false,
-        password:     args.password     || null,
-        sessionId:    args.sessionId    || "",   // [FIX] Edgegap 세션 UUID
-        sessionToken: args.sessionToken || 0,    // [FIX] 릴레이 인증 토큰 (클라이언트 transport.sessionId 용)
-        createdAt:    Date.now()
+        hostName:      hostName,
+        hostPublicIp:  args.hostPublicIp  || "",    // 호스트 공인 IP (same-IP 판별용)
+        ip:            args.ip,                     // Edgegap 릴레이 서버 IP
+        port:          args.port,
+        roomName:      args.roomName,
+        playerCount:   1,
+        maxPlayers:    args.maxPlayers,
+        isPrivate:     args.isPrivate     || false,
+        password:      args.password      || null,
+        sessionId:     args.sessionId     || "",    // Edgegap 세션 UUID
+        sessionToken:  args.sessionToken  || 0,     // transport.sessionId 용
+        userTokens:    args.userTokens    || [],    // 선발급 userToken 배열 ([0]=호스트, [1+]=클라이언트)
+        createdAt:     Date.now()
     };
 }
 
@@ -235,7 +237,8 @@ function GetRoomList()
             }
 
             delete room.password;
-            delete room.sessionToken; // 방 목록에는 노출 금지 - JoinRoom 시에만 제공
+            delete room.sessionToken;  // 목록에는 노출 금지 — JoinRoom 시에만 제공
+            delete room.userTokens;    // 목록에는 노출 금지 — JoinRoom 시에만 제공
             rooms.push(room);
         }
         catch(e)
@@ -299,9 +302,9 @@ function joinRoom(args)
         Value: JSON.stringify(room)
     });
 
-    // 참가자에게는 sessionToken 포함해서 반환 (transport.sessionId 설정에 필요)
+    // 참가자에게는 sessionToken + userTokens 포함해서 반환
     delete room.password;
-    return room;
+    return room;  // sessionToken, userTokens 모두 포함
 }
 
 function leaveRoom(args)

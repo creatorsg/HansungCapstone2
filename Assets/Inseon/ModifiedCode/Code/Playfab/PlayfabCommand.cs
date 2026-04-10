@@ -54,15 +54,17 @@ public static class PlayfabCommand
     // ========================= Room =========================
 
     public static void CreateRoom(
-    string roomId,
-    string roomName,
-    string ip,
-    int port,
-    int maxPlayers,
-    bool isPrivate,
-    string password,
-    string sessionId,
-    uint sessionToken)         
+        string roomId,
+        string roomName,
+        string hostPublicIp,    // 호스트 공인 IP (same-IP 판별용)
+        string relayIp,         // Edgegap 릴레이 서버 IP
+        int port,
+        int maxPlayers,
+        bool isPrivate,
+        string password,
+        string sessionId,
+        uint sessionToken,      // transport.sessionId 용 (세션 인증 토큰)
+        uint[] userTokens)      // 선발급 userToken 배열: [0]=호스트, [1+]=클라이언트
     {
         PlayFabClientAPI.ExecuteCloudScript(
             new ExecuteCloudScriptRequest
@@ -70,15 +72,17 @@ public static class PlayfabCommand
                 FunctionName = "CreateRoom",
                 FunctionParameter = new
                 {
-                    roomId = roomId,
-                    roomName = roomName,
-                    ip = ip,
-                    port = port,
-                    maxPlayers = maxPlayers,
-                    isPrivate = isPrivate,
-                    password = password,
-                    sessionId = sessionId,
-                    sessionToken = sessionToken   
+                    roomId       = roomId,
+                    roomName     = roomName,
+                    hostPublicIp = hostPublicIp,
+                    ip           = relayIp,
+                    port         = port,
+                    maxPlayers   = maxPlayers,
+                    isPrivate    = isPrivate,
+                    password     = password,
+                    sessionId    = sessionId,
+                    sessionToken = sessionToken,
+                    userTokens   = userTokens   // uint[] → JSON 배열로 직렬화됨
                 }
             },
             r => Debug.Log("Room registered"),
@@ -130,6 +134,22 @@ public static class PlayfabCommand
         };
 
         PlayFabClientAPI.ExecuteCloudScript(request, null, null);
+    }
+
+    // 연결 실패 등으로 playerCount를 롤백해야 할 때 호출
+    public static void LeaveRoom(string roomId)
+    {
+        var request = new ExecuteCloudScriptRequest
+        {
+            FunctionName = "LeaveRoom",
+            FunctionParameter = new { roomId = roomId }
+        };
+
+        PlayFabClientAPI.ExecuteCloudScript(
+            request,
+            r => Debug.Log($"[LeaveRoom] playerCount 롤백 완료: {roomId}"),
+            e => Debug.LogError($"[LeaveRoom] 실패: {e.GenerateErrorReport()}")
+        );
     }
 
     public static void LoadCharacterCatalog(System.Action onComplete)

@@ -1,7 +1,6 @@
 using Edgegap;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,18 +18,29 @@ public static class EdgegapRelayManager
         public ushort serverPort;
         public ushort clientPort;
         public string sessionId;
-        public uint sessionAuthToken;   
-        public uint userAuthToken;    
+        public uint sessionAuthToken;
+
+        // 세션 생성 시 maxPlayers 수만큼 미리 발급된 userToken 배열.
+        // [0] = 호스트, [1] = 첫 번째 클라이언트, [2] = 두 번째 클라이언트, ...
+        // Edgegap Relay는 세션 생성 이후 사용자를 추가할 수 없으므로 여기서 전부 발급함.
+        public uint[] userAuthTokens;
     }
 
-    public static async Task<RelayInfo> CreateSession(string hostIp)
+    // ─────────────────────────────────────────────────────────────────────
+    // 방 생성 시 호출. maxPlayers 수만큼 유저 슬롯을 미리 등록해 토큰을 전부 발급받음.
+    // Edgegap Relay는 세션 생성 이후 사용자 추가 API(405/404)를 지원하지 않는다.
+    // ─────────────────────────────────────────────────────────────────────
+    public static async Task<RelayInfo> CreateSession(string hostIp, int maxPlayers)
     {
         try
         {
-            var body = JsonConvert.SerializeObject(new
-            {
-                users = new[] { new { ip = hostIp } }
-            });
+            // maxPlayers 개의 슬롯 생성. 실제 클라이언트 IP는 미리 알 수 없으므로
+            // 호스트 IP로 플레이스홀더 등록. Edgegap은 토큰을 IP가 아닌 인덱스로 발급한다.
+            var users = new object[maxPlayers];
+            for (int i = 0; i < maxPlayers; i++)
+                users[i] = new { ip = hostIp };
+
+            var body = JsonConvert.SerializeObject(new { users = users });
 
             var request = new UnityWebRequest(API_URL, "POST");
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body));
@@ -42,21 +52,18 @@ public static class EdgegapRelayManager
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"릴레이 세션 생성 오류: {request.error}\n{request.downloadHandler.text}");
+                Debug.LogError($"[CreateSession] 릴레이 세션 생성 오류: {request.error}\n{request.downloadHandler.text}");
                 return null;
             }
 
-            var response = JsonConvert.DeserializeObject<RelaySessionResponse>(
-                request.downloadHandler.text
-            );
+            Debug.Log($"[CreateSession] 응답: {request.downloadHandler.text}");
 
-            string sessionId = response.session_id;
-
-            return await WaitForRelay(sessionId, response);
+            var response = JsonConvert.DeserializeObject<RelaySessionResponse>(request.downloadHandler.text);
+            return await WaitForRelay(response.session_id, response);
         }
         catch (Exception e)
         {
-            Debug.LogError($"릴레이 세션 생성 실패: {e.Message}");
+            Debug.LogError($"[CreateSession] 릴레이 세션 생성 실패: {e.Message}");
             return null;
         }
     }
@@ -70,27 +77,34 @@ public static class EdgegapRelayManager
             if (initial.relay != null && initial.relay.ip != null)
             {
                 uint sessionToken = initial.authorization_token ?? 0;
-                uint userToken = initial.session_users?[0].authorization_token ?? 0;
+
+                // 전체 user 토큰 배열 수집
+                var tokens = new uint[initial.session_users?.Count ?? 0];
+                if (initial.session_users != null)
+                {
+                    for (int j = 0; j < initial.session_users.Count; j++)
+                        tokens[j] = initial.session_users[j].authorization_token ?? 0;
+                }
+
+                Debug.Log($"[CreateSession] 세션 준비 완료. 슬롯 수={tokens.Length}, 토큰={string.Join(",", tokens)}");
 
                 return new RelayInfo
                 {
-                    relayAddress = initial.relay.ip,
-                    serverPort = (ushort)initial.relay.ports.server.port,
-                    clientPort = (ushort)initial.relay.ports.client.port,
-                    sessionId = initial.session_id,
+                    relayAddress     = initial.relay.ip,
+                    serverPort       = (ushort)initial.relay.ports.server.port,
+                    clientPort       = (ushort)initial.relay.ports.client.port,
+                    sessionId        = initial.session_id,
                     sessionAuthToken = sessionToken,
-                    userAuthToken = userToken
+                    userAuthTokens   = tokens
                 };
             }
 
-            // 1초 대기 후 재조회
             await Task.Delay(1000);
             initial = await GetSession(sessionId);
-
             if (initial == null) return null;
         }
 
-        Debug.LogError("릴레이 준비 타임아웃");
+        Debug.LogError("[CreateSession] 릴레이 준비 타임아웃");
         return null;
     }
 
@@ -107,9 +121,7 @@ public static class EdgegapRelayManager
             return null;
         }
 
-        return JsonConvert.DeserializeObject<RelaySessionResponse>(
-            request.downloadHandler.text
-        );
+        return JsonConvert.DeserializeObject<RelaySessionResponse>(request.downloadHandler.text);
     }
 
     public static async Task DeleteSession(string sessionId)
@@ -124,39 +136,6 @@ public static class EdgegapRelayManager
             Debug.Log("릴레이 세션 종료 완료");
         else
             Debug.LogError($"세션 종료 실패: {request.error}");
-    }
-
-    public static async Task<uint> GetUserToken(string sessionId, string clientIp)
-    {
-        try
-        {
-            // Edgegap Relay API: POST /v1/relays/sessions/{session_id}:authorize-user
-            // session_id를 URL 경로에 포함시켜야 합니다.
-            var body = JsonConvert.SerializeObject(new
-            {
-                ip = clientIp
-            });
-
-            var request = new UnityWebRequest(
-                $"{API_URL}/{sessionId}:authorize-user", "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(body));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("Authorization", $"token {RELAY_API_TOKEN}");
-
-            await request.SendWebRequest();
-
-            var response = JsonConvert.DeserializeObject<AuthorizeUserResponse>(
-                request.downloadHandler.text
-            );
-
-            return response.authorization_token ?? 0;
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"유저 토큰 가져오기 실패: {e.Message}");
-            return 0;
-        }
     }
 
     #region 응답 구조체
@@ -195,12 +174,6 @@ public static class EdgegapRelayManager
     class PortInfo
     {
         public ushort port;
-    }
-
-    [Serializable]
-    class AuthorizeUserResponse
-    {
-        public uint? authorization_token;
     }
 
     #endregion

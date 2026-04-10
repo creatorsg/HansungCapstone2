@@ -14,10 +14,12 @@ public static class PlayfabRoomCommand
         bool isPrivate,
         string password,
         int maxPlayers,
-        string ip,
+        string hostPublicIp,    // 호스트의 공인 IP (same-IP 판별용)
+        string relayIp,         // Edgegap 릴레이 서버 IP
         int port,
         string sessionId,
-        uint sessionToken)      // 릴레이 세션 인증 토큰 (클라이언트 접속 시 필요)
+        uint sessionToken,      // 릴레이 세션 인증 토큰 (transport.sessionId)
+        uint[] userTokens)      // 선발급 userToken 배열 ([0]=호스트, [1+]=클라이언트)
     {
         var manager = NetworkManager.singleton as Jun.GameRoomManager;
 
@@ -32,13 +34,15 @@ public static class PlayfabRoomCommand
         PlayfabCommand.CreateRoom(
             roomId,
             roomName,
-            ip,
+            hostPublicIp,
+            relayIp,
             port,
             maxPlayers,
             isPrivate,
             password,
             sessionId,
-            sessionToken
+            sessionToken,
+            userTokens
         );
     }
 

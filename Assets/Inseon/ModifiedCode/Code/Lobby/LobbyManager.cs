@@ -9,6 +9,10 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private Text _playerNickname;
     [SerializeField] private GameObject _createRoomWindow;
 
+    [Header("Debug / Test")]
+    [Tooltip("ON: 같은 공인 IP끼리도 접속 허용 (테스트용). 실제 배포 시 OFF 권장.")]
+    [SerializeField] private bool _allowSameIpTest = false;
+
     private Player _player;
     public static LobbyManager Instance;
 
@@ -41,7 +45,7 @@ public class LobbyManager : MonoBehaviour
         {
             var rooms = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<RoomInfo>>(json);
             RoomListUI.Instance.UpdateList(rooms);
-        }); 
+        });
     }
 
     public async void JoinRoom(RoomInfo room)
@@ -54,41 +58,83 @@ public class LobbyManager : MonoBehaviour
             return;
         }
 
+        // ── [FIX] PlayfabCommand.JoinRoom 콜백은 joinedRoom을 사용해야 함 ──
+        // GetRoomList는 보안상 sessionToken을 지워서 반환하므로,
+        // JoinRoom CloudScript가 반환하는 joinedRoom에만 sessionToken이 존재함.
         PlayfabCommand.JoinRoom(room.roomId, null, async joinedRoom =>
         {
-            // ── 진단 로그 ──
-            Debug.Log($"[JoinRoom] PlayFab에서 받은 방 정보:\n" +
-                      $"  ip          = {room.ip}\n" +
-                      $"  port        = {room.port}\n" +
-                      $"  sessionId   = {room.sessionId}\n" +
-                      $"  sessionToken= {room.sessionToken}");
+            // ── 진단 로그 (joinedRoom 사용) ──
+            Debug.Log($"[JoinRoom] PlayFab(JoinRoom CS)에서 받은 방 정보:\n" +
+                      $"  roomId      = {joinedRoom.roomId}\n" +
+                      $"  ip          = {joinedRoom.ip}\n" +
+                      $"  port        = {joinedRoom.port}\n" +
+                      $"  sessionId   = {joinedRoom.sessionId}\n" +
+                      $"  sessionToken= {joinedRoom.sessionToken}\n" +
+                      $"  hostPublicIp= {joinedRoom.hostPublicIp}");
 
-            // sessionToken이 0이면 CloudScript가 아직 업데이트 안 된 것
-            if (room.sessionToken == 0)
-                Debug.LogWarning("[JoinRoom] sessionToken이 0입니다! PlayFab CloudScript가 업데이트됐는지 확인하세요.");
+            // sessionToken이 0이면 CloudScript 버전 불일치 → 즉시 중단
+            if (joinedRoom.sessionToken == 0)
+            {
+                Debug.LogError("[JoinRoom] sessionToken이 0입니다! 연결을 중단하고 playerCount를 롤백합니다.");
+                PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                return;
+            }
 
-            // 2. 클라이언트용 유저 토큰 발급
+            // ── 클라이언트 공인 IP (same-IP 테스트 판별용으로만 사용) ──
             string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
             Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
 
-            uint userToken = await EdgegapRelayManager.GetUserToken(room.sessionId, clientIp);
-            Debug.Log($"[JoinRoom] GetUserToken 결과: {userToken}");
+            bool isSameIp = !string.IsNullOrEmpty(joinedRoom.hostPublicIp) &&
+                            joinedRoom.hostPublicIp == clientIp;
+
+            Debug.Log($"[JoinRoom] 클라이언트 IP={clientIp} / 호스트 IP={joinedRoom.hostPublicIp} / SameIp={isSameIp}");
+
+            if (isSameIp && !_allowSameIpTest)
+            {
+                Debug.LogError("[JoinRoom] 호스트와 같은 공인 IP. 테스트 시 Inspector에서 'Allow Same Ip Test'를 ON으로 설정하세요.");
+                PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                return;
+            }
+
+            // ── 선발급 userToken 배열에서 이 클라이언트 슬롯 인덱스 계산 ──
+            // JoinRoom CS가 playerCount를 이미 올린 상태로 반환하므로:
+            //   playerCount=1 → 호스트(슬롯0, 방 생성 시 처리됨)
+            //   playerCount=2 → 첫 번째 클라이언트 → 슬롯1
+            //   playerCount=3 → 두 번째 클라이언트 → 슬롯2
+            int tokenIndex = joinedRoom.playerCount - 1;
+
+            if (joinedRoom.userTokens == null || joinedRoom.userTokens.Length <= tokenIndex)
+            {
+                Debug.LogError($"[JoinRoom] userTokens 배열이 없거나 슬롯 부족. " +
+                               $"playerCount={joinedRoom.playerCount}, tokenIndex={tokenIndex}, " +
+                               $"userTokens길이={joinedRoom.userTokens?.Length ?? 0}");
+                PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                return;
+            }
+
+            uint userToken = joinedRoom.userTokens[tokenIndex];
+            Debug.Log($"[JoinRoom] userToken 슬롯[{tokenIndex}] = {userToken}");
 
             if (userToken == 0)
-                Debug.LogWarning("[JoinRoom] userToken이 0입니다! Edgegap GetUserToken API 호출이 실패했을 수 있습니다.");
+            {
+                Debug.LogError($"[JoinRoom] 슬롯[{tokenIndex}]의 userToken이 0. 릴레이 세션 생성 시 토큰이 발급되지 않았습니다.");
+                PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                return;
+            }
 
-            // 3. Transport에 릴레이 정보 설정
+            // ── Transport에 릴레이 정보 설정 ──
             var transport = manager.GetComponent<EdgegapKcpTransport>();
             if (transport == null)
             {
                 Debug.LogError("EdgegapKcpTransport not found");
+                PlayfabCommand.LeaveRoom(joinedRoom.roomId);
                 return;
             }
 
-            transport.relayAddress       = room.ip;
-            transport.relayGameClientPort = (ushort)room.port;
-            transport.sessionId          = room.sessionToken;
-            transport.userId             = userToken;
+            transport.relayAddress        = joinedRoom.ip;
+            transport.relayGameClientPort = (ushort)joinedRoom.port;
+            transport.sessionId           = joinedRoom.sessionToken;
+            transport.userId              = userToken;
 
             Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
                       $"  relayAddress       = {transport.relayAddress}\n" +
@@ -103,8 +149,8 @@ public class LobbyManager : MonoBehaviour
                 manager.StopClient();
             }
 
-            // 4. 클라이언트 접속
-            manager.networkAddress = room.ip;
+            // ── 클라이언트 접속 ──
+            manager.networkAddress = joinedRoom.ip;
             manager.StartClient();
         });
     }
