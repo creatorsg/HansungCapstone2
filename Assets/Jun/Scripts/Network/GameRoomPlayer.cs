@@ -14,7 +14,8 @@ namespace Jun
     public class GameRoomPlayer : NetworkRoomPlayer
     {
         public readonly SyncList<Charater> CharaterNum = new SyncList<Charater>();
-        
+        [SyncVar] public int PingIndex = -1; // 플레이어 연결 기준 고정 인덱스
+
         private bool isChoiced = false;
         public override void OnStartClient()
         {

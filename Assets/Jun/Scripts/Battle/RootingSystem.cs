@@ -120,7 +120,7 @@ public class RootingSystem : NetworkBehaviour
         foreach (var unit in _manager._players)
         {
             var unitBTN = Instantiate(_unitPrefab, _unitTF);
-            unitBTN.image.sprite = unit.GetComponent<SpriteRenderer>().sprite;
+            unitBTN.image.sprite = _manager.PlayerImages[unit.Info.Id];
 
             _allUnit.Add(new UnitRoot(unit, -1, unitBTN));
             int capturedIndex = _allUnit.Count - 1;

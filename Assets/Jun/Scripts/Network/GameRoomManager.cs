@@ -8,12 +8,17 @@ namespace Jun {
     {
         //게임에 참여중인 영웅의 수
         public int HeroNum = 0;
+        // 플레이어 입장 순서 카운터
+        private int _pingIndexCounter = 0; 
         // 로비에서 본게임으로 넘어갈 때 서버에서 실행되는 함수
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             // 로비 플레이어에서 선택했던 정보를 꺼내기
             var roomPlayerScript = roomPlayer.GetComponent<GameRoomPlayer>();
             var roomPlayerCharaterNum = roomPlayerScript.CharaterNum;
+
+            int myPingIndex = _pingIndexCounter++;
+            roomPlayerScript.PingIndex = myPingIndex;
 
             GameObject mainPlayer = null;
             for (int i = 0; i < roomPlayerCharaterNum.Count; i++)
@@ -30,6 +35,9 @@ namespace Jun {
                 gamePlayerScript.FinalHeroIndex = index;
                 gamePlayerScript.FinalHeroPos = pos;
                 gamePlayerScript.Info = spawnPrefabs[index].GetComponent<GamePlayerController>().Info;
+
+                // 이 커넥션 소속 유닛들은 전부 같은 PingIndex 공유
+                gamePlayerScript.PingIndex = myPingIndex;
 
                 // 다중 캐릭터 소환 처리
                 if (i == 0)

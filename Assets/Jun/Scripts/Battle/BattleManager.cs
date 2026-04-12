@@ -1,8 +1,10 @@
 using Mirror;
+using Mirror.BouncyCastle.Security;
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
@@ -27,6 +29,7 @@ namespace Jun
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
         [Header("캐릭터 관련 UI들")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
+        [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
         [SerializeField] private List<Button> _items; public List<Button> Items => _items;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
@@ -49,13 +52,28 @@ namespace Jun
         public int EnemyNum;
 
         [Header("턴 정보")]
-        [SerializeField] private Transform _turnPanel;
-        [SerializeField] private TextMeshProUGUI _turnUI;
-        [SerializeField] private GameObject _turnUi;
+        [SerializeField] private Transform _turnPanel;  //턴 보여주는 장소
+        [SerializeField] private Image _turnUi;  // 턴이 보여지는 이미지
+        [SerializeField] private List<Image> _turnUIList; 
+        [SerializeField] private TextMeshProUGUI _turnUI;  
         public List<TurnData> _turnList = new List<TurnData>();
         public GamePlayerController CurrentTurnUnit { get; private set; }
 
         [SerializeField] private RootingSystem _rootingSystem;
+
+        [System.Serializable]
+        public class PingSystem
+        {
+            public GameObject MyPing;
+            public GameObject IsPing = null;
+           
+        }
+
+        [Header("핑 시스템")]
+        [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
+
+
+
         public int Order = -1;
 
 
@@ -96,7 +114,7 @@ namespace Jun
             {
                 // 이미 실행 중인 Invoke가 있다면 취소해서 중복 방지
                 CancelInvoke(nameof(StartFirstTurn));
-                Invoke(nameof(StartFirstTurn), 0.5f);
+                Invoke(nameof(StartFirstTurn), 1.0f);
             }
         }
         [Server]
@@ -104,17 +122,65 @@ namespace Jun
         {
             Order = -1; // 확실하게 초기화
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+            RpcTurnListUpdate(_turnList.ToArray());
             NextTurn();
+        }
+        [ClientRpc]
+        private void RpcTurnListUpdate(TurnData[] turnDataArray)
+        {
+            _turnList = new List<TurnData>(turnDataArray);
+
+            for (int i = 0; i < turnDataArray.Length; i++)
+            {
+                Image turnUI = Instantiate(_turnUi, _turnPanel);
+                Sprite sp = null;
+
+                int targetNum = turnDataArray[i].num;
+
+                if (turnDataArray[i].type == "Enemy")
+                {
+                    sp = _enemys[StageNum - 1].Enemys[targetNum].image.sprite;
+                }
+                else
+                {
+                    // 플레이어는 들어오는 데 시간이 걸릴 수 있으니 방어 코드 사용
+                    if (targetNum < _players.Count)
+                    {
+                        sp = _players[targetNum].GetComponent<SpriteRenderer>().sprite;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"아직 {targetNum}번 플레이어가 덜 들어왔습니다.");
+                    }
+                }
+
+                turnUI.sprite = sp;
+                _turnUIList.Add(turnUI);
+            }
+        }
+        [ClientRpc]
+        public void RpcSetHighlight(int index, bool isTurn)
+        {
+            if (index < 0 || index >= _turnUIList.Count) return;
+
+            Debug.Log($"턴 UI 업데이트 - 인덱스: {index}, 상태: {isTurn}");
+            GameObject go = _turnUIList[index].transform.Find("HighLight").gameObject;
+            go.SetActive(isTurn);
         }
         // 다음 턴으로 진행
         [Server]
         public void NextTurn()
         {
+            //이전 턴 하이라이트 끄기
+            RpcSetHighlight(Order, false);
+
             Order = (Order + 1) % _turnList.Count;
-            Debug.Log(Order);
+            if (Order == 0) _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+
             // 이번 턴의 타입과 번호를 서버가 확인
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
+
             Debug.Log("현재 적의 수: " + EnemyNum);
             if (EnemyNum == 0)
             {
@@ -124,11 +190,17 @@ namespace Jun
             }
 
             RpcChangeTurn(currentType, currentNum);
+            RpcSetHighlight(Order, true);
         }
         // 턴 변경
         [ClientRpc]
         public void RpcChangeTurn(string typeTurn, int turnNum)
         {
+            if (CurrentTurnUnit != null && CurrentTurnUnit is GamePlayerController)
+            {
+                CurrentTurnUnit.MyTurn(false);
+            }
+
             if (typeTurn == "Enemy")
             {
                 CurrentTurnUnit = null; // 적 턴이니까 
@@ -144,13 +216,15 @@ namespace Jun
                 var targetPlayer = _players[turnNum];
                 CurrentTurnUnit = targetPlayer; //현재 턴 유닛 정보 저장
                 _turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
+                
+                //누구 것이든 상관없이 무조건 노란 선을 표시
+                targetPlayer.MyTurn(true);
 
-                bool isMyTurn = targetPlayer.isOwned && (CurrentTurnUnit != null && targetPlayer.Info.Id == CurrentTurnUnit.Info.Id);
+                bool isMyTurn = targetPlayer.isOwned;
                 if (isMyTurn)
                 {
                     UpdateUnitUI(targetPlayer);
                 }
-                targetPlayer.MyTurn(isMyTurn);
                 // 내턴인지에 따라 패널 활성/비활성 처리
                 _unitPanel.interactable = isMyTurn;
                 _unitPanel.blocksRaycasts = isMyTurn;
@@ -200,6 +274,8 @@ namespace Jun
                 EnemyBTN.onClick.RemoveAllListeners();
                 EnemyBTN.onClick.AddListener(() => unit.OnClickEnemyBtn(index));
             }
+            _movePosBTN.onClick.RemoveAllListeners();
+            _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
         }
         //적 선택 이미지 변경
         public void UpdateEnemyUI(int index)
@@ -208,6 +284,58 @@ namespace Jun
             _enemyPanel.SetActive(true);
             _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
         }
+        //유닛 위치 이동
+        [Server]
+        public void ChangeUnitPos(GamePlayerController unit1, GamePlayerController unit2)
+        {
+            int tempPos = unit1.FinalHeroPos;
+            unit1.FinalHeroPos = unit2.FinalHeroPos;
+            unit2.FinalHeroPos = tempPos;
+
+            NextTurn();
+        }
+
+        [ClientRpc]
+        public void RpcShowPing(int pingIndex, GameObject targetObj)
+        {
+            Transform pingLayout = null;
+
+            GamePlayerController player = targetObj.GetComponent<GamePlayerController>();
+            if (player != null)
+            {
+                pingLayout = player.PingLayout;
+            }
+            else
+            {
+                EnemyController enemy = targetObj.GetComponent<EnemyController>();
+                pingLayout = enemy.PingLayout;
+            }
+            if (_pingList[pingIndex] != null) {
+                _pingList[pingIndex].SetActive(false);
+            }
+            // 자식 수 확인
+            Debug.Log($"pingIndex: {pingIndex} / PingLayout 자식 수: {pingLayout.childCount}");
+
+            if (pingIndex >= pingLayout.childCount)
+            {
+                Debug.LogWarning("PingLayout 자식이 부족함!");
+                return;
+            }
+
+            // 해당 인덱스 자식 오브젝트 켜기
+            GameObject ping = pingLayout.GetChild(pingIndex).gameObject;
+            ping.SetActive(true);
+            _pingList[pingIndex] = ping;
+
+            StartCoroutine(HidePing(ping));
+        }
+
+        private IEnumerator HidePing(GameObject ping)
+        {
+            yield return new WaitForSeconds(2.0f);
+            ping.SetActive(false);
+        }
+
         //무결성 검사
         public void VerifyClientRequest(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy,List<int> targets)
         {
