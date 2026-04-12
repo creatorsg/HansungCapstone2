@@ -16,6 +16,14 @@ PrefabInstance:
       propertyPath: m_LayerOverridePriority
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1.199
+      objectReference: {fileID: 0}
+    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 2.013
+      objectReference: {fileID: 0}
     - target: {fileID: 197622066061297333, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -25,9 +33,13 @@ PrefabInstance:
       value: 521911151
       objectReference: {fileID: 0}
     - target: {fileID: 1510496185234292729, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1510496185234292729, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 2650255088926332012, guid: d7f188449241f0b4bbe2257c14fbc107, type: 3}
+      objectReference: {fileID: 4923159571906479061, guid: 768a85fee8512c44fb9d5aeea238348c, type: 3}
     - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: Info.Atk
       value: 10
@@ -91,6 +103,10 @@ PrefabInstance:
     - target: {fileID: 7458667269418483121, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -0.000000011176
+      objectReference: {fileID: 0}
+    - target: {fileID: 7963380461074318106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Name

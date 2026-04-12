@@ -1899,9 +1899,9 @@ MonoBehaviour:
   - {fileID: 1463521779}
   - {fileID: 1607407617}
   _playerImages:
-  - {fileID: 2650255088926332012, guid: d7f188449241f0b4bbe2257c14fbc107, type: 3}
-  - {fileID: -6367344308350885168, guid: 58ef2f69d90a14d449e123984cad1a25, type: 3}
-  - {fileID: -4442894277301713744, guid: 9df73a722f9c9ba488d6325bf8d54265, type: 3}
+  - {fileID: 4923159571906479061, guid: 768a85fee8512c44fb9d5aeea238348c, type: 3}
+  - {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
+  - {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
   - {fileID: 6672990557300740791, guid: 37f31d074c58f014ea9be35e1878884d, type: 3}
   _unitPanel: {fileID: 1768533982}
   _charaterIMG: {fileID: 2129562758}
