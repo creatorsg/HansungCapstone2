@@ -32,10 +32,7 @@ public class RootingSystem : NetworkBehaviour
 
             if (child != null)
             {
-                // 2. 자식을 찾았다면, 그 안에 있는 Image 컴포넌트를 RPCIMG에 넣어줍니다.
                 this.RPCIMG = child.GetComponent<Image>();
-
-                // 3. 이제 RPCIMG는 더 이상 Null이 아니므로, 마음껏 명령을 내려도 됩니다!
                 this.RPCIMG.gameObject.SetActive(false);
             }
         }
