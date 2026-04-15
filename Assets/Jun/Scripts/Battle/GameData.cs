@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+
 namespace Jun
 {
     public enum SkillType //��ų ����

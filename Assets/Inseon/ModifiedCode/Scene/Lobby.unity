@@ -3553,7 +3553,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LobbyManager
   _playerNickname: {fileID: 1308380947}
   _createRoomWindow: {fileID: 271483975}
-  _allowSameIpTest: 0
+  _allowSameIpTest: 1
 --- !u!1 &1767435787
 GameObject:
   m_ObjectHideFlags: 0
@@ -3790,7 +3790,7 @@ MonoBehaviour:
   timeInterpolationGui: 0
   showRoomGUI: 1
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 533732390135692344, guid: d475829a97723554196f969e9179d0b8, type: 3}
+  roomPlayerPrefab: {fileID: -3545445526427896883, guid: d475829a97723554196f969e9179d0b8, type: 3}
   RoomScene: Assets/Inseon/ModifiedCode/Scene/Room.unity
   GameplayScene: Assets/Jun/Scenes/GamePlay.unity
   _allPlayersReady: 0

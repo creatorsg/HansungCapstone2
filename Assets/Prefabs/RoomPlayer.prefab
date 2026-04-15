@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8162687577856104036}
   - component: {fileID: 3729596262189340113}
-  - component: {fileID: 533732390135692344}
+  - component: {fileID: -3545445526427896883}
   m_Layer: 0
   m_Name: RoomPlayer
   m_TagString: Untagged
@@ -46,11 +46,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
   sceneId: 0
-  _assetId: 0
+  _assetId: 3345417056
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &533732390135692344
+--- !u!114 &-3545445526427896883
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,12 +59,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7051511757697186513}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79874ac94d5b1314788ecf0e86bd23fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 4ce6b56dd2fdbcc4cac7429662bff9d4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkRoomPlayer
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.GameRoomPlayer
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
   showRoomGUI: 1
   readyToBegin: 0
   index: 0
+  PlayerNickname: 
