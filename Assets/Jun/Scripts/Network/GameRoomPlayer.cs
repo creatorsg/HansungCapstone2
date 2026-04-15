@@ -17,7 +17,7 @@ namespace Jun
 
         // 닉네임 - 모든 클라이언트에 자동 동기화
         [SyncVar(hook = nameof(OnNicknameChanged))]
-        public string PlayerNickname = "";
+        public string PlayerNickname = "nonono";
 
         private bool isChoiced = false;
 

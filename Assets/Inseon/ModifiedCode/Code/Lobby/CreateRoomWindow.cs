@@ -117,6 +117,8 @@ namespace inseon.Lobby.Server.Room.CreateWindow
                 relay.userAuthTokens     // ← 선발급된 전체 userToken 배열
             );
 
+            manager.RoomName = _roomName.text;
+            manager.RoomPrivate = _privateRoomSetting;
             _roomCreateButton.interactable = true;
         }
 

@@ -6,7 +6,9 @@ namespace Jun {
     public class GameRoomManager : NetworkRoomManager
     {
         // 현재 방의 고유 ID (PlayFab에 등록된 roomId)
+        public string RoomName;
         public string RoomId;
+        public bool RoomPrivate;
 
         // 게임에 참여하는 캐릭터의 수
         public int HeroNum = 0;
