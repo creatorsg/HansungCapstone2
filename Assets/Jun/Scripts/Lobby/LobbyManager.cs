@@ -17,6 +17,10 @@ namespace Jun
         [SerializeField] private Button _readyBTN;
         [SerializeField] private TextMeshProUGUI _playerNumText;
 
+        [Header("ìŠ¤í‚¬ ê°•í™” ì‹œì„¤")]
+        [SerializeField] private SkillTreeUI _skillTreeUI;
+        [SerializeField] private CharacterSkillSetSO[] _characterSkillSets; // ì¸ë±ìŠ¤ = HeroIndex
+
         private int _playerNum = 0;
 
         private void Awake()
@@ -28,11 +32,20 @@ namespace Jun
             if (IsServer) _startBTN.gameObject.SetActive(true);
             else _readyBTN.gameObject.SetActive(true);
         }
-        //Ä³¸¯ÅÍ ¼±ÅÃ ¹öÆ°
+        //Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
         public void OnClickedHero(int index)
         {
             var player = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
             player.CMDChoiceHero(index);
+        }
+
+        // ì•„ì§€íŠ¸ ìŠ¤í‚¬ ê°•í™” ì‹œì„¤ ë²„íŠ¼ (HeroIndex ì „ë‹¬)
+        public void OnClickedSkillFacility(int heroIndex)
+        {
+            if (_skillTreeUI == null || _characterSkillSets == null) return;
+            if (heroIndex < 0 || heroIndex >= _characterSkillSets.Length) return;
+
+            _skillTreeUI.Open(_characterSkillSets[heroIndex]);
         }
         public void UpdatePlayerNum(bool In)
         {
@@ -41,17 +54,17 @@ namespace Jun
         }
         public void OnClickedReady()
         {
-            // ·ÎÄÃ ÇÃ·¹ÀÌ¾îÀÇ ·¹µğ »óÅÂ º¯°æ
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             var localPlayer = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
-            //ÁØºñ ÇØÁ¦
+            //ï¿½Øºï¿½ ï¿½ï¿½ï¿½ï¿½
             if (localPlayer.readyToBegin == true)
             {
-                localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin); // readyToBeginÀ» ¹Ù²Ù·Á¸éCmdChangeReadyStateÇÔ¼ö ÇÊ¿ä
+                localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin); // readyToBeginï¿½ï¿½ ï¿½Ù²Ù·ï¿½ï¿½ï¿½CmdChangeReadyStateï¿½Ô¼ï¿½ ï¿½Ê¿ï¿½
                 _readyBTN.GetComponent<Image>().color = Color.white;
                 foreach (var hero in _heroBTN) hero.interactable = true;
                 return;
             }
-            //ÁØºñ¿Ï·á( ¼±ÅÃÇÑ ¿µ¿õÀÌ ¾ø´Ù¸é ÁØºñ¿Ï·á x)
+            //ï¿½Øºï¿½Ï·ï¿½( ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½Øºï¿½Ï·ï¿½ x)
             if (localPlayer.CharaterNum.Count == 0) return;
             localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin);
             _readyBTN.GetComponent<Image>().color = Color.gray;
@@ -62,7 +75,7 @@ namespace Jun
             var localPlayer = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
             var manager = NetworkManager.singleton as GameRoomManager;
 
-            // ´Ù¸¥ ¸ğµç ÇÃ·¹ÀÌ¾îµéÀÇ ÁØºñ»óÅÂ È®ÀÎ
+            // ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
             bool isReadyAllPlayer = true;
             foreach(var player in manager.roomSlots)
             {
@@ -72,7 +85,7 @@ namespace Jun
             if (isReadyAllPlayer) manager.ServerChangeScene(manager.GameplayScene);
             else
             {
-                Debug.Log("¸ğµç ÇÃ·¹ÀÌ¾î°¡ ÁØºñµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+                Debug.Log("ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Øºï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         private void OnDestroy()

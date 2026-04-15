@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 namespace Jun
 {
-    public enum SkillType //½ºÅ³ Á¾·ù
+    public enum SkillType //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
     {
         Atk,
         Heal,
@@ -12,63 +12,65 @@ namespace Jun
         Debuff,
         Enforce
     }
-    public enum UnitState //À¯´Ö »óÅÂ Á¤º¸
+    public enum UnitState //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
-        Waiting,       // ±â´Ù¸®´Â Áß
-        Acting,        // Çàµ¿ Áß
-        Incapacitated  // Çàµ¿ ºÒ´É
+        Waiting,       // ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½ï¿½
+        Acting,        // ï¿½àµ¿ ï¿½ï¿½
+        Incapacitated  // ï¿½àµ¿ ï¿½Ò´ï¿½
     }
 
 
     [System.Serializable]
-    public class PlayerInfo //ÇÃ·¹ÀÌ¾î Á¤º¸
+    public class PlayerInfo //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
-        public int Id;      //ÇÃ·¹ÀÌ¾î id
-        public string Name; //ÀÌ¸§
+        public int Id;      //ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ id
+        public string Name; //ï¿½Ì¸ï¿½
         public List<SkillInfo> Skills;
         public List<ItemInfo> Items;
-        public int Lvl;     //·¹º§
-        public int Exp;     //°æÇèÄ¡
-        public float Hp;      //Ã¼·Â
-        public int Atk;     //°ø°İ·Â
-        public int Def;     //¹æ¾î·Â
-        public int Spd;     //½ºÇÇµå
-        public int San;     //Á¤½Å·Â
-        public int Crit;    //Ä¡¸íÅ¸ È®·ü
-        public int Ctm;     //Ä¡¸íÅ¸ °è¼ö
-        public int Dodge;     //È¸ÇÇÀ²
-        public int Acc;     //¸íÁß·ü
-        public int Res;     //»óÅÂÀÌ»óÀúÇ×
+        public int Lvl;     //ï¿½ï¿½ï¿½ï¿½
+        public int Exp;     //ï¿½ï¿½ï¿½ï¿½Ä¡
+        public float Hp;      //Ã¼ï¿½ï¿½
+        public int Atk;     //ï¿½ï¿½ï¿½İ·ï¿½
+        public int Def;     //ï¿½ï¿½ï¿½ï¿½
+        public int Spd;     //ï¿½ï¿½ï¿½Çµï¿½
+        public int San;     //ï¿½ï¿½ï¿½Å·ï¿½
+        public int Crit;    //Ä¡ï¿½ï¿½Å¸ È®ï¿½ï¿½
+        public int Ctm;     //Ä¡ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½
+        public int Dodge;     //È¸ï¿½ï¿½ï¿½ï¿½
+        public int Acc;     //ï¿½ï¿½ï¿½ß·ï¿½
+        public int Res;     //ï¿½ï¿½ï¿½ï¿½ï¿½Ì»ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        public int WpnId; // ÀåÂø ÁßÀÎ ¹«±â ID
-        public int ArmId; // ÀåÂø ÁßÀÎ ¹æ¾î±¸ ID
-        public int Trk1;  // Àå½Å±¸ ½½·Ô 1
-        public int Trk2;  // Àå½Å±¸ ½½·Ô 2
+        public int WpnId; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ID
+        public int ArmId; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î±¸ ID
+        public int Trk1;  // ï¿½ï¿½Å±ï¿½ ï¿½ï¿½ï¿½ï¿½ 1
+        public int Trk2;  // ï¿½ï¿½Å±ï¿½ ï¿½ï¿½ï¿½ï¿½ 2
     }
 
     [System.Serializable]
-    public class SkillInfo // ½ºÅ³ Á¤º¸
+    public class SkillInfo // ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
     {
         public string Name;
         public SkillType Type;
         public string anim;
         public int TagetNum;
-        //´Ù¸¥ Á¤º¸µé
+
+        // Aì•ˆ ë¸Œë¦¿ì§€: ìŠ¤í‚¬íŠ¸ë¦¬ì—ì„œ ì„ íƒëœ í™œì„± Tier ë°ì´í„° (íš¨ê³¼/ìˆ˜ì¹˜/ì„¤ëª… ì°¸ì¡°ìš©)
+        public SkillTierData TierData;
     }
     [System.Serializable]
-    public class ItemInfo //¾ÆÀÌÅÛ Á¤º¸
+    public class ItemInfo //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         public string Name;
         public int TagetNum;
 
-        //´Ù¸¥ Á¤º¸µé
+        //ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     [System.Serializable]
-    public class EqpInfo // Àåºñ Á¤º¸
+    public class EqpInfo // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         public string Name;
-        public int EqpId;   // Àåºñ °íÀ¯ ¹øÈ£
-                            //´Ù¸¥ Á¤º¸µé
+        public int EqpId;   // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£
+                            //ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
     [System.Serializable]

@@ -13,18 +13,23 @@ namespace Jun
         [SerializeField] private UnitModel _model;
         [SerializeField] private PlayerView _view;
 
+        [Header("ìŠ¤í‚¬ ì‹œìŠ¤í…œ (ìºë¦­í„° í”„ë¦¬íŒ¹ë§ˆë‹¤ ê³ ìœ  SO ì§€ì •)")]
+        [SerializeField] private CharacterSkillSetSO _skillSet;
+        public CharacterSkillSetSO SkillSet => _skillSet;
+
         [SyncVar] public int FinalHeroIndex = -1;
         [SyncVar(hook = nameof(OnPosIndexChanged))] public int FinalHeroPos = -1;
         [SyncVar] public PlayerInfo Info;
         [SyncVar] public int PingIndex;
 
-        [Header("ÇÎ ½Ã½ºÅÛ")]
-        public Transform PingLayout; // ÇÎ ³ª¿À´Â °ø°£
+        [Header("ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½")]
+        public Transform PingLayout; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         public bool IsMovePos = false;
         public override void OnStartServer()
         {
             base.OnStartServer();
+            ApplyActiveSkills(); // ìŠ¤í‚¬íŠ¸ë¦¬ ì„ íƒ ê²°ê³¼ë¥¼ Info.Skillsì— ì£¼ì…
             _model.SetUp(Info);
             BattleManager.Instance.RegisterPlayer(this);
 
@@ -32,42 +37,42 @@ namespace Jun
             if (targetPoint != null)
             {
                 transform.position = targetPoint.position;
-                Debug.Log($"{gameObject.name}°¡ {FinalHeroPos}¹ø À§Ä¡·Î ¹èÄ¡µÇ¾ú½À´Ï´Ù.");
+                Debug.Log($"{gameObject.name}ï¿½ï¿½ {FinalHeroPos}ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
             }
         }
         public override void OnStartClient()
         {
             base.OnStartClient();
 
-            // ¸¸¾à ³»°¡ ¼­¹ö(È£½ºÆ®)¶ó¸é OnStartServer¿¡¼­ ÀÌ¹Ì ¼Â¾÷À» ÇßÀ¸¹Ç·Î Áßº¹ ½ÇÇàÀ» ¸·¾ÆÁİ´Ï´Ù.
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(È£ï¿½ï¿½Æ®)ï¿½ï¿½ï¿½ OnStartServerï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½Â¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½İ´Ï´ï¿½.
             if (!isServer)
             {
                 Transform targetPoint = BattleManager.Instance.SpawnPoints[FinalHeroPos];
                 if (targetPoint != null)
                 {
                     transform.position = targetPoint.position;
-                    Debug.Log($"{gameObject.name}°¡ {FinalHeroPos}¹ø À§Ä¡·Î ¹èÄ¡µÇ¾ú½À´Ï´Ù.");
+                    Debug.Log($"{gameObject.name}ï¿½ï¿½ {FinalHeroPos}ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
                 }
-                // Å¬¶óÀÌ¾ğÆ®µµ ÀÚ±â È­¸é¿¡¼­ ½ºÅ³ µ¥ÀÌÅÍ¸¦ Á¤»óÀûÀ¸·Î ·ÎµåÇÕ´Ï´Ù!
+                // Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½Ú±ï¿½ È­ï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½Õ´Ï´ï¿½!
                 _model.SetUp(Info);
             }
         }
-        // À§Ä¡¸¦ Àâ´Â ·ÎÁ÷À» º°µµ ÇÔ¼ö·Î ºĞ¸®ÇØ¼­ È£Ãâ
+        // ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ğ¸ï¿½ï¿½Ø¼ï¿½ È£ï¿½ï¿½
         void OnPosIndexChanged(int oldPos, int newPos)
         {
             if (oldPos == -1)
             {
-                // Ã³À½ ½ºÆùµÉ ¶§
+                // Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                 transform.position = BattleManager.Instance.SpawnPoints[newPos].position;
             }
             else
             {
-                // ÅÏ µµÁß¿¡ ÀÚ¸®°¡ ¹Ù²î¾úÀ» ¶§ (ºÎµå·´°Ô ÀÌµ¿)
+                // ï¿½ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½Îµå·´ï¿½ï¿½ ï¿½Ìµï¿½)
                 StopAllCoroutines();
                 StartCoroutine(MoveRoutine(BattleManager.Instance.SpawnPoints[newPos].position));
             }
         }
-        //ºÎµå·´°Ô ¿òÁ÷ÀÌ°Ô ÇØÁÖ´Â ÇÔ¼ö
+        //ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
         System.Collections.IEnumerator MoveRoutine(Vector3 targetPos)
         {
             while (Vector3.Distance(transform.position, targetPos) > 0.01f)
@@ -86,12 +91,12 @@ namespace Jun
         {
             _view.SetSel(IsMyTurn);
         }
-        // ½ºÅ³ ¹öÆ°À» ´©¸£¸é ¼±ÅÃÇÑ ½ºÅ³ÀÇ Á¤º¸°¡ ÀúÀåÀÌ µÇ°í (¸¸¾à Àü¿¡ ¾ÆÀÌÅÛÀ» ¼±ÅÃÇß´Ù¸é Áö¿ì±â, Å¸°Ùµéµµ Áö¿ì±â)
-        // ¼±ÅÃÇÑ ½ºÅ³ÀÇ Å¸°Ù ¼ö¿¡ µû¶ó ¼±ÅÃ °¡´ÉÇÑ Å¸°Ù ¼ö º¯°æ
-        // Å¸°Ù ¹öÆ° È°¼ºÈ­
-        // ¾ÆÀÌÅÛ ¹öÆ°µµ °úÁ¤Àº µ¿ÀÏ
+        // ï¿½ï¿½Å³ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ (ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½, Å¸ï¿½Ùµéµµ ï¿½ï¿½ï¿½ï¿½ï¿½)
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // Å¸ï¿½ï¿½ ï¿½ï¿½Æ° È°ï¿½ï¿½È­
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        public void OnClickSkillBtn(int index) //½ºÅ³¹öÆ°
+        public void OnClickSkillBtn(int index) //ï¿½ï¿½Å³ï¿½ï¿½Æ°
         {
             if (isOwned)
             {
@@ -100,7 +105,7 @@ namespace Jun
             }
 
         }
-        public void OnClickItemBtn(int index) //¾ÆÀÌÅÛ ¹öÆ°
+        public void OnClickItemBtn(int index) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
         {
             if (isOwned)
             {
@@ -109,14 +114,14 @@ namespace Jun
             }
         }
 
-        public void OnClickEnemyBtn(int index) //Àû¹öÆ°
+        public void OnClickEnemyBtn(int index) //ï¿½ï¿½ï¿½ï¿½Æ°
         {
             if (_model.SelectedItem == -1 && _model.SelectedSkill == -1)
             {
-                Debug.Log("ÀûUIÆĞ³Î ³ª¿À±â "+ index);
+                Debug.Log("ï¿½ï¿½UIï¿½Ğ³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "+ index);
                 BattleManager.Instance.UpdateEnemyUI(index);
             }
-            // Àû ÇÎ Ãß°¡
+            // ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½
             GameObject enemyObj = BattleManager.Instance.Enemys[BattleManager.Instance.StageNum - 1].Enemys[index].gameObject;
             foreach (var unit in BattleManager.Instance._players)
             {
@@ -136,9 +141,9 @@ namespace Jun
         {
             if (!isOwned) return;
             IsMovePos = true;
-            Debug.Log("ÀÚ¸®ÀÌµ¿" + IsMovePos);
+            Debug.Log("ï¿½Ú¸ï¿½ï¿½Ìµï¿½" + IsMovePos);
         }
-        // ¹Ù²Ü ´ë»ó(´Ù¸¥ ¾Æ±º À¯´Ö)À» Å¬¸¯ÇßÀ» ¶§ ½ÇÇà
+        // ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½(ï¿½Ù¸ï¿½ ï¿½Æ±ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         public void OnClickedUnit()
         {
             var currentUnit = BattleManager.Instance.CurrentTurnUnit;
@@ -149,7 +154,7 @@ namespace Jun
                 currentUnit.IsMovePos = false;
             }
             else
-            { // ±âÁ¸ ·ÎÁ÷
+            { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 BattleManager.Instance.UpdateUnitUI(this);
 
                 foreach (var unit in BattleManager.Instance._players)
@@ -170,7 +175,39 @@ namespace Jun
             BattleManager.Instance.RpcShowPing(PingIndex, target);
         }
 
-        // ¼­¹ö·Î ÀÚ¸® ±³Ã¼ ¿äÃ»
+        // ìŠ¤í‚¬íŠ¸ë¦¬ ì„ íƒì„ ê¸°ì¡´ Info.Skillsì— ë°˜ì˜ (Aì•ˆ ë¸Œë¦¿ì§€)
+        // SkillInfo.Name ì„ í™œì„± í‹°ì–´ ì´ë¦„ìœ¼ë¡œ ë®ì–´ì“°ê³  TierData ì°¸ì¡°ë¥¼ ì—°ê²°.
+        // anim/TargetNum ë“± ê¸°ë³¸ íŒŒë¼ë¯¸í„°ëŠ” í”„ë¦¬íŒ¹ì— í”„ë¦¬ì…‹ëœ ê°’ ìœ ì§€.
+        [Server]
+        private void ApplyActiveSkills()
+        {
+            if (_skillSet == null)
+            {
+                Debug.LogWarning($"[GamePlayerController] _skillSet ë¯¸ì§€ì •: {name}");
+                return;
+            }
+            if (Info == null || Info.Skills == null)
+            {
+                Debug.LogWarning($"[GamePlayerController] Info.Skills ë¯¸ì§€ì •: {name}");
+                return;
+            }
+
+            var save = SkillSaveSync.Instance != null
+                ? SkillSaveSync.Instance.Find(_skillSet.characterName)
+                : null;
+            if (save == null) save = new SkillTreeSaveData { characterName = _skillSet.characterName };
+
+            int count = Mathf.Min(4, Info.Skills.Count);
+            for (int i = 0; i < count; i++)
+            {
+                var active = SkillManager.GetCurrentSkill(_skillSet, save, i);
+                if (active == null || Info.Skills[i] == null) continue;
+                Info.Skills[i].Name = active.skillName;
+                Info.Skills[i].TierData = active;
+            }
+        }
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¸ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½Ã»
         [Command]
         public void CmdRequestChangePos(GameObject targetUnitObj)
         {
@@ -181,15 +218,15 @@ namespace Jun
             }
         }
 
-        // ÇÇÇØ ¹ŞÀ½
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         public void PlDamaged(float Attack)
         {
             _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
             
         }
 
-        //½ºÅ³ »ç¿ëÀ» ¼­¹ö¿¡ ¿äÃ»
-        //¹èÆ² ¸Å´ÏÀú¿¡°Ô ¹«°á¼º °Ë»ç ¿äÃ»
+        //ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»
+        //ï¿½ï¿½Æ² ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½á¼º ï¿½Ë»ï¿½ ï¿½ï¿½Ã»
         [Command]
         public void CMDSelectionComplete(int skillIndex, int itemIndex, bool isEnemy, List<int> tagets)
         {
@@ -197,15 +234,15 @@ namespace Jun
         }
 
 
-        // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+        // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
         [ClientRpc]
         public void RpcPlaySkillAnim(string animName)
         {
-            //±»ÀÌ ½ºÅ³·Î ÇÑÁ¤ ¾ÈÇØµµ µÉµí
+            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Øµï¿½ ï¿½Éµï¿½
             _view.SkillAnim(animName);
         }
 
-        // ³ªÀÇ ÅÏÁ¾·á -> ÅÏ ³Ñ±â±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½
         [Command]
         public void EndMyTurn()
         {
