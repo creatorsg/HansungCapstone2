@@ -29,6 +29,8 @@ namespace Jun
             CmdSetNickname(nick);
         }
 
+
+
         [Command]
         void CmdSetNickname(string nickname)
         {
@@ -43,17 +45,19 @@ namespace Jun
         public override void OnStartClient()
         {
             base.OnStartClient();
-
             CharaterNum.OnChange += OnCharaterListChanged;
 
-            // 플레이어 수 업데이트
-            LobbyManager.Instance.UpdatePlayerNum(true);
-            // 준비 or 시작버튼 활성화
-            LobbyManager.Instance.ActiveBTN(isServer);
-            // 플레이어 슬롯 갱신
-            LobbyManager.Instance?.RefreshPlayerSlots();
+            // ── null 체크 추가 ──
+            if (LobbyManager.Instance == null)
+            {
+                Debug.LogWarning("[GameRoomPlayer] OnStartClient: LobbyManager.Instance가 null입니다. 씬 전환 도중일 수 있습니다.");
+                return;
+            }
 
-            // 이미 선택된 캐릭터도 표시
+            LobbyManager.Instance.UpdatePlayerNum(true);
+            LobbyManager.Instance.ActiveBTN(isServer);
+            LobbyManager.Instance.RefreshPlayerSlots();
+
             foreach (var item in CharaterNum)
                 UpdateLobbyUI(SyncList<Charater>.Operation.OP_ADD, item);
         }

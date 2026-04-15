@@ -1,3 +1,4 @@
+using inseon.Playfab.User;
 using PlayFab;
 using System;
 using UnityEngine;
@@ -69,6 +70,13 @@ public class RegisterWindow : MonoBehaviour
                     {
                         Debug.Log("Init OK: " + json);
                         SetState("가입 완료!");
+                        PlayfabUserManage.Login(id, pw,
+                            PlayfabUserManage.SuccessLogin,
+                            err =>
+                            {
+                                SetState("자동 로그인 실패. 수동으로 로그인해주세요.");
+                                EndProgress();
+                            });
                         EndProgress();
                     },
                     onCloudScriptError: csErr =>

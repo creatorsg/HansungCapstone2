@@ -36,9 +36,21 @@ namespace Jun {
         // �κ񿡼� ���������� �Ѿ �� �������� ����Ǵ� �Լ�
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
-            // �κ� �÷��̾�� �����ߴ� ������ ������
             var roomPlayerScript = roomPlayer.GetComponent<GameRoomPlayer>();
+            if (roomPlayerScript == null)
+            {
+                Debug.LogError("[GameRoomManager] roomPlayer에 GameRoomPlayer 컴포넌트가 없습니다!");
+                return null;
+            }
+
             var roomPlayerCharaterNum = roomPlayerScript.CharaterNum;
+            Debug.Log($"[GameRoomManager] OnRoomServerCreateGamePlayer 호출: conn={conn}, CharaterNum.Count={roomPlayerCharaterNum.Count}, spawnPrefabs.Count={spawnPrefabs.Count}");
+
+            if (roomPlayerCharaterNum.Count == 0)
+            {
+                Debug.LogWarning($"[GameRoomManager] CharaterNum이 비어 있습니다. playerPrefab 폴백 사용.");
+                return null; // Mirror가 playerPrefab으로 폴백
+            }
 
             GameObject mainPlayer = null;
             for (int i = 0; i < roomPlayerCharaterNum.Count; i++)
@@ -47,33 +59,42 @@ namespace Jun {
                 int index = roomPlayerCharaterNum[i].HeroIndex;
                 int pos = roomPlayerCharaterNum[i].HeroPos;
 
-                // �����ӿ� �÷��̾� �������� ����
+                // ── 핵심 방어 코드 ──
+                if (index < 0 || index >= spawnPrefabs.Count)
+                {
+                    Debug.LogError($"[GameRoomManager] spawnPrefabs 인덱스 범위 초과! HeroIndex={index}, spawnPrefabs.Count={spawnPrefabs.Count}");
+                    // mainPlayer가 null이면 Mirror가 playerPrefab으로 폴백
+                    return mainPlayer;
+                }
+                if (spawnPrefabs[index] == null)
+                {
+                    Debug.LogError($"[GameRoomManager] spawnPrefabs[{index}]가 null입니다! Inspector에서 프리팹을 확인하세요.");
+                    return mainPlayer;
+                }
+
                 GameObject gamePlayer = Instantiate(spawnPrefabs[index]);
 
-                // ������ ���� �÷��̾� ��ũ��Ʈ�� �����͸� ����
                 var gamePlayerScript = gamePlayer.GetComponent<GamePlayerController>();
+                if (gamePlayerScript == null)
+                {
+                    Debug.LogError($"[GameRoomManager] spawnPrefabs[{index}]에 GamePlayerController가 없습니다!");
+                    Destroy(gamePlayer);
+                    return mainPlayer;
+                }
+
                 gamePlayerScript.FinalHeroIndex = index;
                 gamePlayerScript.FinalHeroPos = pos;
                 gamePlayerScript.Info = spawnPrefabs[index].GetComponent<GamePlayerController>().Info;
 
-                // ���� ĳ���� ��ȯ ó��
                 if (i == 0)
-                {
-                    // ù ��° ĳ���ʹ� �Լ��� ���ϰ����� ���� (Mirror�� �ڵ� ��ȯ)
                     mainPlayer = gamePlayer;
-                }
                 else
-                {
-                    // �� ��° ĳ���ͺ��ʹ� �������� NetworkServer.Spawn ȣ��
-                    // conn�� �����ؾ� �ش� Ŭ���̾�Ʈ�� �� ĳ������ ����(isLocalPlayer)�� �����ϴ�.
                     NetworkServer.Spawn(gamePlayer, conn);
-                }
             }
 
-            // ù ��°�� ������ ĳ���͸� ��ȯ�Ͽ� ������ ���� �������� ����
+            Debug.Log($"[GameRoomManager] mainPlayer 생성 완료: {mainPlayer?.name ?? "null"}");
             return mainPlayer;
         }
-
 
     }
 }
