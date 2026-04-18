@@ -149,7 +149,11 @@ public class LobbyManager : MonoBehaviour
                 manager.StopClient();
             }
 
-            // ── 클라이언트 접속 ──
+            // ── 클라이언트 접속 전, 방 정보를 manager에 저장 ──
+            // (Host는 CreateRoomWindow에서 이미 세팅 완료)
+            manager.RoomId   = joinedRoom.roomId;
+            manager.RoomName = joinedRoom.roomName;
+
             manager.networkAddress = joinedRoom.ip;
             manager.StartClient();
         });

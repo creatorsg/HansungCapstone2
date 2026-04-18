@@ -38,6 +38,15 @@ namespace Jun
         void OnNicknameChanged(string _, string __)
         {
             LobbyManager.Instance?.RefreshPlayerSlots();
+            PlayerRoomManager.Instance?.RefreshPlayerSlots();
+        }
+
+        // NetworkRoomPlayer의 readyToBegin SyncVar hook 재정의
+        // Ready 상태가 바뀔 때마다 Host의 Start 버튼 활성화 여부를 갱신합니다.
+        public override void ReadyStateChanged(bool oldReadyState, bool newReadyState)
+        {
+            base.ReadyStateChanged(oldReadyState, newReadyState);
+            PlayerRoomManager.Instance?.RefreshStartButton();
         }
 
         public override void OnStartClient()
@@ -46,11 +55,14 @@ namespace Jun
 
             CharaterNum.OnChange += OnCharaterListChanged;
 
-            // 플레이어 수 업데이트
-            LobbyManager.Instance.UpdatePlayerNum(true);
-            // 준비 or 시작버튼 활성화
-            LobbyManager.Instance.ActiveBTN(isServer);
-            // 플레이어 슬롯 갱신
+            // Inseon Room 씬: PlayerRoomManager가 모든 UI 처리
+            PlayerRoomManager.Instance?.UpdatePlayerNum(true);
+            PlayerRoomManager.Instance?.ActiveBTN(isServer);
+            PlayerRoomManager.Instance?.RefreshAll();
+
+            // Jun GameRoom 씬 fallback (Jun.LobbyManager가 씬에 있는 경우만 실행됨)
+            LobbyManager.Instance?.UpdatePlayerNum(true);
+            LobbyManager.Instance?.ActiveBTN(isServer);
             LobbyManager.Instance?.RefreshPlayerSlots();
 
             // 이미 선택된 캐릭터도 표시
@@ -60,11 +72,11 @@ namespace Jun
 
         private void OnDestroy()
         {
-            if (LobbyManager.Instance != null)
-            {
-                LobbyManager.Instance.UpdatePlayerNum(false);
-                LobbyManager.Instance.RefreshPlayerSlots();
-            }
+            PlayerRoomManager.Instance?.UpdatePlayerNum(false);
+            PlayerRoomManager.Instance?.RefreshPlayerSlots();
+
+            LobbyManager.Instance?.UpdatePlayerNum(false);
+            LobbyManager.Instance?.RefreshPlayerSlots();
         }
 
         // ── 채팅 ──
@@ -82,7 +94,11 @@ namespace Jun
         [ClientRpc]
         void RpcReceiveChat(string message)
         {
-            LobbyManager.Instance?.AddChatMessage(message);
+            // ChattingWindow가 씬에 있으면 우선 사용, 없으면 Jun.LobbyManager fallback
+            if (ChattingWindow.Instance != null)
+                ChattingWindow.Instance.DisplayMessage(message);
+            else
+                LobbyManager.Instance?.AddChatMessage(message);
         }
 
         // ── 캐릭터 선택 ──

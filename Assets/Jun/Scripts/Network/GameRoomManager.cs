@@ -6,9 +6,10 @@ namespace Jun {
     public class GameRoomManager : NetworkRoomManager
     {
         // 현재 방의 고유 ID (PlayFab에 등록된 roomId)
-        public string RoomName;
-        public string RoomId;
-        public bool RoomPrivate;
+        // Host는 StartHost() 전에, Client는 StartClient() 전에 직접 세팅합니다.
+        // (PlayFab에서 이미 데이터를 가져오므로 SyncVar 불필요)
+        public string RoomId   = "";
+        public string RoomName = "";
 
         // 게임에 참여하는 캐릭터의 수
         public int HeroNum = 0;

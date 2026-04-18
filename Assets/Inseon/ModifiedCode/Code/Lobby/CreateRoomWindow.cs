@@ -89,7 +89,8 @@ namespace inseon.Lobby.Server.Room.CreateWindow
             transport.sessionId           = relay.sessionAuthToken;
             transport.userId              = relay.userAuthTokens[0];
 
-            manager.RoomId = roomId;
+            manager.RoomId   = roomId;
+            manager.RoomName = _roomName.text;  // 방 이름을 SyncVar에 저장 → 클라이언트에 자동 동기화
 
             // 이미 연결 중이면 먼저 정리
             if (NetworkServer.active || NetworkClient.active)
@@ -117,8 +118,6 @@ namespace inseon.Lobby.Server.Room.CreateWindow
                 relay.userAuthTokens     // ← 선발급된 전체 userToken 배열
             );
 
-            manager.RoomName = _roomName.text;
-            manager.RoomPrivate = _privateRoomSetting;
             _roomCreateButton.interactable = true;
         }
 
