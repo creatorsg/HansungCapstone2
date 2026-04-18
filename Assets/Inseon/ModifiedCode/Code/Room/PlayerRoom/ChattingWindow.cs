@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,6 +39,16 @@ public class ChattingWindow : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Debug.Log("[ChattingWindow] Awake 실행됨 - Instance 설정 완료");
+    }
+
+    private void OnEnable()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            Debug.Log("[ChattingWindow] OnEnable에서 Instance 재설정");
+        }
     }
 
     private void Update()
@@ -62,31 +73,23 @@ public class ChattingWindow : MonoBehaviour
     /// </summary>
     public void DisplayMessage(string message)
     {
-        Debug.Log($"[ChattingWindow] DisplayMessage 호출됨. message='{message}'");
+        if (chatContent == null || messagePrefab == null) return;
 
-        if (chatContent == null || messagePrefab == null)
-        {
-            Debug.LogError($"[ChattingWindow] 연결 누락 → chatContent:{chatContent}, messagePrefab:{messagePrefab}");
-            return;
-        }
-
-        var obj  = Instantiate(messagePrefab, chatContent);
+        var obj = Instantiate(messagePrefab, chatContent);
         var text = obj.GetComponentInChildren<Text>();
-
-        Debug.Log($"[ChattingWindow] Text 컴포넌트 찾음: {text != null}, 오브젝트 크기: {obj.GetComponent<RectTransform>()?.rect}");
-
         if (text != null)
-        {
-            text.text  = message;
-            text.color = Color.black; // 혹시 흰색이면 강제로 검정 지정
-            Debug.Log($"[ChattingWindow] text.text 설정 완료: '{text.text}', color: {text.color}");
-        }
-        else
-        {
-            Debug.LogError("[ChattingWindow] Text 컴포넌트를 찾지 못했습니다. 프리팹 구조를 확인하세요.");
-        }
+            text.text = message;
 
-        Canvas.ForceUpdateCanvases();
+        StartCoroutine(ScrollToBottomNextFrame());
+    }
+
+    private IEnumerator ScrollToBottomNextFrame()
+    {
+        // Layout 재계산이 완전히 끝난 다음 프레임에 스크롤
+        yield return new WaitForEndOfFrame();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(chatContent as RectTransform);
+
         if (scrollRect != null)
             scrollRect.verticalNormalizedPosition = 0f;
     }

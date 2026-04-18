@@ -94,9 +94,12 @@ namespace Jun
         [ClientRpc]
         void RpcReceiveChat(string message)
         {
-            // ChattingWindow가 씬에 있으면 우선 사용, 없으면 Jun.LobbyManager fallback
-            if (ChattingWindow.Instance != null)
-                ChattingWindow.Instance.DisplayMessage(message);
+            // Instance가 null이면 씬에서 직접 찾기 시도
+            var window = ChattingWindow.Instance
+                         ?? Object.FindAnyObjectByType<ChattingWindow>();
+
+            if (window != null)
+                window.DisplayMessage(message);
             else
                 LobbyManager.Instance?.AddChatMessage(message);
         }
