@@ -210,6 +210,8 @@ public class RootingSystem : NetworkBehaviour
         Debug.Log("모든 칸의 가위바위보 완료.");
         // 여기서 다음 단계 만들기
         // 선택한 보상들 적용하기 귀찮다
+        // 필요하다면 플레이어들의 새로운 정보들 저장
+        NetworkManager.singleton.ServerChangeScene("Home 1");
     }
     //가위바위보 로직
     IEnumerator RockPaperScissors(List<int> RPS)

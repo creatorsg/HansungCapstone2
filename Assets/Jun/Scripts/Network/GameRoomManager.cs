@@ -31,10 +31,10 @@ namespace Jun {
                 GameObject gamePlayer = Instantiate(spawnPrefabs[index]);
 
                 // 생성된 게임 플레이어 스크립트에 데이터를 주입
-                var gamePlayerScript = gamePlayer.GetComponent<GamePlayerController>();
+                var gamePlayerScript = gamePlayer.GetComponent<PlayerData>();
                 gamePlayerScript.FinalHeroIndex = index;
                 gamePlayerScript.FinalHeroPos = pos;
-                gamePlayerScript.Info = spawnPrefabs[index].GetComponent<GamePlayerController>().Info;
+                gamePlayerScript.Info = spawnPrefabs[index].GetComponent<PlayerData>().Info;
 
                 // 이 커넥션 소속 유닛들은 전부 같은 PingIndex 공유
                 gamePlayerScript.PingIndex = myPingIndex;

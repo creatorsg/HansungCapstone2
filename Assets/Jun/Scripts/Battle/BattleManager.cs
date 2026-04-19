@@ -24,6 +24,9 @@ namespace Jun
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
         [Header("캐릭터들의 이미지")]
         [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
+
+        [Header("전투 유닛 프리팹")]
+        [SerializeField] private List<GameObject> BattleUnitPrefabs;
         [Header("캐릭터 정보 창")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
@@ -100,23 +103,45 @@ namespace Jun
             {
                 _turnList.Add(new TurnData("Enemy", _enemys[StageNum - 1].Enemys[i].GetComponent<EnemyController>().Info.Spd, i));
             }
+            StartCoroutine(SetupBattleFlow());
         }
-        //접속 후 플레이어 추가(관리하기 위해)
-        public void RegisterPlayer(GamePlayerController pl)
+        [Server]
+        private IEnumerator SetupBattleFlow()
         {
-            var manager = NetworkManager.singleton as GameRoomManager;
-            // 현재 플레이어 추가
-            _players.Add(pl);
-            _turnList.Add(new TurnData("Player", pl.Info.Spd, _players.Count-1));
-            
-            pl.gameObject.SetActive(true);
-            if (isServer && _players.Count == manager.HeroNum)
+            var roomManager = NetworkManager.singleton as GameRoomManager;
+
+            PlayerData[] survivors;
+            while (true)
             {
-                // 이미 실행 중인 Invoke가 있다면 취소해서 중복 방지
-                CancelInvoke(nameof(StartFirstTurn));
-                Invoke(nameof(StartFirstTurn), 1.0f);
+                survivors = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+                if (survivors.Length == roomManager.HeroNum) break;
+                yield return null;
             }
+
+            Debug.Log("전원 도착! 전투 몸통을 생성합니다.");
+
+            foreach (var data in survivors)
+            {
+                // 1. 데이터(FinalHeroIndex)에 맞는 전투용 프리팹 생성! (위치는 스폰 포인트로)
+                GameObject battleObj = Instantiate(BattleUnitPrefabs[data.FinalHeroIndex], SpawnPoints[data.FinalHeroPos].position, Quaternion.identity);
+
+                // 2. 프리팹 안의 컨트롤러를 꺼내서 데이터(영혼) 주입!
+                var controller = battleObj.GetComponent<GamePlayerController>();
+                controller.InjectData(data);
+
+                // 3. [가장 중요] 서버에 스폰하면서, 해당 클라이언트에게 조종 권한 주기!
+                // PlayerData를 가지고 온 원래 주인의 연결(connectionToClient)을 새 몸통에 연결해줍니다.
+                NetworkServer.Spawn(battleObj, data.connectionToClient);
+
+                // 4. 전투 리스트에 컨트롤러 등록
+                _players.Add(controller);
+                _turnList.Add(new TurnData("Player", data.Info.Spd, _players.Count - 1));
+            }
+
+            // 5. 턴 시작
+            Invoke(nameof(StartFirstTurn), 1.0f);
         }
+
         [Server]
         private void StartFirstTurn()
         {

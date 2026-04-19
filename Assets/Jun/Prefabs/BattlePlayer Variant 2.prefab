@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &8519018903883400961
+--- !u!1001 &8886486193526560316
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -9,45 +9,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_LayerOverridePriority
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 1.199
+      value: 0.855
       objectReference: {fileID: 0}
     - target: {fileID: -1615942044821185106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 2.013
-      objectReference: {fileID: 0}
-    - target: {fileID: 197622066061297333, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+      value: 1.6225
       objectReference: {fileID: 0}
     - target: {fileID: 1109338203283845972, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: _assetId
-      value: 521911151
-      objectReference: {fileID: 0}
-    - target: {fileID: 1510496185234292729, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_FlipX
-      value: 1
+      value: 3926283984
       objectReference: {fileID: 0}
     - target: {fileID: 1510496185234292729, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 4923159571906479061, guid: 768a85fee8512c44fb9d5aeea238348c, type: 3}
-    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: Info.Atk
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2808384062215202789, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: Info.Name
-      value: aa
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
     - target: {fileID: 3199968498827224327, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -88,29 +64,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5148489984695023724, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5148489984695023724, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7458667269418483121, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.0467
-      objectReference: {fileID: 0}
-    - target: {fileID: 7458667269418483121, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -0.000000011176
-      objectReference: {fileID: 0}
-    - target: {fileID: 7963380461074318106, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Name
-      value: C1 Variant
+      value: BattlePlayer Variant 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

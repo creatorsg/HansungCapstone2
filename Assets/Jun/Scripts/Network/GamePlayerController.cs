@@ -22,35 +22,16 @@ namespace Jun
         public Transform PingLayout; // 핑 나오는 공간
 
         public bool IsMovePos = false;
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            _model.SetUp(Info);
-            BattleManager.Instance.RegisterPlayer(this);
 
-            Transform targetPoint = BattleManager.Instance.SpawnPoints[FinalHeroPos];
-            if (targetPoint != null)
-            {
-                transform.position = targetPoint.position;
-                Debug.Log($"{gameObject.name}가 {FinalHeroPos}번 위치로 배치되었습니다.");
-            }
-        }
-        public override void OnStartClient()
+        // 정보 저장
+        [Server]
+        public void InjectData(PlayerData data)
         {
-            base.OnStartClient();
-
-            // 만약 내가 서버(호스트)라면 OnStartServer에서 이미 셋업을 했으므로 중복 실행을 막아줍니다.
-            if (!isServer)
-            {
-                Transform targetPoint = BattleManager.Instance.SpawnPoints[FinalHeroPos];
-                if (targetPoint != null)
-                {
-                    transform.position = targetPoint.position;
-                    Debug.Log($"{gameObject.name}가 {FinalHeroPos}번 위치로 배치되었습니다.");
-                }
-                // 클라이언트도 자기 화면에서 스킬 데이터를 정상적으로 로드합니다!
-                _model.SetUp(Info);
-            }
+            this.Info = data.Info;
+            this.PingIndex = data.PingIndex;
+            this.FinalHeroIndex = data.FinalHeroIndex;
+            this.FinalHeroPos = data.FinalHeroPos;
+            this.PingIndex = data.PingIndex;
         }
         // 위치를 잡는 로직을 별도 함수로 분리해서 호출
         void OnPosIndexChanged(int oldPos, int newPos)
@@ -81,6 +62,7 @@ namespace Jun
         public void Start()
         {
             _view.EndMyTurn += EndMyTurn;
+            _model.SetUp(Info);
         }
         public void MyTurn(bool IsMyTurn)
         {

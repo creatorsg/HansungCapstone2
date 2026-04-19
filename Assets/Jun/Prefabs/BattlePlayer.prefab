@@ -465,16 +465,17 @@ GameObject:
   - component: {fileID: 3199968498827224327}
   - component: {fileID: 1510496185234292729}
   - component: {fileID: 7164029956429766526}
-  - component: {fileID: 2808384062215202789}
-  - component: {fileID: 330207675683210629}
-  - component: {fileID: 3670633370672280034}
   - component: {fileID: 1109338203283845972}
   - component: {fileID: 213986336491897893}
   - component: {fileID: -1615942044821185106}
   - component: {fileID: 848095451945230899}
   - component: {fileID: 3401555882423077952}
+  - component: {fileID: 9074365310707189209}
+  - component: {fileID: 1289792657702374152}
+  - component: {fileID: 1903755322363339490}
+  - component: {fileID: 4437238361182524385}
   m_Layer: 0
-  m_Name: C1
+  m_Name: BattlePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -576,122 +577,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2808384062215202789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220359351675498512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 881d7e7d03116f04eafb69a49e6295d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GamePlayer
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  _model: {fileID: 330207675683210629}
-  _view: {fileID: 3670633370672280034}
-  FinalHeroIndex: -1
-  FinalHeroPos: -1
-  Info:
-    Id: 0
-    Name: 
-    Skills:
-    - Name: a
-      Type: 0
-      anim: Attack
-      TagetNum: 1
-    - Name: b
-      Type: 0
-      anim: Attack
-      TagetNum: 2
-    - Name: 
-      Type: 0
-      anim: 
-      TagetNum: 0
-    - Name: 
-      Type: 0
-      anim: 
-      TagetNum: 0
-    Items: []
-    Lvl: 0
-    Exp: 0
-    Hp: 0
-    Atk: 0
-    Def: 0
-    Spd: 0
-    San: 0
-    Crit: 0
-    Ctm: 0
-    Dodge: 0
-    Acc: 0
-    Res: 0
-    WpnId: 0
-    ArmId: 0
-    Trk1: 0
-    Trk2: 0
-  PingIndex: 0
-  PingLayout: {fileID: 9170310305947703440}
-  IsMovePos: 0
---- !u!114 &330207675683210629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220359351675498512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1495ac33d530de498e80860b1e1f05f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jun.UnitModel
-  _controller: {fileID: 2808384062215202789}
-  _info:
-    Id: 0
-    Name: 
-    Skills: []
-    Items: []
-    Lvl: 0
-    Exp: 0
-    Hp: 0
-    Atk: 0
-    Def: 0
-    Spd: 0
-    San: 0
-    Crit: 0
-    Ctm: 0
-    Dodge: 0
-    Acc: 0
-    Res: 0
-    WpnId: 0
-    ArmId: 0
-    Trk1: 0
-    Trk2: 0
-  _inventory: []
-  _selectedSkill: -1
-  _selectedItem: -1
---- !u!114 &3670633370672280034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9220359351675498512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e75763f7cb522b498bdd5c7dced84a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Jun.PlayerView
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  SkillBtn: []
-  ItemBtn: []
-  EnemyBtn: []
-  HpBar: {fileID: 2177717066494571944}
-  Sel: {fileID: 5873522677969264439}
 --- !u!114 &1109338203283845972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -833,7 +718,136 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2808384062215202789}
+        - m_Target: {fileID: 1903755322363339490}
+          m_TargetAssemblyTypeName: Jun.GamePlayerController, Assembly-CSharp
+          m_MethodName: OnClickedUnit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &9074365310707189209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e75763f7cb522b498bdd5c7dced84a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.PlayerView
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  SkillBtn: []
+  ItemBtn: []
+  EnemyBtn: []
+  HpBar: {fileID: 2177717066494571944}
+  Sel: {fileID: 5873522677969264439}
+--- !u!114 &1289792657702374152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1495ac33d530de498e80860b1e1f05f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.UnitModel
+  _controller: {fileID: 1903755322363339490}
+  _info:
+    Id: 0
+    Name: 
+    Skills: []
+    Items: []
+    Lvl: 0
+    Exp: 0
+    Hp: 0
+    Atk: 0
+    Def: 0
+    Spd: 0
+    San: 0
+    Crit: 0
+    Ctm: 0
+    Dodge: 0
+    Acc: 0
+    Res: 0
+    WpnId: 0
+    ArmId: 0
+    Trk1: 0
+    Trk2: 0
+  _inventory: []
+  _selectedSkill: -1
+  _selectedItem: -1
+--- !u!114 &1903755322363339490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 881d7e7d03116f04eafb69a49e6295d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.GamePlayerController
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  _model: {fileID: 1289792657702374152}
+  _view: {fileID: 9074365310707189209}
+  FinalHeroIndex: -1
+  FinalHeroPos: -1
+  Info:
+    Id: 0
+    Name: 
+    Skills: []
+    Items: []
+    Lvl: 0
+    Exp: 0
+    Hp: 0
+    Atk: 0
+    Def: 0
+    Spd: 0
+    San: 0
+    Crit: 0
+    Ctm: 0
+    Dodge: 0
+    Acc: 0
+    Res: 0
+    WpnId: 0
+    ArmId: 0
+    Trk1: 0
+    Trk2: 0
+  PingIndex: 0
+  PingLayout: {fileID: 9170310305947703440}
+  IsMovePos: 0
+--- !u!114 &4437238361182524385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9220359351675498512}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1903755322363339490}
           m_TargetAssemblyTypeName: Jun.GamePlayerController, Assembly-CSharp
           m_MethodName: OnClickedUnit
           m_Mode: 1
