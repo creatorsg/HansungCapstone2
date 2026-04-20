@@ -8,6 +8,12 @@ public static class PlayfabCommand
 {
     static void ExecuteCloudScript(string functionName, object args, Action<object> onSuccess)
     {
+        ExecuteCloudScript(functionName, args, onSuccess, null);
+    }
+
+    // 에러 콜백이 필요한 경우 사용하는 오버로드
+    static void ExecuteCloudScript(string functionName, object args, Action<object> onSuccess, Action<string> onError)
+    {
         var request = new ExecuteCloudScriptRequest
         {
             FunctionName = functionName,
@@ -21,7 +27,9 @@ public static class PlayfabCommand
             {
                 if (result.Error != null)
                 {
-                    Debug.LogError($"CloudScript Error ({functionName}) : {result.Error.Message}");
+                    var msg = $"CloudScript Error ({functionName}): {result.Error.Message}";
+                    Debug.LogError(msg);
+                    onError?.Invoke(result.Error.Message);
                     return;
                 }
 
@@ -29,7 +37,9 @@ public static class PlayfabCommand
             },
             error =>
             {
-                Debug.LogError(error.GenerateErrorReport());
+                var msg = error.GenerateErrorReport();
+                Debug.LogError(msg);
+                onError?.Invoke(msg);
             });
     }
 
@@ -105,6 +115,25 @@ public static class PlayfabCommand
                     onResult?.Invoke(r.FunctionResult.ToString());
             },
             e => Debug.LogError(e.GenerateErrorReport())
+        );
+    }
+
+    /// <summary>
+    /// 방 ID로 방 정보를 조회합니다. 입장은 하지 않습니다.
+    /// 방이 없거나 만료된 경우 onError 콜백이 호출됩니다.
+    /// </summary>
+    public static void GetRoomById(string roomId, Action<RoomInfo> onSuccess, Action<string> onError = null)
+    {
+        ExecuteCloudScript(
+            "GetRoomById",
+            new { roomId = roomId },
+            result =>
+            {
+                var json = result.ToString();
+                var room = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomInfo>(json);
+                onSuccess?.Invoke(room);
+            },
+            onError
         );
     }
 

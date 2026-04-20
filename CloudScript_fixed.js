@@ -585,3 +585,33 @@ handlers.ResetSaveData = function(args)
     var playFabId = requirePlayerCheck();
     return DeleteSaveData(playFabId);
 };
+
+// [NEW] 방 ID로 방 정보 조회 (입장하지 않음 — 민감 정보 제외)
+// args: { roomId }
+handlers.GetRoomById = function(args)
+{
+    requirePlayerCheck();
+
+    if (!args.roomId) throw "roomId required";
+
+    var roomKey = "room_" + args.roomId;
+
+    var data = server.GetTitleInternalData({ Keys: [roomKey] });
+
+    if (!data || !data.Data || !data.Data[roomKey])
+        throw "Room not found";
+
+    var room = JSON.parse(data.Data[roomKey]);
+
+    // TTL 초과 방 → 좀비 방으로 간주
+    var now = Date.now();
+    if (room.createdAt && (now - room.createdAt) > ROOM_TTL_MS)
+        throw "Room not found";
+
+    // 민감 정보는 제거 후 반환 (sessionToken, userTokens, password)
+    delete room.password;
+    delete room.sessionToken;
+    delete room.userTokens;
+
+    return room;
+};

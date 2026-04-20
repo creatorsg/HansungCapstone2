@@ -1464,6 +1464,7 @@ GameObject:
   - component: {fileID: 760929705}
   - component: {fileID: 760929704}
   - component: {fileID: 760929703}
+  - component: {fileID: 760929706}
   m_Layer: 5
   m_Name: RoomCode
   m_TagString: Untagged
@@ -1598,6 +1599,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 760929701}
   m_CullTransparentMesh: 1
+--- !u!114 &760929706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760929701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a12cbb14e79324a871ab716876df62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FindRoomWindow
+  _roomIdInput: {fileID: 760929703}
+  _joinButton: {fileID: 379313776}
+  _statusText: {fileID: 0}
 --- !u!1 &810724025
 GameObject:
   m_ObjectHideFlags: 0
@@ -3553,6 +3569,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LobbyManager
   _playerNickname: {fileID: 1308380947}
   _createRoomWindow: {fileID: 271483975}
+  _findRoomWindow: {fileID: 760929701}
   _allowSameIpTest: 1
 --- !u!1 &1767435787
 GameObject:
@@ -3795,9 +3812,8 @@ MonoBehaviour:
   GameplayScene: Assets/Inseon/ModifiedCode/Scene/Character 1.unity
   _allPlayersReady: 0
   clientIndex: 0
-  RoomName: 
   RoomId: 
-  RoomPrivate: 0
+  RoomName: 
   HeroNum: 0
 --- !u!1 &1891598904
 GameObject:

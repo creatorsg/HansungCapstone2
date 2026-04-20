@@ -8,6 +8,7 @@ public class LobbyManager : MonoBehaviour
 {
     [SerializeField] private Text _playerNickname;
     [SerializeField] private GameObject _createRoomWindow;
+    [SerializeField] private GameObject _findRoomWindow;
 
     [Header("Debug / Test")]
     [Tooltip("ON: 같은 공인 IP끼리도 접속 허용 (테스트용). 실제 배포 시 OFF 권장.")]
@@ -38,6 +39,9 @@ public class LobbyManager : MonoBehaviour
 
     public void OpenCreateRoomWindow() => _createRoomWindow.SetActive(true);
     public void CloseCreateRoomWindow() => _createRoomWindow.SetActive(false);
+
+    public void OpenFindRoomWindow() => _findRoomWindow.SetActive(true);
+    public void CloseFindRoomWindow() => _findRoomWindow.SetActive(false);
 
     public void RefreshRoomList()
     {

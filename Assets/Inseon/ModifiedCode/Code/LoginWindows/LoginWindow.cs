@@ -1,14 +1,17 @@
+using inseon.Playfab.User;
 using PlayFab;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace inseon.Playfab.User.Login
+namespace inseon.LoginWindows.Login.Login
 {
     public class LoginWindow : MonoBehaviour
     {
         [SerializeField] private InputField _id;
         [SerializeField] private InputField _pw;
         [SerializeField] private GameObject _registerWindow;
+
         public void LoginWithPlayFab()
         {
             var ID = _id.text?.Trim();
