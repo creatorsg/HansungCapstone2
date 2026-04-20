@@ -69,27 +69,12 @@ public class FindRoomWindow : MonoBehaviour
                     return;
                 }
 
-                // 비밀번호 방이면 PasswordInputWindow를 열어 비번 입력
-                if (room.isPrivate)
-                {
-                    if (PasswordInputWindow.Instance != null)
-                    {
-                        gameObject.SetActive(false);        // 방 코드 창 닫기
-                        PasswordInputWindow.Instance.Open(room);
-                    }
-                    else
-                    {
-                        SetStatus("비밀번호가 필요한 방입니다.", true);
-                        _joinButton.interactable = true;
-                    }
-                    return;
-                }
-
-                // 2단계: 일반 방 입장
+                // 2단계: 입장 시도 (private/일반 구분은 LobbyManager가 처리)
+                // - 일반방: 바로 접속
+                // - 비밀방: LobbyManager가 _passwordInputWindow.Open(room) 호출
                 SetStatus("방에 입장하는 중...", false);
+                gameObject.SetActive(false);            // 방 코드 창 먼저 닫기
                 LobbyManager.Instance.JoinRoom(room);
-
-                gameObject.SetActive(false);
             },
             onError: errMsg =>
             {

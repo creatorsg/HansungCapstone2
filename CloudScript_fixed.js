@@ -320,12 +320,8 @@ function leaveRoom(args)
 
     var room = JSON.parse(data.Data[roomKey]);
 
-    if (room.hostPlayFabId === currentPlayerId)
-    {
-        removeRoom(args);
-        return;
-    }
-
+    // 호스트 여부와 무관하게 항상 playerCount만 감소
+    // (호스트가 방을 폭파할 때는 RemoveRoom을 직접 호출 → OnStopHost에서 처리)
     room.playerCount = Math.max(0, room.playerCount - 1);
 
     server.SetTitleInternalData({

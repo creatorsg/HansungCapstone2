@@ -21,6 +21,7 @@ namespace Jun {
             {
                 PlayfabCommand.RemoveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 방 제거 요청: {RoomId}");
+                RoomId = ""; // OnServerDisconnect 중복 호출 방지
             }
         }
 
@@ -32,9 +33,26 @@ namespace Jun {
             {
                 PlayfabCommand.RemoveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 게임 시작 - 방 목록에서 제거: {RoomId}");
+                RoomId = ""; // 씬 전환 후 OnServerDisconnect 중복 호출 방지
             }
 
             base.OnRoomServerPlayersReady(); // 씬 전환 실행
+        }
+
+        /// <summary>
+        /// 클라이언트가 정상/비정상 종료로 연결이 끊겼을 때 서버에서 호출됩니다.
+        /// PlayFab playerCount를 롤백하여 유령 인원 문제를 방지합니다.
+        /// </summary>
+        public override void OnServerDisconnect(NetworkConnectionToClient conn)
+        {
+            // RoomId가 비어있으면 이미 RemoveRoom됐거나 방이 없는 상태 → 스킵
+            if (!string.IsNullOrEmpty(RoomId))
+            {
+                PlayfabCommand.LeaveRoom(RoomId);
+                Debug.Log($"[GameRoomManager] 클라이언트 연결 종료 → PlayFab playerCount 롤백: {RoomId}");
+            }
+
+            base.OnServerDisconnect(conn);
         }
         // �κ񿡼� ���������� �Ѿ �� �������� ����Ǵ� �Լ�
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
