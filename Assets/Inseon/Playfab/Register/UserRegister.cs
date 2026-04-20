@@ -1,4 +1,5 @@
 using PlayFab;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ namespace inseon.Server.Playfab.Register
         [field: SerializeField] private InputField PW;
         [field: SerializeField] private InputField PW_Check;
         [field: SerializeField] private InputField Nickname;
-        [field: SerializeField] private Text RegisterState;
+        [field: SerializeField] private TextMeshProUGUI RegisterState;
         [field: SerializeField] private Button RegisterButton;
 
         private bool _inProgress;

@@ -1,6 +1,7 @@
 using inseon.Playfab.User;
 using PlayFab;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace inseon.LoginWindows.Login.Register
 {
     public class RegisterWindow : MonoBehaviour
     {
-        [SerializeField] private Text _registerState;
+        [SerializeField] private TextMeshProUGUI _registerState;
         [SerializeField] private InputField _IDField;
         [SerializeField] private InputField _PWField;
         [SerializeField] private InputField _PWCheckField;
@@ -28,25 +29,25 @@ namespace inseon.LoginWindows.Login.Register
 
             if (string.IsNullOrEmpty(id))
             {
-                SetState("ID¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+                SetState("IDï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
                 return;
             }
 
             if (string.IsNullOrEmpty(pw))
             {
-                SetState("PW¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+                SetState("PWï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
                 return;
             }
 
             if (string.IsNullOrEmpty(nickname))
             {
-                SetState("nickNameÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+                SetState("nickNameï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
                 return;
             }
 
             if (pw != pw2)
             {
-                SetState("ºñ¹Ð¹øÈ£°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù.");
+                SetState("ï¿½ï¿½Ð¹ï¿½È£ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.");
                 return;
             }
 
@@ -57,7 +58,7 @@ namespace inseon.LoginWindows.Login.Register
         {
             _isProcessing = true;
             _registerButton.interactable = false;
-            SetState("°¡ÀÔ Áß...");
+            SetState("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½...");
 
             inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayFabUser(
                 id,
@@ -65,36 +66,36 @@ namespace inseon.LoginWindows.Login.Register
                 nickname,
                 onOk: _ =>
                 {
-                    SetState("µ¥ÀÌÅÍ ÃÊ±âÈ­ Áß...");
+                    SetState("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½...");
 
                     inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
                         onOkJson: json =>
                         {
                             Debug.Log("Init OK: " + json);
-                            SetState("°¡ÀÔ ¿Ï·á!");
+                            SetState("ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½!");
                             PlayfabUserManage.Login(id, pw,
                                 PlayfabUserManage.SuccessLogin,
                                 err =>
                                 {
-                                    SetState("ÀÚµ¿ ·Î±×ÀÎ ½ÇÆÐ. ¼öµ¿À¸·Î ·Î±×ÀÎÇØÁÖ¼¼¿ä.");
+                                    SetState("ï¿½Úµï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
                                     EndProgress();
                                 });
                             EndProgress();
                         },
                         onCloudScriptError: csErr =>
                         {
-                            SetState($"¼­¹ö ÃÊ±âÈ­ ½ÇÆÐ: {csErr.message}");
+                            SetState($"ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½: {csErr.message}");
                             EndProgress();
                         },
                         onTransportError: pfErr =>
                         {
                             Debug.LogError(pfErr.GenerateErrorReport());
-                            SetState("³×Æ®¿öÅ©/ÀÎÁõ ¿À·ù·Î ÃÊ±âÈ­ ½ÇÆÐ");
+                            SetState("ï¿½ï¿½Æ®ï¿½ï¿½Å©/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½");
                             EndProgress();
                         }
                     );
                 },
-                onError: e => Fail(e, "°¡ÀÔ ½ÇÆÐ")
+                onError: e => Fail(e, "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")
             );
         }
 

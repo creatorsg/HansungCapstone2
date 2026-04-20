@@ -1,6 +1,7 @@
 using Edgegap;
 using Mirror;
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ namespace inseon.Lobby.Server.Room.CreateWindow
         [SerializeField] private InputField _password;
         [SerializeField] private Toggle _privateRoomSetting;
 
-        [SerializeField] private Text _currentSettingRoomNumber;
+        [SerializeField] private TextMeshProUGUI _currentSettingRoomNumber;
         [SerializeField] private Button _roomNumberUpButton;
         [SerializeField] private Button _roomNumberDownButton;
 

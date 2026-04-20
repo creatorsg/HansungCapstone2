@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,7 @@ public class FindRoomWindow : MonoBehaviour
     [SerializeField] private Button     _joinButton;
 
     [Tooltip("검색/오류 결과를 표시할 텍스트 (없으면 생략 가능)")]
-    [SerializeField] private Text       _statusText;
+    [SerializeField] private TextMeshProUGUI _statusText;
 
     private void Awake()
     {
@@ -68,20 +69,26 @@ public class FindRoomWindow : MonoBehaviour
                     return;
                 }
 
-                // 비밀번호 방이면 비밀번호 입력 UI가 별도로 필요 (Issue #2)
-                // 현재 단계에서는 비공개방 안내만 표시
+                // 비밀번호 방이면 PasswordInputWindow를 열어 비번 입력
                 if (room.isPrivate)
                 {
-                    SetStatus("비밀번호가 필요한 방입니다. 목록에서 입장해주세요.", true);
-                    _joinButton.interactable = true;
+                    if (PasswordInputWindow.Instance != null)
+                    {
+                        gameObject.SetActive(false);        // 방 코드 창 닫기
+                        PasswordInputWindow.Instance.Open(room);
+                    }
+                    else
+                    {
+                        SetStatus("비밀번호가 필요한 방입니다.", true);
+                        _joinButton.interactable = true;
+                    }
                     return;
                 }
 
-                // 2단계: 실제 입장
+                // 2단계: 일반 방 입장
                 SetStatus("방에 입장하는 중...", false);
                 LobbyManager.Instance.JoinRoom(room);
 
-                // 입장 시도 후 창 닫기
                 gameObject.SetActive(false);
             },
             onError: errMsg =>

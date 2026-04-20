@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
@@ -27,9 +28,13 @@ public static class PlayfabCommand
             {
                 if (result.Error != null)
                 {
-                    var msg = $"CloudScript Error ({functionName}): {result.Error.Message}";
-                    Debug.LogError(msg);
-                    onError?.Invoke(result.Error.Message);
+                    // result.Error.Message = "JavascriptException" (오류 유형)
+                    // result.Error.Error   = CloudScript에서 throw한 실제 메시지 (e.g. "Wrong password")
+                    var detail = !string.IsNullOrEmpty(result.Error.Error)
+                        ? result.Error.Error
+                        : result.Error.Message;
+                    Debug.LogError($"CloudScript Error ({functionName}): [{result.Error.Message}] {result.Error.Error}");
+                    onError?.Invoke(detail);
                     return;
                 }
 
@@ -137,7 +142,7 @@ public static class PlayfabCommand
         );
     }
 
-    public static void JoinRoom(string roomId, string password, Action<RoomInfo> onSuccess)
+    public static void JoinRoom(string roomId, string password, Action<RoomInfo> onSuccess, Action<string> onError = null)
     {
         ExecuteCloudScript(
             "JoinRoom",
@@ -145,9 +150,22 @@ public static class PlayfabCommand
             result =>
             {
                 var json = result.ToString();
+
+                // CloudScript에서 throw한 오류는 { cloudError: "..." } 형태로 반환됨
+                // (PlayFab SDK가 string throw를 ScriptExecutionError에 제대로 담지 않는 문제 우회)
+                var jObj = JObject.Parse(json);
+                if (jObj["cloudError"] != null)
+                {
+                    var errMsg = jObj["cloudError"].ToString();
+                    Debug.LogWarning($"[JoinRoom] CloudScript 오류: {errMsg}");
+                    onError?.Invoke(errMsg);
+                    return;
+                }
+
                 var room = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomInfo>(json);
                 onSuccess?.Invoke(room);
-            }
+            },
+            onError
         );
     }
 

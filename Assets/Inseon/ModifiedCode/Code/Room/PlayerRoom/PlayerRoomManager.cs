@@ -1,6 +1,7 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Image = UnityEngine.UI.Image;
@@ -19,8 +20,8 @@ public class PlayerRoomManager : MonoBehaviour
     public static PlayerRoomManager Instance;
 
     [Header("방 정보")]
-    [SerializeField] private Text   roomName;
-    [SerializeField] private Text   roomID;
+    [SerializeField] private TextMeshProUGUI roomName;
+    [SerializeField] private TextMeshProUGUI roomID;
     [SerializeField] private Image  roomTypeImage;
     [SerializeField] private Sprite privateSprite;
     [SerializeField] private Sprite publicSprite;
@@ -31,7 +32,7 @@ public class PlayerRoomManager : MonoBehaviour
     [Header("Start / Ready 공용 버튼")]
     [Tooltip("Host면 Start, Client면 Ready로 동작하는 단일 버튼")]
     [SerializeField] private Button          actionButton;
-    [SerializeField] private Text            actionButtonText;
+    [SerializeField] private TextMeshProUGUI actionButtonText;
 
     private GameRoomManager _gameRoomManager;
     private bool _isHost = false;

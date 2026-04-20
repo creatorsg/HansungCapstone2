@@ -1,11 +1,12 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerSlot : MonoBehaviour
 {
-    [SerializeField] private Text playerDisplayName;
-    [SerializeField] private Button controlButton;
-    [SerializeField] private Text playerState;
+    [SerializeField] private TextMeshProUGUI playerDisplayName;
+    [SerializeField] private Button          controlButton;
+    [SerializeField] private TextMeshProUGUI playerState;
 
     /// <summary>
     /// 플레이어 이름과 역할(Host/추방버튼)을 한번에 설정합니다.

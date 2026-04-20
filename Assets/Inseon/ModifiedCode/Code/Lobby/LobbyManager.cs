@@ -1,14 +1,15 @@
-using System;
 using Edgegap;
 using Mirror;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
-    [SerializeField] private Text _playerNickname;
+    [SerializeField] private TextMeshProUGUI _playerNickname;
     [SerializeField] private GameObject _createRoomWindow;
     [SerializeField] private GameObject _findRoomWindow;
+    [SerializeField] private PasswordInputWindow _passwordInputWindow;
 
     [Header("Debug / Test")]
     [Tooltip("ON: 같은 공인 IP끼리도 접속 허용 (테스트용). 실제 배포 시 OFF 권장.")]
@@ -32,16 +33,18 @@ public class LobbyManager : MonoBehaviour
         }
 
         _playerNickname.text = _player.Nickname;
-
-        // 로비 진입 시 자동으로 방 목록 갱신
         RefreshRoomList();
     }
+
+    // ─── 창 열기/닫기 ────────────────────────────────────────────
 
     public void OpenCreateRoomWindow() => _createRoomWindow.SetActive(true);
     public void CloseCreateRoomWindow() => _createRoomWindow.SetActive(false);
 
     public void OpenFindRoomWindow() => _findRoomWindow.SetActive(true);
     public void CloseFindRoomWindow() => _findRoomWindow.SetActive(false);
+
+    // ─── 방 목록 ─────────────────────────────────────────────────
 
     public void RefreshRoomList()
     {
@@ -52,22 +55,57 @@ public class LobbyManager : MonoBehaviour
         });
     }
 
-    public async void JoinRoom(RoomInfo room)
+    // ─── 방 입장 Public API ───────────────────────────────────────
+
+    /// <summary>
+    /// 방 목록/코드 검색에서 입장 버튼을 눌렀을 때 호출됩니다.
+    /// 비번방이면 PasswordInputWindow를 열고, 일반방이면 바로 입장합니다.
+    /// </summary>
+    public void JoinRoom(RoomInfo room)
+    {
+        if (room.isPrivate)
+        {
+            if (_passwordInputWindow == null)
+            {
+                Debug.LogError("[LobbyManager] PasswordInputWindow가 Inspector에 연결되지 않았습니다!");
+                return;
+            }
+            _passwordInputWindow.Open(room);
+        }
+        else
+        {
+            JoinRoomInternal(room, null, null);
+        }
+    }
+
+    /// <summary>
+    /// PasswordInputWindow에서 비밀번호 확인 후 호출됩니다.
+    /// 비밀번호가 틀리면 onError 콜백으로 에러 메시지를 전달합니다.
+    /// </summary>
+    public void JoinRoomWithPassword(RoomInfo room, string password, System.Action<string> onError = null)
+    {
+        JoinRoomInternal(room, password, onError);
+    }
+
+    // ─── 실제 접속 로직 ───────────────────────────────────────────
+
+    private async void JoinRoomInternal(RoomInfo room, string password, System.Action<string> onError)
     {
         var manager = Mirror.NetworkManager.singleton as Jun.GameRoomManager;
-
         if (manager == null)
         {
-            Debug.LogError("GameRoomManager를 찾을 수 없습니다. Scene에 GameRoomManager가 있는지 확인하세요.");
+            const string err = "GameRoomManager를 찾을 수 없습니다. Scene에 GameRoomManager가 있는지 확인하세요.";
+            Debug.LogError(err);
+            onError?.Invoke(err);
             return;
         }
 
-        // ── [FIX] PlayfabCommand.JoinRoom 콜백은 joinedRoom을 사용해야 함 ──
-        // GetRoomList는 보안상 sessionToken을 지워서 반환하므로,
-        // JoinRoom CloudScript가 반환하는 joinedRoom에만 sessionToken이 존재함.
-        PlayfabCommand.JoinRoom(room.roomId, null, async joinedRoom =>
+        PlayfabCommand.JoinRoom(room.roomId, password, async joinedRoom =>
         {
-            // ── 진단 로그 (joinedRoom 사용) ──
+            // ── 접속 성공 시 비번 창 닫기 ──
+            if (_passwordInputWindow != null && _passwordInputWindow.gameObject.activeSelf)
+                _passwordInputWindow.gameObject.SetActive(false);
+
             Debug.Log($"[JoinRoom] PlayFab(JoinRoom CS)에서 받은 방 정보:\n" +
                       $"  roomId      = {joinedRoom.roomId}\n" +
                       $"  ip          = {joinedRoom.ip}\n" +
@@ -76,7 +114,6 @@ public class LobbyManager : MonoBehaviour
                       $"  sessionToken= {joinedRoom.sessionToken}\n" +
                       $"  hostPublicIp= {joinedRoom.hostPublicIp}");
 
-            // sessionToken이 0이면 CloudScript 버전 불일치 → 즉시 중단
             if (joinedRoom.sessionToken == 0)
             {
                 Debug.LogError("[JoinRoom] sessionToken이 0입니다! 연결을 중단하고 playerCount를 롤백합니다.");
@@ -84,14 +121,11 @@ public class LobbyManager : MonoBehaviour
                 return;
             }
 
-            // ── 클라이언트 공인 IP (same-IP 테스트 판별용으로만 사용) ──
             string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
             Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
 
             bool isSameIp = !string.IsNullOrEmpty(joinedRoom.hostPublicIp) &&
                             joinedRoom.hostPublicIp == clientIp;
-
-            Debug.Log($"[JoinRoom] 클라이언트 IP={clientIp} / 호스트 IP={joinedRoom.hostPublicIp} / SameIp={isSameIp}");
 
             if (isSameIp && !_allowSameIpTest)
             {
@@ -100,11 +134,6 @@ public class LobbyManager : MonoBehaviour
                 return;
             }
 
-            // ── 선발급 userToken 배열에서 이 클라이언트 슬롯 인덱스 계산 ──
-            // JoinRoom CS가 playerCount를 이미 올린 상태로 반환하므로:
-            //   playerCount=1 → 호스트(슬롯0, 방 생성 시 처리됨)
-            //   playerCount=2 → 첫 번째 클라이언트 → 슬롯1
-            //   playerCount=3 → 두 번째 클라이언트 → 슬롯2
             int tokenIndex = joinedRoom.playerCount - 1;
 
             if (joinedRoom.userTokens == null || joinedRoom.userTokens.Length <= tokenIndex)
@@ -121,12 +150,11 @@ public class LobbyManager : MonoBehaviour
 
             if (userToken == 0)
             {
-                Debug.LogError($"[JoinRoom] 슬롯[{tokenIndex}]의 userToken이 0. 릴레이 세션 생성 시 토큰이 발급되지 않았습니다.");
+                Debug.LogError($"[JoinRoom] 슬롯[{tokenIndex}]의 userToken이 0.");
                 PlayfabCommand.LeaveRoom(joinedRoom.roomId);
                 return;
             }
 
-            // ── Transport에 릴레이 정보 설정 ──
             var transport = manager.GetComponent<EdgegapKcpTransport>();
             if (transport == null)
             {
@@ -135,10 +163,10 @@ public class LobbyManager : MonoBehaviour
                 return;
             }
 
-            transport.relayAddress        = joinedRoom.ip;
+            transport.relayAddress = joinedRoom.ip;
             transport.relayGameClientPort = (ushort)joinedRoom.port;
-            transport.sessionId           = joinedRoom.sessionToken;
-            transport.userId              = userToken;
+            transport.sessionId = joinedRoom.sessionToken;
+            transport.userId = userToken;
 
             Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
                       $"  relayAddress       = {transport.relayAddress}\n" +
@@ -146,20 +174,18 @@ public class LobbyManager : MonoBehaviour
                       $"  sessionId          = {transport.sessionId}\n" +
                       $"  userId             = {transport.userId}");
 
-            // 이미 연결 중이면 먼저 정리
             if (NetworkClient.active)
             {
                 Debug.LogWarning("[JoinRoom] 기존 클라이언트 연결 감지 → 정리 후 재접속");
                 manager.StopClient();
             }
 
-            // ── 클라이언트 접속 전, 방 정보를 manager에 저장 ──
-            // (Host는 CreateRoomWindow에서 이미 세팅 완료)
-            manager.RoomId   = joinedRoom.roomId;
+            manager.RoomId = joinedRoom.roomId;
             manager.RoomName = joinedRoom.roomName;
 
             manager.networkAddress = joinedRoom.ip;
             manager.StartClient();
-        });
+
+        }, onError); // 에러 콜백 전달 �
     }
 }
