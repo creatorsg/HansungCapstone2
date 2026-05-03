@@ -151,6 +151,9 @@ public class PlayerRoomManager : MonoBehaviour
 
         var slots = new List<NetworkRoomPlayer>(_gameRoomManager.roomSlots);
 
+        // 로컬 플레이어가 호스트(서버)인지 확인 – 추방 버튼 활성화 기준
+        bool localIsHost = NetworkServer.active;
+
         for (int i = 0; i < playerSlots.Count; i++)
         {
             if (playerSlots[i] == null) continue;
@@ -161,16 +164,39 @@ public class PlayerRoomManager : MonoBehaviour
                 string nick = (roomPlayer != null && !string.IsNullOrEmpty(roomPlayer.PlayerNickname))
                               ? roomPlayer.PlayerNickname
                               : "...";
-                bool isHost = (i == 0);
+                bool isHostSlot = (i == 0);
+
+                // 추방 콜백: 호스트만 생성, 호스트 슬롯에는 null
+                System.Action kickAction = null;
+                if (!isHostSlot && localIsHost && roomPlayer != null)
+                {
+                    uint targetNetId = roomPlayer.netId;
+                    kickAction = () => KickPlayer(targetNetId);
+                }
 
                 playerSlots[i].gameObject.SetActive(true);
-                playerSlots[i].SetPlayer(nick, isHost);
+                playerSlots[i].SetPlayer(nick, isHostSlot, localIsHost, kickAction);
             }
             else
             {
                 playerSlots[i].SetEmpty();
             }
         }
+    }
+
+    /// <summary>
+    /// 호스트가 특정 플레이어를 추방합니다.
+    /// </summary>
+    private void KickPlayer(uint targetNetId)
+    {
+        var localPlayer = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
+        if (localPlayer == null)
+        {
+            Debug.LogWarning("[PlayerRoomManager] KickPlayer: 로컬 플레이어를 찾을 수 없습니다.");
+            return;
+        }
+        Debug.Log($"[PlayerRoomManager] 추방 요청 → netId={targetNetId}");
+        localPlayer.CmdKickPlayer(targetNetId);
     }
 
     /// <summary>

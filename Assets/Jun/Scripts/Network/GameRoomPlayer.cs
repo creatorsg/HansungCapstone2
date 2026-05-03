@@ -79,6 +79,33 @@ namespace Jun
             LobbyManager.Instance?.RefreshPlayerSlots();
         }
 
+        // ── 추방 ──
+
+        /// <summary>
+        /// 호스트가 특정 플레이어를 강제로 연결 해제(추방)합니다.
+        /// [Command]이므로 서버에서 실행되며, 발신자가 호스트 슬롯인지 재검증합니다.
+        /// </summary>
+        [Command]
+        public void CmdKickPlayer(uint targetNetId)
+        {
+            // 서버에서 실행됨.
+            // 호스트 판별: Mirror 호스트 모드에서 호스트의 connectionToClient == NetworkServer.localConnection
+            if (connectionToClient != NetworkServer.localConnection)
+            {
+                Debug.LogWarning($"[GameRoomPlayer] CmdKickPlayer: 호스트가 아닌 플레이어의 추방 시도 차단 (netId={netId})");
+                return;
+            }
+
+            if (!NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity target))
+            {
+                Debug.LogWarning($"[GameRoomPlayer] CmdKickPlayer: 대상 netId={targetNetId} 를 찾을 수 없습니다.");
+                return;
+            }
+
+            Debug.Log($"[GameRoomPlayer] 플레이어 추방: netId={targetNetId}");
+            target.connectionToClient?.Disconnect();
+        }
+
         // ── 채팅 ──
 
         /// <summary>
