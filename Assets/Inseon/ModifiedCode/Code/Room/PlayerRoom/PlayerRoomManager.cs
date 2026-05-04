@@ -103,16 +103,19 @@ public class PlayerRoomManager : MonoBehaviour
         if (_gameRoomManager == null) return;
 
         var slots = _gameRoomManager.roomSlots;
-        if (slots.Count <= 1)          // 혼자면 시작 불가
+
+        // 혼자일 때(호스트만 있을 때)는 바로 활성화
+        if (slots.Count <= 1)
         {
-            actionButton.interactable = false;
+            actionButton.interactable = true;
             return;
         }
 
+        // 다른 플레이어가 있을 때는 모두 Ready 상태여야 활성화
         bool allReady = true;
         foreach (var slot in slots)
         {
-            // Host 자신(index 0)은 제외하고 나머지가 모두 ready인지 확인
+            // Host 자신은 제외하고 나머지가 모두 ready인지 확인
             if (slot.isLocalPlayer) continue;
             if (!slot.readyToBegin) { allReady = false; break; }
         }
@@ -151,8 +154,16 @@ public class PlayerRoomManager : MonoBehaviour
 
         var slots = new List<NetworkRoomPlayer>(_gameRoomManager.roomSlots);
 
-        // 로컬 플레이어가 호스트(서버)인지 확인 – 추방 버튼 활성화 기준
+        // 로컬 플레이어가 호스트(서버)인지 확인
         bool localIsHost = NetworkServer.active;
+
+        // 올리기 가능 여부: CharCount > 1 인 다른 플레이어가 있어야 함
+        bool anyRichEnough = false;
+        foreach (var s in slots)
+        {
+            var p = s as GameRoomPlayer;
+            if (p != null && p.CharCount > 1) { anyRichEnough = true; break; }
+        }
 
         for (int i = 0; i < playerSlots.Count; i++)
         {
@@ -165,8 +176,19 @@ public class PlayerRoomManager : MonoBehaviour
                               ? roomPlayer.PlayerNickname
                               : "...";
                 bool isHostSlot = (i == 0);
+                int  charCount  = roomPlayer != null ? roomPlayer.CharCount : 1;
 
-                // 추방 콜백: 호스트만 생성, 호스트 슬롯에는 null
+                // 올리기: 이 슬롯 자신을 제외한 다른 플레이어 중 CharCount > 1 이 있어야 함
+                bool canUp = localIsHost && slots.Count > 1 &&
+                             slots.Exists(s => {
+                                 var p = s as GameRoomPlayer;
+                                 return p != null && p != roomPlayer && p.CharCount > 1;
+                             });
+
+                // 내리기: 자신이 1 이상이고, 받을 다른 플레이어가 있어야 함
+                bool canDown = localIsHost && charCount > 1 && slots.Count > 1;
+
+                // 추방 콜백
                 System.Action kickAction = null;
                 if (!isHostSlot && localIsHost && roomPlayer != null)
                 {
@@ -174,14 +196,35 @@ public class PlayerRoomManager : MonoBehaviour
                     kickAction = () => KickPlayer(targetNetId);
                 }
 
+                // 올리기 / 내리기 콜백
+                System.Action upAction = null, downAction = null;
+                if (localIsHost && roomPlayer != null)
+                {
+                    uint targetNetId = roomPlayer.netId;
+                    upAction   = () => AdjustCharCount(targetNetId,  1);
+                    downAction = () => AdjustCharCount(targetNetId, -1);
+                }
+
                 playerSlots[i].gameObject.SetActive(true);
-                playerSlots[i].SetPlayer(nick, isHostSlot, localIsHost, kickAction);
+                playerSlots[i].SetPlayer(nick, isHostSlot, localIsHost,
+                                         charCount, canUp, canDown,
+                                         kickAction, upAction, downAction);
             }
             else
             {
                 playerSlots[i].SetEmpty();
             }
         }
+    }
+
+    /// <summary>
+    /// 호스트가 특정 플레이어의 CharCount를 delta만큼 조정 요청합니다.
+    /// </summary>
+    private void AdjustCharCount(uint targetNetId, int delta)
+    {
+        var localPlayer = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
+        if (localPlayer == null) return;
+        localPlayer.CmdAdjustCharCount(targetNetId, delta);
     }
 
     /// <summary>
@@ -207,6 +250,31 @@ public class PlayerRoomManager : MonoBehaviour
         if (roomID == null) return;
         GUIUtility.systemCopyBuffer = roomID.text;
         Debug.Log("[PlayerRoomManager] Room Code Copied: " + roomID.text);
+    }
+
+    // ────────────────────────────────────────────────
+    //  방 나가기
+    // ────────────────────────────────────────────────
+
+    /// <summary>
+    /// 방 나가기 버튼 OnClick에 연결합니다.
+    /// Host면 StopHost()로 방 전체를 닫고, Client면 StopClient()로 접속만 끊습니다.
+    /// </summary>
+    public void OnClickLeaveRoom()
+    {
+        EnsureManager();
+        if (_gameRoomManager == null) return;
+
+        if (_isHost)
+        {
+            // OnStopHost() → PlayfabCommand.RemoveRoom() 자동 호출
+            _gameRoomManager.StopHost();
+        }
+        else
+        {
+            // 클라이언트 퇴장: OnServerDisconnect() → PlayfabCommand.LeaveRoom() 자동 호출
+            _gameRoomManager.StopClient();
+        }
     }
 
     // ────────────────────────────────────────────────

@@ -16,13 +16,31 @@ namespace Jun {
 
         public override void OnStopHost()
         {
-            base.OnStopHost();
+            // RemoveRoom을 base보다 먼저 호출해야 합니다.
+            // base.OnStopHost()가 네트워크 스택을 닫기 전에 HTTP 요청을 보내야
+            // 강제 종료나 씬 전환 중에도 PlayFab에 전달될 가능성이 높아집니다.
             if (!string.IsNullOrEmpty(RoomId))
             {
                 PlayfabCommand.RemoveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 방 제거 요청: {RoomId}");
-                RoomId = ""; // OnServerDisconnect 중복 호출 방지
+                RoomId = "";
             }
+            base.OnStopHost();
+        }
+
+        /// <summary>
+        /// 게임 강제 종료 시 호출됩니다.
+        /// 호스트 중이면 방을 제거한 뒤 base에 위임합니다.
+        /// </summary>
+        public override void OnApplicationQuit()
+        {
+            if (NetworkServer.active && !string.IsNullOrEmpty(RoomId))
+            {
+                PlayfabCommand.RemoveRoom(RoomId);
+                Debug.Log($"[GameRoomManager] 앱 종료 - 방 제거 요청: {RoomId}");
+                RoomId = "";
+            }
+            base.OnApplicationQuit();
         }
 
         // 모든 플레이어가 Ready → 게임 씬으로 전환 직전에 호출됨

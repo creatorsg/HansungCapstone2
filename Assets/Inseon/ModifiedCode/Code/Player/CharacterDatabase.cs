@@ -30,7 +30,16 @@ public static class CharacterDatabase
             // JObject로 파싱해야 중첩 오브젝트(예: characterState:{...})가 있어도 안전하게 읽을 수 있습니다.
             if (!string.IsNullOrEmpty(item.CustomData))
             {
-                var d = JObject.Parse(item.CustomData);
+                var root = JObject.Parse(item.CustomData);
+
+                // CustomData 구조: { "characterState": { "characterCode": "C001", "hp": 25, ... } }
+                // "characterState" 래퍼가 있으면 그 안을 읽고, 없으면 루트를 직접 읽는다.
+                var d = (root["characterState"] as JObject) ?? root;
+
+                // characterCode는 Catalog ItemId와 동일하지만 데이터 내부에도 있으면 우선 사용
+                if (d["characterCode"] != null)
+                    c.characterCode = d["characterCode"].Value<string>();
+
                 c.hp               = GetInt(d, "hp");
                 c.mana             = GetInt(d, "mana");
                 c.attack           = GetInt(d, "attack");

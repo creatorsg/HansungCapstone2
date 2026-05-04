@@ -180,7 +180,7 @@ function createRoomInfo(args)
 }
 
 // 방이 생성된 지 이 시간(ms)이 지나면 좀비 방으로 간주하고 자동 삭제
-var ROOM_TTL_MS = 8 * 60 * 60 * 1000; // 8시간
+var ROOM_TTL_MS = 1 * 60 * 60 * 1000; // 1시간
 
 function GetRoomList()
 {

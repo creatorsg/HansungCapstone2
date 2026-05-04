@@ -32,8 +32,6 @@ namespace Jun
         [SerializeField] private TMP_InputField  _chatInput;
         [SerializeField] private Button          _sendButton;
 
-        private int _playerNum = 0;
-
         private void Awake()
         {
             Instance = this;
@@ -61,11 +59,14 @@ namespace Jun
             player.CMDChoiceHero(index);
         }
 
+        /// <summary>
+        /// 플레이어 수 변경 시 호출됩니다.
+        /// 카운터 대신 roomSlots를 직접 읽어 정확한 인원을 표시합니다.
+        /// entering 파라미터는 호환성을 위해 유지하지만 내부에서 사용하지 않습니다.
+        /// </summary>
         public void UpdatePlayerNum(bool entering)
         {
-            _playerNum = entering ? _playerNum + 1 : Mathf.Max(0, _playerNum - 1);
-            if (_playerNumText != null)
-                _playerNumText.text = _playerNum.ToString();
+            RefreshPlayerSlots();
         }
 
         public void OnClickedReady()
@@ -103,7 +104,7 @@ namespace Jun
         // ── 플레이어 슬롯 ──
 
         /// <summary>
-        /// 현재 방의 roomSlots 상태에 맞게 슬롯 UI를 갱신합니다.
+        /// 현재 방의 roomSlots 상태에 맞게 슬롯 UI와 인원 수 텍스트를 갱신합니다.
         /// GameRoomPlayer.OnStartClient / OnDestroy / OnNicknameChanged 에서 호출됩니다.
         /// </summary>
         public void RefreshPlayerSlots()
@@ -112,6 +113,15 @@ namespace Jun
 
             var manager = NetworkManager.singleton as GameRoomManager;
             int maxPlayers = (manager != null) ? manager.maxConnections : _playerSlotObjects.Count;
+
+            // roomSlots를 한 번만 List로 변환해서 재사용
+            var slotList = (manager != null)
+                ? new System.Collections.Generic.List<NetworkRoomPlayer>(manager.roomSlots)
+                : new System.Collections.Generic.List<NetworkRoomPlayer>();
+
+            // 실제 인원 수를 roomSlots.Count에서 직접 읽어 텍스트 갱신
+            if (_playerNumText != null)
+                _playerNumText.text = slotList.Count.ToString();
 
             for (int i = 0; i < _playerSlotObjects.Count; i++)
             {
@@ -126,14 +136,9 @@ namespace Jun
                 }
 
                 // 닉네임 표시
-                // roomSlots는 HashSet이라 인덱스 접근 불가 → List로 변환 후 사용
                 if (_playerSlotNames != null && i < _playerSlotNames.Count && _playerSlotNames[i] != null)
                 {
-                    var slotList = (manager != null)
-                        ? new System.Collections.Generic.List<NetworkRoomPlayer>(manager.roomSlots)
-                        : null;
-
-                    if (slotList != null && i < slotList.Count && slotList[i] != null)
+                    if (i < slotList.Count && slotList[i] != null)
                     {
                         var roomPlayer = slotList[i] as GameRoomPlayer;
                         string nick = (roomPlayer != null && !string.IsNullOrEmpty(roomPlayer.PlayerNickname))
