@@ -22,16 +22,21 @@ public class Player : MonoBehaviour
     /// </summary>
     public void SetOwnedCharacters(Dictionary<string, bool> data)
     {
-        _ownedCharacters = data ?? new Dictionary<string, bool>();
+        // 키를 소문자로 정규화하여 저장 — CloudScript/PlayFab 대소문자 불일치 방지
+        _ownedCharacters = new Dictionary<string, bool>();
+        if (data != null)
+            foreach (var pair in data)
+                _ownedCharacters[pair.Key.ToLower()] = pair.Value;
+
         Debug.Log($"[Player] 보유 캐릭터 {_ownedCharacters.Count}개 저장 완료");
     }
 
     /// <summary>
-    /// 해당 캐릭터를 보유하고 있는지 반환합니다.
+    /// 해당 캐릭터를 보유하고 있는지 반환합니다. (대소문자 무시)
     /// </summary>
     public bool OwnsCharacter(string characterCode)
     {
-        return _ownedCharacters.TryGetValue(characterCode, out bool v) && v;
+        return _ownedCharacters.TryGetValue(characterCode.ToLower(), out bool v) && v;
     }
 
     /// <summary>
