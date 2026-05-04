@@ -11,9 +11,10 @@ using Image = UnityEngine.UI.Image;
 /// Jun.LobbyManager 없이 이 클래스 하나로 동작합니다.
 ///
 /// GameRoomPlayer가 호출하는 기능:
-///   - UpdatePlayerNum(bool)  → 내부 카운트 관리 (슬롯으로 대체 가능하여 생략 가능)
+///   - UpdatePlayerNum(bool)    → 슬롯 갱신
 ///   - ActiveBTN(bool isServer) → Host/Client에 맞는 버튼 표시
-///   - RefreshPlayerSlots()   → 슬롯 UI 갱신
+///   - RefreshPlayerSlots()     → 슬롯 UI 갱신
+///   - RefreshStartButton()     → Ready 상태 변화 시 Start 버튼 갱신
 /// </summary>
 public class PlayerRoomManager : MonoBehaviour
 {
@@ -22,9 +23,9 @@ public class PlayerRoomManager : MonoBehaviour
     [Header("방 정보")]
     [SerializeField] private TextMeshProUGUI roomName;
     [SerializeField] private TextMeshProUGUI roomID;
-    [SerializeField] private Image  roomTypeImage;
-    [SerializeField] private Sprite privateSprite;
-    [SerializeField] private Sprite publicSprite;
+    [SerializeField] private Image           roomTypeImage;
+    [SerializeField] private Sprite          privateSprite;
+    [SerializeField] private Sprite          publicSprite;
 
     [Header("플레이어 슬롯 (최대 4)")]
     [SerializeField] private List<PlayerSlot> playerSlots;
@@ -44,7 +45,6 @@ public class PlayerRoomManager : MonoBehaviour
         Instance = this;
         _gameRoomManager = FindAnyObjectByType<GameRoomManager>();
 
-        // 시작 전 버튼 비활성화
         if (actionButton != null) actionButton.interactable = false;
     }
 
@@ -59,7 +59,6 @@ public class PlayerRoomManager : MonoBehaviour
 
     /// <summary>
     /// Host/Client 여부에 따라 버튼 텍스트와 동작을 설정합니다.
-    /// GameRoomPlayer.OnStartClient(isServer) 에서 호출됩니다.
     /// </summary>
     public void ActiveBTN(bool isServer)
     {
@@ -68,15 +67,13 @@ public class PlayerRoomManager : MonoBehaviour
         if (actionButtonText != null)
             actionButtonText.text = isServer ? "START" : "READY";
 
-        // 버튼 OnClick 재연결 (이전 리스너 제거 후 역할에 맞게 등록)
         if (actionButton != null)
         {
             actionButton.onClick.RemoveAllListeners();
             actionButton.onClick.AddListener(OnClickAction);
         }
 
-        // Host는 모든 플레이어 Ready 상태일 때만 활성화되므로 일단 비활성
-        // Client는 언제든 누를 수 있으므로 활성
+        // Host는 모든 플레이어 Ready 후 활성화, Client는 언제든 활성
         if (actionButton != null)
             actionButton.interactable = !isServer;
 
@@ -93,7 +90,7 @@ public class PlayerRoomManager : MonoBehaviour
 
     /// <summary>
     /// Host의 Start 버튼 활성화 여부를 갱신합니다.
-    /// 누군가의 Ready 상태가 바뀔 때마다 호출됩니다.
+    /// Ready 상태가 바뀔 때마다 호출됩니다.
     /// </summary>
     public void RefreshStartButton()
     {
@@ -111,11 +108,10 @@ public class PlayerRoomManager : MonoBehaviour
             return;
         }
 
-        // 다른 플레이어가 있을 때는 모두 Ready 상태여야 활성화
+        // 다른 플레이어가 있을 때는 모두 Ready여야 활성화
         bool allReady = true;
         foreach (var slot in slots)
         {
-            // Host 자신은 제외하고 나머지가 모두 ready인지 확인
             if (slot.isLocalPlayer) continue;
             if (!slot.readyToBegin) { allReady = false; break; }
         }
@@ -146,6 +142,7 @@ public class PlayerRoomManager : MonoBehaviour
 
     /// <summary>
     /// 현재 roomSlots를 읽어 PlayerSlot UI를 갱신합니다.
+    /// CharCount 올리기/내리기 버튼 포함.
     /// </summary>
     public void RefreshPlayerSlots()
     {
@@ -154,16 +151,7 @@ public class PlayerRoomManager : MonoBehaviour
 
         var slots = new List<NetworkRoomPlayer>(_gameRoomManager.roomSlots);
 
-        // 로컬 플레이어가 호스트(서버)인지 확인
         bool localIsHost = NetworkServer.active;
-
-        // 올리기 가능 여부: CharCount > 1 인 다른 플레이어가 있어야 함
-        bool anyRichEnough = false;
-        foreach (var s in slots)
-        {
-            var p = s as GameRoomPlayer;
-            if (p != null && p.CharCount > 1) { anyRichEnough = true; break; }
-        }
 
         for (int i = 0; i < playerSlots.Count; i++)
         {
@@ -178,14 +166,14 @@ public class PlayerRoomManager : MonoBehaviour
                 bool isHostSlot = (i == 0);
                 int  charCount  = roomPlayer != null ? roomPlayer.CharCount : 1;
 
-                // 올리기: 이 슬롯 자신을 제외한 다른 플레이어 중 CharCount > 1 이 있어야 함
+                // 올리기: 대상 외 다른 플레이어 중 CharCount > 1 인 사람이 있어야 함
                 bool canUp = localIsHost && slots.Count > 1 &&
                              slots.Exists(s => {
                                  var p = s as GameRoomPlayer;
                                  return p != null && p != roomPlayer && p.CharCount > 1;
                              });
 
-                // 내리기: 자신이 1 이상이고, 받을 다른 플레이어가 있어야 함
+                // 내리기: 본인이 2개 이상이고, 받을 다른 플레이어가 있어야 함
                 bool canDown = localIsHost && charCount > 1 && slots.Count > 1;
 
                 // 추방 콜백
@@ -266,15 +254,9 @@ public class PlayerRoomManager : MonoBehaviour
         if (_gameRoomManager == null) return;
 
         if (_isHost)
-        {
-            // OnStopHost() → PlayfabCommand.RemoveRoom() 자동 호출
-            _gameRoomManager.StopHost();
-        }
+            _gameRoomManager.StopHost();    // OnStopHost() → PlayfabCommand.RemoveRoom() 자동 호출
         else
-        {
-            // 클라이언트 퇴장: OnServerDisconnect() → PlayfabCommand.LeaveRoom() 자동 호출
-            _gameRoomManager.StopClient();
-        }
+            _gameRoomManager.StopClient();  // OnServerDisconnect() → PlayfabCommand.LeaveRoom() 자동 호출
     }
 
     // ────────────────────────────────────────────────
@@ -282,7 +264,6 @@ public class PlayerRoomManager : MonoBehaviour
     // ────────────────────────────────────────────────
 
     /// <summary>
-    /// Inspector의 버튼 OnClick에 연결하거나, ActiveBTN()에서 코드로 등록됩니다.
     /// Host면 게임 시작, Client면 Ready 토글로 동작합니다.
     /// </summary>
     public void OnClickAction()

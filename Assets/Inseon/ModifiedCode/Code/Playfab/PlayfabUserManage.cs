@@ -1,7 +1,9 @@
 using Mirror;
+using Newtonsoft.Json.Linq;
 using PlayFab;
 using PlayFab.ClientModels;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -111,7 +113,27 @@ namespace inseon.Playfab.User
             {
                 PlayfabCommand.CheckPlayerCharacterData(chars =>
                 {
-                    PlayfabCommand.LoadCharacterCatalog(() =>   
+                    // CloudScript 반환: { "characterState": { "C001": true, "C002": false, ... } }
+                    // 결과를 Player 세션에 캐싱해 캐릭터 선택 씬에서 재사용합니다.
+                    if (chars != null)
+                    {
+                        try
+                        {
+                            var root  = JObject.Parse(chars.ToString());
+                            var state = root["characterState"];
+                            if (state != null)
+                            {
+                                var owned = state.ToObject<Dictionary<string, bool>>();
+                                _player.SetOwnedCharacters(owned);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogWarning("[PlayfabUserManage] 캐릭터 보유 데이터 파싱 실패: " + e.Message);
+                        }
+                    }
+
+                    PlayfabCommand.LoadCharacterCatalog(() =>
                     {
                         Debug.Log("모든 초기 데이터 로드 완료 → 로비 이동");
                         SceneManager.LoadScene("Lobby");

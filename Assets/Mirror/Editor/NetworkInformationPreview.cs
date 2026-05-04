@@ -60,7 +60,8 @@ namespace Mirror
         }
 
         GUIContent title;
-        Styles styles = new Styles();
+        Styles styles;
+        Styles GetStyles() => styles ?? (styles = new Styles());
 
         public override GUIContent GetPreviewTitle()
         {
@@ -95,8 +96,7 @@ namespace Mirror
             if (identity == null)
                 return;
 
-            if (styles == null)
-                styles = new Styles();
+            GetStyles(); // 지연 초기화 보장
 
 
             // padding
@@ -132,8 +132,8 @@ namespace Mirror
 
             foreach (NetworkIdentityInfo info in infos)
             {
-                GUI.Label(labelRect, info.name, styles.labelStyle);
-                GUI.Label(idLabelRect, info.value, styles.componentName);
+                GUI.Label(labelRect, info.name, GetStyles().labelStyle);
+                GUI.Label(idLabelRect, info.value, GetStyles().componentName);
                 labelRect.y += labelRect.height;
                 labelRect.x = initialX;
                 idLabelRect.y += idLabelRect.height;
@@ -150,7 +150,7 @@ namespace Mirror
             Vector2 maxBehaviourLabelSize = GetMaxBehaviourLabelSize(behavioursInfo);
             Rect behaviourRect = new Rect(initialX, Y + 10, maxBehaviourLabelSize.x, maxBehaviourLabelSize.y);
 
-            GUI.Label(behaviourRect, new GUIContent("Network Behaviours"), styles.labelStyle);
+            GUI.Label(behaviourRect, new GUIContent("Network Behaviours"), GetStyles().labelStyle);
             // indent names
             behaviourRect.x += 20;
             behaviourRect.y += behaviourRect.height;
@@ -163,7 +163,7 @@ namespace Mirror
                     continue;
                 }
 
-                GUI.Label(behaviourRect, info.name, info.behaviour.enabled ? styles.componentName : styles.disabledName);
+                GUI.Label(behaviourRect, info.name, info.behaviour.enabled ? GetStyles().componentName : GetStyles().disabledName);
                 behaviourRect.y += behaviourRect.height;
                 Y = behaviourRect.y;
             }
@@ -177,14 +177,14 @@ namespace Mirror
             {
                 Rect observerRect = new Rect(initialX, Y + 10, 200, 20);
 
-                GUI.Label(observerRect, new GUIContent("Network observers"), styles.labelStyle);
+                GUI.Label(observerRect, new GUIContent("Network observers"), GetStyles().labelStyle);
                 // indent names
                 observerRect.x += 20;
                 observerRect.y += observerRect.height;
 
                 foreach (KeyValuePair<int, NetworkConnectionToClient> kvp in identity.observers)
                 {
-                    GUI.Label(observerRect, $"{kvp.Value.address}:{kvp.Value}", styles.componentName);
+                    GUI.Label(observerRect, $"{kvp.Value.address}:{kvp.Value}", GetStyles().componentName);
                     observerRect.y += observerRect.height;
                     Y = observerRect.y;
                 }
@@ -198,7 +198,7 @@ namespace Mirror
             if (identity.connectionToClient != null)
             {
                 Rect ownerRect = new Rect(initialX, Y + 10, 400, 20);
-                GUI.Label(ownerRect, new GUIContent($"Client Authority: {identity.connectionToClient}"), styles.labelStyle);
+                GUI.Label(ownerRect, new GUIContent($"Client Authority: {identity.connectionToClient}"), GetStyles().labelStyle);
                 Y += ownerRect.height;
             }
             return Y;
@@ -210,7 +210,7 @@ namespace Mirror
             Vector2 maxLabelSize = Vector2.zero;
             foreach (NetworkIdentityInfo info in infos)
             {
-                Vector2 labelSize = styles.labelStyle.CalcSize(info.value);
+                Vector2 labelSize = GetStyles().labelStyle.CalcSize(info.value);
                 if (maxLabelSize.x < labelSize.x)
                 {
                     maxLabelSize.x = labelSize.x;
@@ -228,7 +228,7 @@ namespace Mirror
             Vector2 maxLabelSize = Vector2.zero;
             foreach (NetworkBehaviourInfo behaviour in behavioursInfo)
             {
-                Vector2 labelSize = styles.labelStyle.CalcSize(behaviour.name);
+                Vector2 labelSize = GetStyles().labelStyle.CalcSize(behaviour.name);
                 if (maxLabelSize.x < labelSize.x)
                 {
                     maxLabelSize.x = labelSize.x;

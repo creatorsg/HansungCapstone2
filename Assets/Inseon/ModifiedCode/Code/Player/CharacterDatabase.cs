@@ -21,9 +21,11 @@ public static class CharacterDatabase
     {
         Stats = new Dictionary<string, Character>();
 
-        foreach (var item in catalog)
+        for (int i = 0; i < catalog.Count; i++)
         {
+            var item = catalog[i];
             var c = new Character();
+            c.index         = i;            // spawnPrefabs 배열과 동일한 순서여야 합니다
             c.characterCode = item.ItemId;
 
             // CatalogItem.CustomData는 PlayFab SDK에서 JSON 인코딩된 string 타입입니다.
@@ -40,6 +42,7 @@ public static class CharacterDatabase
                 if (d["characterCode"] != null)
                     c.characterCode = d["characterCode"].Value<string>();
 
+                c.characterName    = GetString(d, "characterName");
                 c.hp               = GetInt(d, "hp");
                 c.mana             = GetInt(d, "mana");
                 c.attack           = GetInt(d, "attack");
@@ -84,11 +87,21 @@ public static class CharacterDatabase
         if (!obj.TryGetValue(key, out JToken token))
             return 0;
 
-        // 중첩 오브젝트나 배열은 건너뜁니다.
         if (token.Type == JTokenType.Object || token.Type == JTokenType.Array)
             return 0;
 
         try { return token.Value<int>(); }
         catch { return 0; }
+    }
+
+    private static string GetString(JObject obj, string key)
+    {
+        if (!obj.TryGetValue(key, out JToken token))
+            return string.Empty;
+
+        if (token.Type == JTokenType.Object || token.Type == JTokenType.Array)
+            return string.Empty;
+
+        return token.Value<string>() ?? string.Empty;
     }
 }
