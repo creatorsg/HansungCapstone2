@@ -27,8 +27,7 @@ namespace Jun
             SetButtonsInteractable(false, ItemBtn);
             SetButtonsInteractable(false, EnemyBtn);
         }
-        [ClientRpc]
-        public void RpcSetSel(bool IsMyTurn)
+        public void SetSel(bool IsMyTurn)
         {
             Sel.gameObject.SetActive(IsMyTurn);
         }

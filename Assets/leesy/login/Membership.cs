@@ -1,4 +1,4 @@
-using PlayFab.EventsModels;
+//using PlayFab.EventsModels;
 using UnityEngine;
 
 public class Membership: MonoBehaviour

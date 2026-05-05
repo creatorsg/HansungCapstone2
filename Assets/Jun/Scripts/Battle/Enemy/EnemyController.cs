@@ -12,6 +12,9 @@ namespace Jun
         public PlayerInfo Info;
         //[SerializeField] private EnemyView _view;
 
+        [Header("핑 시스템")]
+        public Transform PingLayout; // 핑 나오는 공간
+
         public UnitState State = UnitState.Waiting;
 
         private void Start()

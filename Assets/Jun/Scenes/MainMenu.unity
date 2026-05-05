@@ -1131,10 +1131,14 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs:
-  - {fileID: 706195926600873745, guid: 774a9522715bb9e47980ab056fdf1ed4, type: 3}
-  - {fileID: 352818516547447885, guid: 55427d98700ac58418be5b0a24c0546d, type: 3}
-  - {fileID: 7383094001891227147, guid: b437288243f56894d87ca1f54c290dfa, type: 3}
-  - {fileID: 8982849762600532283, guid: b860b63d920b507468deb4507a3b5d48, type: 3}
+  - {fileID: 4371259210688817755, guid: 126b470ca8c6d934cafaf8b2bbc321af, type: 3}
+  - {fileID: 3258379581491355461, guid: 44598338a035c954588904cbc9945653, type: 3}
+  - {fileID: 920996935090713336, guid: ff60d58411d90fd4f9e4d063d0e52f1f, type: 3}
+  - {fileID: 6954075679612020027, guid: 0a8871a54b82a34469587bb148f88bf0, type: 3}
+  - {fileID: 7326793965946291509, guid: 9ff4a12871d2fde4197257b494cfff4d, type: 3}
+  - {fileID: 2446676002803674425, guid: 216c18ef4fc3de64abb86f72a3d8019d, type: 3}
+  - {fileID: 335078259417015852, guid: 2869ae20a7b8a6b45901c38c115e18e8, type: 3}
+  - {fileID: 5708021282245284645, guid: d69c3ad2dcc1b6e49a9992b348474a10, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -1154,7 +1158,7 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 1264863090357005077, guid: c0ed044943014af4a830bc191387de18, type: 3}
   RoomScene: Assets/Jun/Scenes/GameRoom.unity
-  GameplayScene: Assets/Jun/Scenes/GamePlay.unity
+  GameplayScene: Assets/Jun/Scenes/Home 1.unity
   _allPlayersReady: 0
   clientIndex: 0
   RoomId: 
