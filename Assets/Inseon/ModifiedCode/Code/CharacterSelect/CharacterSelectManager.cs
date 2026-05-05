@@ -85,6 +85,13 @@ public class CharacterSelectManager : MonoBehaviour
         if (localRoomPlayer != null)
             _maxSelect = localRoomPlayer.CharCount;
 
+        // Inspector 수동 연결 없이도 동작하도록 코드에서 직접 등록
+        if (confirmButton != null)
+        {
+            confirmButton.onClick.RemoveAllListeners();
+            confirmButton.onClick.AddListener(OnClickConfirm);
+        }
+
         InitCards();
         RefreshConfirmButton();
         ClearStatPanel();
