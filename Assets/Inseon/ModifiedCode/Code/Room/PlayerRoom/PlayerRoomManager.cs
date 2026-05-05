@@ -276,7 +276,10 @@ public class PlayerRoomManager : MonoBehaviour
     {
         EnsureManager();
         if (_gameRoomManager == null) return;
-        _gameRoomManager.ServerChangeScene(_gameRoomManager.GameplayScene);
+        // 게임 씬으로 바로 가지 않고 캐릭터 선택 씬을 먼저 거칩니다.
+        // 모든 플레이어가 선택 완료하면 GameRoomManager.OnPlayerConfirmedSelection()이
+        // 자동으로 GameplayScene으로 전환합니다.
+        _gameRoomManager.ServerChangeScene(_gameRoomManager.CharacterSelectScene);
     }
 
     private void ClientToggleReady()

@@ -5294,12 +5294,13 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: -3545445526427896883, guid: d475829a97723554196f969e9179d0b8, type: 3}
   RoomScene: Assets/Inseon/ModifiedCode/Scene/Room.unity
-  GameplayScene: Assets/Inseon/ModifiedCode/Scene/Character 1.unity
+  GameplayScene: Assets/Jun/Scenes/GamePlay.unity
   _allPlayersReady: 0
   clientIndex: 0
   RoomId: 
   RoomName: 
   HeroNum: 0
+  CharacterSelectScene: CharacterSelect
 --- !u!1 &1845089764
 GameObject:
   m_ObjectHideFlags: 0

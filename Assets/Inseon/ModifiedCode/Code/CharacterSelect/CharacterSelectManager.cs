@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Jun;
 using Mirror;
@@ -65,12 +66,30 @@ public class CharacterSelectManager : MonoBehaviour
 
     private readonly List<string> _selectedCodes = new List<string>();
     private int _maxSelect = 1;
+    private GameRoomPlayer _localRoomPlayer;   // Start 코루틴에서 캐싱
 
     // ─────────────────────────────────────────────────
 
     private void Awake()
     {
         Instance = this;
+    }
+
+    /// <summary>
+    /// NetworkClient.localPlayer 참조가 씬 전환 타이밍에 따라 null일 수 있으므로
+    /// isLocalPlayer 플래그로 직접 탐색하는 폴백을 함께 사용합니다.
+    /// </summary>
+    private static GameRoomPlayer FindLocalRoomPlayer()
+    {
+        // 1순위: 표준 Mirror API
+        var p = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
+        if (p != null) return p;
+
+        // 2순위: 씬 전환 직후 localPlayer 참조가 미복구된 경우 직접 탐색
+        foreach (var candidate in Object.FindObjectsByType<GameRoomPlayer>(FindObjectsSortMode.None))
+            if (candidate.isLocalPlayer) return candidate;
+
+        return null;
     }
 
     private void Start()
@@ -81,16 +100,38 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        var localRoomPlayer = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
-        if (localRoomPlayer != null)
-            _maxSelect = localRoomPlayer.CharCount;
-
         // Inspector 수동 연결 없이도 동작하도록 코드에서 직접 등록
         if (confirmButton != null)
         {
             confirmButton.onClick.RemoveAllListeners();
             confirmButton.onClick.AddListener(OnClickConfirm);
         }
+
+        // Mirror 씬 전환 직후 GameRoomPlayer 재스폰 타이밍을 기다린 뒤 초기화
+        StartCoroutine(InitAfterNetworkReady());
+    }
+
+    /// <summary>
+    /// Mirror가 씬 전환 후 GameRoomPlayer를 재스폰할 때까지 최대 5초 대기 후 UI를 초기화합니다.
+    /// </summary>
+    private IEnumerator InitAfterNetworkReady()
+    {
+        float timeout = 5f;
+
+        while (_localRoomPlayer == null && timeout > 0f)
+        {
+            _localRoomPlayer = FindLocalRoomPlayer();
+            if (_localRoomPlayer == null)
+            {
+                timeout -= Time.deltaTime;
+                yield return null;   // 다음 프레임에 재시도
+            }
+        }
+
+        if (_localRoomPlayer == null)
+            Debug.LogWarning("[CharacterSelectManager] GameRoomPlayer를 찾지 못했습니다. 네트워크 없이 실행합니다.");
+        else
+            _maxSelect = _localRoomPlayer.CharCount;
 
         InitCards();
         RefreshConfirmButton();
@@ -286,12 +327,16 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        var localRoomPlayer = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
-        if (localRoomPlayer == null)
+        // 캐시가 없으면 한 번 더 탐색 시도
+        if (_localRoomPlayer == null)
+            _localRoomPlayer = FindLocalRoomPlayer();
+
+        if (_localRoomPlayer == null)
         {
             Debug.LogError("[CharacterSelectManager] 로컬 GameRoomPlayer를 찾을 수 없습니다.");
             return;
         }
+        var localRoomPlayer = _localRoomPlayer;
 
         foreach (var code in _selectedCodes)
         {
@@ -301,6 +346,9 @@ public class CharacterSelectManager : MonoBehaviour
                 localRoomPlayer.CMDChoiceHero(charData.index);
             }
         }
+
+        // 선택 확정 신호 전송 → 모든 플레이어 완료 시 서버가 게임 씬으로 전환
+        localRoomPlayer.CmdConfirmSelection();
 
         if (confirmButton != null)
             confirmButton.interactable = false;

@@ -14,6 +14,11 @@ namespace Jun {
         // 게임에 참여하는 캐릭터의 수
         public int HeroNum = 0;
 
+        /// <summary>
+        /// 캐릭터 선택 씬 이름. Inspector에서 Build Settings의 씬 이름과 동일하게 입력하세요.
+        /// </summary>
+        public string CharacterSelectScene = "CharacterSelect";
+
         public override void OnStopHost()
         {
             // RemoveRoom을 base보다 먼저 호출해야 합니다.
@@ -41,6 +46,26 @@ namespace Jun {
                 RoomId = "";
             }
             base.OnApplicationQuit();
+        }
+
+        /// <summary>
+        /// 플레이어 한 명이 캐릭터 선택을 확정할 때 서버에서 호출됩니다.
+        /// 모든 플레이어가 완료되면 GameplayScene으로 전환합니다.
+        /// </summary>
+        public void OnPlayerConfirmedSelection()
+        {
+            // 서버에서만 실행
+            if (!NetworkServer.active) return;
+
+            foreach (var slot in roomSlots)
+            {
+                var player = slot as GameRoomPlayer;
+                if (player == null || !player.IsChoiced)
+                    return; // 아직 안 끝낸 플레이어 있음
+            }
+
+            Debug.Log("[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → 게임 씬으로 전환");
+            ServerChangeScene(GameplayScene);
         }
 
         // 모든 플레이어가 Ready → 게임 씬으로 전환 직전에 호출됨

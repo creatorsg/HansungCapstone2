@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Inseon/ModifiedCode/Scene/Lobby.unity
     guid: fe2dc269b69a24c4f8449d7387577afc
   - enabled: 1
-    path: Assets/Inseon/ModifiedCode/Scene/Character 1.unity
+    path: Assets/Inseon/ModifiedCode/Scene/CharacterSelect.unity
     guid: 87dac11d330ba3341859235cebd824f3
   - enabled: 1
     path: Assets/Inseon/ModifiedCode/Scene/Room.unity

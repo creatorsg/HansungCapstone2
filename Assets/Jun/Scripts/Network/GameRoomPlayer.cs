@@ -24,6 +24,7 @@ namespace Jun
         public int CharCount = 1;
 
         private bool isChoiced = false;
+        public  bool IsChoiced => isChoiced;
 
         // ── 로컬 플레이어만: 서버에 닉네임 등록 ──
         public override void OnStartLocalPlayer()
@@ -254,36 +255,52 @@ namespace Jun
 
         // ── 캐릭터 선택 ──
 
+        /// <summary>
+        /// 캐릭터 선택/해제 토글. 확정은 CmdConfirmSelection()으로 별도 처리합니다.
+        /// </summary>
         [Command]
         public void CMDChoiceHero(int index)
         {
+            // 이미 선택한 캐릭터면 해제
             foreach (var i in CharaterNum)
             {
                 if (index == i.HeroIndex)
                 {
-                    isChoiced = true;
                     CharaterNum.Remove(i);
                     return;
                 }
             }
 
-            // 다른 플레이어가 이미 선택했는지 확인
-            foreach (var player in ((GameRoomManager)NetworkManager.singleton).roomSlots)
+            // 다른 플레이어가 이미 선택했는지 확인 (자신 제외)
+            foreach (var slot in ((GameRoomManager)NetworkManager.singleton).roomSlots)
             {
-                GameRoomPlayer roomPlayer = player as GameRoomPlayer;
-                if (roomPlayer == null) continue;
+                GameRoomPlayer roomPlayer = slot as GameRoomPlayer;
+                if (roomPlayer == null || roomPlayer == this) continue;
 
                 foreach (var charInfo in roomPlayer.CharaterNum)
                 {
                     if (charInfo.HeroIndex == index)
                     {
-                        Debug.Log("이미 다른 플레이어가 선택한 캐릭터입니다.");
+                        Debug.Log($"[GameRoomPlayer] 이미 다른 플레이어가 선택한 캐릭터입니다. index={index}");
                         return;
                     }
                 }
             }
 
             CharaterNum.Add(new Charater { HeroIndex = index, HeroPos = index });
+        }
+
+        /// <summary>
+        /// 캐릭터 선택 확정. 모든 플레이어가 완료되면 서버가 게임 씬으로 전환합니다.
+        /// </summary>
+        [Command]
+        public void CmdConfirmSelection()
+        {
+            isChoiced = true;
+            Debug.Log($"[GameRoomPlayer] {PlayerNickname} 캐릭터 선택 확정");
+
+            var manager = NetworkManager.singleton as GameRoomManager;
+            manager?.OnPlayerConfirmedSelection();
         }
 
         private void OnCharaterListChanged(SyncList<Charater>.Operation op, int itemIndex, Charater item)
