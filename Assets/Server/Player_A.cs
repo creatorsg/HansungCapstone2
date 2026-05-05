@@ -11,7 +11,7 @@ public class Player : NetworkBehaviour
         playerName = name;
     }
 
-    void OnGUI()
+   /* void OnGUI()
     {
         EditorGUILayout.BeginVertical();
         if (isLocalPlayer)
@@ -19,5 +19,5 @@ public class Player : NetworkBehaviour
             GUI.Label(new Rect(10, 10, 300, 20), $"Player: {playerName}");
         }
         EditorGUILayout.EndVertical();
-    }
+    }*/
 }
