@@ -23,6 +23,9 @@ namespace Jun
         [SyncVar(hook = nameof(OnCharCountChanged))]
         public int CharCount = 1;
 
+        // 연결 순서 기준 고정 인덱스 – 핑 시스템에서 PlayerData와 공유
+        [SyncVar] public int PingIndex = -1;
+
         private bool isChoiced = false;
         public  bool IsChoiced => isChoiced;
 

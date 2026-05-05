@@ -79,5 +79,52 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6092218991805724065}
   m_SourcePrefab: {fileID: 100100000, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+--- !u!1 &7326793965946291509 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
+  m_PrefabInstance: {fileID: 1899194893874885925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6092218991805724065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7326793965946291509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7816c93644a23be4d937d8b453cd9f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerData
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  FinalHeroIndex: -1
+  FinalHeroPos: -1
+  Info:
+    Id: 0
+    Name: 
+    Skills: []
+    Items: []
+    Lvl: 0
+    Exp: 0
+    Hp: 0
+    Atk: 0
+    Def: 0
+    Spd: 0
+    San: 0
+    Crit: 0
+    Ctm: 0
+    Dodge: 0
+    Acc: 0
+    Res: 0
+    WpnId: 0
+    ArmId: 0
+    Trk1: 0
+    Trk2: 0
+  PingIndex: 0

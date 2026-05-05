@@ -13,7 +13,7 @@ public class PlayerData : NetworkBehaviour
     {
         base.OnStartClient();
 
-        // ³» È­¸é¿¡ ³» Ä³¸¯ÅÍ°¡ ¼º°øÀûÀ¸·Î ½ºÆùµÇ¾úÀ» ¶§, ³» ÃÊ»óÈ­¸¦ ±×·Á¶ó!
+        // ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ ï¿½Ê»ï¿½È­ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½!
         if (HideoutManager.Instance != null && FinalHeroPos != -1 && FinalHeroIndex != -1)
         {
             HideoutManager.Instance.UpdateHideoutUILocal(FinalHeroPos, FinalHeroIndex);
@@ -22,13 +22,14 @@ public class PlayerData : NetworkBehaviour
 
     private void Start()
     {
-        transform.SetParent(null); // ºÎ¸ğ°¡ ¾ø¾î¾ß º¸È£¸·ÀÌ ÀÛµ¿ÇÕ´Ï´Ù
+        transform.SetParent(null); // ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ûµï¿½ï¿½Õ´Ï´ï¿½
         DontDestroyOnLoad(this.gameObject);
     }
     public override void OnStartServer()
     {
         base.OnStartServer();
-       
-        HideoutManager.Instance.RegisterPlayer(this);
+
+        // Hideoutì”¬ì´ ì—†ëŠ” ê²½ìš°(ë°°í‹€ì”¬ ì§í–‰)ì—ë„ NPEê°€ ë‚˜ì§€ ì•Šë„ë¡ null-safe ì²˜ë¦¬
+        HideoutManager.Instance?.RegisterPlayer(this);
     }
 }
