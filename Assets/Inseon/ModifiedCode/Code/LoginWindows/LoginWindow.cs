@@ -11,7 +11,6 @@ namespace inseon.LoginWindows.Login.Login
     {
         [SerializeField] private TMP_InputField _id;
         [SerializeField] private TMP_InputField _pw;
-        [SerializeField] private GameObject _registerWindow;
 
         public void LoginWithPlayFab()
         {
@@ -33,16 +32,6 @@ namespace inseon.LoginWindows.Login.Login
         {
             PlayfabUserManage.LoginAsGuest(PlayfabUserManage.SuccessLogin,
                 PlayfabUserManage.FailureLogin);
-        }
-
-        public void OpenRegisterWindow()
-        {
-            _registerWindow.SetActive(true);
-        }
-
-        public void CloseRegisterWindow()
-        {
-            _registerWindow.SetActive(false);
         }
     }
 }

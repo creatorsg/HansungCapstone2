@@ -29,25 +29,25 @@ namespace inseon.LoginWindows.Login.Register
 
             if (string.IsNullOrEmpty(id))
             {
-                SetState("ID�� �Է����ּ���.");
+                SetState("ID칸을 입력해주세요.");
                 return;
             }
 
             if (string.IsNullOrEmpty(pw))
             {
-                SetState("PW�� �Է����ּ���.");
+                SetState("PW칸을 입력해주세요.");
                 return;
             }
 
             if (string.IsNullOrEmpty(nickname))
             {
-                SetState("nickName�� �Է����ּ���.");
+                SetState("nickName칸을 입력해주세요.");
                 return;
             }
 
             if (pw != pw2)
             {
-                SetState("��й�ȣ�� ��ġ���� �ʽ��ϴ�.");
+                SetState("비밀번호 확인 칸이 다릅니다.");
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace inseon.LoginWindows.Login.Register
         {
             _isProcessing = true;
             _registerButton.interactable = false;
-            SetState("���� ��...");
+            SetState("회원가입 시도중...");
 
             inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayFabUser(
                 id,
@@ -66,36 +66,36 @@ namespace inseon.LoginWindows.Login.Register
                 nickname,
                 onOk: _ =>
                 {
-                    SetState("������ �ʱ�ȭ ��...");
+                    SetState("정보 처리 중...");
 
                     inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
                         onOkJson: json =>
                         {
                             Debug.Log("Init OK: " + json);
-                            SetState("���� �Ϸ�!");
+                            SetState("닉네임 설정 중...");
                             PlayfabUserManage.Login(id, pw,
                                 PlayfabUserManage.SuccessLogin,
                                 err =>
                                 {
-                                    SetState("�ڵ� �α��� ����. �������� �α������ּ���.");
+                                    SetState("가입이 완료되었습니다. 게임에 로그인 합니다.");
                                     EndProgress();
                                 });
                             EndProgress();
                         },
                         onCloudScriptError: csErr =>
                         {
-                            SetState($"���� �ʱ�ȭ ����: {csErr.message}");
+                            SetState($"서버 초기화 실패: {csErr.message}");
                             EndProgress();
                         },
                         onTransportError: pfErr =>
                         {
                             Debug.LogError(pfErr.GenerateErrorReport());
-                            SetState("��Ʈ��ũ/���� ������ �ʱ�ȭ ����");
+                            SetState("네트워크/인증 오류로 초기화 실패");
                             EndProgress();
                         }
                     );
                 },
-                onError: e => Fail(e, "���� ����")
+                onError: e => Fail(e, "가입 실패")
             );
         }
 

@@ -6,6 +6,15 @@ namespace inseon.LoginWindows.Login.UI
     {
         [field: SerializeField] private GameObject _registerWindow;
 
+        public void OpenRegisterWindow()
+        {
+            _registerWindow.SetActive(true);
+        }
+
+        public void CloseRegisterWindow()
+        {
+            _registerWindow.SetActive(false);
+        }
 
     }
 }
