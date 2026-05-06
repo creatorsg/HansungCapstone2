@@ -1,4 +1,4 @@
-using PlayFab;
+using inseon.Playfab.User;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,10 +7,10 @@ namespace inseon.Server.Playfab.Register
 {
     public class UserRegister : MonoBehaviour
     {
-        [field: SerializeField] private InputField ID;
-        [field: SerializeField] private InputField PW;
-        [field: SerializeField] private InputField PW_Check;
-        [field: SerializeField] private InputField Nickname;
+        [field: SerializeField] private TMP_InputField ID;
+        [field: SerializeField] private TMP_InputField PW;
+        [field: SerializeField] private TMP_InputField PW_Check;
+        [field: SerializeField] private TMP_InputField Nickname;
         [field: SerializeField] private TextMeshProUGUI RegisterState;
         [field: SerializeField] private Button RegisterButton;
 
@@ -30,14 +30,13 @@ namespace inseon.Server.Playfab.Register
             var pw2 = PW_Check.text;
             var nickname = Nickname.text?.Trim();
 
-
-            if(string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
                 SetState("ID를 입력해주세요.");
                 return;
             }
 
-            if(string.IsNullOrEmpty(pw))
+            if (string.IsNullOrEmpty(pw))
             {
                 SetState("PW를 입력해주세요.");
                 return;
@@ -55,7 +54,7 @@ namespace inseon.Server.Playfab.Register
                 return;
             }
 
-            OnClickRegister(ID.text, PW.text, Nickname.text);
+            OnClickRegister(id, pw, nickname);
         }
 
         private void OnClickRegister(string id, string pw, string nickname)
@@ -64,45 +63,14 @@ namespace inseon.Server.Playfab.Register
             RegisterButton.interactable = false;
             SetState("가입 중...");
 
-            inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayFabUser(
-                id,
-                pw,
-                nickname,
-                onOk: _ =>
+            PlayfabUserManage.RegisterAndLogin(id, pw, nickname,
+                onStateChange: SetState,
+                onFail: msg =>
                 {
-                    SetState("데이터 초기화 중...");
-
-                    inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
-                        onOkJson: json =>
-                        {
-                            Debug.Log("Init OK: " + json);
-                            SetState("가입 완료!");
-                            EndProgress();
-                        },
-                        onCloudScriptError: csErr =>
-                        {
-                            SetState($"서버 초기화 실패: {csErr.message}");
-                            EndProgress();
-                        },
-                        onTransportError: pfErr =>
-                        {
-                            Debug.LogError(pfErr.GenerateErrorReport());
-                            SetState("네트워크/인증 오류로 초기화 실패");
-                            EndProgress();
-                        }
-                    );
-                },
-                onError: e => Fail(e, "가입 실패")
-            );
+                    SetState(msg);
+                    EndProgress();
+                });
         }
-
-        private void Fail(PlayFabError e, string msg)
-        {
-            Debug.LogError(e.GenerateErrorReport());
-            SetState(msg);
-            EndProgress();
-        }
-
 
         private void EndProgress()
         {

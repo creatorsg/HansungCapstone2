@@ -1,6 +1,4 @@
 using inseon.Playfab.User;
-using PlayFab;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,10 +8,10 @@ namespace inseon.LoginWindows.Login.Register
     public class RegisterWindow : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _registerState;
-        [SerializeField] private InputField _IDField;
-        [SerializeField] private InputField _PWField;
-        [SerializeField] private InputField _PWCheckField;
-        [SerializeField] private InputField _nicknameField;
+        [SerializeField] private TMP_InputField _IDField;
+        [SerializeField] private TMP_InputField _PWField;
+        [SerializeField] private TMP_InputField _PWCheckField;
+        [SerializeField] private TMP_InputField _nicknameField;
         [SerializeField] private Button _registerButton;
         [SerializeField] private Button _cancelButton;
         private bool _isProcessing = false;
@@ -60,50 +58,13 @@ namespace inseon.LoginWindows.Login.Register
             _registerButton.interactable = false;
             SetState("회원가입 시도중...");
 
-            inseon.Playfab.Register.Authentication.PlayfabRegister.RegisterPlayFabUser(
-                id,
-                pw,
-                nickname,
-                onOk: _ =>
+            PlayfabUserManage.RegisterAndLogin(id, pw, nickname,
+                onStateChange: SetState,
+                onFail: msg =>
                 {
-                    SetState("정보 처리 중...");
-
-                    inseon.Playfab.Register.Authentication.PlayfabRegister.InitializePlayerData(
-                        onOkJson: json =>
-                        {
-                            Debug.Log("Init OK: " + json);
-                            SetState("닉네임 설정 중...");
-                            PlayfabUserManage.Login(id, pw,
-                                PlayfabUserManage.SuccessLogin,
-                                err =>
-                                {
-                                    SetState("가입이 완료되었습니다. 게임에 로그인 합니다.");
-                                    EndProgress();
-                                });
-                            EndProgress();
-                        },
-                        onCloudScriptError: csErr =>
-                        {
-                            SetState($"서버 초기화 실패: {csErr.message}");
-                            EndProgress();
-                        },
-                        onTransportError: pfErr =>
-                        {
-                            Debug.LogError(pfErr.GenerateErrorReport());
-                            SetState("네트워크/인증 오류로 초기화 실패");
-                            EndProgress();
-                        }
-                    );
-                },
-                onError: e => Fail(e, "가입 실패")
-            );
-        }
-
-        private void Fail(PlayFabError e, string msg)
-        {
-            Debug.LogError(e.GenerateErrorReport());
-            SetState(msg);
-            EndProgress();
+                    SetState(msg);
+                    EndProgress();
+                });
         }
 
 

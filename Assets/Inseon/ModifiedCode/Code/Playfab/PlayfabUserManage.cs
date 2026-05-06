@@ -2,6 +2,7 @@ using Mirror;
 using Newtonsoft.Json.Linq;
 using PlayFab;
 using PlayFab.ClientModels;
+using PlayFab.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,6 +53,91 @@ namespace inseon.Playfab.User
             };
 
             PlayFabClientAPI.RegisterPlayFabUser(request, onOk, onError);
+        }
+
+        [Serializable]
+        public class CloudScriptFailure
+        {
+            public string error;
+            public string message;
+            public string stack;
+        }
+
+        public static void InitializePlayerData(
+            Action<string> onOkJson,
+            Action<CloudScriptFailure> onCloudScriptError,
+            Action<PlayFabError> onTransportError)
+        {
+            var req = new ExecuteCloudScriptRequest
+            {
+                FunctionName = "PlayerProfileLoad",
+                FunctionParameter = new { },
+                GeneratePlayStreamEvent = true
+            };
+
+            PlayFabClientAPI.ExecuteCloudScript(req,
+                result =>
+                {
+                    if (result.Error != null)
+                    {
+                        var failure = new CloudScriptFailure
+                        {
+                            error = result.Error.Error,
+                            message = result.Error.Message,
+                            stack = result.Error.StackTrace
+                        };
+                        Debug.LogError($"CloudScript error: {failure.error} - {failure.message}");
+                        onCloudScriptError?.Invoke(failure);
+                        return;
+                    }
+
+                    var json = result.FunctionResult != null
+                        ? PlayFabSimpleJson.SerializeObject(result.FunctionResult)
+                        : "{}";
+
+                    onOkJson?.Invoke(json);
+                },
+                onTransportError
+            );
+        }
+
+        public static void RegisterAndLogin(
+            string id, string pw, string nickname,
+            Action<string> onStateChange,
+            Action<string> onFail)
+        {
+            Register(id, pw, nickname,
+                onOk: _ =>
+                {
+                    onStateChange?.Invoke("정보 처리 중...");
+                    InitializePlayerData(
+                        onOkJson: json =>
+                        {
+                            onStateChange?.Invoke("로그인 중...");
+                            Login(id, pw, SuccessLogin,
+                                err =>
+                                {
+                                    Debug.LogError(err.GenerateErrorReport());
+                                    onFail?.Invoke("자동 로그인 실패. 다시 로그인해주세요.");
+                                });
+                        },
+                        onCloudScriptError: csErr =>
+                        {
+                            onFail?.Invoke($"서버 초기화 실패: {csErr.message}");
+                        },
+                        onTransportError: pfErr =>
+                        {
+                            Debug.LogError(pfErr.GenerateErrorReport());
+                            onFail?.Invoke("네트워크/인증 오류로 초기화 실패");
+                        }
+                    );
+                },
+                onError: e =>
+                {
+                    Debug.LogError(e.GenerateErrorReport());
+                    onFail?.Invoke("가입 실패");
+                }
+            );
         }
 
         public static void LoginAsGuest(
@@ -113,8 +199,6 @@ namespace inseon.Playfab.User
             {
                 PlayfabCommand.CheckPlayerCharacterData(chars =>
                 {
-                    // CloudScript 반환: { "characterState": { "C001": true, "C002": false, ... } }
-                    // 결과를 Player 세션에 캐싱해 캐릭터 선택 씬에서 재사용합니다.
                     if (chars != null)
                     {
                         try
