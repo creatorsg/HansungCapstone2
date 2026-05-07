@@ -1,4 +1,5 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 namespace Lsy
@@ -20,23 +21,20 @@ namespace Lsy
         public readonly SyncList<PlayerSkill> mySkills = new SyncList<PlayerSkill>();
 
         [SyncVar] public string characterName;
-        [SyncVar] public int currentGold;
+
+        [SyncVar(hook = nameof(OnCurrentGoldChanged))]
+        public int currentGold;
 
         public readonly SyncList<InventoryItem> myInventory = new SyncList<InventoryItem>();
 
-        // ==========================================
-        // 무기 업그레이드 상태
-        // Mirror SyncVar hook은 제네릭 불가 - 타입별로 따로 선언
-        // ==========================================
         [SyncVar(hook = nameof(OnSelectedWeaponIdChanged))]
         public string selectedWeaponId = "";
 
         [SyncVar(hook = nameof(OnPurchasedNodeCountChanged))]
         public int purchasedNodeCount = 0;
 
-        // ==========================================
-        // 1. 서버 세팅
-        // ==========================================
+        public event Action<int> OnGoldChanged;
+
         [Server]
         public void SetupFromData(CharacterData data)
         {
@@ -49,12 +47,9 @@ namespace Lsy
             myInfo.Hp = maxHp;
             myInfo.San = maxSan;
 
-            Debug.Log($"<color=green>[서버] 캐릭터 세팅 완료: {characterName} (HP: {maxHp}, 골드: {currentGold}G)</color>");
+            Debug.Log($"<color=green>[서버] 캐릭터 세팅 완료: {characterName} (HP:{maxHp}, 골드:{currentGold}G)</color>");
         }
 
-        // ==========================================
-        // 2. 권한 발급 완료
-        // ==========================================
         public override void OnStartAuthority()
         {
             base.OnStartAuthority();
@@ -67,6 +62,9 @@ namespace Lsy
 
             mySkills.Callback -= OnSkillsChanged;
             mySkills.Callback += OnSkillsChanged;
+
+            if (GoldUI.Instance != null)
+                GoldUI.Instance.SetTrackedUnit(this);
         }
 
         public override void OnStopAuthority()
@@ -76,48 +74,40 @@ namespace Lsy
             mySkills.Callback -= OnSkillsChanged;
         }
 
-        // ==========================================
-        // 3. 무기 업그레이드 SyncVar 훅 (타입별로 분리)
-        // ==========================================
+        private void OnCurrentGoldChanged(int oldVal, int newVal)
+        {
+            if (!isOwned) return;
+            OnGoldChanged?.Invoke(newVal);
+        }
+
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
         {
             if (!isOwned) return;
-            Debug.Log($"<color=yellow>[CharacterUnit] selectedWeaponId 변경: {oldVal} → {newVal}</color>");
             RefreshUpgradeUI();
         }
 
         private void OnPurchasedNodeCountChanged(int oldVal, int newVal)
         {
             if (!isOwned) return;
-            Debug.Log($"<color=yellow>[CharacterUnit] purchasedNodeCount 변경: {oldVal} → {newVal}</color>");
             RefreshUpgradeUI();
         }
 
-        // ==========================================
-        // 4. 스킬 변경 콜백
-        // ==========================================
         private void OnSkillsChanged(SyncList<PlayerSkill>.Operation op, int index, PlayerSkill oldItem, PlayerSkill newItem)
         {
             if (!isOwned) return;
-            Debug.Log("<color=yellow>[CharacterUnit] 스킬 목록 변경 → UI 갱신</color>");
             RefreshUpgradeUI();
         }
 
-        // ==========================================
-        // 5. 활성화된 UpgradeUI 전부 갱신
-        // ==========================================
         private void RefreshUpgradeUI()
         {
-            foreach (var ui in FindObjectsByType<BaseUpgradeUI>(FindObjectsSortMode.None))
+            var uis = FindObjectsByType<BaseUpgradeUI>(FindObjectsSortMode.None);
+            foreach (var ui in uis)
             {
                 if (ui.gameObject.activeInHierarchy)
                     ui.RefreshAllRows();
             }
         }
 
-        // ==========================================
-        // 6. 인벤토리 변경 UI 콜백
-        // ==========================================
         private void OnInventoryChanged(SyncList<InventoryItem>.Operation op, int itemIndex, InventoryItem oldItem, InventoryItem newItem)
         {
             if (PlayerAccount.LocalInstance == null) return;
@@ -128,9 +118,6 @@ namespace Lsy
                 InventoryUI.Instance.RefreshInventory();
         }
 
-        // ==========================================
-        // 7. 인벤토리 유틸
-        // ==========================================
         [Server]
         public int GetItemAmount(string itemName)
         {
@@ -155,9 +142,6 @@ namespace Lsy
             myInventory.Add(new InventoryItem { itemName = itemName, amount = amount });
         }
 
-        // ==========================================
-        // 8. 바텐더
-        // ==========================================
         [Server]
         public bool ApplyBartenderHeal()
         {
@@ -167,9 +151,6 @@ namespace Lsy
             return true;
         }
 
-        // ==========================================
-        // 9. 대장장이 무기 업그레이드 (선형)
-        // ==========================================
         [Server]
         public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel, int price)
         {
@@ -186,9 +167,6 @@ namespace Lsy
             return true;
         }
 
-        // ==========================================
-        // 10. 정보상 스킬 구매 (독립 해금)
-        // ==========================================
         [Server]
         public bool ApplySkillPurchase(string skillId, int npcLevel, int price, int requiredNpcLevel)
         {
@@ -204,9 +182,6 @@ namespace Lsy
             return true;
         }
 
-        // ==========================================
-        // 11. 정보상 스킬 레벨업
-        // ==========================================
         [Server]
         public bool ApplyInformantUpgrade(string targetSkillName, int npcLevel)
         {
