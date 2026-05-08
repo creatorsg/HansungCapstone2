@@ -47,13 +47,16 @@ namespace Jun {
 
         public override void OnRoomServerPlayersReady()
         {
+            // base.OnRoomServerPlayersReady()를 호출하지 않는다.
+            // base의 내부는 ServerChangeScene(GameplayScene)으로 즉시 씬을 전환하는데,
+            // 이 프로젝트는 방→캐릭터선택→게임 경로를 사용하므로 자동 전환을 막아야 한다.
+            // 씬 전환 권한은 오직 호스트의 명시적 버튼 클릭에만 있다.
             if (!string.IsNullOrEmpty(RoomId))
             {
                 PlayfabCommand.RemoveRoom(RoomId);
-                Debug.Log($"[GameRoomManager] 게임 시작 - 방 목록에서 제거: {RoomId}");
+                Debug.Log($"[GameRoomManager] 전원 준비 완료 - 방 목록에서 제거: {RoomId}");
                 RoomId = "";
             }
-            base.OnRoomServerPlayersReady();
         }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
@@ -64,6 +67,49 @@ namespace Jun {
                 Debug.Log($"[GameRoomManager] 클라이언트 연결 종료 → PlayFab playerCount 롤백: {RoomId}");
             }
             base.OnServerDisconnect(conn);
+        }
+
+        // ── 씬 전환 시 카운터 초기화 & PlayerData 정리 ───────────────
+
+        /// <summary>
+        /// 서버에서 씬 전환이 완료될 때 호출됩니다.
+        /// GameplayScene 진입 시 HeroNum / PingIndexCounter를 초기화하고,
+        /// RoomScene 복귀 시 이전 게임의 PlayerData를 전부 정리합니다.
+        /// </summary>
+        public override void OnRoomServerSceneChanged(string newSceneName)
+        {
+            base.OnRoomServerSceneChanged(newSceneName);
+
+            if (newSceneName == GameplayScene)
+            {
+                // Jun 경로(방→게임 직행)에서 OnRoomServerCreateGamePlayer가 호출되기 전에
+                // 카운터를 초기화한다. Inseon 경로(캐릭터선택→게임)는 OnPlayerConfirmedSelection
+                // 내부에서 별도로 초기화하므로 이 시점에 먼저 초기화해도 덮어쓰기가 발생하지 않는다.
+                _pingIndexCounter = 0;
+                HeroNum = 0;
+                Debug.Log("[GameRoomManager] GameplayScene 진입 - HeroNum / PingIndexCounter 초기화");
+            }
+            else if (newSceneName == RoomScene)
+            {
+                // 게임이 끝나고 방으로 돌아왔을 때 이전 게임의 PlayerData를 정리한다.
+                CleanUpPlayerData();
+            }
+        }
+
+        /// <summary>
+        /// DontDestroyOnLoad로 남아있는 PlayerData를 서버에서 전부 파괴합니다.
+        /// NetworkServer.Destroy는 서버와 모든 클라이언트에서 동시에 오브젝트를 제거합니다.
+        /// </summary>
+        private void CleanUpPlayerData()
+        {
+            if (!NetworkServer.active) return;
+
+            var remaining = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+            if (remaining.Length == 0) return;
+
+            Debug.Log($"[GameRoomManager] 이전 게임 PlayerData {remaining.Length}개 정리");
+            foreach (var pd in remaining)
+                NetworkServer.Destroy(pd.gameObject);
         }
 
         // ── 캐릭터 선택 확정 흐름 ────────────────────────────────────
@@ -208,10 +254,14 @@ namespace Jun {
 
             if (roomPlayerCharaterNum.Count == 0)
             {
-                Debug.LogWarning("[GameRoomManager] CharaterNum이 비어 있습니다. playerPrefab 폴백 사용.");
+                // null을 반환하면 Mirror가 playerPrefab을 폴백으로 스폰하므로 허용하지 않는다.
+                // 캐릭터를 선택하지 않은 채 게임 씬에 진입하는 것은 비정상이므로 연결을 끊는다.
+                Debug.LogError($"[GameRoomManager] CharaterNum이 비어 있습니다. 해당 클라이언트 연결 종료. conn={conn}");
+                conn.Disconnect();
                 return null;
             }
 
+            // HeroNum / _pingIndexCounter는 OnRoomServerSceneChanged(GameplayScene)에서 이미 초기화됨.
             // 이 연결의 고정 PingIndex 부여
             int myPingIndex = _pingIndexCounter++;
             roomPlayerScript.PingIndex = myPingIndex;
