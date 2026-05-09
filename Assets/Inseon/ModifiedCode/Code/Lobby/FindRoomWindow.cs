@@ -1,3 +1,4 @@
+using inseon.Lobby.Manager;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

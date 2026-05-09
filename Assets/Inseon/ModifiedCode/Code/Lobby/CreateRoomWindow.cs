@@ -122,11 +122,6 @@ namespace inseon.Lobby.Server.Room.CreateWindow
             _roomCreateButton.interactable = true;
         }
 
-        public void GetRoomList()
-        {
-
-        }
-
         private string CreateRoomID()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

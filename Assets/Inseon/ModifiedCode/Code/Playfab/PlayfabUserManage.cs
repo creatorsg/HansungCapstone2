@@ -193,7 +193,7 @@ namespace inseon.Playfab.User
             LoadPlayer();
             var nickname = result.InfoResultPayload?.PlayerProfile?.DisplayName;
             if (string.IsNullOrEmpty(nickname)) nickname = result.PlayFabId;
-            _player.initPlayerData(nickname, result.PlayFabId);
+            _player.Initialize(nickname, result.PlayFabId);
 
             PlayfabCommand.InitAndGetProfile(profile =>
             {
@@ -236,10 +236,9 @@ namespace inseon.Playfab.User
             if (_player != null)
                 return;
 
-            GameObject g = new GameObject("PlayerSession");
-            _player = g.AddComponent<Player>();
-
-            UnityEngine.Object.DontDestroyOnLoad(g);
+            // Player는 순수 C# 클래스이므로 new로 생성합니다.
+            // static 필드로 보관되어 씬 전환과 무관하게 유지됩니다.
+            _player = new Player();
         }
     }
 }

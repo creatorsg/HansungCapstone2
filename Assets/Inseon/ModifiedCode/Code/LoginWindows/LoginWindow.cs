@@ -23,9 +23,14 @@ namespace inseon.LoginWindows.Login.Login
                 return;
             }
 
+            if (!ButtonGuard.TryLock()) return;
+
             PlayfabUserManage.Login(ID, PW,
-                PlayfabUserManage.SuccessLogin,
-                PlayfabUserManage.FailureLogin);
+                onOk: PlayfabUserManage.SuccessLogin,
+                onError: error => {
+                    PlayfabUserManage.FailureLogin(error);
+                    ButtonGuard.Unlock();
+                });
         }
 
         public void LoginWithGuest()
