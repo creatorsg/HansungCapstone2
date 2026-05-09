@@ -1,4 +1,5 @@
 using Edgegap;
+using inseon.Core;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -50,10 +51,13 @@ namespace inseon.Lobby.Manager
 
         public void RefreshRoomList()
         {
+            if (!ButtonGuard.TryLock()) return;
+
             PlayfabCommand.GetRooms(json =>
             {
                 var rooms = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<RoomInfo>>(json);
                 RoomListUI.Instance.UpdateList(rooms);
+                ButtonGuard.Unlock();
             });
         }
 
@@ -91,104 +95,124 @@ namespace inseon.Lobby.Manager
 
         // ─── 실제 접속 로직 ───────────────────────────────────────────
 
-        private async void JoinRoomInternal(RoomInfo room, string password, System.Action<string> onError)
+        private void JoinRoomInternal(RoomInfo room, string password, System.Action<string> onError)
         {
+            if (!ButtonGuard.TryLock()) return;
+
             var manager = Mirror.NetworkManager.singleton as Jun.GameRoomManager;
             if (manager == null)
             {
                 const string err = "GameRoomManager를 찾을 수 없습니다. Scene에 GameRoomManager가 있는지 확인하세요.";
                 Debug.LogError(err);
                 onError?.Invoke(err);
+                ButtonGuard.Unlock();
                 return;
             }
 
             PlayfabCommand.JoinRoom(room.roomId, password, async joinedRoom =>
             {
-                // ── 접속 성공 시 비번 창 닫기 ──
-                if (_passwordInputWindow != null && _passwordInputWindow.gameObject.activeSelf)
-                    _passwordInputWindow.gameObject.SetActive(false);
-
-                Debug.Log($"[JoinRoom] PlayFab(JoinRoom CS)에서 받은 방 정보:\n" +
-                          $"  roomId      = {joinedRoom.roomId}\n" +
-                          $"  ip          = {joinedRoom.ip}\n" +
-                          $"  port        = {joinedRoom.port}\n" +
-                          $"  sessionId   = {joinedRoom.sessionId}\n" +
-                          $"  sessionToken= {joinedRoom.sessionToken}\n" +
-                          $"  hostPublicIp= {joinedRoom.hostPublicIp}");
-
-                if (joinedRoom.sessionToken == 0)
+                try
                 {
-                    Debug.LogError("[JoinRoom] sessionToken이 0입니다! 연결을 중단하고 playerCount를 롤백합니다.");
-                    PlayfabCommand.LeaveRoom(joinedRoom.roomId);
-                    return;
+                    // ── 접속 성공 시 비번 창 닫기 ──
+                    if (_passwordInputWindow != null && _passwordInputWindow.gameObject.activeSelf)
+                        _passwordInputWindow.gameObject.SetActive(false);
+
+                    Debug.Log($"[JoinRoom] PlayFab(JoinRoom CS)에서 받은 방 정보:\n" +
+                              $"  roomId      = {joinedRoom.roomId}\n" +
+                              $"  ip          = {joinedRoom.ip}\n" +
+                              $"  port        = {joinedRoom.port}\n" +
+                              $"  sessionId   = {joinedRoom.sessionId}\n" +
+                              $"  sessionToken= {joinedRoom.sessionToken}\n" +
+                              $"  hostPublicIp= {joinedRoom.hostPublicIp}");
+
+                    if (joinedRoom.sessionToken == 0)
+                    {
+                        Debug.LogError("[JoinRoom] sessionToken이 0입니다! 연결을 중단하고 playerCount를 롤백합니다.");
+                        PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                        ButtonGuard.Unlock();
+                        return;
+                    }
+
+                    string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
+                    Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
+
+                    bool isSameIp = !string.IsNullOrEmpty(joinedRoom.hostPublicIp) &&
+                                    joinedRoom.hostPublicIp == clientIp;
+
+                    if (isSameIp && !_allowSameIpTest)
+                    {
+                        Debug.LogError("[JoinRoom] 호스트와 같은 공인 IP. 테스트 시 Inspector에서 'Allow Same Ip Test'를 ON으로 설정하세요.");
+                        PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                        ButtonGuard.Unlock();
+                        return;
+                    }
+
+                    int tokenIndex = joinedRoom.playerCount - 1;
+
+                    if (joinedRoom.userTokens == null || joinedRoom.userTokens.Length <= tokenIndex)
+                    {
+                        Debug.LogError($"[JoinRoom] userTokens 배열이 없거나 슬롯 부족. " +
+                                       $"playerCount={joinedRoom.playerCount}, tokenIndex={tokenIndex}, " +
+                                       $"userTokens길이={joinedRoom.userTokens?.Length ?? 0}");
+                        PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                        ButtonGuard.Unlock();
+                        return;
+                    }
+
+                    uint userToken = joinedRoom.userTokens[tokenIndex];
+                    Debug.Log($"[JoinRoom] userToken 슬롯[{tokenIndex}] = {userToken}");
+
+                    if (userToken == 0)
+                    {
+                        Debug.LogError($"[JoinRoom] 슬롯[{tokenIndex}]의 userToken이 0.");
+                        PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                        ButtonGuard.Unlock();
+                        return;
+                    }
+
+                    var transport = manager.GetComponent<EdgegapKcpTransport>();
+                    if (transport == null)
+                    {
+                        Debug.LogError("EdgegapKcpTransport not found");
+                        PlayfabCommand.LeaveRoom(joinedRoom.roomId);
+                        ButtonGuard.Unlock();
+                        return;
+                    }
+
+                    transport.relayAddress = joinedRoom.ip;
+                    transport.relayGameClientPort = (ushort)joinedRoom.port;
+                    transport.sessionId = joinedRoom.sessionToken;
+                    transport.userId = userToken;
+
+                    Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
+                              $"  relayAddress       = {transport.relayAddress}\n" +
+                              $"  relayGameClientPort= {transport.relayGameClientPort}\n" +
+                              $"  sessionId          = {transport.sessionId}\n" +
+                              $"  userId             = {transport.userId}");
+
+                    if (NetworkClient.active)
+                    {
+                        Debug.LogWarning("[JoinRoom] 기존 클라이언트 연결 감지 → 정리 후 재접속");
+                        manager.StopClient();
+                    }
+
+                    manager.RoomId = joinedRoom.roomId;
+                    manager.RoomName = joinedRoom.roomName;
+                    manager.networkAddress = joinedRoom.ip;
+                    manager.StartClient();
+                    // StartClient 성공 후 씬 전환되므로 Unlock 불필요
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"[JoinRoom] 예외 발생: {e.Message}");
+                    ButtonGuard.Unlock();
                 }
 
-                string clientIp = await PlayfabRoomCommand.GetPublicIPAsync();
-                Debug.Log($"[JoinRoom] 클라이언트 공인 IP: {clientIp}");
-
-                bool isSameIp = !string.IsNullOrEmpty(joinedRoom.hostPublicIp) &&
-                                joinedRoom.hostPublicIp == clientIp;
-
-                if (isSameIp && !_allowSameIpTest)
-                {
-                    Debug.LogError("[JoinRoom] 호스트와 같은 공인 IP. 테스트 시 Inspector에서 'Allow Same Ip Test'를 ON으로 설정하세요.");
-                    PlayfabCommand.LeaveRoom(joinedRoom.roomId);
-                    return;
-                }
-
-                int tokenIndex = joinedRoom.playerCount - 1;
-
-                if (joinedRoom.userTokens == null || joinedRoom.userTokens.Length <= tokenIndex)
-                {
-                    Debug.LogError($"[JoinRoom] userTokens 배열이 없거나 슬롯 부족. " +
-                                   $"playerCount={joinedRoom.playerCount}, tokenIndex={tokenIndex}, " +
-                                   $"userTokens길이={joinedRoom.userTokens?.Length ?? 0}");
-                    PlayfabCommand.LeaveRoom(joinedRoom.roomId);
-                    return;
-                }
-
-                uint userToken = joinedRoom.userTokens[tokenIndex];
-                Debug.Log($"[JoinRoom] userToken 슬롯[{tokenIndex}] = {userToken}");
-
-                if (userToken == 0)
-                {
-                    Debug.LogError($"[JoinRoom] 슬롯[{tokenIndex}]의 userToken이 0.");
-                    PlayfabCommand.LeaveRoom(joinedRoom.roomId);
-                    return;
-                }
-
-                var transport = manager.GetComponent<EdgegapKcpTransport>();
-                if (transport == null)
-                {
-                    Debug.LogError("EdgegapKcpTransport not found");
-                    PlayfabCommand.LeaveRoom(joinedRoom.roomId);
-                    return;
-                }
-
-                transport.relayAddress = joinedRoom.ip;
-                transport.relayGameClientPort = (ushort)joinedRoom.port;
-                transport.sessionId = joinedRoom.sessionToken;
-                transport.userId = userToken;
-
-                Debug.Log($"[JoinRoom] Transport 설정 완료:\n" +
-                          $"  relayAddress       = {transport.relayAddress}\n" +
-                          $"  relayGameClientPort= {transport.relayGameClientPort}\n" +
-                          $"  sessionId          = {transport.sessionId}\n" +
-                          $"  userId             = {transport.userId}");
-
-                if (NetworkClient.active)
-                {
-                    Debug.LogWarning("[JoinRoom] 기존 클라이언트 연결 감지 → 정리 후 재접속");
-                    manager.StopClient();
-                }
-
-                manager.RoomId = joinedRoom.roomId;
-                manager.RoomName = joinedRoom.roomName;
-
-                manager.networkAddress = joinedRoom.ip;
-                manager.StartClient();
-
-            }, onError); // 에러 콜백 전달 �
+            }, err =>
+            {
+                onError?.Invoke(err);
+                ButtonGuard.Unlock();   // PlayFab 에러 시 잠금 해제
+            });
         }
     }
 }

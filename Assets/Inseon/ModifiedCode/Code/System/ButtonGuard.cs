@@ -30,6 +30,24 @@ public class ButtonGuard : MonoBehaviour
             Instance._lockableArea.interactable = true;
     }
 
+    /// <summary>
+    /// seconds 초 동안 잠근 뒤 자동으로 해제합니다.
+    /// Mirror Command처럼 완료 콜백이 없는 동작에 사용하세요.
+    /// </summary>
+    public static void LockFor(float seconds)
+    {
+        if (Instance == null) return;
+        Instance.StartCoroutine(Instance.LockRoutine(seconds));
+    }
+
+    private IEnumerator LockRoutine(float seconds)
+    {
+        if (_lockableArea == null) yield break;
+        _lockableArea.interactable = false;
+        yield return new WaitForSeconds(seconds);
+        _lockableArea.interactable = true;
+    }
+
     public static bool IsLocked
         => Instance != null && Instance._lockableArea != null
            && !Instance._lockableArea.interactable;

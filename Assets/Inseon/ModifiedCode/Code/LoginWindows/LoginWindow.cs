@@ -1,11 +1,9 @@
 using inseon.Playfab.User;
 using PlayFab;
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace inseon.LoginWindows.Login.Login
+namespace inseon.LoginWindows.Login
 {
     public class LoginWindow : MonoBehaviour
     {
@@ -27,16 +25,24 @@ namespace inseon.LoginWindows.Login.Login
 
             PlayfabUserManage.Login(ID, PW,
                 onOk: PlayfabUserManage.SuccessLogin,
-                onError: error => {
+                onError: error =>
+                {
                     PlayfabUserManage.FailureLogin(error);
-                    ButtonGuard.Unlock();
+                    ButtonGuard.Unlock();   
                 });
         }
 
         public void LoginWithGuest()
         {
-            PlayfabUserManage.LoginAsGuest(PlayfabUserManage.SuccessLogin,
-                PlayfabUserManage.FailureLogin);
+            if (!ButtonGuard.TryLock()) return;
+
+            PlayfabUserManage.LoginAsGuest(
+                onOk: PlayfabUserManage.SuccessLogin,
+                onError: err =>
+                {
+                    PlayfabUserManage.FailureLogin(err);
+                    ButtonGuard.Unlock();   
+                });
         }
     }
 }

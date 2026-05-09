@@ -297,6 +297,9 @@ public class PlayerRoomManager : MonoBehaviour
             colors.normalColor = next ? Color.gray : Color.white;
             actionButton.colors = colors;
         }
+
+        // Mirror Command는 완료 콜백이 없으므로 0.5초 후 자동 해제
+        ButtonGuard.LockFor(0.5f);
     }
 
     // ────────────────────────────────────────────────

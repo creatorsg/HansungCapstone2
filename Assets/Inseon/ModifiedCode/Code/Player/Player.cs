@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace inseon.Core
+{
+
 public class Player
 {
     private string _playfabId;
@@ -42,3 +45,5 @@ public class Player
     public void JoinRoom(string roomId) => _currentRoom = roomId;
     public void LeaveRoom()             => _currentRoom = null;
 }
+
+} // namespace inseon.Core
