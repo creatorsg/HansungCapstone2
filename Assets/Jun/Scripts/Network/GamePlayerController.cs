@@ -18,7 +18,14 @@ namespace Jun
         [SyncVar] public PlayerInfo Info;
         [SyncVar] public int PingIndex;
 
-        [Header("핑 시스템")]
+        public readonly SyncList<ActiveEffect> Effects = new SyncList<ActiveEffect>();
+
+        public int EffectiveAtk => CombatCalculator.GetEffectiveAtk(Info.Atk, Effects);
+        public int EffectiveDef => CombatCalculator.GetEffectiveDef(Info.Def, Effects);
+        public int EffectiveAcc => CombatCalculator.GetEffectiveAcc(Info.Acc, Effects);
+        public int EffectiveDodge => CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects);
+
+       [Header("핑 시스템")]
         public Transform PingLayout; // 핑 나오는 공간
 
         public bool IsMovePos = false;
@@ -27,7 +34,9 @@ namespace Jun
         [Server]
         public void InjectData(PlayerData data)
         {
-            this.Info = data.Info;
+            var info = data.Info;
+            info.MaxHp = info.Hp; 
+            this.Info = info;
             this.PingIndex = data.PingIndex;
             this.FinalHeroIndex = data.FinalHeroIndex;
             this.FinalHeroPos = data.FinalHeroPos;
@@ -77,8 +86,15 @@ namespace Jun
         {
             if (isOwned)
             {
+                if (!isOwned) return;
                 _model.SelectSkill(index);
-                _view.SetButtonsInteractable(true, _view.EnemyBtn);
+
+                var skillType = Info.Skills[index].Type;
+                if (skillType == SkillType.Atk || skillType == SkillType.Debuff)
+                {
+                    // 적 대상 스킬 → 적 버튼 활성화
+                    _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                }
             }
 
         }
@@ -130,18 +146,24 @@ namespace Jun
                 currentUnit.CmdRequestChangePos(this.gameObject);
                 currentUnit.IsMovePos = false;
             }
-            else
-            { // 기존 로직
-                BattleManager.Instance.UpdateUnitUI(this);
-
-                foreach (var unit in BattleManager.Instance._players)
+            else if (currentUnit != null && currentUnit.isOwned)
+            {
+                var model = currentUnit.GetComponent<UnitModel>();
+                if (model.SelectedSkill != -1)
                 {
-                    if (unit.isOwned) 
+                    var skillType = currentUnit.Info.Skills[model.SelectedSkill].Type;
+                    bool isAllyTarget = skillType == SkillType.Heal || skillType == SkillType.Buff;
+                    if (isAllyTarget)
                     {
-                        unit.CmdSendPing(unit.PingIndex,this.gameObject); 
-                        break;
+                        model.SelectAlly(BattleManager.Instance._players.IndexOf(this));
+                        return;
                     }
                 }
+                BattleManager.Instance.UpdateUnitUI(this);
+            }
+            else
+            {
+                BattleManager.Instance.UpdateUnitUI(this);
             }
         }
 
@@ -166,10 +188,22 @@ namespace Jun
         // 피해 받음
         public void PlDamaged(float Attack)
         {
-            _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
-            
+            _view.PlDamaged(_model.PlDamaged(Attack) / Info.MaxHp);
+
+        }
+        [Server]
+        public void ApplyHpChange(float delta)
+        {
+            var info = Info;
+            info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
+            Info = info; // SyncVar 재할당해야 클라이언트에 동기화됨
         }
 
+        [Server]
+        public void AddEffect(ActiveEffect effect)
+        {
+            Effects.Add(effect); // SyncList라 자동으로 클라이언트에 동기화됨
+        }
         //스킬 사용을 서버에 요청
         //배틀 매니저에게 무결성 검사 요청
         [Command]
@@ -192,6 +226,13 @@ namespace Jun
         public void EndMyTurn()
         {
             _model.Reset();
+
+            // ActiveEffect도 내 턴 끝날 때만 tick
+            var ticked = CombatCalculator.TickEffects(Effects);
+            Effects.Clear();
+            foreach (var e in ticked) Effects.Add(e);
+            Debug.Log($"[EndMyTurn] tick 후 Effects 수: {Effects.Count}");
+
             BattleManager.Instance.NextTurn();
         }
     }

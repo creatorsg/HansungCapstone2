@@ -1,6 +1,7 @@
 using Jun;
 using Mirror;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyModel : NetworkBehaviour
@@ -27,4 +28,5 @@ public class EnemyModel : NetworkBehaviour
         IsDamaged?.Invoke(Info.Hp/_maxHp);
         if (Info.Hp <= 0) _controller.CMDDead();
     }
+
 }

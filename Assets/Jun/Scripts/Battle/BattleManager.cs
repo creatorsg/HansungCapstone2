@@ -26,7 +26,7 @@ namespace Jun
         [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
 
         [Header("전투 유닛 프리팹")]
-        [SerializeField] private List<GameObject> BattleUnitPrefabs;
+        [SerializeField] private List<GameObject> _battleUnitPrefabs; public List<GameObject> BattleUnitPrefabs => _battleUnitPrefabs;
         [Header("캐릭터 정보 창")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
@@ -274,12 +274,12 @@ namespace Jun
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
             _hp.text = unit.Info.Hp.ToString();
             _san.text = unit.Info.San.ToString();
-            _acc.text = unit.Info.Acc.ToString();
+            _acc.text = unit.EffectiveAcc.ToString();
             _crit.text = unit.Info.Crit.ToString();
-            _dmg.text = unit.Info.Atk.ToString();
-            _prot.text = unit.Info.Def.ToString();
-            _res.text = unit.Info.Hp.ToString();
-            _dodge.text = unit.Info.Dodge.ToString();
+            _dmg.text = unit.EffectiveAtk.ToString();
+            _prot.text = unit.EffectiveDef.ToString();
+            _res.text = unit.Info.Res.ToString();
+            _dodge.text = unit.EffectiveDodge.ToString();
 
             // 스킬 버튼 이벤트 재연결
             for (int i = 0; i < _skillBTN.Count; i++)
@@ -316,6 +316,12 @@ namespace Jun
             int tempPos = unit1.FinalHeroPos;
             unit1.FinalHeroPos = unit2.FinalHeroPos;
             unit2.FinalHeroPos = tempPos;
+
+            // 현재 턴 유닛의 tick 처리 후 NextTurn
+            var current = _players[_turnList[Order].num];
+            var ticked = CombatCalculator.TickEffects(current.Effects);
+            current.Effects.Clear();
+            foreach (var e in ticked) current.Effects.Add(e);
 
             NextTurn();
         }
@@ -371,6 +377,19 @@ namespace Jun
             _logic.BattleAction(caster, skillIndex,itemIndex, isEnemy, targets);
         }
         [ClientRpc]
+        public void RpcShowCombatResult(CombatResult result)
+        {
+            if (!result.isHit)
+            {
+                Debug.Log("[CLIENT] MISS");
+                // TODO: MISS 플로팅 텍스트
+                return;
+            }
+            string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
+            // TODO: 플로팅 데미지/힐 텍스트 스폰
+            Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
+        }
+        [ClientRpc]
         public void RcpEnemyDead(GameObject go)
         {
             Debug.Log("Enemy Dead");
@@ -384,6 +403,7 @@ namespace Jun
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
+            
             StageClear();
         }
         public void StageClear()

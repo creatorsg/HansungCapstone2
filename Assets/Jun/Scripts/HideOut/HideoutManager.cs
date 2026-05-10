@@ -39,8 +39,7 @@ public class HideoutManager : NetworkBehaviour
         }
     }
 
-    //접속 후 플레이어 추가(관리하기 위해)
-
+    //접속 후 플레이어 추가(관리하기 위해서
     public void RegisterPlayer(PlayerData pl)
     {
 
