@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/informent.png.meta
 guid: 7e4ecb7136d615d49b02c2d8c2cbd7a6
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 3194673378376724292
-    second: informent_0
-========
-guid: 29fb9b04691e82c4bb025f036f823caa
-TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -2311659948842064771
-    second: Player_0
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Player.png.meta
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -75,16 +63,29 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 0
+  applyGammaDecoding: 1
   swizzle: 50462976
-  cookieLightType: 0
+  cookieLightType: 2
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -97,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -106,11 +107,37 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
+    buildTarget: VisionOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,38 +149,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/informent.png.meta
-      name: informent_0
+      name: npc_informent_0
       rect:
         serializedVersion: 2
         x: 703
-        y: 267
-        width: 1074
-        height: 2912
-========
-      name: Player_0
-      rect:
-        serializedVersion: 2
-        x: 5
-        y: 13
-        width: 131
-        height: 115
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Player.png.meta
+        y: 1325
+        width: 5
+        height: 58
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-<<<<<<<< HEAD:Assets/leesy/Sprite/informent.png.meta
-      spriteID: 44faa83f282c55c20800000000000000
-      internalID: 3194673378376724292
-========
-      spriteID: d7465c336855befd0800000000000000
-      internalID: -2311659948842064771
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Player.png.meta
+      spriteID: da3f476ec48136d4fa45bf8cad9f5842
+      internalID: 1269394764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: npc_informent_1
+      rect:
+        serializedVersion: 2
+        x: 704
+        y: 266
+        width: 1072
+        height: 2914
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 98344ce759086e04c8eadca64432f927
+      internalID: -71077192
       vertices: []
       indices: 
       edges: []
@@ -162,7 +196,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 74e5079b93bc98f46997abb4d5ac0c04
     internalID: 0
     vertices: []
     indices: 
@@ -170,13 +204,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-<<<<<<<< HEAD:Assets/leesy/Sprite/informent.png.meta
-      informent_0: 3194673378376724292
-========
-      Player_0: -2311659948842064771
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Player.png.meta
+      npc_informent_0: 1269394764
+      npc_informent_1: -71077192
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

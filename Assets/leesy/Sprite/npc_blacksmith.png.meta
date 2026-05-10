@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
 guid: 2d44bc9354e6d774ba7f2ed9b8d17c4c
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -8337281393119725202
-    second: blacksmith_0
-========
-guid: 37f31d074c58f014ea9be35e1878884d
-TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 6672990557300740791
-    second: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0"
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -75,16 +63,29 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 0
+  applyGammaDecoding: 1
   swizzle: 50462976
-  cookieLightType: 0
+  cookieLightType: 2
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -97,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -106,11 +107,37 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
+    buildTarget: VisionOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,38 +149,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
-      name: blacksmith_0
+      name: npc_blacksmith_0
       rect:
         serializedVersion: 2
-        x: 558
-        y: 209
-        width: 1294
-        height: 1984
-========
-      name: "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0"
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 133
-        height: 141
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
+        x: 552
+        y: 316
+        width: 1300
+        height: 1877
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
-      spriteID: e69ff9aeeb60c4c80800000000000000
-      internalID: -8337281393119725202
-========
-      spriteID: 7b2527d8e893b9c50800000000000000
-      internalID: 6672990557300740791
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
+      spriteID: eec1036dd982ae7499871ca9380ea595
+      internalID: -1454706019
       vertices: []
       indices: 
       edges: []
@@ -162,7 +174,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f6f6ec3a9aaab7847b776e097894b3be
     internalID: 0
     vertices: []
     indices: 
@@ -170,13 +182,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-<<<<<<<< HEAD:Assets/leesy/Sprite/blacksmith.png.meta
-      blacksmith_0: -8337281393119725202
-========
-      "\uC2A4\uD06C\uB9B0\uC0F7 2025-09-03 020233_0": 6672990557300740791
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/스크린샷 2025-09-03 020233.png.meta
+      npc_blacksmith_0: -1454706019
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

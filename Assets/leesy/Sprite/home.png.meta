@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
 guid: 54afba5e9932b484eac7804b747d14ba
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 7635013726552783190
-    second: home_0
-========
-guid: b895e294cec27c84d9d13755b091efac
-TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 3974752895163522847
-    second: Gemini_Generated_Image_1ey12c1ey12c1ey1_0
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -33,7 +21,7 @@ TextureImporter:
     heightScale: 0.25
     normalMapFilter: 0
     flipGreenChannel: 0
-  isReadable: 0
+  isReadable: 1
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
@@ -51,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -75,16 +63,29 @@ TextureImporter:
   compressionQualitySet: 0
   textureFormatSet: 0
   ignorePngGamma: 0
-  applyGammaDecoding: 0
+  applyGammaDecoding: 1
   swizzle: 50462976
-  cookieLightType: 0
+  cookieLightType: 2
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -97,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -106,11 +107,37 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
-    buildTarget: Android
+    buildTarget: VisionOS
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,37 +149,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
       name: home_0
-========
-      name: Gemini_Generated_Image_1ey12c1ey12c1ey1_0
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
         width: 3015
         height: 1671
-========
-        width: 2784
-        height: 1536
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
-      spriteID: 659f862488405f960800000000000000
-      internalID: 7635013726552783190
-========
-      spriteID: f1f5d22f2b8292730800000000000000
-      internalID: 3974752895163522847
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
+      spriteID: 9af27e7dd67e79944b6f4786f6518ea4
+      internalID: -786575917
       vertices: []
       indices: 
       edges: []
@@ -161,7 +174,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e7a81ff5d0ab19e42acbd0dbb6e61520
     internalID: 0
     vertices: []
     indices: 
@@ -169,13 +182,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
-      home_0: 7635013726552783190
-========
-      Gemini_Generated_Image_1ey12c1ey12c1ey1_0: 3974752895163522847
->>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
+      home_0: -786575917
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
