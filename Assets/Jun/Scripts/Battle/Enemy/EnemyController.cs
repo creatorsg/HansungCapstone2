@@ -26,6 +26,13 @@ namespace Jun
 
         private void Start()
         {
+            // 신 시스템(Statuses)·MaxHp 초기화 보강 — 옛 Effects 시스템과 병행 운영
+            if (Info != null)
+            {
+                if (Info.MaxHp <= 0f) Info.MaxHp = Info.Hp;
+                if (Info.Statuses == null) Info.Statuses = new System.Collections.Generic.List<ActiveStatus>();
+            }
+
             _model.SetUp(Info);
             _model.IsDamaged += _view.Damaged;
         }

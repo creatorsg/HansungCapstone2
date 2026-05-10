@@ -25,6 +25,37 @@ namespace Jun {
         /// </summary>
         public string CharacterSelectScene = "CharacterSelect";
 
+        [Header("던전 세션")]
+        [Tooltip("RoundManager 컴포넌트가 붙은 프리팹. 호스트 시작 시 한 번만 스폰됩니다. 어떤 씬에도 미리 배치하지 마세요(sceneId 충돌 방지).")]
+        public GameObject RoundManagerPrefab;
+
+        // ── 던전 세션 ──────────────────────────────────────────────
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            EnsureRoundManagerSpawned();
+        }
+
+        private void EnsureRoundManagerSpawned()
+        {
+            if (RoundManager.Instance != null) return;
+            if (RoundManagerPrefab == null)
+            {
+                Debug.LogWarning("[GameRoomManager] RoundManagerPrefab이 비어 있어 던전 세션 추적이 비활성화됩니다.");
+                return;
+            }
+            if (RoundManagerPrefab.GetComponent<RoundManager>() == null)
+            {
+                Debug.LogError("[GameRoomManager] RoundManagerPrefab에 RoundManager 컴포넌트가 없습니다!");
+                return;
+            }
+
+            var go = Instantiate(RoundManagerPrefab);
+            NetworkServer.Spawn(go);
+            Debug.Log("[GameRoomManager] RoundManager 스폰 완료 (DontDestroyOnLoad).");
+        }
+
         // ── PlayFab 연동 ──────────────────────────────────────────────
 
         public override void OnStopHost()

@@ -1,6 +1,5 @@
 using UnityEngine;
 using Mirror;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
@@ -36,7 +35,18 @@ namespace Jun
         public void OnClickedHero(int index)
         {
             var player = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
-            player.CMDChoiceHero(index);
+
+            string code = null;
+            foreach (var kvp in CharacterDatabase.Stats)
+            {
+                if (kvp.Value.index == index) { code = kvp.Key; break; }
+            }
+            if (string.IsNullOrEmpty(code))
+            {
+                Debug.LogWarning($"[LobbyManager] HeroIndex {index}에 해당하는 CharacterCode를 찾지 못했습니다.");
+                return;
+            }
+            player.CMDChoiceHero(code);
         }
 
         // 아지트 스킬 강화 시설 버튼 (HeroIndex 전달)

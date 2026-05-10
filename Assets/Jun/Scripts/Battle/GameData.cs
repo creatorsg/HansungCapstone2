@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -21,6 +20,46 @@ namespace Jun
         Waiting,       // 대기
         Acting,        // 행동 중
         Incapacitated  // 행동불가(기절 등)
+    }
+
+    // 스킬/아이템 타깃 종류 (신 시스템: SkillSO / EnemyAI / UnitModel)
+    public enum TargetType
+    {
+        SingleEnemy,
+        AllEnemies,
+        SingleAlly,
+        AllAllies,
+        Self,
+    }
+
+    // 신 상태이상 종류 (StatusProcessor 기반)
+    public enum StatusType
+    {
+        Bleed,
+        Poison,
+        Stun,
+        AtkUp, AtkDown,
+        DefUp, DefDown,
+        SpdUp, SpdDown,
+    }
+
+    // PlayerInfo 에 누적되는 신 상태이상 인스턴스 (StatusProcessor 가 직접 가공)
+    [System.Serializable]
+    public class ActiveStatus
+    {
+        public StatusType Type;
+        public int RemainingTurns;
+        public int Value;
+    }
+
+    // 스킬/AI 가 부여하는 상태이상 정의 (확률 + 지속 + 값)
+    [System.Serializable]
+    public class StatusApply
+    {
+        public StatusType Type;
+        [Range(0f, 1f)] public float Chance = 1f;
+        public int Duration = 1;
+        public int Value;
     }
 
     // 상태이상 종류
@@ -124,6 +163,9 @@ namespace Jun
         public int ArmId;
         public int Trk1;
         public int Trk2;
+
+        // 신 시스템: StatusProcessor 가 누적/소비하는 상태이상 리스트
+        public List<ActiveStatus> Statuses;
     }
 
     // 스킬 정보
@@ -148,6 +190,12 @@ namespace Jun
 
         // 스킬 트리 연동
         public SkillTierData TierData;
+
+        // 신 시스템 (SkillSO / EnemyAI / UnitModel) — 옛 필드와 공존
+        public TargetType Target;
+        public float DamageMultiplier;
+        public int HealAmount;
+        public List<StatusApply> StatusEffects;
     }
 
     // 아이템 정보
@@ -157,6 +205,9 @@ namespace Jun
         public string Name;
         public int TagetNum;
         public float HealRate;          // 회복 비율
+
+        // 신 시스템: 자동 타깃 라우팅 (Self / AllAllies / SingleAlly 등)
+        public TargetType Target = TargetType.SingleAlly;
     }
 
     // 장비 정보

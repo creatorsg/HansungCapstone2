@@ -1,16 +1,11 @@
 using Mirror;
-using Mirror.BouncyCastle.Security;
-using NUnit.Framework;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ¹èÆ²À» Àü¹İÀûÀ¸·Î ¿î¿µÇÏ´Â ¼­¹ö
+// ï¿½ï¿½Æ²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½î¿µï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
 namespace Jun
 {
     public class BattleManager : NetworkBehaviour
@@ -18,19 +13,19 @@ namespace Jun
         [SerializeField] private BattleLogic _logic;
         public static BattleManager Instance;
 
-        [Header("ÀüÅõ À¯´Ö ¸®½ºÆ®")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®")]
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
-        [Header("¿µ¿õ »ı¼º À§Ä¡")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("Ä³¸¯ÅÍµéÀÇ ÀÌ¹ÌÁö")]
+        [Header("Ä³ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½")]
         [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
 
-        [Header("ÀüÅõ À¯´Ö ÇÁ¸®ÆÕ")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
         [SerializeField] private List<GameObject> _battleUnitPrefabs; public List<GameObject> BattleUnitPrefabs => _battleUnitPrefabs;
-        [Header("Ä³¸¯ÅÍ Á¤º¸ Ã¢")]
+        [Header("Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¢")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
-        [Header("Ä³¸¯ÅÍ °ü·Ã UIµé")]
+        [Header("Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
@@ -45,7 +40,7 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _dodge; public TextMeshProUGUI Dodge => _dodge;
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
-        [Header("Àû")]// ½ÇÇèÀ» À§ÇØ Àá½Ã ¹öÆ°À¸·Î ¸¸µë, ÈÄ¿¡ GameObject·Î ¹Ù²Ü ¿¹Á¤
+        [Header("ï¿½ï¿½")]// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ä¿ï¿½ GameObjectï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½ï¿½
         [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
@@ -54,13 +49,14 @@ namespace Jun
 
         public int EnemyNum;
 
-        [Header("ÅÏ Á¤º¸")]
-        [SerializeField] private Transform _turnPanel;  //ÅÏ º¸¿©ÁÖ´Â Àå¼Ò
-        [SerializeField] private Image _turnUi;  // ÅÏÀÌ º¸¿©Áö´Â ÀÌ¹ÌÁö
+        [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+        [SerializeField] private Transform _turnPanel;  //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
+        [SerializeField] private Image _turnUi;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         [SerializeField] private List<Image> _turnUIList; 
         [SerializeField] private TextMeshProUGUI _turnUI;  
         public List<TurnData> _turnList = new List<TurnData>();
         public GamePlayerController CurrentTurnUnit { get; private set; }
+        private Coroutine _enemyTurnRoutine;
 
         [SerializeField] private RootingSystem _rootingSystem;
 
@@ -72,7 +68,7 @@ namespace Jun
            
         }
 
-        [Header("ÇÎ ½Ã½ºÅÛ")]
+        [Header("ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½")]
         [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
 
 
@@ -83,7 +79,7 @@ namespace Jun
         private void Awake()
         {
             Instance = this;
-            //  ÆĞ³Î ºñÈ°¼º Ã³¸®
+            //  ï¿½Ğ³ï¿½ ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha =  0.5f;
@@ -93,12 +89,12 @@ namespace Jun
         {
             base.OnStartServer();
 
-            // ±âÁ¸¿¡ ½×ÀÎ ¾²·¹±â µ¥ÀÌÅÍ ÃÊ±âÈ­ 
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ 
             _players.Clear();
             _turnList.Clear();
             Order = -1;
 
-            // ¼­¹ö¿¡¼­¸¸ Àû ÅÏ µ¥ÀÌÅÍ Ãß°¡.
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½.
             for (int i = 0; i < _enemys[StageNum - 1].Enemys.Count; i++)
             {
                 _turnList.Add(new TurnData("Enemy", _enemys[StageNum - 1].Enemys[i].GetComponent<EnemyController>().Info.Spd, i));
@@ -111,43 +107,89 @@ namespace Jun
             var roomManager = NetworkManager.singleton as GameRoomManager;
 
             PlayerData[] survivors;
+            float deadline = Time.time + 10f;
             while (true)
             {
                 survivors = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-                if (survivors.Length == roomManager.HeroNum) break;
+                int expectedHeroCount = roomManager != null ? roomManager.HeroNum : 0;
+
+                if (expectedHeroCount > 0 && survivors.Length >= expectedHeroCount) break;
+                if (expectedHeroCount <= 0 && survivors.Length > 0) break;
+                if (Time.time >= deadline)
+                {
+                    Debug.LogWarning($"[BattleManager] PlayerData wait timeout. found={survivors.Length}, expected={expectedHeroCount}");
+                    break;
+                }
                 yield return null;
             }
 
-            Debug.Log("Àü¿ø µµÂø! ÀüÅõ ¸öÅëÀ» »ı¼ºÇÕ´Ï´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
+
+            if (survivors.Length == 0)
+            {
+                Debug.LogError("[BattleManager] PlayerDataê°€ ì—†ì–´ ì „íˆ¬ë¥¼ ì‹œì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+                yield break;
+            }
 
             foreach (var data in survivors)
             {
-                // 1. µ¥ÀÌÅÍ(FinalHeroIndex)¿¡ ¸Â´Â ÀüÅõ¿ë ÇÁ¸®ÆÕ »ı¼º! (À§Ä¡´Â ½ºÆù Æ÷ÀÎÆ®·Î)
+                if (data.FinalHeroIndex < 0 || data.FinalHeroIndex >= BattleUnitPrefabs.Count)
+                {
+                    Debug.LogWarning($"[BattleManager] Invalid hero index: {data.FinalHeroIndex}");
+                    continue;
+                }
+
+                if (data.FinalHeroPos < 0 || data.FinalHeroPos >= SpawnPoints.Count)
+                {
+                    Debug.LogWarning($"[BattleManager] Invalid hero position: {data.FinalHeroPos}");
+                    continue;
+                }
+
+                if (BattleUnitPrefabs[data.FinalHeroIndex] == null)
+                {
+                    Debug.LogWarning($"[BattleManager] BattleUnitPrefab is null. index={data.FinalHeroIndex}");
+                    continue;
+                }
+                // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(FinalHeroIndex)ï¿½ï¿½ ï¿½Â´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½! (ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½)
                 GameObject battleObj = Instantiate(BattleUnitPrefabs[data.FinalHeroIndex], SpawnPoints[data.FinalHeroPos].position, Quaternion.identity);
 
-                // 2. ÇÁ¸®ÆÕ ¾ÈÀÇ ÄÁÆ®·Ñ·¯¸¦ ²¨³»¼­ µ¥ÀÌÅÍ(¿µÈ¥) ÁÖÀÔ!
+                // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½È¥) ï¿½ï¿½ï¿½ï¿½!
                 var controller = battleObj.GetComponent<GamePlayerController>();
+                if (controller == null)
+                {
+                    Debug.LogWarning($"[BattleManager] GamePlayerController missing on prefab index={data.FinalHeroIndex}");
+                    Destroy(battleObj);
+                    continue;
+                }
+
                 controller.InjectData(data);
 
-                // 3. [°¡Àå Áß¿ä] ¼­¹ö¿¡ ½ºÆùÇÏ¸é¼­, ÇØ´ç Å¬¶óÀÌ¾ğÆ®¿¡°Ô Á¶Á¾ ±ÇÇÑ ÁÖ±â!
-                // PlayerData¸¦ °¡Áö°í ¿Â ¿ø·¡ ÁÖÀÎÀÇ ¿¬°á(connectionToClient)À» »õ ¸öÅë¿¡ ¿¬°áÇØÁİ´Ï´Ù.
+                // 3. [ï¿½ï¿½ï¿½ï¿½ ï¿½ß¿ï¿½] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸é¼­, ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½!
+                // PlayerDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(connectionToClient)ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ë¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½İ´Ï´ï¿½.
                 NetworkServer.Spawn(battleObj, data.connectionToClient);
 
-                // 4. ÀüÅõ ¸®½ºÆ®¿¡ ÄÁÆ®·Ñ·¯ µî·Ï
+                // 4. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ï¿½
                 _players.Add(controller);
                 _turnList.Add(new TurnData("Player", data.Info.Spd, _players.Count - 1));
             }
 
-            // 5. ÅÏ ½ÃÀÛ
+            // 5. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            if (_players.Count == 0)
+            {
+                Debug.LogError("[BattleManager] ìƒì„±ëœ í”Œë ˆì´ì–´ ìœ ë‹›ì´ ì—†ì–´ ì „íˆ¬ë¥¼ ì‹œì‘í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+                yield break;
+            }
+
             Invoke(nameof(StartFirstTurn), 1.0f);
         }
 
         [Server]
         private void StartFirstTurn()
         {
-            Order = -1; // È®½ÇÇÏ°Ô ÃÊ±âÈ­
+            Order = -1;
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
+            RpcResetAllHighlights();   // prefab ê¸°ë³¸ê°’ì´ active ì¸ ê²½ìš° ëŒ€ë¹„
             NextTurn();
         }
         [ClientRpc]
@@ -168,14 +210,14 @@ namespace Jun
                 }
                 else
                 {
-                    // ÇÃ·¹ÀÌ¾î´Â µé¾î¿À´Â µ¥ ½Ã°£ÀÌ °É¸± ¼ö ÀÖÀ¸´Ï ¹æ¾î ÄÚµå »ç¿ë
+                    // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½É¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Úµï¿½ ï¿½ï¿½ï¿½
                     if (targetNum < _players.Count)
                     {
                         sp = _players[targetNum].GetComponent<SpriteRenderer>().sprite;
                     }
                     else
                     {
-                        Debug.LogWarning($"¾ÆÁ÷ {targetNum}¹ø ÇÃ·¹ÀÌ¾î°¡ ´ú µé¾î¿Ô½À´Ï´Ù.");
+                        Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ {targetNum}ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ ï¿½ï¿½ï¿½Ô½ï¿½ï¿½Ï´ï¿½.");
                     }
                 }
 
@@ -186,38 +228,115 @@ namespace Jun
         [ClientRpc]
         public void RpcSetHighlight(int index, bool isTurn)
         {
-            if (index < 0 || index >= _turnUIList.Count) return;
+            if (index < 0 || _turnUIList == null || index >= _turnUIList.Count) return;
 
-            Debug.Log($"ÅÏ UI ¾÷µ¥ÀÌÆ® - ÀÎµ¦½º: {index}, »óÅÂ: {isTurn}");
-            GameObject go = _turnUIList[index].transform.Find("HighLight").gameObject;
-            go.SetActive(isTurn);
+            var img = _turnUIList[index];
+            if (img == null) return;
+
+            var t = img.transform.Find("HighLight");
+            if (t == null)
+            {
+                Debug.LogWarning($"[BattleManager] _turnUi í”„ë¦¬íŒ¹ì— 'HighLight' ìì‹ì´ ì—†ìŠµë‹ˆë‹¤. index={index}");
+                return;
+            }
+
+            Debug.Log($"[BattleManager] Highlight - index:{index}, on:{isTurn}");
+            t.gameObject.SetActive(isTurn);
         }
-        // ´ÙÀ½ ÅÏÀ¸·Î ÁøÇà
+
+        // ë¼ìš´ë“œ ì‹œì‘ / ìƒˆ í„´ ë¦¬ìŠ¤íŠ¸ ë¹Œë“œ ì‹œ ëª¨ë“  highlight ë¥¼ ì¼ê´„ OFF (prefab ê¸°ë³¸ê°’ì´ active ì¸ ê²½ìš° ëŒ€ë¹„)
+        [ClientRpc]
+        private void RpcResetAllHighlights()
+        {
+            if (_turnUIList == null) return;
+            foreach (var img in _turnUIList)
+            {
+                if (img == null) continue;
+                var t = img.transform.Find("HighLight");
+                if (t != null) t.gameObject.SetActive(false);
+            }
+        }
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         [Server]
         public void NextTurn()
         {
-            //ÀÌÀü ÅÏ ÇÏÀÌ¶óÀÌÆ® ²ô±â
-            RpcSetHighlight(Order, false);
-
-            Order = (Order + 1) % _turnList.Count;
-            if (Order == 0) _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
-
-            // ÀÌ¹ø ÅÏÀÇ Å¸ÀÔ°ú ¹øÈ£¸¦ ¼­¹ö°¡ È®ÀÎ
-            string currentType = _turnList[Order].type;
-            int currentNum = _turnList[Order].num;
-
-            Debug.Log("ÇöÀç ÀûÀÇ ¼ö: " + EnemyNum);
-            if (EnemyNum == 0)
+            if (_turnList == null || _turnList.Count == 0)
             {
-                Debug.Log("EndStage");
+                Debug.LogWarning("[BattleManager] NextTurn called with empty turn list.");
+                return;
+            }
+
+            // íŒ¨ë°° / ìŠ¹ë¦¬ ì¢…ë£Œ ì²´í¬
+            int alivePlayers = 0;
+            foreach (var p in _players)
+                if (p != null && p.Info != null && p.Info.Hp > 0f) alivePlayers++;
+
+            if (alivePlayers == 0)
+            {
+                Debug.Log("[BattleManager] ì „ë©¸ â€” defeat");
+                var rmFail = RoundManager.Instance;
+                if (rmFail != null) rmFail.OnAllPlayersDead();
+                else NetworkManager.singleton.ServerChangeScene("Home 1");
+                return;
+            }
+
+            if (EnemyNum <= 0)
+            {
+                Debug.Log("[BattleManager] ì  ì „ë©¸ â€” round clear");
                 NextStage();
                 return;
             }
 
+            RpcSetHighlight(Order, false);
+
+            // ì‚´ì•„ìˆëŠ” ë‹¤ìŒ ìœ ë‹› ì°¾ê¸° (ì£½ì€ ìœ ë‹›ì€ ìŠ¤í‚µ)
+            int safety = 0;
+            do
+            {
+                Order = (Order + 1) % _turnList.Count;
+                if (Order == 0) _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+                if (++safety > _turnList.Count + 1)
+                {
+                    Debug.LogWarning("[BattleManager] No alive units in turn list.");
+                    return;
+                }
+            } while (IsTurnEntryDead(_turnList[Order]));
+
+            string currentType = _turnList[Order].type;
+            int currentNum = _turnList[Order].num;
+
+            Debug.Log($"[BattleManager] Turn: {currentType}#{currentNum} (ì :{EnemyNum} ìƒì¡´:{alivePlayers})");
+
             RpcChangeTurn(currentType, currentNum);
             RpcSetHighlight(Order, true);
+
+            if (currentType == "Enemy")
+            {
+                if (_enemyTurnRoutine != null) StopCoroutine(_enemyTurnRoutine);
+                _enemyTurnRoutine = StartCoroutine(EnemyTurnServer());
+            }
         }
-        // ÅÏ º¯°æ
+
+        // í„´ ë¦¬ìŠ¤íŠ¸ í•­ëª©ì´ ì‚¬ë§ ìƒíƒœì¸ì§€ (ìŠ¤í‚µ íŒì •)
+        private bool IsTurnEntryDead(TurnData t)
+        {
+            if (t == null) return true;
+            if (t.type == "Enemy")
+            {
+                if (Enemys == null) return true;
+                int sIdx = StageNum - 1;
+                if (sIdx < 0 || sIdx >= Enemys.Count) return true;
+                if (t.num < 0 || t.num >= Enemys[sIdx].Enemys.Count) return true;
+                var btn = Enemys[sIdx].Enemys[t.num];
+                if (btn == null) return true;
+                var ec = btn.GetComponent<EnemyController>();
+                return ec == null || ec.Info == null || ec.Info.Hp <= 0f;
+            }
+            if (t.num < 0 || t.num >= _players.Count) return true;
+            var pl = _players[t.num];
+            return pl == null || pl.Info == null || pl.Info.Hp <= 0f;
+        }
+        // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         [ClientRpc]
         public void RpcChangeTurn(string typeTurn, int turnNum)
         {
@@ -228,21 +347,20 @@ namespace Jun
 
             if (typeTurn == "Enemy")
             {
-                CurrentTurnUnit = null; // Àû ÅÏÀÌ´Ï±î 
+                CurrentTurnUnit = null; // ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´Ï±ï¿½ 
                 _turnUI.text = "Enemy" + turnNum.ToString();
-                //  ÆĞ³Î ºñÈ°¼º Ã³¸®
+                //  ï¿½Ğ³ï¿½ ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
                 _unitPanel.interactable = false;
                 _unitPanel.blocksRaycasts = false;
                 _unitPanel.alpha = 0.5f;
-                StartCoroutine(EnemyTurn());
             }
             else
             {
                 var targetPlayer = _players[turnNum];
-                CurrentTurnUnit = targetPlayer; //ÇöÀç ÅÏ À¯´Ö Á¤º¸ ÀúÀå
+                CurrentTurnUnit = targetPlayer; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 _turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
                 
-                //´©±¸ °ÍÀÌµç »ó°ü¾øÀÌ ¹«Á¶°Ç ³ë¶õ ¼±À» Ç¥½Ã
+                //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
                 targetPlayer.MyTurn(true);
 
                 bool isMyTurn = targetPlayer.isOwned;
@@ -250,27 +368,93 @@ namespace Jun
                 {
                     UpdateUnitUI(targetPlayer);
                 }
-                // ³»ÅÏÀÎÁö¿¡ µû¶ó ÆĞ³Î È°¼º/ºñÈ°¼º Ã³¸®
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ğ³ï¿½ È°ï¿½ï¿½/ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
                 _unitPanel.interactable = isMyTurn;
                 _unitPanel.blocksRaycasts = isMyTurn;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
         }
-        // Àû ÅÏÀÏ‹š Àá½Ã ÄÚ·çÆ¾À¸·Î ³Ñ±â±â
-        IEnumerator EnemyTurn()
+        // ì  ì°¨ë¡€ â€” EnemyAIë¡œ ìŠ¤í‚¬/íƒ€ê¹ƒ ê²°ì • í›„ BattleLogic.EnemyAction ì‹¤í–‰
+        [Server]
+        private IEnumerator EnemyTurnServer()
         {
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(0.7f);
+
+            if (_turnList == null || Order < 0 || Order >= _turnList.Count)
+            {
+                _enemyTurnRoutine = null;
+                NextTurn();
+                yield break;
+            }
+
+            int eIdx = _turnList[Order].num;
+            int sIdx = StageNum - 1;
+
+            EnemyController enemy = null;
+            UnityEngine.UI.Button btn = null;
+            if (Enemys != null && sIdx >= 0 && sIdx < Enemys.Count
+                && eIdx >= 0 && eIdx < Enemys[sIdx].Enemys.Count)
+            {
+                btn = Enemys[sIdx].Enemys[eIdx];
+                if (btn != null) enemy = btn.GetComponent<EnemyController>();
+            }
+
+            if (enemy == null || enemy.Info == null || enemy.Info.Hp <= 0f)
+            {
+                _enemyTurnRoutine = null;
+                NextTurn();
+                yield break;
+            }
+
+            // EnemyAI ê°€ ìˆìœ¼ë©´ ê°€ì¤‘ì¹˜ ê¸°ë°˜ ìŠ¤í‚¬ í”½, ì—†ìœ¼ë©´ ê¸°ë³¸ ê³µê²©
+            SkillInfo skill;
+            List<int> targets;
+            var ai = btn.GetComponent<EnemyAI>();
+            if (ai != null)
+            {
+                skill = ai.PickSkill();
+                targets = ai.PickTargets(skill, _players);
+            }
+            else
+            {
+                skill = new SkillInfo
+                {
+                    Name = "Bash",
+                    Type = SkillType.Atk,
+                    DamageMultiplier = 1f,
+                    Target = TargetType.SingleEnemy,
+                    TagetNum = 1,
+                    StatusEffects = new List<StatusApply>()
+                };
+                targets = new List<int>();
+                for (int i = 0; i < _players.Count; i++)
+                {
+                    if (_players[i] != null && _players[i].Info != null && _players[i].Info.Hp > 0f)
+                    {
+                        targets.Add(i);
+                        break;
+                    }
+                }
+            }
+
+            if (_logic != null && targets != null && targets.Count > 0)
+            {
+                _logic.EnemyAction(enemy, skill, targets);
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            _enemyTurnRoutine = null;
             NextTurn();
         }
         public void UpdateUnitUI(GamePlayerController unit)
         {
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
-            // ¼±ÅÃµÈ À¯´ÖÀÇ Â÷·Ê¿Í ³» ¼ÒÀ¯ÀÎÁö¿¡ µû¶ó ÆĞ³Î È°¼º/ºñÈ°¼º Ã³¸®
+            // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ğ³ï¿½ È°ï¿½ï¿½/ï¿½ï¿½È°ï¿½ï¿½ Ã³ï¿½ï¿½
             _unitPanel.interactable = isUnitTurn;
             _unitPanel.blocksRaycasts = isUnitTurn;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
-            // ¼±ÅÃµÈ À¯´ÖÀÇ Á¤º¸·Î ±³Ã¼
+            // ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
             _hp.text = unit.Info.Hp.ToString();
             _san.text = unit.Info.San.ToString();
@@ -281,14 +465,14 @@ namespace Jun
             _res.text = unit.Info.Res.ToString();
             _dodge.text = unit.EffectiveDodge.ToString();
 
-            // ½ºÅ³ ¹öÆ° ÀÌº¥Æ® Àç¿¬°á
+            // ï¿½ï¿½Å³ ï¿½ï¿½Æ° ï¿½Ìºï¿½Æ® ï¿½ç¿¬ï¿½ï¿½
             for (int i = 0; i < _skillBTN.Count; i++)
             {
                 int index = i;
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
 
-                // ½ºÅ³ ¾ÆÀÌÄÜµµ À¯´Ö¿¡ ¸Â°Ô º¯°æ °¡´É
+                // ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½ ï¿½ï¿½ï¿½Ö¿ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 // _skillBTN[i].image.sprite = unit.SkillSprites[i];
 
             }
@@ -302,14 +486,14 @@ namespace Jun
             _movePosBTN.onClick.RemoveAllListeners();
             _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
         }
-        //Àû ¼±ÅÃ ÀÌ¹ÌÁö º¯°æ
+        //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         public void UpdateEnemyUI(int index)
         {
             var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
             _enemyPanel.SetActive(true);
             _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
         }
-        //À¯´Ö À§Ä¡ ÀÌµ¿
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½Ìµï¿½
         [Server]
         public void ChangeUnitPos(GamePlayerController unit1, GamePlayerController unit2)
         {
@@ -317,7 +501,7 @@ namespace Jun
             unit1.FinalHeroPos = unit2.FinalHeroPos;
             unit2.FinalHeroPos = tempPos;
 
-            // ÇöÀç ÅÏ À¯´ÖÀÇ tick Ã³¸® ÈÄ NextTurn
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tick Ã³ï¿½ï¿½ ï¿½ï¿½ NextTurn
             var current = _players[_turnList[Order].num];
             var ticked = CombatCalculator.TickEffects(current.Effects);
             current.Effects.Clear();
@@ -329,6 +513,8 @@ namespace Jun
         [ClientRpc]
         public void RpcShowPing(int pingIndex, GameObject targetObj)
         {
+            if (pingIndex < 0 || targetObj == null) return;
+
             Transform pingLayout = null;
 
             GamePlayerController player = targetObj.GetComponent<GamePlayerController>();
@@ -339,21 +525,26 @@ namespace Jun
             else
             {
                 EnemyController enemy = targetObj.GetComponent<EnemyController>();
-                pingLayout = enemy.PingLayout;
+                if (enemy != null) pingLayout = enemy.PingLayout;
             }
+            if (pingLayout == null) return;
+
+            while (_pingList.Count <= pingIndex)
+                _pingList.Add(null);
+
             if (_pingList[pingIndex] != null) {
                 _pingList[pingIndex].SetActive(false);
             }
-            // ÀÚ½Ä ¼ö È®ÀÎ
-            Debug.Log($"pingIndex: {pingIndex} / PingLayout ÀÚ½Ä ¼ö: {pingLayout.childCount}");
+            // ï¿½Ú½ï¿½ ï¿½ï¿½ È®ï¿½ï¿½
+            Debug.Log($"pingIndex: {pingIndex} / PingLayout ï¿½Ú½ï¿½ ï¿½ï¿½: {pingLayout.childCount}");
 
             if (pingIndex >= pingLayout.childCount)
             {
-                Debug.LogWarning("PingLayout ÀÚ½ÄÀÌ ºÎÁ·ÇÔ!");
+                Debug.LogWarning("PingLayout ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½!");
                 return;
             }
 
-            // ÇØ´ç ÀÎµ¦½º ÀÚ½Ä ¿ÀºêÁ§Æ® ÄÑ±â
+            // ï¿½Ø´ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ñ±ï¿½
             GameObject ping = pingLayout.GetChild(pingIndex).gameObject;
             ping.SetActive(true);
             _pingList[pingIndex] = ping;
@@ -367,13 +558,14 @@ namespace Jun
             ping.SetActive(false);
         }
 
-        //¹«°á¼º °Ë»ç
+        //ï¿½ï¿½ï¿½á¼º ï¿½Ë»ï¿½
         public void VerifyClientRequest(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy,List<int> targets)
         {
-            // ±ÔÄ¢ È®ÀÎ ÈÄ(¾ÆÁ÷ »ı°¢¾ÈÇØµÒ)
+            // ï¿½ï¿½Ä¢ È®ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½)
 
 
 
+            if (_logic == null || caster == null || targets == null) return;
             _logic.BattleAction(caster, skillIndex,itemIndex, isEnemy, targets);
         }
         [ClientRpc]
@@ -382,33 +574,163 @@ namespace Jun
             if (!result.isHit)
             {
                 Debug.Log("[CLIENT] MISS");
-                // TODO: MISS ÇÃ·ÎÆÃ ÅØ½ºÆ®
+                // TODO: MISS ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®
                 return;
             }
             string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
-            // TODO: ÇÃ·ÎÆÃ µ¥¹ÌÁö/Èú ÅØ½ºÆ® ½ºÆù
+            // TODO: ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
             Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
         }
+        [Server]
+        public void OnEnemyDead(GameObject enemyObj)
+        {
+            EnemyNum -= 1;
+            RpcEnemyDead(enemyObj);
+        }
+
         [ClientRpc]
-        public void RcpEnemyDead(GameObject go)
+        public void RpcEnemyDead(GameObject go)
         {
             Debug.Log("Enemy Dead");
-            EnemyNum -= 1;
             go.SetActive(false);
         }
+
+        // â”€â”€ ë˜ì „/ë¼ìš´ë“œ ì‹œìŠ¤í…œ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // RoundManager ê°€ SyncVar hook ìœ¼ë¡œ í˜¸ì¶œ. ìƒˆ ë¼ìš´ë“œì˜ ì ì„ í™œì„±í™”í•˜ê³  í„´ ë¦¬ìŠ¤íŠ¸ ì¬êµ¬ì„±.
+        [Server]
+        public void ServerSetupRound(int round)
+        {
+            if (round < 1 || _enemys == null || round - 1 >= _enemys.Count)
+            {
+                Debug.LogError($"[BattleManager] ServerSetupRound: invalid round {round} (stages={_enemys?.Count ?? 0})");
+                return;
+            }
+
+            Debug.Log($"[BattleManager] ServerSetupRound({round}) ì‹œì‘");
+
+            if (_enemyTurnRoutine != null)
+            {
+                StopCoroutine(_enemyTurnRoutine);
+                _enemyTurnRoutine = null;
+            }
+
+            _stageNum = round;
+
+            // ëª¨ë“  ìŠ¤í…Œì´ì§€ì˜ ì  ë¹„í™œì„± â†’ ìƒˆ ë¼ìš´ë“œë§Œ í™œì„±í™”
+            for (int s = 0; s < _enemys.Count; s++)
+            {
+                if (_enemys[s].Enemys == null) continue;
+                for (int i = 0; i < _enemys[s].Enemys.Count; i++)
+                {
+                    bool active = (s == round - 1);
+                    RpcSetEnemyActive(s, i, active);
+                }
+            }
+
+            // ìƒˆ ë¼ìš´ë“œ ì  HP ë¦¬ì…‹ + HPë°” ë™ê¸°í™”
+            var roster = _enemys[round - 1].Enemys;
+            for (int i = 0; i < roster.Count; i++)
+            {
+                if (roster[i] == null) continue;
+                var ec = roster[i].GetComponent<EnemyController>();
+                if (ec == null || ec.Info == null) continue;
+
+                if (ec.Info.MaxHp <= 0f) ec.Info.MaxHp = ec.Info.Hp;
+                ec.Info.Hp = ec.Info.MaxHp;
+                if (ec.Info.Statuses != null) ec.Info.Statuses.Clear();
+
+                RpcSyncEnemyHp(i, ec.Info.Hp, ec.Info.MaxHp);
+            }
+            EnemyNum = roster.Count;
+
+            // í„´ ë¦¬ìŠ¤íŠ¸ ì¬êµ¬ì„± (ì‚´ì•„ìˆëŠ” í”Œë ˆì´ì–´ + ìƒˆ ì )
+            _turnList.Clear();
+            for (int i = 0; i < _players.Count; i++)
+            {
+                var p = _players[i];
+                if (p != null && p.Info != null && p.Info.Hp > 0f)
+                    _turnList.Add(new TurnData("Player", p.Info.Spd, i));
+            }
+            for (int i = 0; i < roster.Count; i++)
+            {
+                if (roster[i] == null) continue;
+                var ec = roster[i].GetComponent<EnemyController>();
+                if (ec != null && ec.Info != null)
+                    _turnList.Add(new TurnData("Enemy", ec.Info.Spd, i));
+            }
+
+            Order = -1;
+            _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+            RpcClearTurnUI();
+            RpcTurnListUpdate(_turnList.ToArray());
+            RpcResetAllHighlights();
+
+            Invoke(nameof(NextTurn), 1.0f);
+        }
+
+        [ClientRpc]
+        private void RpcSetEnemyActive(int stageIdx, int enemyIdx, bool active)
+        {
+            if (_enemys == null) return;
+            if (stageIdx < 0 || stageIdx >= _enemys.Count) return;
+            if (_enemys[stageIdx].Enemys == null) return;
+            if (enemyIdx < 0 || enemyIdx >= _enemys[stageIdx].Enemys.Count) return;
+            var btn = _enemys[stageIdx].Enemys[enemyIdx];
+            if (btn != null) btn.gameObject.SetActive(active);
+        }
+
+        [ClientRpc]
+        private void RpcClearTurnUI()
+        {
+            if (_turnUIList == null) return;
+            foreach (var img in _turnUIList)
+                if (img != null) Destroy(img.gameObject);
+            _turnUIList.Clear();
+        }
+
+        // EndMyTurn ë“±ì—ì„œ í˜¸ì¶œ. í˜„ì¬ëŠ” NextTurn ì§ê²° (í ì‹œìŠ¤í…œ ë„ì… ì‹œ í™•ì¥).
+        [Server]
+        public void QueueNextTurn()
+        {
+            NextTurn();
+        }
+
+        // ì  HP ë³€ë™ì„ ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— ë™ê¸°í™” (EnemyModel.Damaged ê°€ ì„œë²„ì—ì„œ í˜¸ì¶œ)
+        [ClientRpc]
+        public void RpcSyncEnemyHp(int enemyIdx, float hp, float maxHp)
+        {
+            if (enemyIdx < 0
+                || _enemys == null
+                || StageNum - 1 < 0
+                || StageNum - 1 >= _enemys.Count
+                || enemyIdx >= _enemys[StageNum - 1].Enemys.Count) return;
+
+            var view = _enemys[StageNum - 1].Enemys[enemyIdx].GetComponent<EnemyView>();
+            if (view != null && maxHp > 0f) view.Damaged(hp / maxHp);
+        }
+        [Server]
         public void NextStage()
         {
             Debug.Log("NextStage");
-            //  ÆĞ³Î ºñÈ°¼º Ã³¸®
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
-            
+
+            var rm = RoundManager.Instance;
+            if (rm != null && rm.State == DungeonState.InBattle && rm.CurrentRound < rm.TotalRounds)
+            {
+                // ë‹¤ìŒ ë¼ìš´ë“œ â€” Rooting ì—†ì´ ë°”ë¡œ ì§„í–‰ (hook ì´ ServerSetupRound í˜¸ì¶œ)
+                Debug.Log($"[BattleManager] Round {rm.CurrentRound}/{rm.TotalRounds} clear â†’ ë‹¤ìŒ ë¼ìš´ë“œ");
+                rm.OnRoundCleared();
+                return;
+            }
+
+            // ë§ˆì§€ë§‰ ë¼ìš´ë“œ ë˜ëŠ” RoundManager ë¯¸ì‚¬ìš© â€” ê¸°ì¡´ Rooting íë¦„
             StageClear();
         }
         public void StageClear()
         {
-            Debug.Log("StageClaer");
+            Debug.Log("StageClear");
             _rootingSystem.ServerEndStage();
         }
     }

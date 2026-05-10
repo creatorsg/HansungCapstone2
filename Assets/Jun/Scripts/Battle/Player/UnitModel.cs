@@ -1,8 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
-using System;
-
 
 namespace Jun
 {
@@ -11,89 +8,112 @@ namespace Jun
         [SerializeField] private GamePlayerController _controller;
         [SerializeField] private PlayerInfo _info;
         [SerializeField] private List<ItemInfo> _inventory = new List<ItemInfo>();
- 
-        Animator anim;
-        public PlayerInfo Info => _info; //¿–±‚¿¸øÎ
 
-        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //º±≈√µ» skill
-        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //º±≈√µ» æ∆¿Ã≈€    
-        private List<int> _selectedTarget = new List<int>();   // ≈∏∞ŸµÈ
-        private bool _isEnemy = true;//≈∏∞Ÿ¿Ã ¿˚¿Œ¡ˆ æ∆±∫¿Œ¡ˆ
-        private int _targetNum = -1;   //¿˚øÎ«“ ≈∏∞Ÿ¿« ºˆ
+        Animator anim;
+        public PlayerInfo Info => _info;
+
+        [SerializeField] private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;
+        [SerializeField] private int _selectedItem  = -1; public int SelectedItem  => _selectedItem;
+        private List<int> _selectedTarget = new List<int>();
+        private bool _isEnemy = true;
+        private int _targetNum = -1;
+        private TargetType _selectedTargetType = TargetType.SingleEnemy;
 
         private float _currentHp;
         private float _maxHp;
+
         public void Start()
         {
             anim = GetComponent<Animator>();
         }
+
         public void SetUp(PlayerInfo info)
         {
             _info = info;
+            if (_info != null)
+            {
+                if (_info.MaxHp <= 0f) _info.MaxHp = info.Hp;
+                if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
+            }
             _currentHp = info.Hp;
+            _maxHp     = info.MaxHp > 0f ? info.MaxHp : info.Hp;
         }
 
         public void SelectSkill(int index)
         {
-            Debug.Log($"[Ω∫≈≥ º±≈√] index:{index}");
+            Debug.Log($"[Ïä§ÌÇ¨ ÏÑ†ÌÉù] index:{index}");
             _selectedSkill = index;
-            _selectedItem = -1;
+            _selectedItem  = -1;
             _selectedTarget.Clear();
-            _targetNum = _info.Skills[index].TagetNum;
 
-            var skillType = _info.Skills[index].Type;
-            _isEnemy = (skillType == SkillType.Atk || skillType == SkillType.Debuff);
-
-            // ¶°¶° Ω∫≈≥ ¡§∫∏ ∑Œ±◊
             var skill = _info.Skills[index];
-            Debug.Log($"[Ω∫≈≥ ¡§∫∏] ¿Ã∏ß:{skill.Name} | ≈∏¿‘:{skill.Type} | ≈∏∞Ÿºˆ:{skill.TagetNum} | " +
-                      $"DamageRate:{skill.DamageRate} | HealRate:{skill.HealRate} | " +
-                      $"EffectType:{skill.EffectType} | EffectValue:{skill.EffectValue} | EffectDuration:{skill.EffectDuration}");
+            _targetNum          = skill.TagetNum;
+            _selectedTargetType = skill.Target;
+            _isEnemy            = (skill.Type == SkillType.Atk || skill.Type == SkillType.Debuff);
 
-            // ¶°¶° Enforce¥¬ ≈∏∞Ÿ¿Ã ¿⁄±‚ ¿⁄Ω≈ °Ê πŸ∑Œ πﬂµø
-            if (skillType == SkillType.Enforce)
+            // ÏûêÎèô ÌÉÄÍπÉ(Self / AllEnemies / AllAllies)ÏùÄ ÌÅ¥Î¶≠ ÏóÜÏù¥ Ï¶âÏãú Î∞úÎèô
+            if (IsAutoTarget(_selectedTargetType))
             {
-                Debug.Log("[Ω∫≈≥ πﬂµø] Enforce °Ê ¿⁄±‚ ¿⁄Ω≈ ¥ÎªÛ¿∏∑Œ ¡ÔΩ√ πﬂµø");
-                _selectedTarget.Add(0); // ¿Œµ¶Ω∫ ¿«πÃ æ¯¿Ω, º≠πˆø°º≠ caster ¡˜¡¢ ªÁøÎ
-                _controller.CMDSelectionComplete(_selectedSkill, _selectedItem, _isEnemy, _selectedTarget);
-                _selectedTarget.Clear();
-                _targetNum = 0;
+                FireSelection();
+                return;
+            }
+
+            // Î†àÍ±∞Ïãú Ìò∏Ìôò: Enforce Îäî ÏûêÍ∏∞ ÏûêÏã† ÎåÄÏÉÅÏúºÎ°ú Ï¶âÏãú Î∞úÎèô
+            if (skill.Type == SkillType.Enforce)
+            {
+                Debug.Log("[Ïä§ÌÇ¨ Î∞úÎèô] Enforce ‚Üí ÏûêÍ∏∞ ÏûêÏã† Ï¶âÏãú Î∞úÎèô");
+                _selectedTarget.Add(0); // Ïù∏Îç±Ïä§ ÏùòÎØ∏ ÏóÜÏùå, ÏÑúÎ≤ÑÏóêÏÑú caster ÏûêÏ≤¥ ÏÇ¨Ïö©
+                FireSelection();
             }
         }
 
-        // °Á √ﬂ∞°: æ∆±∫ º±≈√
+        // ÏïÑÍµ∞ ÌÅ¥Î¶≠ (Heal/Buff Ïä§ÌÇ¨Ïö©)
         public void SelectAlly(int index)
         {
+            if (IsAutoTarget(_selectedTargetType)) return;
             _selectedTarget.Add(index);
-            if (_targetNum > 0 && _targetNum == _selectedTarget.Count)
-            {
-                _controller.CMDSelectionComplete(_selectedSkill, _selectedItem, _isEnemy, _selectedTarget);
-                _selectedTarget.Clear();
-                _targetNum = 0;
-            }
+            if (_targetNum > 0 && _targetNum == _selectedTarget.Count) FireSelection();
         }
+
         public void SelectItem(int index)
         {
-            Debug.Log("æ∆¿Ã≈€ º±≈√");
-
-            _selectedItem = index;
+            Debug.Log("ÏïÑÏù¥ÌÖú ÏÑ†ÌÉù");
+            _selectedItem  = index;
             _selectedSkill = -1;
             _selectedTarget.Clear();
 
-            _targetNum = _info.Items[index].TagetNum;
+            var item = _info.Items[index];
+            _targetNum          = item.TagetNum;
+            _selectedTargetType = item.Target;
+            _isEnemy            = false;
+
+            if (IsAutoTarget(_selectedTargetType)) FireSelection();
         }
+
         public void SelectEnemy(int index)
         {
-            Debug.Log("≈∏∞Ÿ º±≈√");
+            if (IsAutoTarget(_selectedTargetType)) return;
+            if (_selectedSkill == -1 && _selectedItem == -1) return;
 
+            Debug.Log("ÌÉÄÍπÉ ÏÑ†ÌÉù");
             _selectedTarget.Add(index);
-            if (_targetNum > 0 && _targetNum == _selectedTarget.Count)
-            {
-                _controller.CMDSelectionComplete(_selectedSkill, _selectedItem, _isEnemy, _selectedTarget);
-                _selectedTarget.Clear();
-                _targetNum = 0;
-            }
+            if (_targetNum > 0 && _targetNum == _selectedTarget.Count) FireSelection();
         }
+
+        private void FireSelection()
+        {
+            _controller.CMDSelectionComplete(_selectedSkill, _selectedItem, _isEnemy, new List<int>(_selectedTarget));
+            _selectedTarget.Clear();
+            _targetNum = 0;
+        }
+
+        private static bool IsAutoTarget(TargetType t)
+        {
+            return t == TargetType.AllEnemies
+                || t == TargetType.AllAllies
+                || t == TargetType.Self;
+        }
+
         public float PlDamaged(float Attack)
         {
             _currentHp -= Attack;
@@ -108,10 +128,10 @@ namespace Jun
 
         public void Reset()
         {
-            _selectedItem = -1;
-            _selectedSkill = -1;
-            _targetNum = -1;
+            _selectedItem   = -1;
+            _selectedSkill  = -1;
+            _targetNum      = -1;
+            _selectedTarget.Clear();
         }
     }
-
 }

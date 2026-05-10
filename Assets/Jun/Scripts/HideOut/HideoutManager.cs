@@ -11,13 +11,13 @@ public class HideoutManager : NetworkBehaviour
 {
     public static HideoutManager Instance;
 
-    [Header("À¯´Ö ¸®½ºÆ®")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®")]
     public readonly SyncList<PlayerData> _players = new SyncList<PlayerData>();
 
-    [Header("À¯´Ö »ı¼º À§Ä¡")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
     [SerializeField] private List<Image> _spawnPoints;
 
-    [Header("À¯´ÖµéÀÇ ÀÌ¹ÌÁö")]
+    [Header("ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½")]
     [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
 
     private void Awake()
@@ -39,7 +39,7 @@ public class HideoutManager : NetworkBehaviour
         }
     }
 
-    //Á¢¼Ó ÈÄ ÇÃ·¹ÀÌ¾î Ãß°¡(°ü¸®ÇÏ±â À§ÇØ¼­
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ß°ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½
     public void RegisterPlayer(PlayerData pl)
     {
 
@@ -59,12 +59,38 @@ public class HideoutManager : NetworkBehaviour
     [ClientRpc]
     private void RpcAllPlayersReady()
     {
-        Debug.Log("ÁıÇÕ ¿Ï·á");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
     }
 
     [Server]
     public void CmdGoToBattleScene()
     {
         NetworkManager.singleton.ServerChangeScene("GamePlay");
+    }
+
+    /// <summary>
+    /// ë˜ì „ ì§„ì… ë²„íŠ¼ ì½œë°± (í˜¸ìŠ¤íŠ¸ ì „ìš©).
+    /// RegionConfig ë¥¼ ë“¤ê³  ìˆëŠ” UI ë²„íŠ¼ OnClick ì— ì—°ê²°í•©ë‹ˆë‹¤.
+    /// í´ë¼ì´ì–¸íŠ¸ê°€ ëˆ„ë¥´ë©´ ë¬´ì‹œë˜ë©°, í˜¸ìŠ¤íŠ¸ê°€ ëˆ„ë¥´ë©´ RoundManager.StartDungeon â†’ ë˜ì „ ì”¬ ì „í™˜.
+    /// </summary>
+    public void OnClickEnterDungeon(Jun.RegionConfig cfg)
+    {
+        if (!NetworkServer.active)
+        {
+            Debug.LogWarning("[HideoutManager] í˜¸ìŠ¤íŠ¸ë§Œ ë˜ì „ì„ ì‹œì‘í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.");
+            return;
+        }
+        if (cfg == null)
+        {
+            Debug.LogError("[HideoutManager] RegionConfig ê°€ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
+            return;
+        }
+        if (Jun.RoundManager.Instance == null)
+        {
+            Debug.LogError("[HideoutManager] RoundManager ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìŠµë‹ˆë‹¤. GameRoomManager.RoundManagerPrefab í• ë‹¹ì„ í™•ì¸í•˜ì„¸ìš”.");
+            return;
+        }
+
+        Jun.RoundManager.Instance.StartDungeon(cfg);
     }
 }
