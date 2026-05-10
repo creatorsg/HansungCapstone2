@@ -1,10 +1,19 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
 guid: 54afba5e9932b484eac7804b747d14ba
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: 7635013726552783190
     second: home_0
+========
+guid: b895e294cec27c84d9d13755b091efac
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3974752895163522847
+    second: Gemini_Generated_Image_1ey12c1ey12c1ey1_0
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +122,22 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
       name: home_0
+========
+      name: Gemini_Generated_Image_1ey12c1ey12c1ey1_0
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
       rect:
         serializedVersion: 2
         x: 0
         y: 0
+<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
         width: 3015
         height: 1671
+========
+        width: 2784
+        height: 1536
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +146,13 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
+<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
       spriteID: 659f862488405f960800000000000000
       internalID: 7635013726552783190
+========
+      spriteID: f1f5d22f2b8292730800000000000000
+      internalID: 3974752895163522847
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
       vertices: []
       indices: 
       edges: []
@@ -148,7 +171,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+<<<<<<<< HEAD:Assets/leesy/Sprite/home.png.meta
       home_0: 7635013726552783190
+========
+      Gemini_Generated_Image_1ey12c1ey12c1ey1_0: 3974752895163522847
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/Jun/Sprites/Gemini_Generated_Image_1ey12c1ey12c1ey1.png.meta
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
