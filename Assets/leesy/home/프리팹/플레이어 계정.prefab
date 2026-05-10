@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7767492542720992742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 394802331473601888}
+  - component: {fileID: 5038814820936475756}
+  - component: {fileID: 7089285066458774859}
+  m_Layer: 0
+  m_Name: "\uD50C\uB808\uC774\uC5B4 \uACC4\uC815"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &394802331473601888
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7767492542720992742}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 869.41925, y: 534.81366, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5038814820936475756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7767492542720992742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
+  sceneId: 0
+  _assetId: 33694176
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
+--- !u!114 &7089285066458774859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7767492542720992742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f22ad1da5efb42d49b3d4dec176885cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.PlayerAccount
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  currentSelectedCharacter: {fileID: 3664049623001376028, guid: cc12472de03869143996533ae0a22e7d, type: 3}
+  myCharacterPrefabs:
+  - {fileID: 8422179778371143612, guid: cc12472de03869143996533ae0a22e7d, type: 3}
+  myCharacterDataList:
+  - {fileID: 11400000, guid: 546dbab1f3ee46a449da4441c670f2f3, type: 2}
+  - {fileID: 11400000, guid: 5b45f7b9aebccfb45855c21e05de0d26, type: 2}
+  - {fileID: 11400000, guid: 9c9fe8c9b0c61704abed856871cf150f, type: 2}
+  - {fileID: 11400000, guid: 57be0524f9860724ca88156d53ece4e2, type: 2}
+  - {fileID: 11400000, guid: 0d0b97591ca66964c96fb4710fdb9f46, type: 2}

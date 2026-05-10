@@ -1,11 +1,14 @@
 using TMPro;
 using UnityEngine;
 
-public class UpdateInformation : MonoBehaviour
+namespace Lsy
 {
-    [SerializeField] private TMP_Text information;
-    public void ChangeText(string newString)
+    public class UpdateInformation : MonoBehaviour
     {
-        information.text = newString;
+        [SerializeField] private TMP_Text information;
+        public void ChangeText(string newString)
+        {
+            information.text = newString;
+        }
     }
 }

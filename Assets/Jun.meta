@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Jun.meta
 guid: f1eefc4a39be4ff40bdbf27ab25326d4
+========
+guid: 27a607871024c634ea7b0936ce2c8b16
+>>>>>>>> 806da1d8e36d66309045ff5c5184d6a9342747b1:Assets/Resources.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

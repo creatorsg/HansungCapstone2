@@ -1,25 +1,27 @@
 using UnityEngine;
-
-public class PopupManager : MonoBehaviour
+namespace Lsy
 {
-    public static PopupManager Instance { get; private set; }
-    public Transform canvasTransform;
-
-    private void Awake()
+    public class PopupManager : MonoBehaviour
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
+        public static PopupManager Instance { get; private set; }
+        public Transform canvasTransform;
 
-    public void ToggleObjectPopup(GameObject popupObject, bool isActive)
-    {
-        if (popupObject == null) return;
-
-        popupObject.SetActive(isActive);
-
-        if (isActive)
+        private void Awake()
         {
-            popupObject.transform.SetAsLastSibling();
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+        }
+
+        public void ToggleObjectPopup(GameObject popupObject, bool isActive)
+        {
+            if (popupObject == null) return;
+
+            popupObject.SetActive(isActive);
+
+            if (isActive)
+            {
+                popupObject.transform.SetAsLastSibling();
+            }
         }
     }
 }
