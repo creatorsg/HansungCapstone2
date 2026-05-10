@@ -24,8 +24,11 @@ EditorBuildSettings:
     path: Assets/Jun/Scenes/GameRoom.unity
     guid: 569af81375b337c468261cda98f88307
   - enabled: 1
-    path: Assets/Jun/Scenes/GamePlay.unity
+    path: Assets/Inseon/ModifiedCode/Scene/GamePlay.unity
     guid: cc0ff7797367d4d46b580d685620be1e
+  - enabled: 1
+    path: Assets/Jun/Scenes/Home 1.unity
+    guid: 9f4f724363574304fb3d2e0f8361dd6e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

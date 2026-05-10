@@ -7,8 +7,13 @@ namespace Jun
     [System.Serializable]
     public class Charater
     {
-        public int HeroIndex;
-        public int HeroPos;
+        /// <summary>CharacterDatabase.index (UI/레거시 호환용)</summary>
+        public int    HeroIndex;
+
+        /// <summary>CharacterCard의 CharacterCode - 프리팹 룩업 기준 식별자</summary>
+        public string HeroCode;
+
+        // HeroPos 제거: 서버에서 스폰 시 HeroNum 기반으로 FinalHeroPos를 전역 순번으로 할당
     }
 
     public class GameRoomPlayer : NetworkRoomPlayer
@@ -260,14 +265,15 @@ namespace Jun
 
         /// <summary>
         /// 캐릭터 선택/해제 토글. 확정은 CmdConfirmSelection()으로 별도 처리합니다.
+        /// code = CharacterCard.CharacterCode (예: "C001")
         /// </summary>
         [Command]
-        public void CMDChoiceHero(int index)
+        public void CMDChoiceHero(string code)
         {
             // 이미 선택한 캐릭터면 해제
             foreach (var i in CharaterNum)
             {
-                if (index == i.HeroIndex)
+                if (code == i.HeroCode)
                 {
                     CharaterNum.Remove(i);
                     return;
@@ -282,15 +288,17 @@ namespace Jun
 
                 foreach (var charInfo in roomPlayer.CharaterNum)
                 {
-                    if (charInfo.HeroIndex == index)
+                    if (charInfo.HeroCode == code)
                     {
-                        Debug.Log($"[GameRoomPlayer] 이미 다른 플레이어가 선택한 캐릭터입니다. index={index}");
+                        Debug.Log($"[GameRoomPlayer] 이미 다른 플레이어가 선택한 캐릭터입니다. code={code}");
                         return;
                     }
                 }
             }
 
-            CharaterNum.Add(new Charater { HeroIndex = index, HeroPos = index });
+            // UI 표시용 HeroIndex는 CharacterDatabase에서 조회 (없으면 -1)
+            int legacyIndex = CharacterDatabase.Stats.TryGetValue(code, out var cd) ? cd.index : -1;
+            CharaterNum.Add(new Charater { HeroIndex = legacyIndex, HeroCode = code });
         }
 
         /// <summary>
@@ -314,7 +322,9 @@ namespace Jun
         private void UpdateLobbyUI(SyncList<Charater>.Operation op, Charater item)
         {
             var lobby = LobbyManager.Instance;
-            if (lobby == null || item == null) return;
+            // HeroIndex가 유효한 경우에만 UI 반영 (레거시 int 인덱스 기반)
+            if (lobby == null || item == null || item.HeroIndex < 0) return;
+            if (item.HeroIndex >= lobby.Go.Count) return;
 
             switch (op)
             {

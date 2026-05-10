@@ -8,6 +8,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 // ��Ʋ�� ���������� ��ϴ� ����
@@ -22,11 +23,6 @@ namespace Jun
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
         [Header("���� ���� ��ġ")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("ĳ���͵��� �̹���")]
-        [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
-
-        [Header("���� ���� ������")]
-        [SerializeField] private List<GameObject> BattleUnitPrefabs;
         [Header("ĳ���� ���� â")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
@@ -80,6 +76,21 @@ namespace Jun
         public int Order = -1;
 
 
+        private void Update()
+        {
+            if (Mouse.current == null) return;
+            if (!Mouse.current.leftButton.wasPressedThisFrame) return;
+
+            // Physics2D 직접 레이캐스트 — EventSystem / Canvas에 영향받지 않습니다.
+            Vector2 screenPos = Mouse.current.position.ReadValue();
+            Vector2 worldPos  = Camera.main.ScreenToWorldPoint(screenPos);
+            Collider2D hit = Physics2D.OverlapPoint(worldPos);
+            if (hit == null) return;
+
+            var unit = hit.GetComponent<GamePlayerController>();
+            if (unit != null) unit.OnClickedUnit();
+        }
+
         private void Awake()
         {
             Instance = this;
@@ -111,15 +122,49 @@ namespace Jun
             var roomManager = NetworkManager.singleton as GameRoomManager;
             Debug.Log($"[SetupBattleFlow] 시작. HeroNum={roomManager?.HeroNum}");
 
+            // ── CharacterRegistry 상태 확인 ──────────────────────────────
+            Debug.Log($"[SetupBattleFlow] CharacterRegistry 등록 수: {CharacterRegistry.All.Count}");
+            foreach (var kv in CharacterRegistry.All)
+                Debug.Log($"  Registry: {kv.Key} / PlayerDataPrefab={kv.Value.PlayerDataPrefab?.name ?? "null"} / BattleUnitPrefab={kv.Value.BattleUnitPrefab?.name ?? "null"}");
+
+            // HeroNum이 확정될 때까지 최대 5초 대기 (OnRoomServerSceneChanged 타이밍 차이 대응)
+            float heroNumWait = 5f;
+            while (roomManager != null && roomManager.HeroNum <= 0 && heroNumWait > 0f)
+            {
+                heroNumWait -= Time.deltaTime;
+                yield return null;
+            }
+
+            if (roomManager == null || roomManager.HeroNum <= 0)
+            {
+                Debug.LogError($"[SetupBattleFlow] HeroNum이 0입니다! " +
+                               $"CharacterSelect에서 CmdConfirmSelection이 호출됐는지, " +
+                               $"GameRoomManager._playerDataPreSpawned가 true인지 확인하세요.");
+                yield break;
+            }
+
+            Debug.Log($"[SetupBattleFlow] HeroNum 확인: {roomManager.HeroNum}. PlayerData 대기 시작.");
+
             PlayerData[] survivors;
             int waitFrames = 0;
+            const int MAX_WAIT_FRAMES = 1800; // ~30초 (60fps 기준)
             while (true)
             {
                 survivors = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
                 if (waitFrames % 60 == 0)
                     Debug.Log($"[SetupBattleFlow] 대기 중... survivors={survivors.Length}, HeroNum={roomManager.HeroNum}");
                 waitFrames++;
+
                 if (survivors.Length == roomManager.HeroNum) break;
+
+                if (waitFrames >= MAX_WAIT_FRAMES)
+                {
+                    Debug.LogError($"[SetupBattleFlow] 타임아웃! survivors={survivors.Length}, HeroNum={roomManager.HeroNum}\n" +
+                                   $"원인: PlayerData.Awake()에서 DontDestroyOnLoad가 호출되지 않아 씬 전환 시 파괴됐거나,\n" +
+                                   $"SpawnPlayerDataForPlayer()에서 스폰이 실패했을 수 있습니다.");
+                    yield break;
+                }
+
                 yield return null;
             }
 
@@ -127,24 +172,72 @@ namespace Jun
 
             foreach (var data in survivors)
             {
-                Debug.Log($"[SetupBattleFlow] PlayerData 처리: FinalHeroIndex={data.FinalHeroIndex}, FinalHeroPos={data.FinalHeroPos}, conn={data.connectionToClient}");
-                // 1. ������(FinalHeroIndex)�� �´� ������ ������ ����! (��ġ�� ���� ����Ʈ��)
-                GameObject battleObj = Instantiate(BattleUnitPrefabs[data.FinalHeroIndex], SpawnPoints[data.FinalHeroPos].position, Quaternion.identity);
+                Debug.Log($"[SetupBattleFlow] PlayerData 처리: code='{data.FinalHeroCode}', Pos={data.FinalHeroPos}, conn={data.connectionToClient}");
 
-                // 2. ������ ���� ��Ʈ�ѷ��� ������ ������(��ȥ) ����!
+                // ── 유효성 검사 ────────────────────────────────────────────
+                if (string.IsNullOrEmpty(data.FinalHeroCode))
+                {
+                    Debug.LogError($"[SetupBattleFlow] FinalHeroCode가 비어 있습니다! " +
+                                   $"CMDChoiceHero가 호출되기 전에 CmdConfirmSelection이 처리됐을 수 있습니다.");
+                    continue;
+                }
+
+                if (data.FinalHeroPos < 0 || data.FinalHeroPos >= SpawnPoints.Count)
+                {
+                    Debug.LogError($"[SetupBattleFlow] FinalHeroPos={data.FinalHeroPos}가 SpawnPoints 범위를 벗어납니다! " +
+                                   $"SpawnPoints 수={SpawnPoints.Count}");
+                    continue;
+                }
+
+                // 1. CharacterRegistry에서 코드 기반으로 BattleUnit 프리팹 조회
+                if (!CharacterRegistry.TryGet(data.FinalHeroCode, out var entry))
+                {
+                    Debug.LogError($"[SetupBattleFlow] CharacterRegistry에 '{data.FinalHeroCode}'가 없습니다!\n" +
+                                   $"CharacterCard의 CharacterCode가 PlayFab ItemId와 일치하는지,\n" +
+                                   $"CharacterSelectManager.InitCards()가 정상 완료됐는지 확인하세요.");
+                    continue;
+                }
+
+                if (entry.BattleUnitPrefab == null)
+                {
+                    Debug.LogError($"[SetupBattleFlow] '{data.FinalHeroCode}'의 BattleUnitPrefab이 null입니다! " +
+                                   $"CharacterCard Inspector에서 battleUnitPrefab을 연결하세요.");
+                    continue;
+                }
+
+                // 2. 스폰 위치에 배틀 유닛 인스턴스화
+                GameObject battleObj = Instantiate(
+                    entry.BattleUnitPrefab,
+                    SpawnPoints[data.FinalHeroPos].position,
+                    Quaternion.identity);
+
+                // 3. GamePlayerController에 PlayerData 주입
                 var controller = battleObj.GetComponent<GamePlayerController>();
+                if (controller == null)
+                {
+                    Debug.LogError($"[SetupBattleFlow] '{entry.BattleUnitPrefab.name}'에 GamePlayerController가 없습니다!");
+                    Destroy(battleObj);
+                    continue;
+                }
                 controller.InjectData(data);
 
-                // 3. [���� �߿�] ������ �����ϸ鼭, �ش� Ŭ���̾�Ʈ���� ���� ���� �ֱ�!
-                // PlayerData�� ������ �� ���� ������ ����(connectionToClient)�� �� ���뿡 �������ݴϴ�.
+                // 4. 해당 클라이언트 소유권으로 스폰
                 NetworkServer.Spawn(battleObj, data.connectionToClient);
 
-                // 4. ���� ����Ʈ�� ��Ʈ�ѷ� ���
+                // 5. 배틀 플레이어 + 턴 목록에 추가
                 _players.Add(controller);
                 _turnList.Add(new TurnData("Player", data.Info.Spd, _players.Count - 1));
+
+                Debug.Log($"[SetupBattleFlow] 스폰 완료: {entry.BattleUnitPrefab.name}, Pos={data.FinalHeroPos}, PingIndex={data.PingIndex}");
             }
 
-            // 5. �� ����
+            if (_players.Count == 0)
+            {
+                Debug.LogError("[SetupBattleFlow] 스폰된 플레이어가 0명입니다! 위의 에러 로그를 확인하세요.");
+                yield break;
+            }
+
+            Debug.Log($"[SetupBattleFlow] 전체 스폰 완료. 플레이어={_players.Count}명. 1초 후 첫 턴 시작.");
             Invoke(nameof(StartFirstTurn), 1.0f);
         }
 
@@ -177,7 +270,7 @@ namespace Jun
                     // �÷��̾�� ������ �� �ð��� �ɸ� �� ������ ��� �ڵ� ���
                     if (targetNum < _players.Count)
                     {
-                        sp = _players[targetNum].GetComponent<SpriteRenderer>().sprite;
+                        sp = _players[targetNum].GetCharacterSprite();
                     }
                     else
                     {
@@ -244,11 +337,22 @@ namespace Jun
             }
             else
             {
+                if (turnNum < 0 || turnNum >= _players.Count)
+                {
+                    Debug.LogError($"[RpcChangeTurn] _players 범위 초과: turnNum={turnNum}, _players.Count={_players.Count}. SpawnObserversForConnection이 누락됐을 가능성이 있습니다.");
+                    return;
+                }
+
                 var targetPlayer = _players[turnNum];
-                CurrentTurnUnit = targetPlayer; //���� �� ���� ���� ����
-                _turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
-                
-                //���� ���̵� ������� ������ ��� ���� ǥ��
+                if (targetPlayer == null)
+                {
+                    Debug.LogError($"[RpcChangeTurn] _players[{turnNum}]이 null입니다.");
+                    return;
+                }
+
+                CurrentTurnUnit = targetPlayer;
+                _turnUI.text = "Turn: " + targetPlayer.Info.Name;
+
                 targetPlayer.MyTurn(true);
 
                 bool isMyTurn = targetPlayer.isOwned;
@@ -256,7 +360,6 @@ namespace Jun
                 {
                     UpdateUnitUI(targetPlayer);
                 }
-                // ���������� ���� �г� Ȱ��/��Ȱ�� ó��
                 _unitPanel.interactable = isMyTurn;
                 _unitPanel.blocksRaycasts = isMyTurn;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
@@ -276,35 +379,70 @@ namespace Jun
             _unitPanel.interactable = isUnitTurn;
             _unitPanel.blocksRaycasts = isUnitTurn;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
-            // ���õ� ������ ������ ��ü
-            _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
-            _hp.text = unit.Info.Hp.ToString();
-            _san.text = unit.Info.San.ToString();
-            _acc.text = unit.Info.Acc.ToString();
-            _crit.text = unit.Info.Crit.ToString();
-            _dmg.text = unit.Info.Atk.ToString();
-            _prot.text = unit.Info.Def.ToString();
-            _res.text = unit.Info.Hp.ToString();
-            _dodge.text = unit.Info.Dodge.ToString();
+            // 선택된 유닛의 이미지 및 스탯 표시
+            // GetCharacterSprite(): CharacterRegistry → SpriteRenderer 순으로 조회하므로 null-safe
+            _charaterIMG.sprite = unit.GetCharacterSprite();
+            _name.text   = unit.Info.Name;
+            _hp.text     = unit.Info.Hp.ToString();
+            _san.text    = unit.Info.San.ToString();
+            _acc.text    = unit.Info.Acc.ToString();
+            _crit.text   = unit.Info.Crit.ToString();
+            _dmg.text    = unit.Info.Atk.ToString();
+            _prot.text   = unit.Info.Def.ToString();
+            _res.text    = unit.Info.Res.ToString();   // BUG FIX: 기존에 Hp가 잘못 표시됨
+            _dodge.text  = unit.Info.Dodge.ToString();
 
-            // ��ų ��ư �̺�Ʈ �翬��
+            // 스킬 버튼 이벤트 연결 + 스킬 이름 표시
             for (int i = 0; i < _skillBTN.Count; i++)
             {
                 int index = i;
                 _skillBTN[i].onClick.RemoveAllListeners();
-                _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
 
-                // ��ų �����ܵ� ���ֿ� �°� ���� ����
-                // _skillBTN[i].image.sprite = unit.SkillSprites[i];
+                bool hasSkill = unit.Info.Skills != null && i < unit.Info.Skills.Count;
+                _skillBTN[i].gameObject.SetActive(hasSkill);
 
+                if (hasSkill)
+                {
+                    _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
+
+                    // 버튼 자식의 TMP 텍스트에 스킬 이름 표시
+                    var label = _skillBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (label != null) label.text = unit.Info.Skills[i].Name;
+                }
             }
+
+            // 아이템 버튼 이벤트 연결 + 아이템 이름 표시
+            for (int i = 0; i < _items.Count; i++)
+            {
+                int index = i;
+                _items[i].onClick.RemoveAllListeners();
+
+                bool hasItem = unit.Info.Items != null && i < unit.Info.Items.Count;
+                _items[i].gameObject.SetActive(hasItem);
+
+                if (hasItem)
+                {
+                    _items[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+
+                    var label = _items[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (label != null) label.text = unit.Info.Items[i].Name;
+                }
+            }
+
+            // 적 버튼 이벤트 연결 + PlayerView.EnemyBtn 동기화 (프리팹에서 연결 불가한 씬 오브젝트이므로 런타임 설정)
+            var enemyButtons = new List<Button>();
             for (int i = 0; i < _enemys[StageNum-1].Enemys.Count; i++)
             {
                 int index = i;
                 var EnemyBTN = _enemys[StageNum-1].Enemys[i].GetComponent<Button>();
+                if (EnemyBTN == null) continue;
                 EnemyBTN.onClick.RemoveAllListeners();
                 EnemyBTN.onClick.AddListener(() => unit.OnClickEnemyBtn(index));
+                enemyButtons.Add(EnemyBTN);
             }
+            // 스킬 선택 후 SetButtonsInteractable(true, EnemyBtn)이 올바르게 동작하도록 동기화
+            unit.View.EnemyBtn = enemyButtons;
+
             _movePosBTN.onClick.RemoveAllListeners();
             _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
         }
@@ -376,11 +514,27 @@ namespace Jun
 
             _logic.BattleAction(caster, skillIndex,itemIndex, isEnemy, targets);
         }
+        /// <summary>
+        /// 서버에서 즉시 EnemyNum을 감소시키고, 0이 되면 바로 NextStage를 호출합니다.
+        /// EnemyController.CMDDead()에서 호출됩니다.
+        /// </summary>
+        [Server]
+        public void OnEnemyDead(GameObject enemyObj)
+        {
+            EnemyNum--;
+            Debug.Log($"[BattleManager] 적 사망. 남은 적: {EnemyNum}");
+            RcpEnemyDead(enemyObj);
+
+            if (EnemyNum <= 0)
+            {
+                Debug.Log("[BattleManager] 모든 적 사망 → NextStage");
+                NextStage();
+            }
+        }
+
         [ClientRpc]
         public void RcpEnemyDead(GameObject go)
         {
-            Debug.Log("Enemy Dead");
-            EnemyNum -= 1;
             go.SetActive(false);
         }
         public void NextStage()

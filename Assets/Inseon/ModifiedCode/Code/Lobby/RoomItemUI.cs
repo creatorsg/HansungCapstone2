@@ -27,8 +27,6 @@ public class RoomItemUI : MonoBehaviour
 
         bool isFull = info.playerCount >= info.maxPlayers;
 
-        // TMP 기본 폰트(LiberationSans SDF)는 한글 미지원 → ASCII 사용
-        // 비공개방이면 [LOCK] 접두어로 구분
         if (isFull)
             _status.text = "FULL";
         else if (info.isPrivate)
@@ -36,7 +34,6 @@ public class RoomItemUI : MonoBehaviour
         else
             _status.text = "OPEN";
 
-        // 별도 자물쇠 아이콘 오브젝트가 있을 경우 on/off
         if (_privateIcon != null)
             _privateIcon.SetActive(info.isPrivate);
 

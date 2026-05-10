@@ -11,29 +11,28 @@ using UnityEngine.UI;
 ///
 /// ★ 사용법 (Unity Editor)
 ///   1. 빈 GameObject에 이 스크립트를 붙입니다.
-///   2. 각 캐릭터 버튼에 CharacterCard 스크립트를 붙이고 CharacterCode를 입력합니다.
-///   3. characterCards 리스트에 씬의 CharacterCard들을 순서대로 등록합니다.
-///   4. previewImage : 카드 호버 시 캐릭터 이미지가 표시될 큰 Image
-///   5. 우측 스탯 패널 TMP 텍스트들을 연결합니다.
-///   6. confirmButton의 OnClick → OnClickConfirm() 을 연결합니다.
+///   2. 각 캐릭터 버튼 GameObject에 CharacterCard 스크립트를 붙입니다.
+///   3. CharacterCard 인스펙터에서 코드·스프라이트·프리팹·스킬을 채웁니다.
+///      → 순서는 무관합니다. 코드(C001 등)를 키로 자동 매핑됩니다.
+///   4. characterCards 리스트에 씬의 CharacterCard들을 등록합니다 (순서 무관).
+///   5. previewImage: 카드 호버 시 캐릭터 이미지가 표시될 큰 Image를 연결합니다.
+///   6. 우측 스탯 패널 TMP 텍스트들을 연결합니다.
+///   7. confirmButton의 OnClick → OnClickConfirm() 을 연결합니다.
 /// </summary>
 public class CharacterSelectManager : MonoBehaviour
 {
     public static CharacterSelectManager Instance { get; private set; }
 
     // ── 카드 목록 ────────────────────────────────────
-    [Header("캐릭터 카드 (씬에 배치된 순서대로 등록)")]
+    [Header("캐릭터 카드 (순서 무관 — CharacterCode를 키로 자동 매핑)")]
     [SerializeField] private List<CharacterCard> characterCards;
 
-    // ── 아이콘 / 이미지 ──────────────────────────────
-    [Header("캐릭터 아이콘 & 프리뷰")]
-    [Tooltip("CharacterCode(C001, C002...) 와 동일한 순서로 스프라이트를 등록하세요.")]
-    [SerializeField] private List<Sprite> characterIcons;
-
+    // ── 프리뷰 이미지 ─────────────────────────────────
+    [Header("프리뷰")]
     [Tooltip("카드에 마우스를 올리면 이 Image에 캐릭터 이미지가 표시됩니다.")]
-    [SerializeField] private Image previewImage;             // 가운데 기다란 흰 박스
+    [SerializeField] private Image previewImage;
 
-    [Tooltip("previewImage에 아무것도 없을 때 표시할 기본 스프라이트 (선택사항)")]
+    [Tooltip("아무것도 선택되지 않았을 때 표시할 기본 스프라이트 (선택사항)")]
     [SerializeField] private Sprite previewDefaultSprite;
 
     // ── 스탯 패널 (우측) ────────────────────────────
@@ -64,9 +63,12 @@ public class CharacterSelectManager : MonoBehaviour
     // 런타임 상태
     // ─────────────────────────────────────────────────
 
+    /// <summary>code → CharacterCard 빠른 조회용 딕셔너리 (InitCards에서 빌드)</summary>
+    private readonly Dictionary<string, CharacterCard> _cardMap = new Dictionary<string, CharacterCard>();
+
     private readonly List<string> _selectedCodes = new List<string>();
     private int _maxSelect = 1;
-    private GameRoomPlayer _localRoomPlayer;   // Start 코루틴에서 캐싱
+    private GameRoomPlayer _localRoomPlayer;
 
     // ─────────────────────────────────────────────────
 
@@ -81,11 +83,9 @@ public class CharacterSelectManager : MonoBehaviour
     /// </summary>
     private static GameRoomPlayer FindLocalRoomPlayer()
     {
-        // 1순위: 표준 Mirror API
         var p = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
         if (p != null) return p;
 
-        // 2순위: 씬 전환 직후 localPlayer 참조가 미복구된 경우 직접 탐색
         foreach (var candidate in Object.FindObjectsByType<GameRoomPlayer>(FindObjectsSortMode.None))
             if (candidate.isLocalPlayer) return candidate;
 
@@ -100,14 +100,12 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        // Inspector 수동 연결 없이도 동작하도록 코드에서 직접 등록
         if (confirmButton != null)
         {
             confirmButton.onClick.RemoveAllListeners();
             confirmButton.onClick.AddListener(OnClickConfirm);
         }
 
-        // Mirror 씬 전환 직후 GameRoomPlayer 재스폰 타이밍을 기다린 뒤 초기화
         StartCoroutine(InitAfterNetworkReady());
     }
 
@@ -124,7 +122,7 @@ public class CharacterSelectManager : MonoBehaviour
             if (_localRoomPlayer == null)
             {
                 timeout -= Time.deltaTime;
-                yield return null;   // 다음 프레임에 재시도
+                yield return null;
             }
         }
 
@@ -148,6 +146,10 @@ public class CharacterSelectManager : MonoBehaviour
 
         var player = inseon.Playfab.User.PlayfabUserManage.Player;
 
+        // CharacterRegistry 초기화 (이전 씬 잔여 데이터 제거)
+        CharacterRegistry.Clear();
+        _cardMap.Clear();
+
         foreach (var card in characterCards)
         {
             if (card == null) continue;
@@ -159,25 +161,47 @@ public class CharacterSelectManager : MonoBehaviour
                 continue;
             }
 
-            // CharacterDatabase(Catalog ItemId 기준)와 _ownedCharacters(PlayFab UserData 이름 기준)가
-            // 다른 키를 사용하므로, DB에서 characterName을 꺼내 소유권 조회에 사용합니다.
-            var charInfo     = CharacterDatabase.Get(code);
-            string ownerKey  = (charInfo.HasValue && !string.IsNullOrEmpty(charInfo.Value.characterName))
-                               ? charInfo.Value.characterName
-                               : code;
-            bool owned = player != null && player.OwnsCharacter(ownerKey);
+            if (_cardMap.ContainsKey(code))
+            {
+                Debug.LogWarning($"[CharacterSelectManager] 중복 CharacterCode '{code}' 감지 — {card.gameObject.name} 무시");
+                continue;
+            }
 
-            Sprite icon = GetIcon(code);
+            // ── Dictionary 등록 ─────────────────────────────────────────
+            _cardMap[code] = card;
+
+            // ── CharacterRegistry 등록 ──────────────────────────────────
+            CharacterRegistry.Register(code, new CharacterRegistry.Entry
+            {
+                PlayerDataPrefab = card.PlayerDataPrefab,
+                BattleUnitPrefab = card.BattleUnitPrefab,
+                CharacterSprite  = card.BattleSprite,
+                Skills           = card.Skills ?? new List<SkillInfo>(),
+                Items            = card.Items  ?? new List<ItemInfo>(),
+            });
+
+            // ── Mirror 프리팹 등록 ──────────────────────────────────────
+            TryRegisterPrefab(card.PlayerDataPrefab);
+            TryRegisterPrefab(card.BattleUnitPrefab);
+
+            // ── 소유권 확인 ─────────────────────────────────────────────
+            var charInfo    = CharacterDatabase.Get(code);
+            string ownerKey = (charInfo.HasValue && !string.IsNullOrEmpty(charInfo.Value.characterName))
+                              ? charInfo.Value.characterName
+                              : code;
+            bool owned = player != null && player.OwnsCharacter(ownerKey);
 
             string captured = code;
             card.Setup(
                 owned,
-                icon,
-                onClick:       () => OnCardClicked(captured),
-                onHoverEnter:  () => OnCardHoverEnter(captured),
-                onHoverExit:   () => OnCardHoverExit()
+                card.CardIcon,
+                onClick:      () => OnCardClicked(captured),
+                onHoverEnter: () => OnCardHoverEnter(captured),
+                onHoverExit:  () => OnCardHoverExit()
             );
         }
+
+        Debug.Log($"[CharacterSelectManager] 카드 초기화 완료. 등록 수: {_cardMap.Count}");
     }
 
     // ─────────────────────────────────────────────────
@@ -186,27 +210,24 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void OnCardHoverEnter(string characterCode)
     {
-        // 스탯 패널 갱신
         ShowStatPanel(characterCode);
 
-        // 기다란 프리뷰 이미지 갱신
         if (previewImage != null)
         {
-            Sprite icon = GetIcon(characterCode);
-            previewImage.sprite  = (icon != null) ? icon : previewDefaultSprite;
+            Sprite icon = GetCardIcon(characterCode);
+            previewImage.sprite  = icon != null ? icon : previewDefaultSprite;
             previewImage.enabled = true;
         }
     }
 
     private void OnCardHoverExit()
     {
-        // 마우스가 카드에서 벗어나면 초기화
         ClearStatPanel();
 
         if (previewImage != null)
         {
             previewImage.sprite  = previewDefaultSprite;
-            previewImage.enabled = (previewDefaultSprite != null);
+            previewImage.enabled = previewDefaultSprite != null;
         }
     }
 
@@ -219,7 +240,7 @@ public class CharacterSelectManager : MonoBehaviour
         if (_selectedCodes.Contains(characterCode))
         {
             _selectedCodes.Remove(characterCode);
-            FindCard(characterCode)?.SetSelected(false);
+            GetCard(characterCode)?.SetSelected(false);
         }
         else
         {
@@ -227,23 +248,15 @@ public class CharacterSelectManager : MonoBehaviour
             {
                 string oldest = _selectedCodes[0];
                 _selectedCodes.RemoveAt(0);
-                FindCard(oldest)?.SetSelected(false);
+                GetCard(oldest)?.SetSelected(false);
             }
 
             _selectedCodes.Add(characterCode);
-            FindCard(characterCode)?.SetSelected(true);
+            GetCard(characterCode)?.SetSelected(true);
         }
 
         RefreshMySlots();
         RefreshConfirmButton();
-    }
-
-    private CharacterCard FindCard(string code)
-    {
-        if (characterCards == null) return null;
-        foreach (var card in characterCards)
-            if (card != null && card.CharacterCode == code) return card;
-        return null;
     }
 
     // ─────────────────────────────────────────────────
@@ -273,10 +286,10 @@ public class CharacterSelectManager : MonoBehaviour
     private void ClearStatPanel()
     {
         string dash = "-";
-        SetText(nameText, dash);  SetText(levelText, dash);    SetText(hpText, dash);
-        SetText(attackText, dash); SetText(defenseText, dash); SetText(accuracyText, dash);
-        SetText(evasionText, dash); SetText(speedText, dash);  SetText(criticalText, dash);
-        SetText(effectResText, dash); SetText(stunResText, dash); SetText(stressText, dash);
+        SetText(nameText, dash);      SetText(levelText, dash);    SetText(hpText, dash);
+        SetText(attackText, dash);    SetText(defenseText, dash);  SetText(accuracyText, dash);
+        SetText(evasionText, dash);   SetText(speedText, dash);    SetText(criticalText, dash);
+        SetText(effectResText, dash); SetText(stunResText, dash);  SetText(stressText, dash);
     }
 
     // ─────────────────────────────────────────────────
@@ -293,8 +306,7 @@ public class CharacterSelectManager : MonoBehaviour
 
             if (i < _selectedCodes.Count)
             {
-                Sprite icon = GetIcon(_selectedCodes[i]);
-                mySelectedSlots[i].sprite  = icon;
+                mySelectedSlots[i].sprite  = GetCardIcon(_selectedCodes[i]);
                 mySelectedSlots[i].enabled = true;
             }
             else
@@ -327,7 +339,6 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        // 캐시가 없으면 한 번 더 탐색 시도
         if (_localRoomPlayer == null)
             _localRoomPlayer = FindLocalRoomPlayer();
 
@@ -336,18 +347,15 @@ public class CharacterSelectManager : MonoBehaviour
             Debug.LogError("[CharacterSelectManager] 로컬 GameRoomPlayer를 찾을 수 없습니다.");
             return;
         }
+
         var localRoomPlayer = _localRoomPlayer;
 
         foreach (var code in _selectedCodes)
         {
-            if (CharacterDatabase.Stats.TryGetValue(code, out var charData))
-            {
-                Debug.Log($"[CharacterSelectManager] CMDChoiceHero({charData.index}) - {code}");
-                localRoomPlayer.CMDChoiceHero(charData.index);
-            }
+            Debug.Log($"[CharacterSelectManager] CMDChoiceHero({code})");
+            localRoomPlayer.CMDChoiceHero(code);
         }
 
-        // 선택 확정 신호 전송 → 모든 플레이어 완료 시 서버가 게임 씬으로 전환
         localRoomPlayer.CmdConfirmSelection();
 
         if (confirmButton != null)
@@ -360,16 +368,40 @@ public class CharacterSelectManager : MonoBehaviour
     //  유틸
     // ─────────────────────────────────────────────────
 
-    private Sprite GetIcon(string characterCode)
+    /// <summary>code → CharacterCard O(1) 조회</summary>
+    private CharacterCard GetCard(string code)
     {
-        if (characterIcons == null) return null;
-        if (!CharacterDatabase.Stats.TryGetValue(characterCode, out var c)) return null;
-        if (c.index < 0 || c.index >= characterIcons.Count) return null;
-        return characterIcons[c.index];
+        _cardMap.TryGetValue(code, out var card);
+        return card;
+    }
+
+    /// <summary>code에 해당하는 카드 아이콘 스프라이트를 반환합니다.</summary>
+    private Sprite GetCardIcon(string code)
+    {
+        return GetCard(code)?.CardIcon;
     }
 
     private static void SetText(TextMeshProUGUI label, string value)
     {
         if (label != null) label.text = value;
+    }
+
+    /// <summary>
+    /// 이미 등록된 프리팹이면 건너뜁니다.
+    /// NetworkClient.RegisterPrefab은 중복 호출 시 예외를 던지므로 반드시 이 메서드를 사용하세요.
+    /// </summary>
+    private static void TryRegisterPrefab(GameObject prefab)
+    {
+        if (prefab == null) return;
+        var identity = prefab.GetComponent<NetworkIdentity>();
+        if (identity == null)
+        {
+            Debug.LogError($"[CharacterSelectManager] {prefab.name} 에 NetworkIdentity가 없습니다! Mirror 스폰 불가.");
+            return;
+        }
+        if (NetworkClient.prefabs.ContainsKey(identity.assetId))
+            return;
+
+        NetworkClient.RegisterPrefab(prefab);
     }
 }

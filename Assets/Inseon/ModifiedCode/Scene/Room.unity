@@ -2380,7 +2380,7 @@ GameObject:
   - component: {fileID: 2035147405}
   - component: {fileID: 2035147406}
   m_Layer: 0
-  m_Name: RoomManager
+  m_Name: PlayerRoomManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2416,8 +2416,8 @@ MonoBehaviour:
   roomName: {fileID: 298537677}
   roomID: {fileID: 311084755}
   roomTypeImage: {fileID: 1215306279}
-  privateSprite: {fileID: 0}
-  publicSprite: {fileID: 35948093, guid: 051920cad5e4720499cebb6e3035262a, type: 3}
+  privateSprite: {fileID: 4262765734395609195, guid: d404e6768cae9264a89799e6231deb8b, type: 3}
+  publicSprite: {fileID: -2015501885985997111, guid: 83b7fcc88d6a555469c0dca2a14a5143, type: 3}
   playerSlots:
   - {fileID: 5317239509862633808}
   - {fileID: 1096396354}

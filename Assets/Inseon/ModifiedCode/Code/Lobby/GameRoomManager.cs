@@ -16,6 +16,10 @@ namespace Jun {
         // 연결 순서 기준 PingIndex 카운터 (서버 전용)
         private int _pingIndexCounter = 0;
 
+        // CharacterSelect → Gameplay 경로에서 PlayerData를 미리 스폰했는지 여부.
+        // true일 때 OnServerReady에서 SceneLoadedForPlayer 체인을 차단합니다.
+        private bool _playerDataPreSpawned = false;
+
         /// <summary>
         /// 캐릭터 선택 씬 이름. Inspector에서 Build Settings의 씬 이름과 동일하게 입력하세요.
         /// </summary>
@@ -82,17 +86,25 @@ namespace Jun {
 
             if (newSceneName == GameplayScene)
             {
-                // Jun 경로(방→게임 직행)에서 OnRoomServerCreateGamePlayer가 호출되기 전에
-                // 카운터를 초기화한다. Inseon 경로(캐릭터선택→게임)는 OnPlayerConfirmedSelection
-                // 내부에서 별도로 초기화하므로 이 시점에 먼저 초기화해도 덮어쓰기가 발생하지 않는다.
-                _pingIndexCounter = 0;
-                HeroNum = 0;
-                Debug.Log("[GameRoomManager] GameplayScene 진입 - HeroNum / PingIndexCounter 초기화");
+                if (!_playerDataPreSpawned)
+                {
+                    // Jun 경로(방→게임 직행): OnRoomServerCreateGamePlayer 호출 전에 초기화
+                    _pingIndexCounter = 0;
+                    HeroNum = 0;
+                    Debug.Log("[GameRoomManager] GameplayScene 진입 - HeroNum/PingIndex 초기화 (Jun 직행 경로)");
+                }
+                else
+                {
+                    // Inseon 경로(CharacterSelect→Game): HeroNum은 OnPlayerConfirmedSelection에서
+                    // 이미 올바르게 설정됐으므로 덮어쓰지 않는다.
+                    Debug.Log($"[GameRoomManager] GameplayScene 진입 - HeroNum 유지: {HeroNum} (CharacterSelect 경로)");
+                }
             }
             else if (newSceneName == RoomScene)
             {
                 // 게임이 끝나고 방으로 돌아왔을 때 이전 게임의 PlayerData를 정리한다.
                 CleanUpPlayerData();
+                _playerDataPreSpawned = false;   // 다음 게임을 위해 플래그 초기화
             }
         }
 
@@ -144,6 +156,10 @@ namespace Jun {
                 SpawnPlayerDataForPlayer(roomPlayer.connectionToClient, roomPlayer);
             }
 
+            // 클라이언트가 Gameplay 씬 로드 후 Ready를 보낼 때
+            // OnRoomServerCreateGamePlayer가 중복 호출되는 것을 막기 위한 플래그
+            _playerDataPreSpawned = true;
+
             Debug.Log($"[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → 게임 씬으로 전환 (HeroNum={HeroNum})");
             ServerChangeScene(GameplayScene);
         }
@@ -166,36 +182,76 @@ namespace Jun {
 
             for (int i = 0; i < charaterNum.Count; i++)
             {
-                int index = charaterNum[i].HeroIndex;
-                int pos   = charaterNum[i].HeroPos;
+                string code = charaterNum[i].HeroCode;
 
-                if (index < 0 || index >= spawnPrefabs.Count || spawnPrefabs[index] == null)
+                if (!CharacterRegistry.TryGet(code, out var entry))
                 {
-                    Debug.LogError($"[GameRoomManager] spawnPrefabs 인덱스 오류! HeroIndex={index}");
+                    Debug.LogError($"[GameRoomManager] SpawnPlayerData: CharacterRegistry에 '{code}'가 없습니다!");
+                    continue;
+                }
+                if (entry.PlayerDataPrefab == null)
+                {
+                    Debug.LogError($"[GameRoomManager] '{code}'의 PlayerDataPrefab이 null입니다! CharacterCard Inspector를 확인하세요.");
+                    continue;
+                }
+                if (entry.PlayerDataPrefab.GetComponent<PlayerData>() == null)
+                {
+                    Debug.LogError($"[GameRoomManager] '{code}'의 PlayerDataPrefab에 PlayerData 컴포넌트가 없습니다!");
                     continue;
                 }
 
-                var prefab     = spawnPrefabs[index];
-                var prefabData = prefab.GetComponent<PlayerData>();
-                if (prefabData == null)
-                {
-                    Debug.LogError($"[GameRoomManager] spawnPrefabs[{index}]에 PlayerData가 없습니다!");
-                    continue;
-                }
-
-                GameObject gamePlayer = Instantiate(prefab);
+                GameObject gamePlayer = Instantiate(entry.PlayerDataPrefab);
                 var playerData = gamePlayer.GetComponent<PlayerData>();
 
-                playerData.FinalHeroIndex = index;
+                int pos = HeroNum; // 전역 순번으로 스폰 위치 할당 (중복 없음)
+
+                playerData.FinalHeroCode  = code;
+                playerData.FinalHeroIndex = charaterNum[i].HeroIndex; // 레거시 UI용
                 playerData.FinalHeroPos   = pos;
-                playerData.Info           = prefabData.Info;
+                playerData.Info           = BuildPlayerInfoFromRegistry(code, myPingIndex, entry);
                 playerData.PingIndex      = myPingIndex;
 
                 NetworkServer.Spawn(gamePlayer, conn);
                 HeroNum++;
 
-                Debug.Log($"[GameRoomManager] PlayerData 스폰: HeroIndex={index}, Pos={pos}, PingIndex={myPingIndex}, HeroNum={HeroNum}");
+                Debug.Log($"[GameRoomManager] PlayerData 스폰: code={code}, Pos={pos}, PingIndex={myPingIndex}, HeroNum={HeroNum}");
             }
+        }
+
+        /// <summary>
+        /// CharacterRegistry(프리팹/스킬)와 CharacterDatabase(스탯)를 합쳐 PlayerInfo를 빌드합니다.
+        /// </summary>
+        private static PlayerInfo BuildPlayerInfoFromRegistry(string heroCode, int pingIndex, CharacterRegistry.Entry entry)
+        {
+            // 스탯은 CharacterDatabase(PlayFab 카탈로그)에서 가져옵니다.
+            if (!CharacterDatabase.Stats.TryGetValue(heroCode, out var c))
+            {
+                Debug.LogWarning($"[GameRoomManager] BuildPlayerInfo: CharacterDatabase에서 '{heroCode}'를 찾지 못했습니다. 기본값 사용.");
+                return new PlayerInfo
+                {
+                    Id     = pingIndex,
+                    Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
+                    Items  = new List<ItemInfo>(entry.Items  ?? new List<ItemInfo>()),
+                };
+            }
+
+            // 스킬/아이템은 CharacterCard에서 Inspector로 직접 설정된 값을 사용합니다.
+            return new PlayerInfo
+            {
+                Id    = pingIndex,
+                Name  = c.characterName,
+                Hp    = c.hp,
+                Atk   = c.attack,
+                Def   = c.defense,
+                Acc   = c.accuracy,
+                Dodge = c.evasion,
+                Spd   = c.speed,
+                Crit  = c.critical,
+                San   = c.stress,
+                Res   = c.effectResistance,
+                Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
+                Items  = new List<ItemInfo>(entry.Items  ?? new List<ItemInfo>()),
+            };
         }
 
         // ── Mirror 씬 전환 보호 ──────────────────────────────────────
@@ -231,6 +287,40 @@ namespace Jun {
             // CharacterSelect · Gameplay씬: NetworkClient.Ready만 보장하고 AddPlayer는 생략
             if (!NetworkClient.ready)
                 NetworkClient.Ready();
+        }
+
+        /// <summary>
+        /// 클라이언트가 씬 로드 완료 후 Ready 상태를 알릴 때 서버에서 호출됩니다.
+        /// NetworkRoomManager의 기본 구현은 내부에서
+        ///   OnServerReady → SceneLoadedForPlayer → OnRoomServerCreateGamePlayer
+        /// 체인을 실행합니다.
+        /// CharacterSelect 씬에서는 캐릭터를 아직 선택하지 않아 CharaterNum이 비어있으므로
+        /// 이 체인이 실행되면 연결이 강제 종료됩니다.
+        /// CharacterSelect 씬일 때는 conn.isReady만 설정하고 체인을 차단합니다.
+        /// </summary>
+        public override void OnServerReady(NetworkConnectionToClient conn)
+        {
+            // CharacterSelect 씬: 캐릭터를 아직 선택하지 않아 CharaterNum이 비어있으므로 차단
+            // Gameplay 씬 + 사전 스폰: OnPlayerConfirmedSelection에서 PlayerData를 이미 생성했으므로
+            //   SceneLoadedForPlayer → OnRoomServerCreateGamePlayer 체인이 중복 실행되지 않도록 차단
+            bool shouldBlock = Utils.IsSceneActive(CharacterSelectScene)
+                            || (Utils.IsSceneActive(GameplayScene) && _playerDataPreSpawned);
+
+            if (shouldBlock)
+            {
+                // NetworkServer.SetClientReady(conn) 는 내부적으로
+                //   conn.isReady = true  +  SpawnObserversForConnection(conn)
+                // 을 수행합니다.
+                // base.OnServerReady 전체를 건너뛰면 SceneLoadedForPlayer 체인
+                // (→ OnRoomServerCreateGamePlayer 중복 호출)은 실행되지 않으면서
+                // SyncList/SyncVar 최신 상태는 클라이언트에 정상 전달됩니다.
+                NetworkServer.SetClientReady(conn);
+
+                Debug.Log($"[GameRoomManager] OnServerReady: SceneLoadedForPlayer 차단 (SetClientReady 수동 호출). conn={conn}, scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
+                return;
+            }
+
+            base.OnServerReady(conn);
         }
 
         // ── 게임 플레이어 생성 ───────────────────────────────────────
@@ -269,36 +359,36 @@ namespace Jun {
             GameObject mainPlayer = null;
             for (int i = 0; i < roomPlayerCharaterNum.Count; i++)
             {
-                HeroNum++;
-                int index = roomPlayerCharaterNum[i].HeroIndex;
-                int pos   = roomPlayerCharaterNum[i].HeroPos;
+                string code = roomPlayerCharaterNum[i].HeroCode;
 
-                if (index < 0 || index >= spawnPrefabs.Count)
+                if (!CharacterRegistry.TryGet(code, out var entry))
                 {
-                    Debug.LogError($"[GameRoomManager] spawnPrefabs 인덱스 범위 초과! HeroIndex={index}");
+                    Debug.LogError($"[GameRoomManager] OnRoomServerCreateGamePlayer: CharacterRegistry에 '{code}'가 없습니다!");
                     return mainPlayer;
                 }
-                if (spawnPrefabs[index] == null)
+                if (entry.PlayerDataPrefab == null)
                 {
-                    Debug.LogError($"[GameRoomManager] spawnPrefabs[{index}]가 null입니다!");
+                    Debug.LogError($"[GameRoomManager] '{code}'의 PlayerDataPrefab이 null입니다! CharacterCard Inspector를 확인하세요.");
                     return mainPlayer;
                 }
 
-                GameObject gamePlayer = Instantiate(spawnPrefabs[index]);
+                var playerData_prefab = entry.PlayerDataPrefab.GetComponent<PlayerData>();
+                if (playerData_prefab == null)
+                {
+                    Debug.LogError($"[GameRoomManager] '{code}'의 PlayerDataPrefab에 PlayerData 컴포넌트가 없습니다!");
+                    return mainPlayer;
+                }
 
-                // PlayerData 컴포넌트에 데이터 주입
-                // BattleManager가 FindObjectsByType<PlayerData>()로 이 오브젝트를 찾습니다.
+                GameObject gamePlayer = Instantiate(entry.PlayerDataPrefab);
                 var playerData = gamePlayer.GetComponent<PlayerData>();
-                if (playerData == null)
-                {
-                    Debug.LogError($"[GameRoomManager] spawnPrefabs[{index}]에 PlayerData 컴포넌트가 없습니다! Inspector에서 프리팹을 확인하세요.");
-                    Destroy(gamePlayer);
-                    return mainPlayer;
-                }
 
-                playerData.FinalHeroIndex = index;
+                int pos = HeroNum; // 전역 순번으로 스폰 위치 할당
+                HeroNum++;
+
+                playerData.FinalHeroCode  = code;
+                playerData.FinalHeroIndex = roomPlayerCharaterNum[i].HeroIndex; // 레거시 UI용
                 playerData.FinalHeroPos   = pos;
-                playerData.Info           = spawnPrefabs[index].GetComponent<PlayerData>().Info;
+                playerData.Info           = BuildPlayerInfoFromRegistry(code, myPingIndex, entry);
                 playerData.PingIndex      = myPingIndex;
 
                 if (i == 0)

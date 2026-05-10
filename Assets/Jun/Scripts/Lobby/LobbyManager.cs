@@ -56,7 +56,22 @@ namespace Jun
         public void OnClickedHero(int index)
         {
             var player = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
-            player.CMDChoiceHero(index);
+
+            // CMDChoiceHero는 이제 CharacterCode(string)를 받습니다.
+            // Jun 직행 경로는 CharacterRegistry가 없으므로 CharacterDatabase에서 역조회합니다.
+            string code = null;
+            foreach (var kv in CharacterDatabase.Stats)
+            {
+                if (kv.Value.index == index) { code = kv.Key; break; }
+            }
+
+            if (string.IsNullOrEmpty(code))
+            {
+                Debug.LogWarning($"[LobbyManager] index={index} 에 해당하는 CharacterCode를 찾지 못했습니다.");
+                return;
+            }
+
+            player.CMDChoiceHero(code);
         }
 
         /// <summary>

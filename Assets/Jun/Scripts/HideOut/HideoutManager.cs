@@ -11,14 +11,11 @@ public class HideoutManager : NetworkBehaviour
 {
     public static HideoutManager Instance;
 
-    [Header("À¯´Ö ¸®½ºÆ®")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®")]
     public readonly SyncList<PlayerData> _players = new SyncList<PlayerData>();
 
-    [Header("À¯´Ö »ı¼º À§Ä¡")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡")]
     [SerializeField] private List<Image> _spawnPoints;
-
-    [Header("À¯´ÖµéÀÇ ÀÌ¹ÌÁö")]
-    [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
 
     private void Awake()
     {
@@ -35,11 +32,11 @@ public class HideoutManager : NetworkBehaviour
 
         foreach(var player in players)
         {
-            UpdateHideoutUILocal(player.FinalHeroPos, player.FinalHeroIndex);
+            UpdateHideoutUILocal(player.FinalHeroPos, player.FinalHeroCode);
         }
     }
 
-    //Á¢¼Ó ÈÄ ÇÃ·¹ÀÌ¾î Ãß°¡(°ü¸®ÇÏ±â À§ÇØ)
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ß°ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
     public void RegisterPlayer(PlayerData pl)
     {
@@ -52,15 +49,24 @@ public class HideoutManager : NetworkBehaviour
             RpcAllPlayersReady();
         }
     }
-    public void UpdateHideoutUILocal(int pos, int heroIndex)
+    public void UpdateHideoutUILocal(int pos, string heroCode)
     {
-        _spawnPoints[pos].sprite = _playerImages[heroIndex];
+        if (pos < 0 || pos >= _spawnPoints.Count) return;
+
+        Sprite sprite = null;
+        if (CharacterRegistry.TryGet(heroCode, out var entry))
+            sprite = entry.CharacterSprite;
+
+        if (sprite == null)
+            Debug.LogWarning($"[HideoutManager] '{heroCode}' ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+
+        _spawnPoints[pos].sprite = sprite;
     }
 
     [ClientRpc]
     private void RpcAllPlayersReady()
     {
-        Debug.Log("ÁıÇÕ ¿Ï·á");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
     }
 
     [Server]

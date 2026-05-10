@@ -22,7 +22,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1109338203283845972, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: _assetId
-      value: 2612555127
+      value: 1426328551
       objectReference: {fileID: 0}
     - target: {fileID: 1510496185234292729, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Sprite
@@ -78,7 +78,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9220359351675498512, guid: 0c2e1e802474a3b44a8248aae81866ff, type: 3}
       propertyPath: m_Name
-      value: BattlePlayer Variant
+      value: BattlePlayer Variant 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

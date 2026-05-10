@@ -18,10 +18,10 @@ public class RootingSystem : NetworkBehaviour
     class UnitRoot
     {
         public GamePlayerController unit;
-        public int rootId; //¼±ÅÃÇÑ º¸»ó Id
-        public Image unitText; // ¼±ÅÃÈÄ º¸»ó ¾Æ·¡ ³ªÅ¸³ª´Â ÀÌ¹ÌÁö(ÅØ½ºÆ®)
-        public Button unitBTN; //ÀÚ½ÅÀÇ unit¹öÆ°
-        public Image RPCIMG; //°¡À§¹ÙÀ§º¸ ÀÌ¹ÌÁö
+        public int rootId; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Id
+        public Image unitText; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ·ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½(ï¿½Ø½ï¿½Æ®)
+        public Button unitBTN; //ï¿½Ú½ï¿½ï¿½ï¿½ unitï¿½ï¿½Æ°
+        public Image RPCIMG; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
         public UnitRoot() { }
         public UnitRoot(GamePlayerController unit, int rootId, Button unitBTN)
         {
@@ -40,48 +40,58 @@ public class RootingSystem : NetworkBehaviour
     [System.Serializable]
     public struct RewardInfo
     {
-        public string name;      // º¸»ó ÀÌ¸§
-        public Sprite icon;      // º¸¿©ÁÙ ÀÌ¹ÌÁö
-        public bool isEquipment; // Àåºñ¿©ºÎ (true¸é °¡À§¹ÙÀ§º¸, false¸é ±İÈ­)
-        public int amount;       // ±İÈ­ÀÏ °æ¿ì ±İ¾×
+        public string name;      // ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½
+        public Sprite icon;      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+        public bool isEquipment; // ï¿½ï¿½ñ¿©ºï¿½ (trueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, falseï¿½ï¿½ ï¿½ï¿½È­)
+        public int amount;       // ï¿½ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½İ¾ï¿½
     }
 
     [SerializeField] private BattleManager _manager;
-    [SerializeField] private GameObject _panel;    //rootÆĞ³Î
-    [SerializeField] private List<Image> _rootIMG;  //º¸»ó ÀÌ¹ÌÁö
-    [SerializeField] private List<Button> _rootBTN;    //º¸»ó ¼±ÅÃ ¹öÆ°
+    [SerializeField] private GameObject _panel;    //rootï¿½Ğ³ï¿½
+    [SerializeField] private List<Image> _rootIMG;  //ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
+    [SerializeField] private List<Button> _rootBTN;    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°
 
-    [SerializeField] private Transform _unitTF;    //Ä³¸¯ÅÍ ¼±ÅÃ ¹öÆ° À§Ä¡
-    [SerializeField] private List<UnitRoot> _allUnit = new List<UnitRoot>();// Å¬¶ó¿Í ¼­¹ö ¸ğµÎ°¡ °¡Áö°í ÀÖ´Â °øÅëµÈ À¯´Ö ¸®½ºÆ®
-    [SerializeField] private Button _unitPrefab;   //À¯´Ö ¹öÆ° ÇÁ¸®ÆÕ
-    [SerializeField] private Image _idPrefab;   // º¸»ó ¼±ÅÃ ÈÄ ³ªÅ¸³ª´Â À¯´Ö id
-    [SerializeField] private List<Transform> _selectTF;  //º¸»ó ¼±ÅÃ ÈÄ ³ªÅ¸³ª´Â À¯´Ö idÀÇ À§Ä¡
-    [SerializeField] private int[] _selectRootNum = new int[4]; // °¢ º¸»ó º° ¼±ÅÃÇÑ À¯´ÖÀÇ ¼ö
-    [SerializeField] private int endSelectUnit = 0;  
+    [SerializeField] private Transform _unitTF;    //Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° ï¿½ï¿½Ä¡
+    [SerializeField] private List<UnitRoot> _allUnit = new List<UnitRoot>();// Å¬ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
+    [SerializeField] private Button _unitPrefab;   //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private Image _idPrefab;   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ id
+    [SerializeField] private List<Transform> _selectTF;  //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ idï¿½ï¿½ ï¿½ï¿½Ä¡
+    [SerializeField] private int[] _selectRootNum = new int[4]; // ê° ë³´ìƒ ì¹¸ë³„ ì„ íƒ ì¸ì› ìˆ˜
+    [SerializeField] private int endSelectUnit = 0;
+
+    // ì„œë²„ ì „ìš©: _allUnit ì—†ì´ ì„ íƒ ìƒíƒœ ì¶”ì  (unitIdx â†’ itemIdx)
+    // SyncVar í›…ì€ í´ë¼ì´ì–¸íŠ¸ì—ì„œë§Œ ì‹¤í–‰ë˜ì–´ ì„œë²„ì˜ _allUnitì´ ë¹„ì–´ìˆìœ¼ë¯€ë¡œ ë³„ë„ ê´€ë¦¬
+    private readonly Dictionary<int, int> _serverSelections = new Dictionary<int, int>();
 
     [SyncVar(hook = nameof(StartRooting))]
     public bool isEndStage = false;
     public int selectedUnit = -1;
-    [Header("°¡À§¹ÙÀ§º¸ Á¤º¸µé")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private List<int> RPS;
-    [SerializeField] private List<Sprite> RPSImage; // °¡À§¹ÙÀ§º¸ ÀÌ¹ÌÁö
+    [SerializeField] private List<Sprite> RPSImage; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½
     [SerializeField] private Image RPSStartIMG;
 
-    [Header("º¸»ó Á¤º¸µé")]
-    [SerializeField] private List<RewardInfo> _rootDatas; // ¸ğµç º¸»ó Á¤º¸µé
-    [SerializeField] private List<RewardInfo> _currentReward; //ÇöÀç º¸»ó Á¤º¸µé
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [SerializeField] private List<RewardInfo> _rootDatas; // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private List<RewardInfo> _currentReward; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     readonly SyncList<int> _currentRewardIndices = new SyncList<int>();
     private void Start() { _panel.SetActive(false); }
 
-    // ¼­¹öÂÊ¿¡¼­ ½ºÅ×ÀÌÁö°¡ ³¡³­´Ù¸é ½ÇÇà µÊ
     [Server]
-    public void ServerEndStage() 
+    public void ServerEndStage()
     {
+        // ì„œë²„ ìƒíƒœ ì´ˆê¸°í™”
+        _serverSelections.Clear();
+        endSelectUnit = 0;
+        for (int i = 0; i < _selectRootNum.Length; i++) _selectRootNum[i] = 0;
+
         _currentRewardIndices.Clear();
+        _currentReward.Clear(); // ì„œë²„ì—ì„œë„ _currentReward ì´ˆê¸°í™”
         for (int i = 0; i < 4; i++)
         {
             int rand = UnityEngine.Random.Range(0, _rootDatas.Count);
-            _currentRewardIndices.Add(rand); // SyncList¿¡ ³Ö´Â ¼ø°£ ¸ğµç Å¬¶ó¿¡ Àü´ŞµÊ
+            _currentRewardIndices.Add(rand);
+            _currentReward.Add(_rootDatas[rand]); // ì„œë²„ì—ì„œë„ ë³´ìƒ ë°ì´í„° ì±„ìš°ê¸°
         }
         isEndStage = true;
     }
@@ -91,40 +101,48 @@ public class RootingSystem : NetworkBehaviour
         if (newVal)
         {
             _panel.SetActive(true);
-            // ÆĞ³ÎÀÌ ÄÑÁö¸é¼­ OnEnableÀÌ ½ÇÇàµÉ °ÍÀÔ´Ï´Ù.
-            InitRooting();
+            // SyncVar í›…ì€ SyncListë³´ë‹¤ ë¨¼ì € ë„ì°©í•  ìˆ˜ ìˆìœ¼ë¯€ë¡œ
+            // í•œ í”„ë ˆì„ ëŒ€ê¸° í›„ InitRootingì„ ì‹¤í–‰í•©ë‹ˆë‹¤.
+            StartCoroutine(InitRootingNextFrame());
         }
     }
-    // ·çÆÃ½Ã½ºÅÛ ÃÊ±â ¼³Á¤µé
+
+    private System.Collections.IEnumerator InitRootingNextFrame()
+    {
+        yield return null; // SyncList ë™ê¸°í™” ëŒ€ê¸°
+        InitRooting();
+    }
+    // ï¿½ï¿½ï¿½Ã½Ã½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     public void InitRooting()
     {
         Debug.Log("PanelOnEnable");
-        // Áßº¹ »ı¼º ¹æÁö¸¦ À§ÇØ ¸®½ºÆ®¿Í ÀÚ½Ä ¿ÀºêÁ§Æ® ÃÊ±âÈ­
+        // ì¤‘ë³µ ë°©ì§€ë¥¼ ìœ„í•´ ë¦¬ìŠ¤íŠ¸ì™€ ìì‹ ì˜¤ë¸Œì íŠ¸ ì´ˆê¸°í™”
         foreach (Transform child in _unitTF)
             Destroy(child.gameObject);
         _allUnit.Clear();
+        _currentReward.Clear(); // ì¬ì§„ì… ì‹œ ì¤‘ë³µ ëˆ„ì  ë°©ì§€
         endSelectUnit = 0;
 
-        // º¸»óµéÀÌ ´Ù º¸ÀÌ°Ô ¼³Á¤
+        // ë³´ìƒì¹¸ì˜ ì•„ì´ì½˜ ì„¸íŒ…
         for (int i = 0; i < _currentRewardIndices.Count; i++)
         {
             int dataIdx = _currentRewardIndices[i];
             _currentReward.Add(_rootDatas[dataIdx]);
             _rootIMG[i].sprite = _rootDatas[dataIdx].icon;
         }
-        // ¸ğµç À¯´ÖµéÀ» µ¹¾Æ°¡¸ç À¯´Ö ¹öÆ° »ı¼º ¹× ¿¬°á
+        // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         foreach (var unit in _manager._players)
         {
             var unitBTN = Instantiate(_unitPrefab, _unitTF);
-            unitBTN.image.sprite = _manager.PlayerImages[unit.Info.Id];
+            unitBTN.image.sprite = unit.GetCharacterSprite();
 
             _allUnit.Add(new UnitRoot(unit, -1, unitBTN));
             int capturedIndex = _allUnit.Count - 1;
             unitBTN.onClick.AddListener(() => OnClickedUnitBTN(capturedIndex));
             Debug.Log(_allUnit.Count - 1);
 
-            //³» À¯´ÖÀÏ¶§¸¸ È°¼ºÈ­ ºñ È°¼ºÈ­ µî ¿©·¯°¡Áö ±â´É
+            //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¶ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ È°ï¿½ï¿½È­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             if (unit.isOwned)
             {
                 unitBTN.interactable = true;
@@ -138,46 +156,62 @@ public class RootingSystem : NetworkBehaviour
         }
         RootBTNActivate(false);
     }
-    // À¯´Ö ¹öÆ°À» ´­·¶À» ¶§ ³ª¿À´Â ÀÌº¥Æ®
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
     public void OnClickedUnitBTN(int unitIdx)
     {
-        Debug.Log("¼±ÅÃÇÑ À¯´ÖÀÇ id: " + _allUnit[unitIdx].unit.Info.Id + " ¼±ÅÃÇÑ À¯´ÖÀÇ index: " + unitIdx);
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ id: " + _allUnit[unitIdx].unit.Info.Id + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ index: " + unitIdx);
         selectedUnit = unitIdx;
         RootBTNActivate(true);
     }
 
-    // ¾ÆÀÌÅÛ ¹öÆ°À» ´­·¶À» ¶§ ³ª¿À´Â ÀÌº¥Æ®
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
     public void OnClickedItem(int itemIndex)
     {
         if (selectedUnit == -1) return;
         CMDOnClickedRootBTN(selectedUnit, itemIndex);
     }
 
-    //¼­¹ö¿¡°Ô ¼±ÅÃµÈ À¯´Ö°ú ¾ÆÀÌÅÛÀ¸·Î ¾÷µ¥ÀÌÆ® ¿äÃ»
+    // ì„œë²„ ì „ìš© ë”•ì…”ë„ˆë¦¬(_serverSelections)ë¡œ ì„ íƒ ì¶”ì  â€” _allUnitì€ í´ë¼ì´ì–¸íŠ¸ ì „ìš©
     [Command(requiresAuthority = false)]
     public void CMDOnClickedRootBTN(int unitIdx, int itemIdx)
     {
-        if (_allUnit[unitIdx].rootId != -1) { Destroy(_allUnit[unitIdx].unitText.gameObject); endSelectUnit--; _selectRootNum[itemIdx]--; }
+        int prevItemIdx = -1;
 
-        _allUnit[unitIdx].rootId = itemIdx;
-        endSelectUnit++;
+        // ì´ì „ì— ì„ íƒí•œ ë³´ìƒì´ ìˆìœ¼ë©´ ì·¨ì†Œ
+        if (_serverSelections.TryGetValue(unitIdx, out int prev))
+        {
+            prevItemIdx = prev;
+            _selectRootNum[prev]--;
+            endSelectUnit--;
+        }
+
+        _serverSelections[unitIdx] = itemIdx;
         _selectRootNum[itemIdx]++;
+        endSelectUnit++;
 
-        Debug.Log($"¼­¹ö ¼ö½Å - À¯´Ö:{_allUnit[unitIdx].unit.Info.Id}, ¾ÆÀÌÅÛ:{itemIdx}");
+        Debug.Log($"[RootingSystem] ì„ íƒ - unitIdx:{unitIdx}, itemIdx:{itemIdx}, ì™„ë£Œ:{endSelectUnit}/{_manager._players.Count}");
 
-        // ¸ğµç Å¬¶óÀÌ¾ğÆ®ÀÇ UI¸¦ ¾÷µ¥ÀÌÆ®ÇÏµµ·Ï RPC È£Ãâ
-        RpcRequestSelectRoot(unitIdx, itemIdx);
+        // í´ë¼ì´ì–¸íŠ¸ UI ì—…ë°ì´íŠ¸ (prevItemIdx ì „ë‹¬ â†’ ì´ì „ ì•„ì´ì½˜ ì œê±°ìš©)
+        RpcRequestSelectRoot(unitIdx, itemIdx, prevItemIdx);
 
-        if (endSelectUnit == _allUnit.Count) EndRooting();
+        if (endSelectUnit == _manager._players.Count) EndRooting();
     }
 
-    // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡¼­ ÇØ´ç À¯´Ö À§¿¡ º¸»ó UI »ı¼º
     [ClientRpc]
-    void RpcRequestSelectRoot(int unitIdx, int itemIdx)
+    void RpcRequestSelectRoot(int unitIdx, int itemIdx, int prevItemIdx)
     {
+        // ì´ì „ ì„ íƒ ì•„ì´ì½˜ ì œê±° (ë³€ê²½ ì‹œ)
+        if (prevItemIdx != -1 && _allUnit[unitIdx].unitText != null)
+        {
+            Destroy(_allUnit[unitIdx].unitText.gameObject);
+            _allUnit[unitIdx].unitText = null;
+        }
+
+        // ìƒˆ ì„ íƒ ì•„ì´ì½˜ ìƒì„±
         var id = Instantiate(_idPrefab, _selectTF[itemIdx]);
         _allUnit[unitIdx].unitText = id;
-        _allUnit[unitIdx].unitText.GetComponentInChildren<TextMeshProUGUI>().text = _allUnit[unitIdx].unit.Info.Id.ToString();
+        _allUnit[unitIdx].unitText.GetComponentInChildren<TextMeshProUGUI>().text
+            = _allUnit[unitIdx].unit.Info.Id.ToString();
 
         RootBTNActivate(false);
     }
@@ -194,36 +228,44 @@ public class RootingSystem : NetworkBehaviour
         {
             if (_selectRootNum[i] > 1 && _currentReward[i].isEquipment)
             {
-                RPS.Clear(); //°¡À§¹ÙÀ§º¸ Âü°¡ÀÚ
-                for (int j = 0; j < _allUnit.Count; j++)
+                // _allUnitì€ ì„œë²„ì—ì„œ ë¹„ì–´ìˆìœ¼ë¯€ë¡œ ì„œë²„ ì „ìš© _serverSelections ì‚¬ìš©
+                RPS.Clear();
+                foreach (var kvp in _serverSelections)
                 {
-                    if (_allUnit[j].rootId == i)
+                    if (kvp.Value == i)
                     {
-                        RPS.Add(j);
-                        Debug.Log(_allUnit[j].unit.Info.Id);
+                        RPS.Add(kvp.Key);
+                        Debug.Log($"[RPS ì°¸ê°€] unitIdx={kvp.Key}");
                     }
                 }
-                yield return StartCoroutine(RockPaperScissors(RPS)); // ÀÌ ÇÔ¼ö°¡ ³¡³¯¶§±îÁö Á¤Áö
+
+                if (RPS.Count < 2)
+                {
+                    Debug.LogWarning($"[ProcessAllBattles] ìŠ¬ë¡¯ {i}: ì°¸ê°€ì {RPS.Count}ëª…, RPS ìƒëµ");
+                    continue;
+                }
+
+                yield return StartCoroutine(RockPaperScissors(RPS));
             }
         }
 
-        Debug.Log("¸ğµç Ä­ÀÇ °¡À§¹ÙÀ§º¸ ¿Ï·á.");
-        // ¿©±â¼­ ´ÙÀ½ ´Ü°è ¸¸µé±â
-        // ¼±ÅÃÇÑ º¸»óµé Àû¿ëÇÏ±â ±ÍÂú´Ù
-        // ÇÊ¿äÇÏ´Ù¸é ÇÃ·¹ÀÌ¾îµéÀÇ »õ·Î¿î Á¤º¸µé ÀúÀå
+        Debug.Log("ï¿½ï¿½ï¿½ Ä­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½.");
+        // ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½Ê¿ï¿½ï¿½Ï´Ù¸ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         NetworkManager.singleton.ServerChangeScene("Home 1");
     }
-    //°¡À§¹ÙÀ§º¸ ·ÎÁ÷
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     IEnumerator RockPaperScissors(List<int> RPS)
     {
-        Debug.Log("°¡À§¹ÙÀ§º¸ ½ÃÀÛ");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
         RpcStartRPS(true);
         yield return new WaitForSeconds(1.0f);
         RpcStartRPS(false);
 
         bool isDraw = true;
         while (isDraw) {
-            Debug.Log("°¡À§¹ÙÀ§º¸ Áß");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½");
             List<int> hands = new List<int>();
             for (int i = 0; i < RPS.Count; i++) hands.Add(UnityEngine.Random.Range(0, 3));
 
@@ -235,21 +277,21 @@ public class RootingSystem : NetworkBehaviour
             bool hasScissors = hands.Exists(x => x == 2);
             int winner = -1;
 
-            if (hasRock && hasPaper && hasScissors) winner = -1; //¸ğµÎ°¡ ´Ù ´Ù¸¦¶§
+            if (hasRock && hasPaper && hasScissors) winner = -1; //ï¿½ï¿½Î°ï¿½ ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½
             else if (hasRock && hasScissors) winner = 0;
             else if (hasPaper && hasRock) winner = 1;
             else if (hasScissors && hasPaper) winner = 2;
             else winner = -1;
 
-            if (winner == -1) { Debug.Log("¹«½ÂºÎ Àç°æ±â"); continue; } // ¹«½ÂºÎ°¡ ³ª¿Ã½Ã ´Ù½Ã ÁøÇà
+            if (winner == -1) { Debug.Log("ï¿½ï¿½ï¿½Âºï¿½ ï¿½ï¿½ï¿½ï¿½"); continue; } // ï¿½ï¿½ï¿½ÂºÎ°ï¿½ ï¿½ï¿½ï¿½Ã½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-            // 4. ÆĞ¹èÀÚ Á¦°Å (µÚ¿¡¼­ºÎÅÍ »èÁ¦ÇØ¾ß ÀÎµ¦½º°¡ ¾È ²¿ÀÓ)
+            // 4. ï¿½Ğ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             for (int i = RPS.Count - 1; i >= 0; i--)
             {
                 if (hands[i] != winner)
                 {
                     int loserIdx = RPS[i];
-                    Debug.Log($"ÆĞ¹èÀÚ Å»¶ô: {_allUnit[loserIdx].unit.Info.Id}");
+                    Debug.Log($"ï¿½Ğ¹ï¿½ï¿½ï¿½ Å»ï¿½ï¿½: {_allUnit[loserIdx].unit.Info.Id}");
 
                     RpcHideRPSIcon(loserIdx);
                     RPS.RemoveAt(i);
@@ -258,7 +300,7 @@ public class RootingSystem : NetworkBehaviour
             if (RPS.Count <= 1)
             {
                 isDraw = false;
-                Debug.Log("½Â¸®ÀÚ: " + _allUnit[RPS[0]].unit.Info.Id);
+                Debug.Log("ï¿½Â¸ï¿½ï¿½ï¿½: " + _allUnit[RPS[0]].unit.Info.Id);
                 //RpcHideRPSIcon(RPS[0]);
             }
         }
@@ -268,19 +310,19 @@ public class RootingSystem : NetworkBehaviour
     {
         RPSStartIMG.gameObject.SetActive(isStart);
     }
-    // °¡À§¹ÙÀ§º¸ ÀÌ¹ÌÁö º¸¿©ÁÖ±â
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½
     [ClientRpc]
     public void RpcShowRPS(List<int> RPS, List<int> hands)
     {
-        Debug.Log("°¡À§¹ÙÀ§º¸ °á°ú");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½");
         for(int i = 0; i < RPS.Count; i++)
         {
             _allUnit[RPS[i]].RPCIMG.sprite = RPSImage[hands[i]];
             _allUnit[RPS[i]].RPCIMG.gameObject.SetActive(true);
-            Debug.Log("°¡À§¹ÙÀ§º¸ °á°ú:"+ _allUnit[RPS[i]].unit.Info.Id + " hand: "+ hands[i]);
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½:"+ _allUnit[RPS[i]].unit.Info.Id + " hand: "+ hands[i]);
         }
     }
-    // °¡À§¹ÙÀ§º¸ ÀÌ¹ÌÁö ²ô¶ó°í ¸í·É
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     [ClientRpc]
     public void RpcHideRPSIcon(int Idx)
     {

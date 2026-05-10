@@ -12,8 +12,8 @@ namespace Jun
         public PlayerInfo Info;
         //[SerializeField] private EnemyView _view;
 
-        [Header("гн ╫ц╫╨еш")]
-        public Transform PingLayout; // гн Ё╙©ю╢б ╟Ь╟ё
+        [Header("О©╫О©╫ О©╫ц╫О©╫О©╫О©╫")]
+        public Transform PingLayout; // О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
 
         public UnitState State = UnitState.Waiting;
 
@@ -54,8 +54,8 @@ namespace Jun
         [Command(requiresAuthority = false)]
         public void CMDDead()
         {
-            Debug.Log("E");
-            BattleManager.Instance.RcpEnemyDead(gameObject);
+            Debug.Log("[EnemyController] CMDDead М≤╦Л╤°");
+            BattleManager.Instance.OnEnemyDead(gameObject);
         }
     }
 }
