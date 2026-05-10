@@ -33,7 +33,6 @@ namespace inseon.Core
                 _resolutions.Select(r => $"{r.width} x {r.height}").ToList()
             );
 
-            // 현재 해상도 선택 표시
             int current = global::System.Array.FindIndex(
                 _resolutions,
                 r => r.width == Screen.width && r.height == Screen.height
@@ -63,8 +62,6 @@ namespace inseon.Core
         }
 
         // ── 버튼 이벤트 ───────────────────────────────────────
-
-        /// <summary>적용 버튼 OnClick에 연결</summary>
         public void OnApply()
         {
             var res = _resolutions[resolutionDropdown.value];
@@ -80,10 +77,18 @@ namespace inseon.Core
             ResolutionManager.Instance.SetResolution(res.width, res.height, mode);
         }
 
-        /// <summary>취소 버튼 OnClick에 연결</summary>
         public void OnCancel()
         {
             gameObject.SetActive(false);
+        }
+
+        public void OnQuitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

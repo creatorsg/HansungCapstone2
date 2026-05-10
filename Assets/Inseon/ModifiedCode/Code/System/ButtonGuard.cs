@@ -18,16 +18,16 @@ public class ButtonGuard : MonoBehaviour
     public static bool TryLock()
     {
         if (Instance == null || Instance._lockableArea == null) return true;
-        if (!Instance._lockableArea.interactable) return false;
+        if (!Instance._lockableArea.blocksRaycasts) return false;
 
-        Instance._lockableArea.interactable = false;
+        Instance._lockableArea.blocksRaycasts = false;
         return true;
     }
 
     public static void Unlock()
     {
         if (Instance?._lockableArea != null)
-            Instance._lockableArea.interactable = true;
+            Instance._lockableArea.blocksRaycasts = true;
     }
 
     /// <summary>
@@ -43,13 +43,13 @@ public class ButtonGuard : MonoBehaviour
     private IEnumerator LockRoutine(float seconds)
     {
         if (_lockableArea == null) yield break;
-        _lockableArea.interactable = false;
+        _lockableArea.blocksRaycasts = false;
         yield return new WaitForSeconds(seconds);
-        _lockableArea.interactable = true;
+        _lockableArea.blocksRaycasts = true;
     }
 
     public static bool IsLocked
         => Instance != null && Instance._lockableArea != null
-           && !Instance._lockableArea.interactable;
+           && !Instance._lockableArea.blocksRaycasts;
 }
 

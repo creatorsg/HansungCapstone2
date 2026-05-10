@@ -12,6 +12,7 @@ namespace inseon.Lobby.Manager
         [SerializeField] private TextMeshProUGUI _playerNickname;
         [SerializeField] private GameObject _createRoomWindow;
         [SerializeField] private GameObject _findRoomWindow;
+        [SerializeField] private GameObject _settingWindow;
         [SerializeField] private PasswordInputWindow _passwordInputWindow;
 
         [Header("Proto Test")]
@@ -46,6 +47,9 @@ namespace inseon.Lobby.Manager
 
         public void OpenFindRoomWindow() => _findRoomWindow.SetActive(true);
         public void CloseFindRoomWindow() => _findRoomWindow.SetActive(false);
+
+        public void OpenSettingWindow() => _settingWindow.SetActive(true);
+        public void CloseSettingWindow() => _settingWindow.SetActive(false);
 
         // ─── 방 목록 ─────────────────────────────────────────────────
 
