@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -31,13 +31,15 @@ namespace Lsy
         public override void OnStartLocalPlayer()
         {
             LocalInstance = this;
-            Debug.Log("<color=green>[����] ���� ����!</color>");
+            Debug.Log("<color=green>[계정] 접속 성공!</color>");
+            // 서버로 보낸다: 내 캐릭터 목록/초기 선택 캐릭터 로딩 요청
             CmdRequestMyCharacters();
         }
 
         [Command]
         public void CmdRequestMyCharacters()
         {
+            // 서버에서 받아온다: 내 캐릭터 기본 데이터(이름/스탯/초기 골드)로 네트워크 캐릭터 생성
             if (myCharacterPrefabs == null || myCharacterPrefabs.Count == 0) return;
 
             GameObject newCharObj = Instantiate(myCharacterPrefabs[0]);
@@ -59,12 +61,14 @@ namespace Lsy
             if (profileIndex < 0 || profileIndex >= myCharacterDataList.Count) return;
             if (profileIndex == currentActiveIndex) return;
 
+            // 서버로 보낸다: 사용 캐릭터 전환 요청(대상 profileIndex)
             CmdRequestSwapCharacter(profileIndex);
         }
 
         [Command]
         public void CmdRequestSwapCharacter(int targetIndex)
         {
+            // 서버에서 받아온다: targetIndex 캐릭터 상태(인벤토리/스킬/강화/골드) 적용
             if (targetIndex < 0 || targetIndex >= myCharacterDataList.Count) return;
             if (currentActiveIndex == targetIndex) return;
             if (currentSelectedCharacter == null) return;
@@ -102,14 +106,15 @@ namespace Lsy
             }
 
             TargetRpcRefreshUI(connectionToClient, targetIndex);
-            Debug.Log($"<color=cyan>[����] {targetData.charName}���� ���� �Ϸ�!</color>");
+            Debug.Log($"<color=cyan>[서버] {targetData.charName}으로 스왑 완료!</color>");
         }
 
         [TargetRpc]
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
         {
+            // 서버에서 받아온다: 현재 활성 캐릭터 인덱스(newActiveIndex)와 최신 UI 반영 트리거
             currentActiveIndex = newActiveIndex;
-            Debug.Log($"<color=cyan>[Ŭ���̾�Ʈ] currentActiveIndex: {newActiveIndex}</color>");
+            Debug.Log($"<color=cyan>[클라이언트] currentActiveIndex: {newActiveIndex}</color>");
 
             if (InventoryUI.Instance != null)
                 InventoryUI.Instance.RefreshInventory();

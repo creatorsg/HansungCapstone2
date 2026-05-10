@@ -38,11 +38,13 @@ namespace Lsy
 
         public bool IsPlayerReady(uint playerNetId)
         {
+            // 서버에서 받아온다: playerNetId의 준비 상태(readyMap)
             return _readyByPlayerNetId.TryGetValue(playerNetId, out bool isReady) && isReady;
         }
 
         private void OnReadyMapChanged(SyncDictionary<uint, bool>.Operation op, uint key, bool value)
         {
+            // 서버에서 받아온다: 준비 상태 맵 변경(playerNetId -> isReady)
             if (op == SyncDictionary<uint, bool>.Operation.OP_REMOVE)
             {
                 OnPlayerReadyChanged?.Invoke(key, false);
@@ -71,6 +73,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdToggleReady(uint playerNetId, NetworkConnectionToClient sender = null)
         {
+            // 서버로 보낸다: 준비 토글 요청(요청자 connection/netId 기준)
             if (sender == null)
             {
                 Debug.LogWarning("[ReadySystem][Server] sender connection is null.");
@@ -126,12 +129,14 @@ namespace Lsy
 
         private void OnAllReadySyncChanged(bool oldValue, bool newValue)
         {
+            // 서버에서 받아온다: 전체 준비 완료 여부(allReady)
             OnAllReadyChanged?.Invoke(newValue);
         }
 
         [ClientRpc]
         private void RpcOnPlayerReadyChanged(uint playerNetId, bool isReady)
         {
+            // 서버에서 받아온다: 특정 플레이어 준비 상태(playerNetId, isReady)
             Debug.Log($"<color=yellow>[ReadySystem][Client] netId:{playerNetId} isReady:{isReady}</color>");
             OnPlayerReadyChanged?.Invoke(playerNetId, isReady);
         }
@@ -139,6 +144,7 @@ namespace Lsy
         [ClientRpc]
         private void RpcOnAllReadyChanged(bool allReady)
         {
+            // 서버에서 받아온다: 전체 준비 완료 여부(allReady)
             OnAllReadyChanged?.Invoke(allReady);
         }
 

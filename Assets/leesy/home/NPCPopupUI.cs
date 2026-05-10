@@ -1,4 +1,4 @@
-using Lsy;
+ï»¿using Lsy;
 using Mirror;
 using TMPro;
 using UnityEngine;
@@ -12,10 +12,10 @@ namespace Lsy
         public GameObject itemSlotPrefab;
         public TextMeshProUGUI upgradeProgressText;
 
-        [Header("´ëÀåÀåÀÌ Àü¿ë UI (´ëÀåÀåÀÌ NPC¿¡¸¸ ¿¬°á)")]
+        [Header("ëŒ€ì¥ì¥ì´ ì „ìš© UI (ëŒ€ì¥ì¥ì´ NPCì—ë§Œ ì—°ê²°)")]
         public BlacksmithUI blacksmithUI;
 
-        [Header("Á¤º¸»ó Àü¿ë UI (Á¤º¸»ó NPC¿¡¸¸ ¿¬°á)")]
+        [Header("ì •ë³´ìƒ ì „ìš© UI (ì •ë³´ìƒ NPCì—ë§Œ ì—°ê²°)")]
         public InformantUI informantUI;
 
         private NPCState _currentState;
@@ -30,41 +30,39 @@ namespace Lsy
             _currentState = state;
             _currentState.OnStateChanged += RefreshUI;
 
-            // BlacksmithUI/InformantUI´Â °¢ÀÚ OnStateChanged¸¦ ±¸µ¶ÇÏ¹Ç·Î
-            // InitializeUI¸¸ È£ÃâÇÏ¸é ÀÌÈÄ NPC ·¹º§ º¯°æ ½Ã ÀÚµ¿ °»½ÅµÊ
             if (blacksmithUI != null)
                 blacksmithUI.InitializeUI(state);
 
             if (informantUI != null)
                 informantUI.InitializeUI(state);
 
+            // ì„œë²„ì—ì„œ ë°›ì•„ì˜¨ë‹¤
             RefreshUI();
         }
 
         private void RefreshUI()
         {
+            // ì„œë²„ì—ì„œ ë°›ì•„ì˜¨ë‹¤
             if (_currentState == null || _currentState.npcData == null) return;
 
-            // ÁøÇàµµ ÅØ½ºÆ® °»½Å
             if (_currentState.currentLevel < _currentState.npcData.maxLevel)
             {
                 int idx = _currentState.currentLevel - 1;
                 if (idx >= 0 && idx < _currentState.npcData.upgradeTargetGold.Count)
                 {
                     int target = _currentState.npcData.upgradeTargetGold[idx];
-                    upgradeProgressText.text = $"Lv.{_currentState.currentLevel} ÅõÀÚ: {_currentState.currentInvestedGold} / {target} G";
+                    upgradeProgressText.text = $"Lv.{_currentState.currentLevel} íˆ¬ì: {_currentState.currentInvestedGold} / {target} G";
                 }
                 else
                 {
-                    upgradeProgressText.text = $"Lv.{_currentState.currentLevel} (µ¥ÀÌÅÍ ¿À·ù)";
+                    upgradeProgressText.text = $"Lv.{_currentState.currentLevel} (ë°ì´í„° ì˜¤ë¥˜)";
                 }
             }
             else
             {
-                upgradeProgressText.text = "ÃÖ´ë ·¹º§";
+                upgradeProgressText.text = "ìµœëŒ€ ë ˆë²¨";
             }
 
-            // »óÁ¡ ½½·Ô °»½Å
             foreach (Transform child in itemSlotContainer) Destroy(child.gameObject);
 
             if (_currentState.npcData.sellingItems != null)
@@ -91,6 +89,7 @@ namespace Lsy
         {
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤
             shop.CmdBuyItem(item.itemName, price);
         }
 
@@ -98,6 +97,7 @@ namespace Lsy
         {
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤
             shop.CmdInvestToNPC(_currentState.netId, amount);
         }
 
@@ -105,6 +105,7 @@ namespace Lsy
         {
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤
             shop.CmdUseBartender(100);
         }
 
@@ -112,13 +113,13 @@ namespace Lsy
         {
             if (PlayerAccount.LocalInstance == null || PlayerAccount.LocalInstance.currentSelectedCharacter == null)
             {
-                Debug.LogWarning("[NPCPopupUI] ¼±ÅÃµÈ Ä³¸¯ÅÍ°¡ ¾ø½À´Ï´Ù!");
+                Debug.LogWarning("[NPCPopupUI] ì„ íƒëœ ìºë¦­í„°ê°€ ì—†ìŠµë‹ˆë‹¤!");
                 return null;
             }
 
             CharacterShop shop = PlayerAccount.LocalInstance.currentSelectedCharacter.GetComponent<CharacterShop>();
             if (shop == null)
-                Debug.LogError("[NPCPopupUI] CharacterShop ÄÄÆ÷³ÍÆ®°¡ ÇÁ¸®ÆÕ¿¡ ¾ø½À´Ï´Ù!");
+                Debug.LogError("[NPCPopupUI] CharacterShop ì»´í¬ë„ŒíŠ¸ê°€ í”„ë¦¬íŒ¹ì— ì—†ìŠµë‹ˆë‹¤!");
 
             return shop;
         }

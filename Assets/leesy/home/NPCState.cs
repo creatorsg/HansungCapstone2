@@ -1,6 +1,5 @@
-using Mirror;
+ï»¿using Mirror;
 using UnityEngine;
-using System;
 
 namespace Lsy
 {
@@ -8,7 +7,7 @@ namespace Lsy
     {
         public NPCData npcData;
 
-        public event Action OnStateChanged;
+        public event System.Action OnStateChanged;
 
         [SyncVar(hook = nameof(OnStateChangedHook))]
         public int currentLevel = 1;
@@ -18,6 +17,7 @@ namespace Lsy
 
         private void OnStateChangedHook(int oldValue, int newValue)
         {
+            // ì„œë²„ì—ì„œ ë°›ì•„ì˜¨ë‹¤
             OnStateChanged?.Invoke();
         }
 
@@ -30,7 +30,7 @@ namespace Lsy
             currentInvestedGold += amount;
             CheckLevelUp();
 
-            Debug.Log($"<color=yellow>[¼­¹ö] {npcData.npcName} ÅõÀÚ ¼ö½Å: {amount}G. ÇöÀç ´©Àû: {currentInvestedGold}G</color>");
+            Debug.Log($"<color=yellow>[ì„œë²„] {npcData.npcName} íˆ¬ì ìˆ˜ì‹ : {amount}G. í˜„ì¬ ëˆ„ì : {currentInvestedGold}G</color>");
         }
 
         [Server]
@@ -48,9 +48,8 @@ namespace Lsy
                 currentInvestedGold -= targetGold;
                 currentLevel++;
 
-                Debug.Log($"<color=green>[¼­¹ö] {npcData.npcName} ·¹º§¾÷! ÇöÀç Lv.{currentLevel}</color>");
+                Debug.Log($"<color=green>[ì„œë²„] {npcData.npcName} ë ˆë²¨ì—…! í˜„ì¬ Lv.{currentLevel}</color>");
 
-                // ´ÙÀ½ ·¹º§ ¸ñÇ¥Ä¡µµ ¹Ù·Î ´Ş¼ºÇß´ÂÁö Àç±Í Ã¼Å©
                 if (currentLevel < npcData.maxLevel)
                 {
                     CheckLevelUp();
@@ -58,12 +57,10 @@ namespace Lsy
             }
         }
 
-        // ±¸¸Å ·ÎÁ÷ Ã³¸®
         [Server]
         public void ExecutePurchase(string itemName, int price)
         {
-            // ¼­¹ö¿¡ ±¸¸ÅÇÑ ¾ÆÀÌÅÛ Àü¼Û
-            Debug.Log($"<color=white>[¼­¹ö ±¸¸Å ±â·Ï] ¾ÆÀÌÅÛ: {itemName}, °¡°İ: {price}</color>");
+            Debug.Log($"<color=white>[ì„œë²„ êµ¬ë§¤ ê¸°ë¡] ì•„ì´í…œ: {itemName}, ê°€ê²©: {price}</color>");
         }
     }
 }

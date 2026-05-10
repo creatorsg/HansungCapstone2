@@ -89,6 +89,7 @@ namespace Lsy
             }
 
             Debug.Log($"<color=yellow>[ReadyOrStartButton] 준비 토글 - netId:{myNetId}</color>");
+            // 서버로 보낸다: 준비 토글 요청(netId 기준)
             ReadySystem.Instance.CmdToggleReady(myNetId);
         }
 
@@ -130,3 +131,5 @@ namespace Lsy
         }
     }
 }
+
+

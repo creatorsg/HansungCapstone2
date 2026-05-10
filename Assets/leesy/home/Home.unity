@@ -973,6 +973,7 @@ GameObject:
   - component: {fileID: 166284523}
   - component: {fileID: 166284525}
   - component: {fileID: 166284524}
+  - component: {fileID: 166284526}
   m_Layer: 5
   m_Name: "\uC2A4\uD0AC1"
   m_TagString: Untagged
@@ -995,8 +996,8 @@ RectTransform:
   - {fileID: 1298105026}
   - {fileID: 1008619940}
   - {fileID: 1017056678}
-  - {fileID: 1765504618}
   - {fileID: 630802358}
+  - {fileID: 1765504618}
   m_Father: {fileID: 542453266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
@@ -1042,6 +1043,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166284522}
   m_CullTransparentMesh: 1
+--- !u!114 &166284526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166284522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6275bfbdf87cb674cbe9fa4b5988ab6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.InformantSkillGrid
+  upgradeNodes:
+  - {fileID: 1008619944}
+  - {fileID: 1017056682}
+  - {fileID: 630802362}
+  - {fileID: 1765504622}
+  skillData: {fileID: 11400000, guid: 3a40cf649eee17a4caabe3905e4a98e4, type: 2}
 --- !u!1 &176132586
 GameObject:
   m_ObjectHideFlags: 0
@@ -1980,7 +1999,8 @@ GameObject:
   - component: {fileID: 320706037}
   - component: {fileID: 320706036}
   - component: {fileID: 320706038}
-  - component: {fileID: 320706039}
+  - component: {fileID: 320706040}
+  - component: {fileID: 320706041}
   m_Layer: 5
   m_Name: "\uC815\uBCF4\uC0C1\uCC3D"
   m_TagString: Untagged
@@ -2065,7 +2085,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Popup
   _popup: {fileID: 320706034}
---- !u!114 &320706039
+--- !u!114 &320706040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320706034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12524581fefde0047ad251f505a7f9e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.InformantUI
+  skillGrids:
+  - {fileID: 166284526}
+--- !u!114 &320706041
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2077,11 +2111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 759e151a8b6f7f341a8d116d668c9949, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.NPCPopupUI
-  itemSlotContainer: {fileID: 1724506867}
-  itemSlotPrefab: {fileID: 8766211226358369030, guid: 06c231ed5bd118e47a1d4f178f3fe044, type: 3}
+  itemSlotContainer: {fileID: 0}
+  itemSlotPrefab: {fileID: 0}
   upgradeProgressText: {fileID: 1659069594}
   blacksmithUI: {fileID: 0}
-  informantUI: {fileID: 0}
+  informantUI: {fileID: 320706040}
 --- !u!1 &341280069
 GameObject:
   m_ObjectHideFlags: 0
@@ -4260,8 +4294,9 @@ GameObject:
   - component: {fileID: 630802360}
   - component: {fileID: 630802359}
   - component: {fileID: 630802361}
+  - component: {fileID: 630802362}
   m_Layer: 5
-  m_Name: "\uB808\uBCA84"
+  m_Name: "\uB808\uBCA83"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4274,7 +4309,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630802357}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4369,6 +4404,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &630802362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630802357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9025ee12275d3499fccbd8acda6d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
+  nodeButton: {fileID: 630802361}
+  priceText: {fileID: 1065401019}
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &687573238
 GameObject:
   m_ObjectHideFlags: 0
@@ -4708,7 +4759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.NPCInteract
   _npcState: {fileID: 383200246841515894}
-  _npcUI: {fileID: 320706039}
+  _npcUI: {fileID: 0}
 --- !u!1 &697309082
 GameObject:
   m_ObjectHideFlags: 0
@@ -7047,6 +7098,7 @@ GameObject:
   - component: {fileID: 1008619942}
   - component: {fileID: 1008619941}
   - component: {fileID: 1008619943}
+  - component: {fileID: 1008619944}
   m_Layer: 5
   m_Name: "\uB808\uBCA81"
   m_TagString: Untagged
@@ -7156,6 +7208,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1008619944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008619939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9025ee12275d3499fccbd8acda6d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
+  nodeButton: {fileID: 1008619943}
+  priceText: {fileID: 245687842}
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1010258536
 GameObject:
   m_ObjectHideFlags: 0
@@ -7234,6 +7302,7 @@ GameObject:
   - component: {fileID: 1017056680}
   - component: {fileID: 1017056679}
   - component: {fileID: 1017056681}
+  - component: {fileID: 1017056682}
   m_Layer: 5
   m_Name: "\uB808\uBCA82"
   m_TagString: Untagged
@@ -7343,6 +7412,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1017056682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017056677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9025ee12275d3499fccbd8acda6d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
+  nodeButton: {fileID: 1017056681}
+  priceText: {fileID: 1406422151}
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1027382335
 GameObject:
   m_ObjectHideFlags: 0
@@ -10130,8 +10215,6 @@ GameObject:
   - component: {fileID: 1298105026}
   - component: {fileID: 1298105028}
   - component: {fileID: 1298105027}
-  - component: {fileID: 1298105030}
-  - component: {fileID: 1298105029}
   m_Layer: 5
   m_Name: "\uC2A4\uD0AC\uC6D0\uBCF8"
   m_TagString: Untagged
@@ -10196,36 +10279,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1298105025}
   m_CullTransparentMesh: 1
---- !u!114 &1298105029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1298105025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6275bfbdf87cb674cbe9fa4b5988ab6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Lsy.InformantSkillGrid
-  upgradeNodes:
-  - {fileID: 0}
-  - {fileID: 0}
-  skillData: {fileID: 0}
---- !u!114 &1298105030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1298105025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12524581fefde0047ad251f505a7f9e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Lsy.InformantUI
-  skillGrids:
-  - {fileID: 0}
 --- !u!1 &1339398554
 GameObject:
   m_ObjectHideFlags: 0
@@ -11740,7 +11793,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 320706039}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Lsy.NPCPopupUI, Assembly-CSharp
         m_MethodName: OnInvestButtonClicked
         m_Mode: 3
@@ -13748,8 +13801,9 @@ GameObject:
   - component: {fileID: 1765504620}
   - component: {fileID: 1765504619}
   - component: {fileID: 1765504621}
+  - component: {fileID: 1765504622}
   m_Layer: 5
-  m_Name: "\uB808\uBCA83"
+  m_Name: "\uB808\uBCA84"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13857,6 +13911,22 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1765504622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765504617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db9025ee12275d3499fccbd8acda6d86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
+  nodeButton: {fileID: 1765504621}
+  priceText: {fileID: 568487269}
+  unlockedColor: {r: 1, g: 1, b: 1, a: 1}
+  lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1795827264
 GameObject:
   m_ObjectHideFlags: 0
@@ -14810,6 +14880,7 @@ GameObject:
   - component: {fileID: 1945280250}
   - component: {fileID: 1945280249}
   - component: {fileID: 1945280252}
+  - component: {fileID: 1945280253}
   m_Layer: 5
   m_Name: "\uC900\uBE44/\uC2DC\uC791 \uBC84\uD2BC"
   m_TagString: Untagged
@@ -14880,7 +14951,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1945280250}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1945280253}
+        m_TargetAssemblyTypeName: BattleStartBtn, Assembly-CSharp
+        m_MethodName: GameStartBtn
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1945280250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14939,6 +15022,18 @@ MonoBehaviour:
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   clientReadyColor: {r: 0, g: 1, b: 0, a: 1}
+--- !u!114 &1945280253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945280247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c357d2454a96aa4b990259b528e29d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleStartBtn
 --- !u!1 &1957884587
 GameObject:
   m_ObjectHideFlags: 0

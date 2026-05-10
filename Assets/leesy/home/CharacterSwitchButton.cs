@@ -74,6 +74,7 @@ namespace Lsy
             else if (isAvailable)
             {
                 if (!CharacterSlotManager.TryGetLocalNetId(out uint myNetId)) return;
+                // 서버로 보낸다
                 CharacterSlotManager.Instance.CmdClaimSlot(characterIndex, myNetId);
                 PlayerAccount.LocalInstance.SelectCharacter(characterIndex);
             }
@@ -99,3 +100,5 @@ namespace Lsy
         }
     }
 }
+
+

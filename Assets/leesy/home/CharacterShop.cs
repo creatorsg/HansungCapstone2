@@ -1,4 +1,4 @@
-using Mirror;
+ï»¿using Mirror;
 using UnityEngine;
 
 namespace Lsy
@@ -11,46 +11,42 @@ namespace Lsy
         {
             _unit = GetComponent<CharacterUnit>();
             if (_unit == null)
-                Debug.LogError("[CharacterShop] °°Àº ¿ÀºêÁ§Æ®¿¡ CharacterUnitÀÌ ¾ø½À´Ï´Ù!");
+                Debug.LogError("[CharacterShop] ê°™ì€ ì˜¤ë¸Œì íŠ¸ì— CharacterUnitì´ ì—†ìŠµë‹ˆë‹¤!");
             else
-                Debug.Log("<color=green>[CharacterShop] CharacterUnit ¿¬°á ¿Ï·á</color>");
+                Debug.Log("<color=green>[CharacterShop] CharacterUnit ì—°ê²° ì™„ë£Œ</color>");
         }
 
-        // ==========================================
-        // 1. ÀÏ¹İ »óÁ¡ °áÁ¦
-        // ==========================================
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ì•„ì´í…œ êµ¬ë§¤ ìš”ì²­(itemName, price)
             Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
 
             if (_unit.currentGold < price)
             {
-                SendNotification(sender, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 return;
             }
             if (_unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}Àº(´Â) ÀÌ¹Ì 5°³¸¦ ¼ÒÁöÇÏ°í ÀÖ½À´Ï´Ù.");
+                SendNotification(sender, $"{itemName}ì€(ëŠ”) ì´ë¯¸ 5ê°œë¥¼ ì†Œì§€í•˜ê³  ìˆìŠµë‹ˆë‹¤.");
                 return;
             }
 
             _unit.currentGold -= price;
             _unit.AddItem(itemName, 1);
-            SendNotification(sender, $"[½Ã½ºÅÛ ¾Ë¸²] {itemName} ±¸¸Å ¿Ï·á.");
+            SendNotification(sender, $"[ì‹œìŠ¤í…œ ì•Œë¦¼] {itemName} êµ¬ë§¤ ì™„ë£Œ.");
         }
 
-        // ==========================================
-        // 2. NPC ÅõÀÚ
-        // ==========================================
         [Command(requiresAuthority = false)]
         public void CmdInvestToNPC(uint npcNetId, int amount, NetworkConnectionToClient sender = null)
         {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: NPC íˆ¬ì ìš”ì²­(npcNetId, amount)
             Debug.Log($"[CharacterShop][Server] CmdInvestToNPC - netId:{npcNetId}, amount:{amount}");
 
             if (_unit.currentGold < amount)
             {
-                SendNotification(sender, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 return;
             }
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
@@ -64,107 +60,120 @@ namespace Lsy
             }
         }
 
-        // ==========================================
-        // 3. ¹ÙÅÙ´õ
-        // ==========================================
         [Command(requiresAuthority = false)]
         public void CmdUseBartender(int price, NetworkConnectionToClient sender = null)
         {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ë°”í…ë” íšŒë³µ ìš”ì²­(price)
             Debug.Log($"[CharacterShop][Server] CmdUseBartender - price:{price}");
 
             if (_unit.currentGold < price)
             {
-                SendNotification(sender, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 return;
             }
             if (_unit.ApplyBartenderHeal())
             {
                 _unit.currentGold -= price;
-                SendNotification(sender, $"{_unit.characterName}ÀÇ Ã¼·Â/Á¤½Å·ÂÀÌ È¸º¹µÇ¾ú½À´Ï´Ù.");
+                SendNotification(sender, $"{_unit.characterName}ì˜ ì²´ë ¥/ì •ì‹ ë ¥ì´ íšŒë³µë˜ì—ˆìŠµë‹ˆë‹¤.");
             }
             else
             {
-                SendNotification(sender, "ÀÌ¹Ì Ã¼·Â°ú Á¤½Å·ÂÀÌ ÃÖ´ëÀÔ´Ï´Ù.");
+                SendNotification(sender, "ì´ë¯¸ ì²´ë ¥ê³¼ ì •ì‹ ë ¥ì´ ìµœëŒ€ì…ë‹ˆë‹¤.");
             }
         }
 
-        // ==========================================
-        // 4. ´ëÀåÀåÀÌ ¹«±â ¾÷±×·¹ÀÌµå
-        // ==========================================
         [Command(requiresAuthority = false)]
         public void CmdUpgradeWeapon(string weaponId, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
         {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ë¬´ê¸° ë…¸ë“œ ê°•í™” ìš”ì²­(weaponId, nodeIndex, npcLevel, price)
             Debug.Log($"[CharacterShop][Server] CmdUpgradeWeapon - weaponId:{weaponId}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
 
             bool success = _unit.ApplyBlacksmithUpgrade(weaponId, nodeIndex, npcLevel, price);
 
             if (success)
             {
-                Debug.Log($"<color=green>[CharacterShop][Server] °­È­ ¼º°ø! weaponId:{weaponId}, node:{nodeIndex}</color>");
-                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}´Ü°è °­È­ ¿Ï·á!");
+                Debug.Log($"<color=green>[CharacterShop][Server] ê°•í™” ì„±ê³µ! weaponId:{weaponId}, node:{nodeIndex}</color>");
+                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}ë‹¨ê³„ ê°•í™” ì™„ë£Œ!");
             }
             else
             {
-                // ½ÇÆĞ ¿øÀÎ ¼­¹ö ·Î±×
-                Debug.Log($"<color=red>[CharacterShop][Server] °­È­ ½ÇÆĞ - gold:{_unit.currentGold}/{price}, selectedWeapon:{_unit.selectedWeaponId}, purchasedCount:{_unit.purchasedNodeCount}</color>");
+                Debug.Log($"<color=red>[CharacterShop][Server] ê°•í™” ì‹¤íŒ¨ - gold:{_unit.currentGold}/{price}, selectedWeapon:{_unit.selectedWeaponId}, purchasedCount:{_unit.purchasedNodeCount}</color>");
 
                 if (_unit.currentGold < price)
-                    SendNotification(sender, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 else if (_unit.selectedWeaponId != "" && _unit.selectedWeaponId != weaponId)
-                    SendNotification(sender, "ÀÌ¹Ì ´Ù¸¥ ¹«±â¸¦ °­È­ ÁßÀÔ´Ï´Ù.");
+                    SendNotification(sender, "ì´ë¯¸ ë‹¤ë¥¸ ë¬´ê¸°ë¥¼ ê°•í™” ì¤‘ì…ë‹ˆë‹¤.");
                 else if (npcLevel < nodeIndex + 1)
-                    SendNotification(sender, "NPC ·¹º§ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "NPC ë ˆë²¨ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 else if (_unit.purchasedNodeCount > nodeIndex)
-                    SendNotification(sender, "ÀÌ¹Ì ±¸¸ÅÇÑ ³ëµåÀÔ´Ï´Ù.");
+                    SendNotification(sender, "ì´ë¯¸ êµ¬ë§¤í•œ ë…¸ë“œì…ë‹ˆë‹¤.");
                 else
-                    SendNotification(sender, "ÀÌÀü ´Ü°è¸¦ ¸ÕÀú ±¸¸ÅÇØ¾ß ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "ì´ì „ ë‹¨ê³„ë¥¼ ë¨¼ì € êµ¬ë§¤í•´ì•¼ í•©ë‹ˆë‹¤.");
             }
         }
 
-        // ==========================================
-        // 5. Á¤º¸»ó ½ºÅ³ ±¸¸Å
-        // ==========================================
         [Command(requiresAuthority = false)]
         public void CmdUpgradeSkillWithLevel(string skillId, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
         {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ìŠ¤í‚¬ êµ¬ë§¤/ê°•í™” ìš”ì²­(skillId, price, npcLevel, requiredNpcLevel)
             Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
 
             bool success = _unit.ApplySkillPurchase(skillId, npcLevel, price, requiredNpcLevel);
 
             if (success)
             {
-                Debug.Log($"<color=green>[CharacterShop][Server] ½ºÅ³ ½Àµæ ¼º°ø! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] ½ºÅ³ ½Àµæ ¿Ï·á!");
+                Debug.Log($"<color=green>[CharacterShop][Server] ìŠ¤í‚¬ ìŠµë“ ì„±ê³µ! skillId:{skillId}</color>");
+                SendNotification(sender, $"[{skillId}] ìŠ¤í‚¬ ìŠµë“ ì™„ë£Œ!");
             }
             else
             {
                 if (_unit.currentGold < price)
-                    SendNotification(sender, "°ñµå°¡ ºÎÁ·ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 else if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC ·¹º§ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "NPC ë ˆë²¨ì´ ë¶€ì¡±í•©ë‹ˆë‹¤.");
                 else
-                    SendNotification(sender, "ÀÌ¹Ì º¸À¯ÇÑ ½ºÅ³ÀÔ´Ï´Ù.");
+                    SendNotification(sender, "ì´ë¯¸ ë³´ìœ í•œ ìŠ¤í‚¬ì…ë‹ˆë‹¤.");
             }
         }
 
-        // ==========================================
-        // ¾Ë¸² Àü¼Û
-        // ==========================================
+        [Command(requiresAuthority = false)]
+        public void CmdEquipItem(string itemName, NetworkConnectionToClient sender = null)
+        {
+            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ì¸ë²¤í† ë¦¬ ì•„ì´í…œ ì¥ì°© ìš”ì²­(itemName)
+            Debug.Log($"[CharacterShop][Server] CmdEquipItem - item:{itemName}");
+
+            if (string.IsNullOrWhiteSpace(itemName))
+            {
+                SendNotification(sender, "ì¥ì°©í•  ì•„ì´í…œ ì´ë¦„ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.");
+                return;
+            }
+
+            if (_unit.GetItemAmount(itemName) <= 0)
+            {
+                SendNotification(sender, $"[{itemName}] ì•„ì´í…œì´ ì¸ë²¤í† ë¦¬ì— ì—†ìŠµë‹ˆë‹¤.");
+                return;
+            }
+
+            _unit.selectedWeaponId = itemName;
+            SendNotification(sender, $"[{itemName}] ì¥ì°© ì™„ë£Œ.");
+        }
+
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)
         {
-            Debug.Log($"[CharacterShop][Server] SendNotification - target:{(target != null ? "ÀÖÀ½" : "NULL")}, msg:{message}");
+            Debug.Log($"[CharacterShop][Server] SendNotification - target:{(target != null ? "ìˆìŒ" : "NULL")}, msg:{message}");
 
             if (target != null)
                 RpcNotify(target, message);
             else
-                Debug.LogWarning("[CharacterShop] sender°¡ NULLÀÌ¶ó ¾Ë¸²À» º¸³¾ ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogWarning("[CharacterShop] senderê°€ NULLì´ë¼ ì•Œë¦¼ì„ ë³´ë‚¼ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         [TargetRpc]
         private void RpcNotify(NetworkConnectionToClient target, string message)
         {
-            Debug.Log($"<color=white>[CharacterShop][Client] ¾Ë¸² ¼ö½Å: {message}</color>");
+            // ì„œë²„ì—ì„œ ë°›ì•„ì˜¨ë‹¤: ìƒì  ì²˜ë¦¬ ê²°ê³¼ ì•Œë¦¼ ë©”ì‹œì§€(message)
+            Debug.Log($"<color=white>[CharacterShop][Client] ì•Œë¦¼ ìˆ˜ì‹ : {message}</color>");
         }
     }
 }

@@ -1,6 +1,6 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
-using System; // ActionÀ» »ç¿ëÇÏ±â À§ÇØ ÇÊ¿ä
+using System;
 
 namespace Lsy
 {
@@ -12,8 +12,7 @@ namespace Lsy
         public Transform slotContainer;
         public GameObject inventorySlotPrefab;
 
-        // ¡Ú »õ·Î Ãß°¡: °ÔÀÓ¿¡ Á¸ÀçÇÏ´Â ¸ğµç ItemData¸¦ ¸ğ¾ÆµÑ ¸®½ºÆ® (¹ø¿ª±â ¿ªÇÒ)
-        [Header("¸ğµç ¾ÆÀÌÅÛ µ¥ÀÌÅÍº£ÀÌ½º")]
+        [Header("ëª¨ë“  ì•„ì´í…œ ë°ì´í„°ë² ì´ìŠ¤")]
         public List<ItemData> allItemDatabase = new List<ItemData>();
 
         private void Awake()
@@ -23,11 +22,11 @@ namespace Lsy
 
         public void RefreshInventory()
         {
+            // ì„œë²„ì—ì„œ ë°›ì•„ì˜¨ë‹¤: í˜„ì¬ ìºë¦­í„° ì¸ë²¤í† ë¦¬/ì¥ì°© ìƒíƒœ(myInventory, selectedWeaponId)
             if (PlayerAccount.LocalInstance == null || PlayerAccount.LocalInstance.currentSelectedCharacter == null) return;
 
             CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
 
-            // 1. ±âÁ¸ ½½·Ô ½Ï ´Ù Áö¿ì±â
             foreach (Transform child in slotContainer)
             {
                 Destroy(child.gameObject);
@@ -49,15 +48,27 @@ namespace Lsy
 
                         if (foundData != null)
                         {
+                            bool isEquipped = myChar.selectedWeaponId == foundData.itemName;
+
                             slotScript.Setup(foundData, item.amount, () =>
                             {
-                                Debug.Log($"<color=yellow>{foundData.itemName} ¾ÆÀÌÅÛ ±¸¸Å¿Ï·á!</color>");
-                                //¼­¹ö¿¡ ±¸¸ÅÇÑ ¾ÆÀÌÅÛ Àü´Ş
+                                CharacterShop shop = myChar.GetComponent<CharacterShop>();
+                                if (shop == null)
+                                {
+                                    Debug.LogWarning("[InventoryUI] CharacterShop ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+                                    return;
+                                }
+
+                                Debug.Log($"<color=yellow>{foundData.itemName} ì¥ì°© ìš”ì²­</color>");
+                                // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ì¥ì°© ìš”ì²­ ì•„ì´í…œ(itemName)
+                                shop.CmdEquipItem(foundData.itemName);
                             });
+
+                            slotScript.ShowItemMark(isEquipped);
                         }
                         else
                         {
-                            Debug.LogWarning($"µ¥ÀÌÅÍº£ÀÌ½º¿¡ '{item.itemName}' ¾ÆÀÌÅÛÀÌ ¾ø½À´Ï´Ù! ÀÎ½ºÆåÅÍ¸¦ È®ÀÎÇØÁÖ¼¼¿ä.");
+                            Debug.LogWarning($"ë°ì´í„°ë² ì´ìŠ¤ì— '{item.itemName}' ì•„ì´í…œì´ ì—†ìŠµë‹ˆë‹¤! ì¸ìŠ¤í™í„°ë¥¼ í™•ì¸í•´ì£¼ì„¸ìš”.");
                         }
                     }
                 }

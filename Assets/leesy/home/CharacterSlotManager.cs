@@ -31,6 +31,7 @@ namespace Lsy
 
         private void OnSlotOwnersChanged(SyncDictionary<int, uint>.Operation op, int key, uint value)
         {
+            // 서버에서 받아온다: 슬롯 소유자 맵 변경(characterIndex -> ownerNetId)
             Debug.Log($"[CharacterSlotManager] 슬롯 변경 - index:{key}, ownerNetId:{value}");
             OnSlotChanged?.Invoke();
         }
@@ -56,6 +57,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdClaimSlot(int characterIndex, uint playerNetId, NetworkConnectionToClient sender = null)
         {
+            // 서버로 보낸다: 캐릭터 슬롯 선점 요청(characterIndex)
             if (sender == null)
             {
                 Debug.LogWarning("[CharacterSlotManager] sender connection is null.");
