@@ -1,0 +1,93 @@
+using inseon.Lobby.Manager;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PasswordInputWindow : MonoBehaviour
+{
+    public static PasswordInputWindow Instance;
+
+    [Tooltip("창 상단에 표시할 방 이름 텍스트 (없으면 생략 가능)")]
+    [SerializeField] private TextMeshProUGUI _titleText;
+
+    [SerializeField] private InputField _passwordInput;
+    [SerializeField] private Button     _confirmButton;
+    [SerializeField] private Button     _cancelButton;
+
+    [Tooltip("오류/상태 메시지를 표시할 텍스트 (없으면 생략 가능)")]
+    [SerializeField] private TextMeshProUGUI _statusText;
+
+    private RoomInfo _pendingRoom;
+
+
+    private void Awake()
+    {
+        Instance = this;
+
+        _confirmButton.onClick.AddListener(OnClickConfirm);
+        _cancelButton.onClick.AddListener(OnClickCancel);
+        _passwordInput.onValueChanged.AddListener(val =>
+            _confirmButton.interactable = !string.IsNullOrEmpty(val));
+
+        _confirmButton.interactable = false;
+    }
+
+    public void Open(RoomInfo room)
+    {
+        _pendingRoom = room;
+
+        _passwordInput.text = "";
+        _confirmButton.interactable = false;
+        SetStatus("", false);
+
+        if (_titleText != null)
+            _titleText.text = $"[{room.roomName}] 비밀번호 입력";
+
+        gameObject.SetActive(true);
+        _passwordInput.Select();
+        _passwordInput.ActivateInputField();
+    }
+
+    private void OnClickConfirm()
+    {
+        if (_pendingRoom == null) return;
+
+        string password = _passwordInput.text;
+        if (string.IsNullOrEmpty(password))
+        {
+            SetStatus("비밀번호를 입력해주세요.", true);
+            return;
+        }
+
+        SetStatus("입장 중...", false);
+        _confirmButton.interactable = false;
+        _cancelButton.interactable  = false;
+
+        LobbyManager.Instance.JoinRoomWithPassword(_pendingRoom, password,
+            onError: errMsg =>
+            {
+                if (errMsg != null && errMsg.Contains("Wrong password"))
+                    SetStatus("비밀번호가 틀렸습니다.", true);
+                else if (errMsg != null && errMsg.Contains("Room is full"))
+                    SetStatus("방이 가득 찼습니다.", true);
+                else
+                    SetStatus("오류가 발생했습니다. 다시 시도해주세요.", true);
+
+                _confirmButton.interactable = true;
+                _cancelButton.interactable  = true;
+            });
+    }
+
+    private void OnClickCancel()
+    {
+        _pendingRoom = null;
+        gameObject.SetActive(false);
+    }
+
+    private void SetStatus(string msg, bool isError)
+    {
+        if (_statusText == null) return;
+        _statusText.text  = msg;
+        _statusText.color = isError ? Color.red : Color.gray;
+    }
+}

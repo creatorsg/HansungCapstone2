@@ -1,30 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Lsy;
 
-namespace MyProject.UI.CharacterSelect
+namespace Lsy
 {
     public class CharacterButton : MonoBehaviour
     {
-        [SerializeField] private UpdateCharacter infoView;
+        [SerializeField] private Lsy.UpdateCharacter infoView;
+        [SerializeField] private Lsy.SelectBtn selectBtn;
         [SerializeField] private Outline[] buttonOutlines;
 
-        private int lastSelectedIndex = -1;
+        private int _lastSelectIndex = -1;
 
-        public void OnClickThisCharacter(int index)
+        public void OnClickCharacter(int index)
         {
-            if (lastSelectedIndex != -1)
+            if (_lastSelectIndex != -1)
             {
-                buttonOutlines[lastSelectedIndex].enabled = false;
+                buttonOutlines[_lastSelectIndex].enabled = false;
             }
 
             buttonOutlines[index].enabled = true;
 
-            lastSelectedIndex = index;
+            _lastSelectIndex = index;
 
+            selectBtn.CharacterIcon(index);
             infoView.UpdateCharacterUI();
-
-            // 여기서 나중에 '현재 선택된 캐릭터 ID' 같은 걸 저장해두면 
-            // 나중에 확정 버튼을 눌렀을 때 동기화하기 편합니다. 
         }
     }
 }

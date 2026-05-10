@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace MyProject.UI.CharacterSelect
+namespace Lsy
 {
     public class UpdateCharacter : MonoBehaviour
     {
