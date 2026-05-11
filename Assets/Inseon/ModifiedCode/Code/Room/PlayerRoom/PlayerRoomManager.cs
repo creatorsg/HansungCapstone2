@@ -1,6 +1,7 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -138,6 +139,16 @@ public class PlayerRoomManager : MonoBehaviour
 
         if (roomID   != null) roomID.text   = _gameRoomManager.RoomId;
         if (roomName != null) roomName.text = _gameRoomManager.RoomName;
+
+        // IsRoomPrivate는 GameRoomPlayer의 SyncVar → 클라이언트에도 자동 동기화됨
+        if (roomTypeImage != null)
+        {
+            var firstSlot = _gameRoomManager.roomSlots
+                            .OfType<GameRoomPlayer>()
+                            .FirstOrDefault();
+            bool isPrivate = firstSlot?.IsRoomPrivate ?? false;
+            roomTypeImage.sprite = isPrivate ? privateSprite : publicSprite;
+        }
     }
 
     /// <summary>

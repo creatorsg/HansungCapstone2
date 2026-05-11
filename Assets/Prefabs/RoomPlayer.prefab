@@ -69,3 +69,5 @@ MonoBehaviour:
   readyToBegin: 0
   index: 0
   PlayerNickname: 
+  CharCount: 1
+  PingIndex: -1

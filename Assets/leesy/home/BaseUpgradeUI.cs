@@ -9,13 +9,13 @@ namespace Lsy
 
         public void InitializeUI(NPCState npcState)
         {
-            // ±âÁ¸ ±¸µ¶ ÇØÁ¦
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (NpcState != null)
                 NpcState.OnStateChanged -= OnNpcStateChanged;
 
             NpcState = npcState;
 
-            // NPC ·¹º§/°ñµå º¯°æ ½Ã ÀÚµ¿À¸·Î ³ëµå °»½Å
+            // NPC ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             if (NpcState != null)
                 NpcState.OnStateChanged += OnNpcStateChanged;
 
@@ -23,10 +23,10 @@ namespace Lsy
             RefreshAllRows();
         }
 
-        // NPC »óÅÂ º¯°æ ½Ã (·¹º§¾÷ µî) ÀÚµ¿ È£Ãâ
+        // NPC ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½) ï¿½Úµï¿½ È£ï¿½ï¿½
         private void OnNpcStateChanged()
         {
-            Debug.Log($"<color=cyan>[UpgradeUI] NPC »óÅÂ º¯°æ °¨Áö - Lv:{NpcState?.currentLevel} ¡æ ³ëµå °»½Å</color>");
+            Debug.Log($"<color=cyan>[UpgradeUI] NPC ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ - Lv:{NpcState?.currentLevel} ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½</color>");
             RefreshAllRows();
         }
 
@@ -34,7 +34,7 @@ namespace Lsy
         {
             if (NpcState == null)
             {
-                Debug.LogWarning("[UpgradeUI] RefreshAllRows - NpcState°¡ NULL");
+                Debug.LogWarning("[UpgradeUI] RefreshAllRows - NpcStateï¿½ï¿½ NULL");
                 return;
             }
 
@@ -48,11 +48,18 @@ namespace Lsy
             }
         }
 
+        private void OnEnable()
+        {
+            // ìºë¦­í„° ê°•í™”/ìŠ¤í‚¬ ìƒíƒœê°€ ë°”ë€Œë©´ ìë™ìœ¼ë¡œ í–‰ ê°±ì‹ 
+            CharacterUnit.OnLocalUpgradeStateChanged += RefreshAllRows;
+        }
+
         private void OnDisable()
         {
-            // Ã¢ÀÌ ´İÈú ¶§ ±¸µ¶ ÇØÁ¦
             if (NpcState != null)
                 NpcState.OnStateChanged -= OnNpcStateChanged;
+
+            CharacterUnit.OnLocalUpgradeStateChanged -= RefreshAllRows;
         }
 
         protected abstract IEnumerable<BaseUpgradeRow> GetRows();

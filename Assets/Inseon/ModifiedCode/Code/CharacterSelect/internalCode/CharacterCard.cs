@@ -98,11 +98,23 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
+    public bool IsOwned => _owned;
+
     public void SetSelected(bool selected)
     {
         _isSelected = selected;
         if (selectedOutline != null)
             selectedOutline.SetActive(selected);
+    }
+
+    /// <summary>
+    /// 다른 플레이어가 이미 선택한 카드임을 표시합니다.
+    /// taken=true면 버튼 비활성화 (내 소유 여부와 무관).
+    /// </summary>
+    public void SetTaken(bool taken)
+    {
+        var btn = GetComponent<Button>();
+        if (btn != null) btn.interactable = _owned && !taken;
     }
 
     // ── 클릭 ────────────────────────────────────

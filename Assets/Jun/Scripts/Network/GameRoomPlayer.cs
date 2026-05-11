@@ -16,6 +16,17 @@ namespace Jun
         // HeroPos 제거: 서버에서 스폰 시 HeroNum 기반으로 FinalHeroPos를 전역 순번으로 할당
     }
 
+    /// <summary>
+    /// 캐릭터 선택 전역 큐의 한 항목.
+    /// heroCode: 선택된 캐릭터 코드 / ownerNetId: 선택한 GameRoomPlayer의 netId.
+    /// </summary>
+    [System.Serializable]
+    public struct SelectionEntry
+    {
+        public string heroCode;
+        public uint   ownerNetId;
+    }
+
     public class GameRoomPlayer : NetworkRoomPlayer
     {
         public readonly SyncList<Charater> CharaterNum = new SyncList<Charater>();
@@ -27,6 +38,10 @@ namespace Jun
         // 이 플레이어가 조종할 캐릭터 수 (합계는 항상 4)
         [SyncVar(hook = nameof(OnCharCountChanged))]
         public int CharCount = 1;
+
+        // 방 공개 여부 — 서버에서 GameRoomManager.IsPrivate를 읽어 동기화
+        [SyncVar(hook = nameof(OnRoomTypeChanged))]
+        public bool IsRoomPrivate = false;
 
         // 연결 순서 기준 고정 인덱스 – 핑 시스템에서 PlayerData와 공유
         [SyncVar] public int PingIndex = -1;
@@ -57,6 +72,11 @@ namespace Jun
         void OnCharCountChanged(int _, int __)
         {
             PlayerRoomManager.Instance?.RefreshPlayerSlots();
+        }
+
+        void OnRoomTypeChanged(bool _, bool __)
+        {
+            PlayerRoomManager.Instance?.RefreshRoomInfo();
         }
 
         // NetworkRoomPlayer의 readyToBegin SyncVar hook 재정의
@@ -123,6 +143,9 @@ namespace Jun
 
             var manager = NetworkManager.singleton as GameRoomManager;
             if (manager == null) return;
+
+            // 방 공개 여부를 SyncVar에 기록 → 모든 클라이언트에 자동 동기화
+            IsRoomPrivate = manager.IsPrivate;
 
             // 기존 플레이어 수 파악 (자신 제외)
             int otherCount = 0;
@@ -264,45 +287,20 @@ namespace Jun
         // ── 캐릭터 선택 ──
 
         /// <summary>
-        /// 캐릭터 선택/해제 토글. 확정은 CmdConfirmSelection()으로 별도 처리합니다.
-        /// code = CharacterCard.CharacterCode (예: "C001")
+        /// 전역 큐에 캐릭터 선택/해제 토글을 요청합니다.
+        /// 실제 큐 관리는 GameRoomManager.TrySelectCharacter(서버)에서 처리하고
+        /// 변경 결과는 RpcSyncGlobalQueue로 전체 클라이언트에 브로드캐스트됩니다.
         /// </summary>
         [Command]
         public void CMDChoiceHero(string code)
         {
-            // 이미 선택한 캐릭터면 해제
-            foreach (var i in CharaterNum)
-            {
-                if (code == i.HeroCode)
-                {
-                    CharaterNum.Remove(i);
-                    return;
-                }
-            }
-
-            // 다른 플레이어가 이미 선택했는지 확인 (자신 제외)
-            foreach (var slot in ((GameRoomManager)NetworkManager.singleton).roomSlots)
-            {
-                GameRoomPlayer roomPlayer = slot as GameRoomPlayer;
-                if (roomPlayer == null || roomPlayer == this) continue;
-
-                foreach (var charInfo in roomPlayer.CharaterNum)
-                {
-                    if (charInfo.HeroCode == code)
-                    {
-                        Debug.Log($"[GameRoomPlayer] 이미 다른 플레이어가 선택한 캐릭터입니다. code={code}");
-                        return;
-                    }
-                }
-            }
-
-            // UI 표시용 HeroIndex는 CharacterDatabase에서 조회 (없으면 -1)
-            int legacyIndex = CharacterDatabase.Stats.TryGetValue(code, out var cd) ? cd.index : -1;
-            CharaterNum.Add(new Charater { HeroIndex = legacyIndex, HeroCode = code });
+            var manager = NetworkManager.singleton as GameRoomManager;
+            if (manager == null) return;
+            manager.TrySelectCharacter(netId, code, CharCount);
         }
 
         /// <summary>
-        /// 캐릭터 선택 확정. 모든 플레이어가 완료되면 서버가 게임 씬으로 전환합니다.
+        /// 캐릭터 선택 확정. 모든 플레이어가 완료되면 서버가 Home 씬으로 전환합니다.
         /// </summary>
         [Command]
         public void CmdConfirmSelection()
@@ -312,6 +310,31 @@ namespace Jun
 
             var manager = NetworkManager.singleton as GameRoomManager;
             manager?.OnPlayerConfirmedSelection();
+        }
+
+        /// <summary>
+        /// 서버가 전역 큐 상태를 모든 클라이언트에 동기화할 때 호출합니다.
+        /// CharacterSelectManager.OnGlobalQueueSynced 로 전달됩니다.
+        /// </summary>
+        [ClientRpc]
+        public void RpcSyncGlobalQueue(string[] heroCodes, uint[] ownerNetIds)
+        {
+            int len = Mathf.Min(heroCodes.Length, ownerNetIds.Length);
+            var queue = new SelectionEntry[len];
+            for (int i = 0; i < len; i++)
+                queue[i] = new SelectionEntry { heroCode = heroCodes[i], ownerNetId = ownerNetIds[i] };
+
+            CharacterSelectManager.Instance?.OnGlobalQueueSynced(queue);
+        }
+
+        /// <summary>
+        /// 클라이언트가 씬 진입 후 현재 큐 상태를 요청합니다.
+        /// </summary>
+        [Command]
+        public void CmdRequestQueueSync()
+        {
+            var manager = NetworkManager.singleton as GameRoomManager;
+            manager?.BroadcastQueue();
         }
 
         private void OnCharaterListChanged(SyncList<Charater>.Operation op, int itemIndex, Charater item)

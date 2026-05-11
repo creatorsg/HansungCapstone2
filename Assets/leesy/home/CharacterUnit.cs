@@ -18,12 +18,22 @@ namespace Lsy
         [SyncVar] public float maxHp;
         [SyncVar] public int maxSan;
 
+        [SyncVar(hook = nameof(OnCurrentHpChanged))]
+        public float currentHp;
+
+        [SyncVar(hook = nameof(OnCurrentSanChanged))]
+        public int currentSan;
+
         public readonly SyncList<PlayerSkill> mySkills = new SyncList<PlayerSkill>();
 
         [SyncVar] public string characterName;
 
-        [SyncVar(hook = nameof(OnCurrentGoldChanged))]
-        public int currentGold;
+        /// <summary>FinalHeroPos — 초상화 슬롯 인덱스 (0~3). 설정되면 OnAnyUnitReady 발화.</summary>
+        [SyncVar(hook = nameof(OnHeroPosChanged))]
+        public int heroPos = -1;
+
+        /// <summary>FinalHeroCode — 초상화 이미지 매핑용</summary>
+        [SyncVar] public string heroCode = "";
 
         public readonly SyncList<InventoryItem> myInventory = new SyncList<InventoryItem>();
 
@@ -33,21 +43,75 @@ namespace Lsy
         [SyncVar(hook = nameof(OnPurchasedNodeCountChanged))]
         public int purchasedNodeCount = 0;
 
-        public event Action<int> OnGoldChanged;
+        // ─── UI 레이어용 이벤트 ───────────────────────────────────────────
+        /// <summary>로컬 권한 획득 시 — 초기화용</summary>
+        public static event Action<CharacterUnit> OnLocalUnitSpawned;
+        /// <summary>heroPos가 설정된 유닛 — 초상화 UI 갱신용 (전체 클라이언트)</summary>
+        public static event Action<CharacterUnit> OnAnyUnitReady;
+        /// <summary>인벤토리 변경 시 — InventoryUI 갱신용</summary>
+        public static event Action OnLocalInventoryChanged;
+        /// <summary>강화/스킬 상태 변경 시 — BaseUpgradeUI 갱신용</summary>
+        public static event Action OnLocalUpgradeStateChanged;
+        /// <summary>HP 또는 San이 변경됐을 때 — 초상화 슬라이더 갱신용</summary>
+        public static event Action<CharacterUnit> OnAnyUnitStatsChanged;
+
+        private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
+        private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
+
+        private void OnHeroPosChanged(int oldVal, int newVal)
+        {
+            if (newVal >= 0)
+                OnAnyUnitReady?.Invoke(this);
+        }
+
+        /// <summary>
+        /// 클라이언트에서 이 오브젝트가 완전히 초기화된 후 호출됩니다.
+        /// 초기 스폰 시 SyncVar 훅이 발동하지 않는 Mirror 버전 대비용.
+        /// heroPos가 이미 유효하면 여기서 명시적으로 OnAnyUnitReady를 발화합니다.
+        /// </summary>
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            if (heroPos >= 0)
+                OnAnyUnitReady?.Invoke(this);
+        }
 
         [Server]
         public void SetupFromData(CharacterData data)
         {
             characterName = data.charName;
-            currentGold = data.gold;
             maxHp = data.maxHp;
             maxSan = data.maxSan;
+            currentHp  = maxHp;
+            currentSan = maxSan;
 
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp = maxHp;
             myInfo.San = maxSan;
 
-            Debug.Log($"<color=green>[����] ĳ���� ���� �Ϸ�: {characterName} (HP:{maxHp}, ���:{currentGold}G)</color>");
+            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (CharacterData): {characterName} (HP:{maxHp})</color>");
+        }
+
+        /// <summary>
+        /// CharacterSelect → PlayerData 경로로 넘어온 데이터로 초기화합니다.
+        /// 골드는 PlayerAccount에서 관리하므로 여기서 설정하지 않습니다.
+        /// </summary>
+        [Server]
+        public void SetupFromPlayerData(PlayerData pd)
+        {
+            characterName = string.IsNullOrEmpty(pd.Info.Name) ? pd.FinalHeroCode : pd.Info.Name;
+            heroCode      = pd.FinalHeroCode;
+            heroPos       = pd.FinalHeroPos; // hook → OnAnyUnitReady 발화
+            maxHp         = pd.Info.Hp;
+            maxSan        = pd.Info.San;
+            currentHp     = maxHp;
+            currentSan    = maxSan;
+
+            if (myInfo == null) myInfo = new PlayerInfo();
+            myInfo.Hp  = maxHp;
+            myInfo.San = maxSan;
+
+            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
         }
 
         public override void OnStartAuthority()
@@ -63,8 +127,7 @@ namespace Lsy
             mySkills.Callback -= OnSkillsChanged;
             mySkills.Callback += OnSkillsChanged;
 
-            if (GoldUI.Instance != null)
-                GoldUI.Instance.SetTrackedUnit(this);
+            OnLocalUnitSpawned?.Invoke(this);
         }
 
         public override void OnStopAuthority()
@@ -72,12 +135,6 @@ namespace Lsy
             base.OnStopAuthority();
             myInventory.Callback -= OnInventoryChanged;
             mySkills.Callback -= OnSkillsChanged;
-        }
-
-        private void OnCurrentGoldChanged(int oldVal, int newVal)
-        {
-            if (!isOwned) return;
-            OnGoldChanged?.Invoke(newVal);
         }
 
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
@@ -100,22 +157,16 @@ namespace Lsy
 
         private void RefreshUpgradeUI()
         {
-            var uis = FindObjectsByType<BaseUpgradeUI>(FindObjectsSortMode.None);
-            foreach (var ui in uis)
-            {
-                if (ui.gameObject.activeInHierarchy)
-                    ui.RefreshAllRows();
-            }
+            OnLocalUpgradeStateChanged?.Invoke();
         }
 
         private void OnInventoryChanged(SyncList<InventoryItem>.Operation op, int itemIndex, InventoryItem oldItem, InventoryItem newItem)
         {
             if (PlayerAccount.LocalInstance == null) return;
             if (PlayerAccount.LocalInstance.currentSelectedCharacter != this) return;
-            if (InventoryUI.Instance == null) return;
+            if (!isOwned) return;
 
-            if (isOwned && InventoryUI.Instance.gameObject.activeInHierarchy)
-                InventoryUI.Instance.RefreshInventory();
+            OnLocalInventoryChanged?.Invoke();
         }
 
         [Server]
@@ -145,38 +196,45 @@ namespace Lsy
         [Server]
         public bool ApplyBartenderHeal()
         {
-            if (myInfo.Hp >= maxHp && myInfo.San >= maxSan) return false;
-            myInfo.Hp = maxHp;
+            if (currentHp >= maxHp && currentSan >= maxSan) return false;
+            currentHp  = maxHp;
+            currentSan = maxSan;
+            if (myInfo == null) myInfo = new PlayerInfo();
+            myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
             return true;
         }
 
+        /// <summary>
+        /// 골드 체크/차감은 PlayerAccount.CmdBlacksmithUpgrade에서 처리합니다.
+        /// 이 메서드는 무기 강화 상태만 변경합니다.
+        /// </summary>
         [Server]
-        public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel, int price)
+        public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel)
         {
-            if (currentGold < price) return false;
             if (npcLevel < nodeIndex + 1) return false;
             if (selectedWeaponId != "" && selectedWeaponId != weaponId) return false;
             if (nodeIndex > 0 && purchasedNodeCount < nodeIndex) return false;
             if (purchasedNodeCount > nodeIndex) return false;
 
-            currentGold -= price;
             selectedWeaponId = weaponId;
             purchasedNodeCount = nodeIndex + 1;
 
             return true;
         }
 
+        /// <summary>
+        /// 골드 체크/차감은 PlayerAccount.CmdSkillPurchase에서 처리합니다.
+        /// 이 메서드는 스킬 추가 상태만 변경합니다.
+        /// </summary>
         [Server]
-        public bool ApplySkillPurchase(string skillId, int npcLevel, int price, int requiredNpcLevel)
+        public bool ApplySkillPurchase(string skillId, int npcLevel, int requiredNpcLevel)
         {
-            if (currentGold < price) return false;
             if (npcLevel < requiredNpcLevel) return false;
 
             foreach (var skill in mySkills)
                 if (skill.skillName == skillId) return false;
 
-            currentGold -= price;
             mySkills.Add(new PlayerSkill { skillName = skillId, currentLevel = 1 });
 
             return true;

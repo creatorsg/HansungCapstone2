@@ -53,7 +53,10 @@ namespace Jun
         public SkillType Type;
         public string anim;
         public int TagetNum;
-        //�ٸ� ������
+        // ★ 추가: 캐릭터 선택 화면 스킬 슬롯용
+        public Sprite icon;
+        [UnityEngine.TextArea(2, 4)]
+        public string description;
     }
     [System.Serializable]
     public class ItemInfo //������ ����

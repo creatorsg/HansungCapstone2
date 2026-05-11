@@ -1,14 +1,13 @@
+using inseon.Playfab.User;
+using PlayFab;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace inseon.Core
 {
-    /// <summary>
-    /// 해상도 / 화면 모드 설정 UI.
-    /// TMP_Dropdown 두 개(해상도, 화면 모드)와 적용/취소 버튼에 연결.
-    /// </summary>
     public class SettingsWindow : MonoBehaviour
     {
         [SerializeField] private TMP_Dropdown resolutionDropdown;
@@ -44,18 +43,17 @@ namespace inseon.Core
         void InitScreenModeDropdown()
         {
             screenModeDropdown.ClearOptions();
+            // ExclusiveFullScreen은 D3D12 충돌/크래시를 유발하므로 선택지에서 제외
             screenModeDropdown.AddOptions(new List<string>
             {
                 "전체화면 (창 모드)",    // FullScreenWindow
                 "창 모드",              // Windowed
-                "전체화면 (독점)"       // ExclusiveFullScreen
             });
 
             screenModeDropdown.value = Screen.fullScreenMode switch
             {
                 FullScreenMode.FullScreenWindow    => 0,
                 FullScreenMode.Windowed            => 1,
-                FullScreenMode.ExclusiveFullScreen => 2,
                 _                                  => 0
             };
             screenModeDropdown.RefreshShownValue();
@@ -70,7 +68,6 @@ namespace inseon.Core
             {
                 0 => FullScreenMode.FullScreenWindow,
                 1 => FullScreenMode.Windowed,
-                2 => FullScreenMode.ExclusiveFullScreen,
                 _ => FullScreenMode.FullScreenWindow
             };
 
@@ -84,11 +81,21 @@ namespace inseon.Core
 
         public void OnQuitGame()
         {
+            // 로그인 상태라면 로그아웃 처리 후 종료
+            if (PlayFabClientAPI.IsClientLoggedIn())
+                PlayfabUserManage.Logout();
+
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+    Application.Quit();
 #endif
+        }
+
+        public void OnLogout()
+        {
+            PlayfabUserManage.Logout();
+            SceneManager.LoadScene("Login"); 
         }
     }
 }

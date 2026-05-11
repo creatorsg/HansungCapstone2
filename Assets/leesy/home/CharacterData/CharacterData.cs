@@ -6,28 +6,28 @@ namespace Lsy
     [CreateAssetMenu(fileName = "Character Data", menuName = "Character Data")]
     public class CharacterData : ScriptableObject
     {
-        [Header("±âº» Á¤º¸")]
-        public int charId;           // °íÀ¯ ID
-        public string charName;      // Á÷¾÷/Ä³¸¯ÅÍ ÀÌ¸§
+        [Header("ê¸°ë³¸ ì •ë³´")]
+        public int charId;           // ë‚´ë¶€ ID
+        public string charName;      // ìºë¦­í„° ì´ë¦„
 
-        [Header("ÀçÈ­ ¹× ·¹º§")]
+        [Header("ï¿½ï¿½È­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         public int level = 1;
         public int exp = 0;
-        public int gold = 2000; // ÃÊ±â ¼ÒÁö °ñµå
+        public int gold = 2000; // ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
-        [Header("ÀüÅõ ½ºÅÈ (ÃÖ´ëÄ¡ ±âÁØ)")]
-        public float maxHp;          // ÃÖ´ë Ã¼·Â
-        public int maxSan;           // ÃÖ´ë Á¤½Å·Â
-        public int atk;              // °ø°İ·Â
-        public int def;              // ¹æ¾î·Â
-        public int spd;              // ½ºÇÇµå
-        public int crit;             // Ä¡¸íÅ¸ È®·ü
-        public int ctm;              // Ä¡¸íÅ¸ °è¼ö
-        public int dodge;            // È¸ÇÇÀ²
-        public int acc;              // ¸íÁß·ü
-        public int res;              // »óÅÂÀÌ»ó ÀúÇ×
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ö´ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½)")]
+        public float maxHp;          // ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½
+        public int maxSan;           // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Å·ï¿½
+        public int atk;              // ï¿½ï¿½ï¿½İ·ï¿½
+        public int def;              // ï¿½ï¿½ï¿½ï¿½
+        public int spd;              // ï¿½ï¿½ï¿½Çµï¿½
+        public int crit;             // Ä¡ï¿½ï¿½Å¸ È®ï¿½ï¿½
+        public int ctm;              // Ä¡ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½
+        public int dodge;            // È¸ï¿½ï¿½ï¿½ï¿½
+        public int acc;              // ï¿½ï¿½ï¿½ß·ï¿½
+        public int res;              // ï¿½ï¿½ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        [Header("ÃÊ±â ÀåÂø Àåºñ ID (0 = ¹ÌÀåÂø)")]
+        [Header("ï¿½Ê±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ID (0 = ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)")]
         public int weaponId;
         public int armorId;
         public int trinket1Id;

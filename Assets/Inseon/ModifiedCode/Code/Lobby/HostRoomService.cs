@@ -78,8 +78,9 @@ namespace inseon.Lobby
 
             // ── 5. 기존 연결 정리 → StartHost ─────────────────────────────
             string roomId = GenerateRoomId();
-            manager.RoomId   = roomId;
-            manager.RoomName = roomName;
+            manager.RoomId    = roomId;
+            manager.RoomName  = roomName;
+            manager.IsPrivate = isPrivate;
 
             if (NetworkServer.active || NetworkClient.active)
             {
