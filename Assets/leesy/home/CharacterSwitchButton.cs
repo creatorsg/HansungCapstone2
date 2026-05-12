@@ -46,47 +46,70 @@ namespace Lsy
 
         private void OnEnable()
         {
-            CharacterSlotManager.OnSlotChanged += RefreshState;
+            PlayerAccount.OnLocalAccountReady += OnAccountReady;
             PlayerAccount.OnCharacterSwitched += RefreshState;
-            button.onClick.RemoveAllListeners();
+
+            // RemoveAllListeners 대신 중복 방지 후 추가 — CharacterPortraitUI 등 다른
+            // 리스너를 지우지 않도록 한다.
+            button.onClick.RemoveListener(OnClickSwitch);
             button.onClick.AddListener(OnClickSwitch);
-            RefreshState();
+
+            if (PlayerAccount.LocalInstance != null)
+                RefreshState();
         }
 
         private void OnDisable()
         {
-            CharacterSlotManager.OnSlotChanged -= RefreshState;
+            PlayerAccount.OnLocalAccountReady -= OnAccountReady;
             PlayerAccount.OnCharacterSwitched -= RefreshState;
+            button.onClick.RemoveListener(OnClickSwitch);
+        }
+
+        private void OnAccountReady(PlayerAccount account)
+        {
+            RefreshState();
         }
 
         private void OnClickSwitch()
         {
-            if (PlayerAccount.LocalInstance == null) return;
-            if (CharacterSlotManager.Instance == null) return;
+            var account = PlayerAccount.LocalInstance;
+            if (account == null) return;
 
-            bool isMySlot = CharacterSlotManager.Instance.IsMySlot(characterIndex);
-            if (!isMySlot) return;
+            // characterIndex는 슬롯 인덱스(heroPos). SelectCharacter는 프로필 인덱스를 요구하므로
+            // myHeroPositions에서 해당 슬롯의 프로필 인덱스를 조회한다.
+            int profileIndex = account.myHeroPositions.IndexOf(characterIndex);
+            if (profileIndex < 0) return; // 내 캐릭터가 아니면 무시
 
-            PlayerAccount.LocalInstance.SelectCharacter(characterIndex);
+            account.SelectCharacter(profileIndex);
         }
 
         private void RefreshState()
         {
-            if (CharacterSlotManager.Instance == null) return;
-            if (PlayerAccount.LocalInstance == null) return;
+            var account = PlayerAccount.LocalInstance;
+            if (account == null) return;
 
-            bool isMySlot = CharacterSlotManager.Instance.IsMySlot(characterIndex);
-            bool isTaken = !isMySlot;
+            // myHeroPositions 기반 소유 판정 — CharacterPortraitUI와 동일한 기준 사용
+            bool isMySlot = account.myHeroPositions.Contains(characterIndex);
 
-            button.interactable = isMySlot;
+            // 버튼 인터랙션: 내 슬롯이 아니면 비활성
+            // (CharacterPortraitUI.RefreshOwnership과 함께 동작하므로 interactable은 여기선 건드리지 않음)
+
             if (_buttonImage != null)
-                _buttonImage.color = isTaken ? takenColor : _originalColor;
+                _buttonImage.color = isMySlot ? _originalColor : takenColor;
 
-            bool isActive = PlayerAccount.LocalInstance.currentActiveIndex == characterIndex
-                            && characterIndex >= 0;
+            // 현재 활성 캐릭터 아웃라인 표시
+            // currentActiveIndex는 프로필 인덱스, myHeroPositions[profileIdx] = slotIndex
+            bool isActive = false;
+            if (isMySlot && account.currentActiveIndex >= 0
+                         && account.currentActiveIndex < account.myHeroPositions.Count)
+            {
+                isActive = account.myHeroPositions[account.currentActiveIndex] == characterIndex;
+            }
 
             if (_outline != null)
                 _outline.enabled = isActive;
         }
     }
 }
+
+

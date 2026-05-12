@@ -7,8 +7,9 @@ namespace Jun {
     public class GameRoomManager : NetworkRoomManager
     {
         // 현재 방의 고유 ID (PlayFab에 등록된 roomId)
-        public string RoomId   = "";
-        public string RoomName = "";
+        public string RoomId     = "";
+        public string RoomName   = "";
+        public bool   IsPrivate  = false;
 
         // 게임에 참여하는 캐릭터의 수
         public int HeroNum = 0;
@@ -21,9 +22,20 @@ namespace Jun {
         private bool _playerDataPreSpawned = false;
 
         /// <summary>
+        /// 캐릭터 선택 전역 큐 (서버 전용).
+        /// 인덱스 = FinalHeroPos. 먼저 선택할수록 낮은 번호를 받습니다.
+        /// </summary>
+        private readonly List<SelectionEntry> _globalQueue = new List<SelectionEntry>();
+
+        /// <summary>
         /// 캐릭터 선택 씬 이름. Inspector에서 Build Settings의 씬 이름과 동일하게 입력하세요.
         /// </summary>
         public string CharacterSelectScene = "CharacterSelect";
+
+        /// <summary>
+        /// Home(아지트) 씬 이름. Build Settings의 씬 이름과 동일하게 입력하세요.
+        /// </summary>
+        public string HomeScene = "Home";
 
         // ── PlayFab 연동 ──────────────────────────────────────────────
 
@@ -84,7 +96,13 @@ namespace Jun {
         {
             base.OnRoomServerSceneChanged(newSceneName);
 
-            if (newSceneName == GameplayScene)
+            if (newSceneName == CharacterSelectScene)
+            {
+                // 새로운 선택 라운드를 위해 전역 큐 초기화
+                _globalQueue.Clear();
+                Debug.Log("[GameRoomManager] CharacterSelect 진입 - GlobalQueue 초기화");
+            }
+            else if (newSceneName == GameplayScene)
             {
                 if (!_playerDataPreSpawned)
                 {
@@ -144,24 +162,143 @@ namespace Jun {
                     return;
             }
 
-            // ── PlayerData 미리 생성 ──────────────────────────────────
-            // CharacterSelect → Gameplay 전환이라 Mirror가 OnRoomServerCreateGamePlayer를
-            // 호출하지 않으므로, 씬 전환 직전에 서버에서 PlayerData를 직접 스폰합니다.
+            // ── 전역 큐 순서대로 PlayerData 스폰 ─────────────────────
+            // GlobalQueue 인덱스 = FinalHeroPos (먼저 선택한 캐릭터가 낮은 번호)
             _pingIndexCounter = 0;
-            HeroNum = 0;
-            foreach (var slot in roomSlots)
+            HeroNum           = 0;
+            var pingByNetId   = new Dictionary<uint, int>();
+
+            for (int queuePos = 0; queuePos < _globalQueue.Count; queuePos++)
             {
-                var roomPlayer = slot as GameRoomPlayer;
-                if (roomPlayer == null) continue;
-                SpawnPlayerDataForPlayer(roomPlayer.connectionToClient, roomPlayer);
+                SelectionEntry entry = _globalQueue[queuePos];
+                string code = entry.heroCode;
+
+                if (!NetworkServer.spawned.TryGetValue(entry.ownerNetId, out NetworkIdentity identity))
+                {
+                    Debug.LogWarning($"[GameRoomManager] ownerNetId={entry.ownerNetId} 오브젝트를 찾을 수 없음. 스킵.");
+                    continue;
+                }
+                NetworkConnectionToClient conn = identity.connectionToClient;
+
+                // 같은 connection의 첫 번째 캐릭터에만 새 PingIndex 부여
+                if (!pingByNetId.ContainsKey(entry.ownerNetId))
+                    pingByNetId[entry.ownerNetId] = _pingIndexCounter++;
+                int pingIdx = pingByNetId[entry.ownerNetId];
+
+                if (!CharacterRegistry.TryGet(code, out var regEntry))
+                {
+                    Debug.LogError($"[GameRoomManager] GlobalQueue: '{code}'이 CharacterRegistry에 없음");
+                    continue;
+                }
+                if (regEntry.PlayerDataPrefab == null)
+                {
+                    Debug.LogError($"[GameRoomManager] '{code}'의 PlayerDataPrefab이 null");
+                    continue;
+                }
+
+                GameObject go = Instantiate(regEntry.PlayerDataPrefab);
+                var pd = go.GetComponent<PlayerData>();
+                if (pd == null) { Destroy(go); continue; }
+
+                pd.FinalHeroCode  = code;
+                pd.FinalHeroPos   = queuePos;   // 큐 인덱스 = heroPos
+                pd.FinalHeroIndex = CharacterDatabase.Stats.TryGetValue(code, out var cd) ? cd.index : -1;
+                pd.Info           = BuildPlayerInfoFromRegistry(code, pingIdx, regEntry);
+                pd.PingIndex      = pingIdx;
+
+                // GameRoomPlayer의 PingIndex도 갱신
+                foreach (var slot in roomSlots)
+                {
+                    var rp = slot as GameRoomPlayer;
+                    if (rp != null && rp.connectionToClient == conn)
+                    { rp.PingIndex = pingIdx; break; }
+                }
+
+                NetworkServer.Spawn(go, conn);
+                HeroNum++;
+                Debug.Log($"[GameRoomManager] PlayerData 스폰: code={code}, heroPos={queuePos}, pingIdx={pingIdx}");
             }
 
-            // 클라이언트가 Gameplay 씬 로드 후 Ready를 보낼 때
-            // OnRoomServerCreateGamePlayer가 중복 호출되는 것을 막기 위한 플래그
             _playerDataPreSpawned = true;
 
-            Debug.Log($"[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → 게임 씬으로 전환 (HeroNum={HeroNum})");
-            ServerChangeScene(GameplayScene);
+            Debug.Log($"[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → Home 씬으로 전환 (HeroNum={HeroNum})");
+            ServerChangeScene(HomeScene);
+        }
+
+        // ── 전역 큐 관리 (서버 전용) ────────────────────────────────
+
+        /// <summary>
+        /// 캐릭터 선택/해제 토글을 전역 큐에 반영합니다.
+        /// 성공/실패 무관하게 현재 큐 상태를 브로드캐스트합니다.
+        /// </summary>
+        [Server]
+        public void TrySelectCharacter(uint ownerNetId, string heroCode, int charCountLimit)
+        {
+            // 이미 내가 선택한 캐릭터면 → 해제
+            for (int i = 0; i < _globalQueue.Count; i++)
+            {
+                if (_globalQueue[i].heroCode == heroCode && _globalQueue[i].ownerNetId == ownerNetId)
+                {
+                    _globalQueue.RemoveAt(i);
+                    Debug.Log($"[GameRoomManager] 선택 해제: code={heroCode}, ownerNetId={ownerNetId}");
+                    BroadcastQueue();
+                    return;
+                }
+            }
+
+            // 다른 플레이어가 이미 선택했으면 → 거부
+            foreach (var e in _globalQueue)
+            {
+                if (e.heroCode == heroCode)
+                {
+                    Debug.Log($"[GameRoomManager] 선택 거부(이미 선택됨): code={heroCode}");
+                    BroadcastQueue(); // 클라이언트 낙관적 UI 교정용
+                    return;
+                }
+            }
+
+            // 내 선택 수 초과 → 거부
+            int myCount = 0;
+            foreach (var e in _globalQueue)
+                if (e.ownerNetId == ownerNetId) myCount++;
+
+            if (myCount >= charCountLimit)
+            {
+                Debug.Log($"[GameRoomManager] 선택 거부(한도 초과): ownerNetId={ownerNetId}, limit={charCountLimit}");
+                BroadcastQueue();
+                return;
+            }
+
+            _globalQueue.Add(new SelectionEntry { heroCode = heroCode, ownerNetId = ownerNetId });
+            Debug.Log($"[GameRoomManager] 선택 추가: code={heroCode}, heroPos={_globalQueue.Count - 1}");
+            BroadcastQueue();
+        }
+
+        /// <summary>
+        /// 현재 전역 큐 상태를 모든 클라이언트에 브로드캐스트합니다.
+        /// </summary>
+        [Server]
+        public void BroadcastQueue()
+        {
+            int count = _globalQueue.Count;
+            string[] codes = new string[count];
+            uint[]   ids   = new uint[count];
+            for (int i = 0; i < count; i++)
+            {
+                codes[i] = _globalQueue[i].heroCode;
+                ids[i]   = _globalQueue[i].ownerNetId;
+            }
+
+            // 첫 번째 roomSlot의 RPC를 이용해 전체 클라이언트에 브로드캐스트
+            foreach (var slot in roomSlots)
+            {
+                var p = slot as GameRoomPlayer;
+                if (p != null)
+                {
+                    p.RpcSyncGlobalQueue(codes, ids);
+                    return;
+                }
+            }
         }
 
         /// <summary>
@@ -284,6 +421,14 @@ namespace Jun {
                 base.OnClientSceneChanged();
                 return;
             }
+
+            // Home 씬: Ready만 전송. PlayerAccount 교체는 서버의 OnServerReady가 담당.
+            if (Utils.IsSceneActive(HomeScene))
+            {
+                if (!NetworkClient.ready) NetworkClient.Ready();
+                return;
+            }
+
             // CharacterSelect · Gameplay씬: NetworkClient.Ready만 보장하고 AddPlayer는 생략
             if (!NetworkClient.ready)
                 NetworkClient.Ready();
@@ -300,11 +445,34 @@ namespace Jun {
         /// </summary>
         public override void OnServerReady(NetworkConnectionToClient conn)
         {
-            // CharacterSelect 씬: 캐릭터를 아직 선택하지 않아 CharaterNum이 비어있으므로 차단
-            // Gameplay 씬 + 사전 스폰: OnPlayerConfirmedSelection에서 PlayerData를 이미 생성했으므로
-            //   SceneLoadedForPlayer → OnRoomServerCreateGamePlayer 체인이 중복 실행되지 않도록 차단
-            bool shouldBlock = Utils.IsSceneActive(CharacterSelectScene)
-                            || (Utils.IsSceneActive(GameplayScene) && _playerDataPreSpawned);
+            // CharacterSelect 씬: 클라이언트가 Ready되면 현재 큐 상태를 브로드캐스트
+            if (Utils.IsSceneActive(CharacterSelectScene))
+            {
+                NetworkServer.SetClientReady(conn);
+                BroadcastQueue();
+                Debug.Log($"[GameRoomManager] CharacterSelect Ready 완료, 큐 브로드캐스트. conn={conn}");
+                return;
+            }
+
+            // Home 씬: SetClientReady 후 PlayerAccount 프리팹으로 플레이어를 직접 교체
+            // (클라이언트의 AddPlayer 요청을 기다리지 않으므로 localPlayer 블로킹 문제를 우회)
+            if (Utils.IsSceneActive(HomeScene))
+            {
+                NetworkServer.SetClientReady(conn);
+
+                if (playerPrefab == null)
+                {
+                    Debug.LogError("[GameRoomManager] OnServerReady(Home): playerPrefab이 null입니다! Inspector에서 PlayerAccount 프리팹을 등록하세요.");
+                    return;
+                }
+
+                GameObject accountObj = Instantiate(playerPrefab);
+                NetworkServer.ReplacePlayerForConnection(conn, accountObj, ReplacePlayerOptions.KeepAuthority);
+                Debug.Log($"[GameRoomManager] Home씬 PlayerAccount 스폰 및 교체 완료: conn={conn}");
+                return;
+            }
+
+            bool shouldBlock = (Utils.IsSceneActive(GameplayScene) && _playerDataPreSpawned);
 
             if (shouldBlock)
             {

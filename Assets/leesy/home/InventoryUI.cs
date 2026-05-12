@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 namespace Lsy
 {
@@ -12,12 +11,24 @@ namespace Lsy
         public Transform slotContainer;
         public GameObject inventorySlotPrefab;
 
-        [Header("모든 아이템 데이터베이스")]
+        // ItemManager로 조회하지 못할 경우를 대비한 폴백 목록
+        // ItemManager.allItems에 아이템이 모두 등록되어 있다면 비워도 됩니다
+        [Header("아이템 DB 폴백 (ItemManager 미사용 시)")]
         public List<ItemData> allItemDatabase = new List<ItemData>();
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
+        }
+
+        private void OnEnable()
+        {
+            CharacterUnit.OnLocalInventoryChanged += RefreshInventory;
+        }
+
+        private void OnDisable()
+        {
+            CharacterUnit.OnLocalInventoryChanged -= RefreshInventory;
         }
 
         public void RefreshInventory()
@@ -44,7 +55,9 @@ namespace Lsy
 
                     if (slotScript != null)
                     {
-                        ItemData foundData = allItemDatabase.Find(x => x.itemName == item.itemName);
+                        ItemData foundData = ItemManager.Instance != null
+                            ? ItemManager.Instance.GetItemData(item.itemName)
+                            : allItemDatabase.Find(x => x.itemName == item.itemName);
 
                         if (foundData != null)
                         {
@@ -68,7 +81,7 @@ namespace Lsy
                         }
                         else
                         {
-                            Debug.LogWarning($"데이터베이스에 '{item.itemName}' 아이템이 없습니다! 인스펙터를 확인해주세요.");
+                            Debug.LogWarning($"[InventoryUI] '{item.itemName}' 아이템을 찾지 못했습니다. ItemManager.allItems를 확인해주세요.");
                         }
                     }
                 }

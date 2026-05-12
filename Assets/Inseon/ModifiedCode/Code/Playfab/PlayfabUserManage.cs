@@ -237,9 +237,13 @@ namespace inseon.Playfab.User
             if (_player != null)
                 return;
 
-            // Player는 순수 C# 클래스이므로 new로 생성합니다.
-            // static 필드로 보관되어 씬 전환과 무관하게 유지됩니다.
             _player = new Player();
+        }
+
+        public static void Logout()
+        {
+            PlayFabClientAPI.ForgetAllCredentials(); 
+            _player = null;                          
         }
     }
 }

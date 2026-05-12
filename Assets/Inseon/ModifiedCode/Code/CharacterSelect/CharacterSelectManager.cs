@@ -9,15 +9,14 @@ using UnityEngine.UI;
 /// <summary>
 /// 캐릭터 선택 씬 UI 전체를 관리합니다.
 ///
-/// ★ 사용법 (Unity Editor)
-///   1. 빈 GameObject에 이 스크립트를 붙입니다.
-///   2. 각 캐릭터 버튼 GameObject에 CharacterCard 스크립트를 붙입니다.
-///   3. CharacterCard 인스펙터에서 코드·스프라이트·프리팹·스킬을 채웁니다.
-///      → 순서는 무관합니다. 코드(C001 등)를 키로 자동 매핑됩니다.
-///   4. characterCards 리스트에 씬의 CharacterCard들을 등록합니다 (순서 무관).
-///   5. previewImage: 카드 호버 시 캐릭터 이미지가 표시될 큰 Image를 연결합니다.
-///   6. 우측 스탯 패널 TMP 텍스트들을 연결합니다.
-///   7. confirmButton의 OnClick → OnClickConfirm() 을 연결합니다.
+/// ── 선택 흐름 (공동 큐 방식) ──────────────────────────────────────────
+/// 카드 클릭 → CMDChoiceHero (서버) → GameRoomManager.TrySelectCharacter
+///   → GlobalQueue 업데이트 → RpcSyncGlobalQueue → OnGlobalQueueSynced
+///   → 모든 클라이언트 UI 갱신 (공유 슬롯 + 카드 잠금 상태)
+///
+/// 확정 버튼 → CmdConfirmSelection (선택은 이미 큐에 있음)
+/// 전원 확정 → OnPlayerConfirmedSelection → HomeScene
+/// ─────────────────────────────────────────────────────────────────────
 /// </summary>
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -55,8 +54,24 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private Button          confirmButton;
     [SerializeField] private TextMeshProUGUI confirmButtonText;
 
-    // ── 내 선택 슬롯 (왼쪽 주황 박스) ───────────────
-    [Header("내 선택 슬롯")]
+    // ── 스킬 슬롯 ────────────────────────────────────
+    [System.Serializable]
+    private class SkillSlotUI
+    {
+        public Image icon;  // 캐릭터 호버 시 스킬 아이콘 표시용
+    }
+
+    [Header("스킬 슬롯 (순서대로 최대 4칸)")]
+    [SerializeField] private List<SkillSlotUI> skillSlots;
+
+    [Tooltip("스킬 아이콘에 마우스를 올렸을 때만 표시되는 공유 이름 텍스트")]
+    [SerializeField] private TextMeshProUGUI skillNameText;
+
+    [Tooltip("스킬 아이콘에 마우스를 올렸을 때만 표시되는 공유 설명 텍스트")]
+    [SerializeField] private TextMeshProUGUI skillDescText;
+
+    // ── 공유 선택 슬롯 ────────────────────────────────
+    [Header("공유 선택 슬롯 (전체 큐 순서대로 표시 — 최대 4칸)")]
     [SerializeField] private List<Image> mySelectedSlots;
 
     // ─────────────────────────────────────────────────
@@ -66,7 +81,12 @@ public class CharacterSelectManager : MonoBehaviour
     /// <summary>code → CharacterCard 빠른 조회용 딕셔너리 (InitCards에서 빌드)</summary>
     private readonly Dictionary<string, CharacterCard> _cardMap = new Dictionary<string, CharacterCard>();
 
-    private readonly List<string> _selectedCodes = new List<string>();
+    /// <summary>서버에서 수신한 최신 전역 큐 스냅샷</summary>
+    private SelectionEntry[] _lastKnownQueue = System.Array.Empty<SelectionEntry>();
+
+    /// <summary>마지막으로 호버한 캐릭터 코드 — HoverExit 후에도 패널 유지용</summary>
+    private string _lastHoveredCode = null;
+
     private int _maxSelect = 1;
     private GameRoomPlayer _localRoomPlayer;
 
@@ -77,10 +97,11 @@ public class CharacterSelectManager : MonoBehaviour
         Instance = this;
     }
 
-    /// <summary>
-    /// NetworkClient.localPlayer 참조가 씬 전환 타이밍에 따라 null일 수 있으므로
-    /// isLocalPlayer 플래그로 직접 탐색하는 폴백을 함께 사용합니다.
-    /// </summary>
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
     private static GameRoomPlayer FindLocalRoomPlayer()
     {
         var p = NetworkClient.localPlayer?.GetComponent<GameRoomPlayer>();
@@ -109,9 +130,6 @@ public class CharacterSelectManager : MonoBehaviour
         StartCoroutine(InitAfterNetworkReady());
     }
 
-    /// <summary>
-    /// Mirror가 씬 전환 후 GameRoomPlayer를 재스폰할 때까지 최대 5초 대기 후 UI를 초기화합니다.
-    /// </summary>
     private IEnumerator InitAfterNetworkReady()
     {
         float timeout = 5f;
@@ -129,11 +147,17 @@ public class CharacterSelectManager : MonoBehaviour
         if (_localRoomPlayer == null)
             Debug.LogWarning("[CharacterSelectManager] GameRoomPlayer를 찾지 못했습니다. 네트워크 없이 실행합니다.");
         else
+        {
             _maxSelect = _localRoomPlayer.CharCount;
+            // 현재 큐 상태 요청 (씬 진입 시 서버에서 이미 브로드캐스트했지만, 타이밍 보정용)
+            _localRoomPlayer.CmdRequestQueueSync();
+        }
 
         InitCards();
+        InitSkillSlots();
         RefreshConfirmButton();
         ClearStatPanel();
+        ClearSkillPanel();
     }
 
     // ─────────────────────────────────────────────────
@@ -146,7 +170,6 @@ public class CharacterSelectManager : MonoBehaviour
 
         var player = inseon.Playfab.User.PlayfabUserManage.Player;
 
-        // CharacterRegistry 초기화 (이전 씬 잔여 데이터 제거)
         CharacterRegistry.Clear();
         _cardMap.Clear();
 
@@ -167,10 +190,8 @@ public class CharacterSelectManager : MonoBehaviour
                 continue;
             }
 
-            // ── Dictionary 등록 ─────────────────────────────────────────
             _cardMap[code] = card;
 
-            // ── CharacterRegistry 등록 ──────────────────────────────────
             CharacterRegistry.Register(code, new CharacterRegistry.Entry
             {
                 PlayerDataPrefab = card.PlayerDataPrefab,
@@ -180,11 +201,9 @@ public class CharacterSelectManager : MonoBehaviour
                 Items            = card.Items  ?? new List<ItemInfo>(),
             });
 
-            // ── Mirror 프리팹 등록 ──────────────────────────────────────
             TryRegisterPrefab(card.PlayerDataPrefab);
             TryRegisterPrefab(card.BattleUnitPrefab);
 
-            // ── 소유권 확인 ─────────────────────────────────────────────
             var charInfo    = CharacterDatabase.Get(code);
             string ownerKey = (charInfo.HasValue && !string.IsNullOrEmpty(charInfo.Value.characterName))
                               ? charInfo.Value.characterName
@@ -210,7 +229,9 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void OnCardHoverEnter(string characterCode)
     {
+        _lastHoveredCode = characterCode;
         ShowStatPanel(characterCode);
+        ShowSkillPanel(characterCode);
 
         if (previewImage != null)
         {
@@ -220,43 +241,112 @@ public class CharacterSelectManager : MonoBehaviour
         }
     }
 
-    private void OnCardHoverExit()
-    {
-        ClearStatPanel();
-
-        if (previewImage != null)
-        {
-            previewImage.sprite  = previewDefaultSprite;
-            previewImage.enabled = previewDefaultSprite != null;
-        }
-    }
+    // 의도적으로 비워둡니다 — 새 카드에 올라가기 전까지 마지막 패널 상태를 유지합니다.
+    private void OnCardHoverExit() { }
 
     // ─────────────────────────────────────────────────
-    //  클릭 (선택 토글)
+    //  클릭 (실시간 선택 — 확정 버튼과 분리)
     // ─────────────────────────────────────────────────
 
     private void OnCardClicked(string characterCode)
     {
-        if (_selectedCodes.Contains(characterCode))
+        if (_localRoomPlayer == null) return;
+
+        // 현재 내 선택 상태 파악
+        bool   isMySelection = false;
+        string oldestMyCode  = null;
+        int    myCount       = 0;
+
+        foreach (var e in _lastKnownQueue)
         {
-            _selectedCodes.Remove(characterCode);
+            if (e.ownerNetId != _localRoomPlayer.netId) continue;
+            myCount++;
+            if (oldestMyCode == null) oldestMyCode = e.heroCode;
+            if (e.heroCode == characterCode) isMySelection = true;
+        }
+
+        if (isMySelection)
+        {
+            // 이미 선택한 카드 → 해제 (낙관적 UI)
             GetCard(characterCode)?.SetSelected(false);
+            _localRoomPlayer.CMDChoiceHero(characterCode);
         }
         else
         {
-            if (_selectedCodes.Count >= _maxSelect)
+            // 한도 초과 시 가장 오래된 선택부터 해제
+            if (myCount >= _maxSelect && oldestMyCode != null)
             {
-                string oldest = _selectedCodes[0];
-                _selectedCodes.RemoveAt(0);
-                GetCard(oldest)?.SetSelected(false);
+                GetCard(oldestMyCode)?.SetSelected(false);
+                _localRoomPlayer.CMDChoiceHero(oldestMyCode);
             }
 
-            _selectedCodes.Add(characterCode);
+            // 새 카드 선택 (낙관적 UI)
             GetCard(characterCode)?.SetSelected(true);
+            _localRoomPlayer.CMDChoiceHero(characterCode);
         }
+    }
 
-        RefreshMySlots();
+    // ─────────────────────────────────────────────────
+    //  전역 큐 수신 (RpcSyncGlobalQueue → 여기로)
+    // ─────────────────────────────────────────────────
+
+    public void OnGlobalQueueSynced(SelectionEntry[] queue)
+    {
+        _lastKnownQueue = queue ?? System.Array.Empty<SelectionEntry>();
+        RefreshSharedSlots();
+        RefreshCardStates();
         RefreshConfirmButton();
+    }
+
+    // ─────────────────────────────────────────────────
+    //  공유 슬롯 갱신 (전역 큐 순서대로 표시)
+    // ─────────────────────────────────────────────────
+
+    private void RefreshSharedSlots()
+    {
+        if (mySelectedSlots == null) return;
+
+        for (int i = 0; i < mySelectedSlots.Count; i++)
+        {
+            if (mySelectedSlots[i] == null) continue;
+
+            if (i < _lastKnownQueue.Length)
+            {
+                mySelectedSlots[i].sprite  = GetCardIcon(_lastKnownQueue[i].heroCode);
+                mySelectedSlots[i].enabled = true;
+            }
+            else
+            {
+                mySelectedSlots[i].sprite  = null;
+                mySelectedSlots[i].enabled = false;
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────────
+    //  카드 상태 갱신 (내 선택 하이라이트 + 타인 선택 잠금)
+    // ─────────────────────────────────────────────────
+
+    private void RefreshCardStates()
+    {
+        if (_localRoomPlayer == null) return;
+
+        foreach (var pair in _cardMap)
+        {
+            bool isMySelection = false;
+            bool isTaken       = false;
+
+            foreach (var e in _lastKnownQueue)
+            {
+                if (e.heroCode != pair.Key) continue;
+                if (e.ownerNetId == _localRoomPlayer.netId) isMySelection = true;
+                else                                        isTaken       = true;
+                break;
+            }
+
+            pair.Value.SetSelected(isMySelection);
+            pair.Value.SetTaken(isTaken);
+        }
     }
 
     // ─────────────────────────────────────────────────
@@ -293,28 +383,80 @@ public class CharacterSelectManager : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────────
-    //  내 선택 슬롯 갱신
+    //  스킬 슬롯
     // ─────────────────────────────────────────────────
 
-    private void RefreshMySlots()
+    /// <summary>씬 초기화 시 각 슬롯 아이콘에 SkillSlotHover를 붙입니다.</summary>
+    private void InitSkillSlots()
     {
-        if (mySelectedSlots == null) return;
+        if (skillSlots == null) return;
 
-        for (int i = 0; i < mySelectedSlots.Count; i++)
+        foreach (var slot in skillSlots)
         {
-            if (mySelectedSlots[i] == null) continue;
-
-            if (i < _selectedCodes.Count)
-            {
-                mySelectedSlots[i].sprite  = GetCardIcon(_selectedCodes[i]);
-                mySelectedSlots[i].enabled = true;
-            }
-            else
-            {
-                mySelectedSlots[i].sprite  = null;
-                mySelectedSlots[i].enabled = false;
-            }
+            if (slot?.icon == null) continue;
+            // 이미 붙어있으면 재사용, 없으면 새로 추가
+            if (slot.icon.GetComponent<SkillSlotHover>() == null)
+                slot.icon.gameObject.AddComponent<SkillSlotHover>();
         }
+    }
+
+    /// <summary>캐릭터 호버 시 각 슬롯 아이콘을 갱신하고 SkillSlotHover에 스킬 정보를 전달합니다.</summary>
+    private void ShowSkillPanel(string characterCode)
+    {
+        if (skillSlots == null) return;
+
+        var card      = GetCard(characterCode);
+        var skillList = card?.Skills;
+
+        for (int i = 0; i < skillSlots.Count; i++)
+        {
+            var slot = skillSlots[i];
+            if (slot?.icon == null) continue;
+
+            bool     hasSkill = skillList != null && i < skillList.Count;
+            SkillInfo skill   = hasSkill ? skillList[i] : null;
+
+            // 아이콘 이미지 갱신
+            slot.icon.sprite  = hasSkill && skill.icon != null ? skill.icon : null;
+            slot.icon.enabled = hasSkill && skill.icon != null;
+
+            // hover 컴포넌트에 스킬 정보 전달
+            slot.icon.GetComponent<SkillSlotHover>()?.SetSkill(skill);
+        }
+
+        // 캐릭터가 바뀌면 텍스트는 초기화
+        SetText(skillNameText, "");
+        SetText(skillDescText,  "");
+    }
+
+    private void ClearSkillPanel()
+    {
+        if (skillSlots == null) return;
+
+        foreach (var slot in skillSlots)
+        {
+            if (slot?.icon == null) continue;
+            slot.icon.sprite  = null;
+            slot.icon.enabled = false;
+            slot.icon.GetComponent<SkillSlotHover>()?.SetSkill(null);
+        }
+
+        SetText(skillNameText, "");
+        SetText(skillDescText,  "");
+    }
+
+    /// <summary>SkillSlotHover에서 호출 — 스킬 이름과 설명을 공유 텍스트에 표시합니다.</summary>
+    public void OnSkillHoverEnter(SkillInfo skill)
+    {
+        SetText(skillNameText, skill.Name        ?? "");
+        SetText(skillDescText,  skill.description ?? "");
+    }
+
+    /// <summary>SkillSlotHover에서 호출 — 공유 텍스트를 비웁니다.</summary>
+    public void OnSkillHoverExit()
+    {
+        SetText(skillNameText, "");
+        SetText(skillDescText,  "");
     }
 
     // ─────────────────────────────────────────────────
@@ -323,22 +465,18 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void RefreshConfirmButton()
     {
+        int myCount = CountMySelections();
+
         if (confirmButtonText != null)
-            confirmButtonText.text = $"선택 완료 ({_selectedCodes.Count}/{_maxSelect})";
+            confirmButtonText.text = $"선택 완료 ({myCount}/{_maxSelect})";
 
         if (confirmButton != null)
-            confirmButton.interactable = (_selectedCodes.Count == _maxSelect);
+            confirmButton.interactable = (myCount == _maxSelect);
     }
 
     /// <summary>확정 버튼 OnClick에 연결합니다.</summary>
     public void OnClickConfirm()
     {
-        if (_selectedCodes.Count != _maxSelect)
-        {
-            Debug.LogWarning($"[CharacterSelectManager] 선택 수 불일치 ({_selectedCodes.Count}/{_maxSelect})");
-            return;
-        }
-
         if (_localRoomPlayer == null)
             _localRoomPlayer = FindLocalRoomPlayer();
 
@@ -348,15 +486,14 @@ public class CharacterSelectManager : MonoBehaviour
             return;
         }
 
-        var localRoomPlayer = _localRoomPlayer;
-
-        foreach (var code in _selectedCodes)
+        int myCount = CountMySelections();
+        if (myCount != _maxSelect)
         {
-            Debug.Log($"[CharacterSelectManager] CMDChoiceHero({code})");
-            localRoomPlayer.CMDChoiceHero(code);
+            Debug.LogWarning($"[CharacterSelectManager] 선택 수 불일치 ({myCount}/{_maxSelect})");
+            return;
         }
 
-        localRoomPlayer.CmdConfirmSelection();
+        _localRoomPlayer.CmdConfirmSelection();
 
         if (confirmButton != null)
             confirmButton.interactable = false;
@@ -368,14 +505,21 @@ public class CharacterSelectManager : MonoBehaviour
     //  유틸
     // ─────────────────────────────────────────────────
 
-    /// <summary>code → CharacterCard O(1) 조회</summary>
+    private int CountMySelections()
+    {
+        if (_localRoomPlayer == null) return 0;
+        int count = 0;
+        foreach (var e in _lastKnownQueue)
+            if (e.ownerNetId == _localRoomPlayer.netId) count++;
+        return count;
+    }
+
     private CharacterCard GetCard(string code)
     {
         _cardMap.TryGetValue(code, out var card);
         return card;
     }
 
-    /// <summary>code에 해당하는 카드 아이콘 스프라이트를 반환합니다.</summary>
     private Sprite GetCardIcon(string code)
     {
         return GetCard(code)?.CardIcon;
@@ -386,10 +530,6 @@ public class CharacterSelectManager : MonoBehaviour
         if (label != null) label.text = value;
     }
 
-    /// <summary>
-    /// 이미 등록된 프리팹이면 건너뜁니다.
-    /// NetworkClient.RegisterPrefab은 중복 호출 시 예외를 던지므로 반드시 이 메서드를 사용하세요.
-    /// </summary>
     private static void TryRegisterPrefab(GameObject prefab)
     {
         if (prefab == null) return;

@@ -1,87 +1,83 @@
-using Mirror;
 using TMPro;
 using UnityEngine;
 
 namespace Lsy
 {
     /// <summary>
-    /// ¾ÆÁöÆ® È­¸é °ñµå Ç¥½Ã ÅØ½ºÆ®.
-    /// ¾À ·Îµå ½Ã, °ñµå º¯°æ ½Ã, Ä³¸¯ÅÍ ÀüÈ¯ ½Ã ÀÚµ¿ °»½Å.
+    /// ê³¨ë“œ í‘œì‹œ UI. ê³¨ë“œëŠ” PlayerAccount ê·€ì†ì´ë¯€ë¡œ PlayerAccountë¥¼ ì¶”ì í•©ë‹ˆë‹¤.
     /// </summary>
     public class GoldUI : MonoBehaviour
     {
         public static GoldUI Instance;
 
-        [Header("°ñµå Ç¥½Ã ÅØ½ºÆ®")]
+        [Header("ê³¨ë“œ í‘œì‹œ í…ìŠ¤íŠ¸")]
         public TextMeshProUGUI goldText;
 
-        private CharacterUnit _trackedUnit;
+        private PlayerAccount _trackedAccount;
 
         private void Awake()
         {
             if (Instance == null) Instance = this;
         }
 
-        // ¾À ·Îµå ½Ã ÃÊ±âÈ­
-        private void Start()
+        private void OnEnable()
         {
+            PlayerAccount.OnLocalAccountReady += SetTrackedAccount;
+            PlayerAccount.OnCharacterSwitched += RefreshGold;
+
+            // ì´ë¯¸ LocalInstanceê°€ ìˆìœ¼ë©´ ë°”ë¡œ ì—°ê²° (ì”¬ ì¬ì§„ì… ë“±)
+            if (PlayerAccount.LocalInstance != null)
+                SetTrackedAccount(PlayerAccount.LocalInstance);
+        }
+
+        private void OnDisable()
+        {
+            PlayerAccount.OnLocalAccountReady -= SetTrackedAccount;
+            PlayerAccount.OnCharacterSwitched -= RefreshGold;
+
+            if (_trackedAccount != null)
+                _trackedAccount.OnGoldChanged -= OnGoldChanged;
+        }
+
+        private void OnDestroy()
+        {
+            PlayerAccount.OnLocalAccountReady -= SetTrackedAccount;
+            PlayerAccount.OnCharacterSwitched -= RefreshGold;
+
+            if (_trackedAccount != null)
+                _trackedAccount.OnGoldChanged -= OnGoldChanged;
+        }
+
+        public void SetTrackedAccount(PlayerAccount account)
+        {
+            if (_trackedAccount != null)
+                _trackedAccount.OnGoldChanged -= OnGoldChanged;
+
+            _trackedAccount = account;
+
+            if (_trackedAccount != null)
+                _trackedAccount.OnGoldChanged += OnGoldChanged;
+
             RefreshGold();
         }
 
-        // ==========================================
-        // ¿ÜºÎ¿¡¼­ È£Ãâ - ÃßÀûÇÒ Ä³¸¯ÅÍ ±³Ã¼
-        // PlayerAccount¿¡¼­ Ä³¸¯ÅÍ ÀüÈ¯ ½Ã È£Ãâ
-        // ==========================================
-        public void SetTrackedUnit(CharacterUnit unit)
-        {
-            // ±âÁ¸ ±¸µ¶ ÇØÁ¦
-            if (_trackedUnit != null)
-                _trackedUnit.OnGoldChanged -= OnGoldChanged;
-
-            _trackedUnit = unit;
-
-            // »õ Ä³¸¯ÅÍ °ñµå º¯°æ ±¸µ¶
-            if (_trackedUnit != null)
-                _trackedUnit.OnGoldChanged += OnGoldChanged;
-
-            RefreshGold();
-        }
-
-        // °ñµå º¯°æ ÀÌº¥Æ® ¼ö½Å
         private void OnGoldChanged(int newGold)
         {
             UpdateText(newGold);
         }
 
-        // ÅØ½ºÆ® °»½Å
         public void RefreshGold()
         {
-            if (PlayerAccount.LocalInstance == null ||
-                PlayerAccount.LocalInstance.currentSelectedCharacter == null)
-            {
-                UpdateText(0);
-                return;
-            }
-
-            CharacterUnit unit = PlayerAccount.LocalInstance.currentSelectedCharacter;
-
-            // ÃßÀû À¯´ÖÀÌ ¹Ù²î¾úÀ¸¸é Àçµî·Ï
-            if (_trackedUnit != unit)
-                SetTrackedUnit(unit);
-            else
-                UpdateText(unit.currentGold);
+            int gold = _trackedAccount != null ? _trackedAccount.currentGold
+                     : PlayerAccount.LocalInstance != null ? PlayerAccount.LocalInstance.currentGold
+                     : 0;
+            UpdateText(gold);
         }
 
         private void UpdateText(int gold)
         {
             if (goldText != null)
                 goldText.text = $"{gold:N0} G";
-        }
-
-        private void OnDestroy()
-        {
-            if (_trackedUnit != null)
-                _trackedUnit.OnGoldChanged -= OnGoldChanged;
         }
     }
 }
