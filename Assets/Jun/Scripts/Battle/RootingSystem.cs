@@ -253,7 +253,12 @@ public class RootingSystem : NetworkBehaviour
         // ���⼭ ���� �ܰ� �����
         // ������ ����� �����ϱ� ������
         // �ʿ��ϴٸ� �÷��̾���� ���ο� ������ ����
-        NetworkManager.singleton.ServerChangeScene("Home 1");
+        var roomManager = NetworkManager.singleton as GameRoomManager;
+        string homeScene = roomManager != null && !string.IsNullOrEmpty(roomManager.HomeScene)
+            ? roomManager.HomeScene
+            : "Home";
+
+        NetworkManager.singleton.ServerChangeScene(homeScene);
     }
     //���������� ����
     IEnumerator RockPaperScissors(List<int> RPS)

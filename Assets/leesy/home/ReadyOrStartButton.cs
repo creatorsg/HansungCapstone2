@@ -23,6 +23,10 @@ namespace Lsy
         public Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
         public Color clientReadyColor = Color.green;
 
+        [Header("디버그(테스트용 - 빌드 전 반드시 OFF)")]
+        [Tooltip("켜면 호스트가 클라이언트 준비 여부와 상관없이 시작 버튼을 누를 수 있음")]
+        [SerializeField] private bool debugForceHostInteractable = false;
+
         private Image _buttonImage;
         private bool _isReady = false;
 
@@ -41,9 +45,16 @@ namespace Lsy
             if (IsHost)
             {
                 buttonText.text = hostReadyText;
-                SetButtonInteractable(false);
-                if (ReadySystem.Instance != null)
-                    SetButtonInteractable(ReadySystem.Instance.AllReady);
+                if (debugForceHostInteractable)
+                {
+                    SetButtonInteractable(true);
+                }
+                else
+                {
+                    SetButtonInteractable(false);
+                    if (ReadySystem.Instance != null)
+                        SetButtonInteractable(ReadySystem.Instance.AllReady);
+                }
             }
             else
             {
@@ -102,6 +113,7 @@ namespace Lsy
         {
             Debug.Log($"<color=magenta>[ReadyOrStartButton] OnAllReadyChanged - allReady:{allReady}, IsHost:{IsHost}</color>");
             if (!IsHost) return;
+            if (debugForceHostInteractable) return;
             SetButtonInteractable(allReady);
         }
 

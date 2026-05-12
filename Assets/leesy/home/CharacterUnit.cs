@@ -25,6 +25,7 @@ namespace Lsy
         public int currentSan;
 
         public readonly SyncList<PlayerSkill> mySkills = new SyncList<PlayerSkill>();
+        public readonly SyncHashSet<string> unlockedNodeIds = new SyncHashSet<string>();
 
         [SyncVar] public string characterName;
 
@@ -127,6 +128,9 @@ namespace Lsy
             mySkills.Callback -= OnSkillsChanged;
             mySkills.Callback += OnSkillsChanged;
 
+            unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
+            unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
+
             OnLocalUnitSpawned?.Invoke(this);
         }
 
@@ -135,6 +139,7 @@ namespace Lsy
             base.OnStopAuthority();
             myInventory.Callback -= OnInventoryChanged;
             mySkills.Callback -= OnSkillsChanged;
+            unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
         }
 
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
@@ -150,6 +155,12 @@ namespace Lsy
         }
 
         private void OnSkillsChanged(SyncList<PlayerSkill>.Operation op, int index, PlayerSkill oldItem, PlayerSkill newItem)
+        {
+            if (!isOwned) return;
+            RefreshUpgradeUI();
+        }
+
+        private void OnUnlockedNodeIdsChanged(SyncSet<string>.Operation op, string item)
         {
             if (!isOwned) return;
             RefreshUpgradeUI();
