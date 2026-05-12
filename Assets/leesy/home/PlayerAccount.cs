@@ -11,6 +11,7 @@ namespace Lsy
         public string selectedWeaponId = "";
         public int purchasedNodeCount = 0;
         public List<PlayerSkill> skills = new List<PlayerSkill>();
+        public List<string> unlockedNodeIds = new List<string>();
     }
 
     public class PlayerAccount : NetworkBehaviour
@@ -142,6 +143,7 @@ namespace Lsy
             NetworkServer.ReplacePlayerForConnection(connectionToClient, newCharObj, ReplacePlayerOptions.KeepAuthority);
 
             currentSelectedCharacter = activeUnit;
+            AutoUnlockLv1Nodes(activeUnit);
             TargetRpcRefreshUI(connectionToClient, currentActiveIndex);
         }
 
@@ -175,6 +177,8 @@ namespace Lsy
                 backup.purchasedNodeCount = currentSelectedCharacter.purchasedNodeCount;
                 foreach (var skill in currentSelectedCharacter.mySkills)
                     backup.skills.Add(skill);
+                foreach (var nodeId in currentSelectedCharacter.unlockedNodeIds)
+                    backup.unlockedNodeIds.Add(nodeId);
                 savedCharacterData[currentActiveIndex] = backup;
             }
 
@@ -197,6 +201,7 @@ namespace Lsy
             // 저장된 인벤토리/스킬 복원
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
+            currentSelectedCharacter.unlockedNodeIds.Clear();
             currentSelectedCharacter.selectedWeaponId = "";
             currentSelectedCharacter.purchasedNodeCount = 0;
 
@@ -208,8 +213,11 @@ namespace Lsy
                 currentSelectedCharacter.purchasedNodeCount = saved.purchasedNodeCount;
                 foreach (var skill in saved.skills)
                     currentSelectedCharacter.mySkills.Add(skill);
+                foreach (var nodeId in saved.unlockedNodeIds)
+                    currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
             }
 
+            AutoUnlockLv1Nodes(currentSelectedCharacter);
             TargetRpcRefreshUI(connectionToClient, targetIndex);
         }
 
@@ -229,6 +237,113 @@ namespace Lsy
         }
 
         // ─── NPC 상호작용 커맨드 (골드 체크/차감 담당) ────────────────
+
+        [Command]
+        public void CmdPurchaseTreeNode(string nodeId)
+        {
+            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode 진입 — nodeId={nodeId}</color>");
+
+            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] 거부: currentSelectedCharacter null"); return; }
+            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] 거부: nodeId 비어있음"); return; }
+
+            string characterCode = GetCurrentCharacterCode();
+            if (string.IsNullOrEmpty(characterCode))
+            {
+                Debug.LogWarning("[SkillTree] 거부: characterCode 비어있음");
+                return;
+            }
+
+            if (!SkillTreeRegistry.TryFind(characterCode, nodeId, out SkillTreeNodeSO node))
+            {
+                Debug.LogWarning($"[SkillTree] 거부: 노드 못 찾음 — character={characterCode}, node={nodeId}");
+                return;
+            }
+
+            if (currentSelectedCharacter.unlockedNodeIds.Contains(nodeId))
+            {
+                Debug.Log($"[SkillTree] 거부: 이미 보유 — {nodeId}");
+                return;
+            }
+
+            if (node.prerequisite != null && !currentSelectedCharacter.unlockedNodeIds.Contains(node.prerequisite.nodeId))
+            {
+                Debug.Log($"[SkillTree] 거부: prereq 미충족 — {nodeId} requires {node.prerequisite.nodeId}");
+                return;
+            }
+
+            foreach (string unlockedNodeId in currentSelectedCharacter.unlockedNodeIds)
+            {
+                SkillTreeNodeSO unlockedNode = SkillTreeRegistry.Find(characterCode, unlockedNodeId);
+                if (unlockedNode == null) continue;
+
+                bool sameBranchChoice =
+                    unlockedNode.skillIndex == node.skillIndex &&
+                    unlockedNode.level == node.level;
+
+                if (sameBranchChoice)
+                {
+                    Debug.Log($"[SkillTree] 거부: 분기 양자택일 — {nodeId} vs 이미 보유 {unlockedNodeId}");
+                    return;
+                }
+            }
+
+            if (currentGold < node.unlockCost)
+            {
+                Debug.Log($"[SkillTree] 거부: 골드 부족 — 필요 {node.unlockCost}, 보유 {currentGold}");
+                return;
+            }
+
+            currentGold -= node.unlockCost;
+            currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
+            Debug.Log($"<color=green>[SkillTree] 구매 성공 — {nodeId}, 잔액 {currentGold}G</color>");
+        }
+
+        private string GetCurrentCharacterCode()
+        {
+            if (currentSelectedCharacter == null) return string.Empty;
+            if (!string.IsNullOrEmpty(currentSelectedCharacter.heroCode))
+                return currentSelectedCharacter.heroCode;
+            return currentSelectedCharacter.characterName;
+        }
+
+        /// <summary>
+        /// 캐릭터의 Lv1 노드 4개(기본 스킬)를 unlockedNodeIds에 자동 추가합니다.
+        /// 캐릭터 초기 스폰 직후, 그리고 새 캐릭터로 스왑한 직후(백업 없을 때) 호출하세요.
+        /// SyncHashSet.Add 는 멱등하므로 중복 호출되어도 안전합니다.
+        /// </summary>
+        [Server]
+        private void AutoUnlockLv1Nodes(CharacterUnit unit)
+        {
+            if (unit == null)
+            {
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: unit이 null");
+                return;
+            }
+
+            string code = !string.IsNullOrEmpty(unit.heroCode) ? unit.heroCode : unit.characterName;
+            if (string.IsNullOrEmpty(code))
+            {
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName 모두 비어있음 — 스킬트리 매칭 불가");
+                return;
+            }
+
+            CharacterSkillTreeSO tree = SkillTreeRegistry.GetTree(code);
+            if (tree == null || tree.allNodes == null)
+            {
+                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree 없음 — code={code}");
+                return;
+            }
+
+            int added = 0;
+            foreach (SkillTreeNodeSO node in tree.allNodes)
+            {
+                if (node == null) continue;
+                if (node.level != 1) continue;
+                if (string.IsNullOrEmpty(node.nodeId)) continue;
+                if (unit.unlockedNodeIds.Add(node.nodeId)) added++;
+            }
+            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 노드 {added}개 추가 (총 unlocked={unit.unlockedNodeIds.Count})</color>");
+        }
 
         [Command]
         public void CmdBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel, int price)

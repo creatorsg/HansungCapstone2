@@ -15,4 +15,7 @@ public class QuestData : ScriptableObject
 
     [Header("등장 적 (최대 4)")]
     public Sprite[] enemyPortraits = new Sprite[4];
+
+    [Header("이동할 전투 씬")]
+    public string battleSceneName;
 }

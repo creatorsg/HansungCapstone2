@@ -63,6 +63,9 @@ namespace Lsy
                 upgradeProgressText.text = "최대 레벨";
             }
 
+            if (itemSlotContainer == null || itemSlotPrefab == null)
+                return;
+
             foreach (Transform child in itemSlotContainer) Destroy(child.gameObject);
 
             if (_currentState.npcData.sellingItems != null)

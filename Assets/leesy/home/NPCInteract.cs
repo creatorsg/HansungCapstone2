@@ -15,6 +15,11 @@ namespace Lsy {
                 Debug.LogError("서버 데이터가 연결되지 않았습니다!");
                 return;
             }
+            if (_npcUI == null)
+            {
+                Debug.LogError("[NPCInteract] NPCPopupUI가 연결되지 않았습니다!");
+                return;
+            }
             // 1. UI에 현재 클릭한 NPC의 상태(데이터)를 주입
             _npcUI.InitializeUI(_npcState);
         }

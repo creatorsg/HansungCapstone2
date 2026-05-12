@@ -1,3 +1,4 @@
+using Mirror;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,9 +21,6 @@ public class QuestInfoPanel : MonoBehaviour
 
     [Header("Quest Database (5개)")]
     [SerializeField] private QuestData[] allQuests;
-
-    [Header("Scene")]
-    [SerializeField] private string battleSceneName = "GamePlay";
 
     private QuestData _currentQuest;
 
@@ -89,9 +87,31 @@ public class QuestInfoPanel : MonoBehaviour
     void OnStartPressed()
     {
         if (_currentQuest == null) return;
+
+        if (string.IsNullOrEmpty(_currentQuest.battleSceneName))
+        {
+            Debug.LogWarning($"[QuestInfoPanel] {_currentQuest.districtType} 의 battleSceneName 이 비어있음");
+            return;
+        }
+
         SelectedQuest.Current = _currentQuest;
 
-        // TODO: 추후 SceneManager.LoadScene(battleSceneName)으로 교체
-        Debug.Log($"[QuestInfoPanel] Start → {_currentQuest.districtType} / {_currentQuest.stageName} (씬 전환 예정: {battleSceneName})");
+        // 호스트/서버 : Mirror 정식 흐름으로 모든 클라이언트 씬 동기 전환
+        if (NetworkServer.active)
+        {
+            NetworkManager.singleton.ServerChangeScene(_currentQuest.battleSceneName);
+            return;
+        }
+
+        // 클라이언트 : 호스트만 시작 가능 (leesy의 Ready 시스템과 동일 규칙)
+        if (NetworkClient.isConnected)
+        {
+            Debug.LogWarning("[QuestInfoPanel] 클라이언트는 직접 씬 전환 불가 — 호스트가 시작해야 함");
+            return;
+        }
+
+        // 네트워크 미연결 : 오프라인 테스트 폴백
+        Debug.Log($"[QuestInfoPanel] 오프라인 모드 — SceneManager.LoadScene({_currentQuest.battleSceneName})");
+        SceneManager.LoadScene(_currentQuest.battleSceneName);
     }
 }
