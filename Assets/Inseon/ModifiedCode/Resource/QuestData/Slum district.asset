@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Slum district
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   districtType: 3
-  stageName: 
-  questDescription: 
-  clearCondition: 
-  recommendCondition: 
+  stageName: "\uBE48\uBBFC\uAC00"
+  questDescription: "\uBE48\uBBFC\uAC00 \uB4B7\uACE8\uBAA9\uC5D0\uC11C \uC2DC\uBBFC\uB4E4\uC774
+    \uC0AC\uB77C\uC9C0\uACE0 \uC788\uB2E4. \n\uC591\uC544\uCE58\uB4E4\uC744 \uC81C\uC555\uD558\uB77C."
+  clearCondition: "\uBE48\uBBFC\uAC00 \uC785\uAD6C\uC5D0\uC11C \uC591\uC544\uCE58
+    \uBB34\uB9AC \uACA9\uD30C\n\uC2DC\uAD81\uC9C0 \uC655 \uCC98\uB9AC"
+  recommendCondition: "\uD3C9\uADE0 \uB808\uBCA8 1~3"
   enemyPortraits:
   - {fileID: 0}
   - {fileID: 0}

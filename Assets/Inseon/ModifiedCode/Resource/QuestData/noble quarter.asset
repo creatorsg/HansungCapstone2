@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: noble quarter
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   districtType: 0
-  stageName: 
+  stageName: "\uAC00\uBA74\uBB34\uB3C4\uD68C"
   questDescription: 
   clearCondition: 
   recommendCondition: 

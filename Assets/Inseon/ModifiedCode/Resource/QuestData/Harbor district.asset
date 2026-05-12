@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Harbor district
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   districtType: 2
-  stageName: 
+  stageName: "\uC548\uAC1C\uC18D\uC758\uB2FB"
   questDescription: 
   clearCondition: 
   recommendCondition: 

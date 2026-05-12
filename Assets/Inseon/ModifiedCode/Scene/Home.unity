@@ -2281,6 +2281,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 306598235}
+  - component: {fileID: 306598238}
+  - component: {fileID: 306598237}
+  - component: {fileID: 306598236}
   m_Layer: 5
   m_Name: slum
   m_TagString: Untagged
@@ -2307,6 +2310,58 @@ RectTransform:
   m_AnchoredPosition: {x: 16.2246, y: -75.6689}
   m_SizeDelta: {x: 192.9507, y: 165.6556}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &306598236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306598234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61b0ec868c6148dd963f7a945a8ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistrictHover
+  districtType: 3
+  hoverColor: {r: 1, g: 1, b: 1, a: 0.3}
+--- !u!114 &306598237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306598234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &306598238
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 306598234}
+  m_CullTransparentMesh: 1
 --- !u!1 &320706034
 GameObject:
   m_ObjectHideFlags: 0
@@ -8036,6 +8091,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1011389218}
+  - component: {fileID: 1011389221}
+  - component: {fileID: 1011389220}
+  - component: {fileID: 1011389219}
   m_Layer: 5
   m_Name: harbor
   m_TagString: Untagged
@@ -8062,6 +8120,58 @@ RectTransform:
   m_AnchoredPosition: {x: 291.02814, y: -206.9443}
   m_SizeDelta: {x: 304.344, y: 276.3112}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1011389219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011389217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61b0ec868c6148dd963f7a945a8ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistrictHover
+  districtType: 2
+  hoverColor: {r: 1, g: 1, b: 1, a: 0.3}
+--- !u!114 &1011389220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011389217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1011389221
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011389217}
+  m_CullTransparentMesh: 1
 --- !u!1 &1017056677
 GameObject:
   m_ObjectHideFlags: 0
@@ -9374,7 +9484,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1134557462
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10888,6 +10998,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1268609628}
+  - component: {fileID: 1268609631}
+  - component: {fileID: 1268609630}
+  - component: {fileID: 1268609629}
   m_Layer: 5
   m_Name: industrial
   m_TagString: Untagged
@@ -10914,6 +11027,58 @@ RectTransform:
   m_AnchoredPosition: {x: -290.451, y: -182.19995}
   m_SizeDelta: {x: 319.0981, y: 325.8}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1268609629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268609627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61b0ec868c6148dd963f7a945a8ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistrictHover
+  districtType: 4
+  hoverColor: {r: 1, g: 1, b: 1, a: 0.3}
+--- !u!114 &1268609630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268609627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1268609631
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268609627}
+  m_CullTransparentMesh: 1
 --- !u!1 &1282194202
 GameObject:
   m_ObjectHideFlags: 0
@@ -14315,6 +14480,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1668528289}
+  - component: {fileID: 1668528292}
+  - component: {fileID: 1668528291}
+  - component: {fileID: 1668528290}
   m_Layer: 5
   m_Name: gothic
   m_TagString: Untagged
@@ -14341,6 +14509,58 @@ RectTransform:
   m_AnchoredPosition: {x: 47.04267, y: 230.29}
   m_SizeDelta: {x: 271.885, y: 239.43}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1668528290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668528288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c61b0ec868c6148dd963f7a945a8ac52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistrictHover
+  districtType: 1
+  hoverColor: {r: 1, g: 1, b: 1, a: 0.3}
+--- !u!114 &1668528291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668528288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1668528292
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668528288}
+  m_CullTransparentMesh: 1
 --- !u!1 &1671183165
 GameObject:
   m_ObjectHideFlags: 0

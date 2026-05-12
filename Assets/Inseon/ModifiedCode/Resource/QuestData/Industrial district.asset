@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Industrial district
   m_EditorClassIdentifier: Assembly-CSharp::QuestData
   districtType: 4
-  stageName: 
+  stageName: "\uAC15\uCCA0\uC758\uAD11\uAE30"
   questDescription: 
   clearCondition: 
   recommendCondition: 
