@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Lsy
 {
@@ -37,7 +37,10 @@ namespace Lsy
             int npcLevel = npcState != null ? npcState.currentLevel : 1;
 
             SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
-            shop.CmdUpgradeSkillWithLevel(nodeData.skillId, nodeData.price, npcLevel, nodeData.requiredNpcLevel);
+            int skillIndex = nodeIndex;
+
+            // 서버로 보낸다: 구매/강화할 스킬 인덱스(skillIndex)
+            shop.CmdUpgradeSkillWithLevel(nodeData.skillId, skillIndex, nodeData.price, npcLevel, nodeData.requiredNpcLevel);
         }
 
         private bool IsSkillPurchased(string skillId, CharacterUnit unit)

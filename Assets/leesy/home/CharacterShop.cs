@@ -63,7 +63,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdUseBartender(int price, NetworkConnectionToClient sender = null)
         {
-            // 서버로 보낸다: 바텐더 회복 요청(price)
+            // 서버로 보낸다: 바텐더 회복 요청(price) + 현재 HP/SAN을 최대치로 회복
             Debug.Log($"[CharacterShop][Server] CmdUseBartender - price:{price}");
 
             if (_unit.currentGold < price)
@@ -83,10 +83,10 @@ namespace Lsy
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeWeapon(string weaponId, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeWeapon(string weaponId, int weaponIndex, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
         {
-            // 서버로 보낸다: 무기 노드 강화 요청(weaponId, nodeIndex, npcLevel, price)
-            Debug.Log($"[CharacterShop][Server] CmdUpgradeWeapon - weaponId:{weaponId}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
+            // 서버로 보낸다: 무기 노드 강화 요청(weaponId, weaponIndex, nodeIndex, npcLevel, price)
+            Debug.Log($"[CharacterShop][Server] CmdUpgradeWeapon - weaponId:{weaponId}, weaponIndex:{weaponIndex}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
 
             bool success = _unit.ApplyBlacksmithUpgrade(weaponId, nodeIndex, npcLevel, price);
 
@@ -113,10 +113,10 @@ namespace Lsy
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeSkillWithLevel(string skillId, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeSkillWithLevel(string skillId, int skillIndex, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
         {
-            // 서버로 보낸다: 스킬 구매/강화 요청(skillId, price, npcLevel, requiredNpcLevel)
-            Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
+            // 서버로 보낸다: 스킬 구매/강화 요청(skillId, skillIndex, price, npcLevel, requiredNpcLevel)
+            Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, skillIndex:{skillIndex}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
 
             bool success = _unit.ApplySkillPurchase(skillId, npcLevel, price, requiredNpcLevel);
 

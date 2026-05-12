@@ -1,4 +1,4 @@
-using Mirror;
+Ôªøusing Mirror;
 using System;
 using UnityEngine;
 
@@ -17,6 +17,8 @@ namespace Lsy
 
         [SyncVar] public float maxHp;
         [SyncVar] public int maxSan;
+        [SyncVar] public float currentHp;
+        [SyncVar] public int currentSan;
 
         public readonly SyncList<PlayerSkill> mySkills = new SyncList<PlayerSkill>();
 
@@ -42,12 +44,14 @@ namespace Lsy
             currentGold = data.gold;
             maxHp = data.maxHp;
             maxSan = data.maxSan;
+            currentHp = maxHp;
+            currentSan = maxSan;
 
             if (myInfo == null) myInfo = new PlayerInfo();
-            myInfo.Hp = maxHp;
-            myInfo.San = maxSan;
+            myInfo.Hp = currentHp;
+            myInfo.San = currentSan;
 
-            Debug.Log($"<color=green>[º≠πˆ] ƒ≥∏Ø≈Õ ºº∆√ øœ∑·: {characterName} (HP:{maxHp}, ∞ÒµÂ:{currentGold}G)</color>");
+            Debug.Log($"<color=green>[ÏÑúÎ≤Ñ] Ï∫êÎ¶≠ÌÑ∞ ÏÑ∏ÌåÖ ÏôÑÎ£å: {characterName} (HP:{maxHp}, Í≥®Îìú:{currentGold}G)</color>");
         }
 
         public override void OnStartAuthority()
@@ -145,9 +149,14 @@ namespace Lsy
         [Server]
         public bool ApplyBartenderHeal()
         {
-            if (myInfo.Hp >= maxHp && myInfo.San >= maxSan) return false;
-            myInfo.Hp = maxHp;
-            myInfo.San = maxSan;
+            if (myInfo == null) myInfo = new PlayerInfo();
+
+            if (currentHp >= maxHp && currentSan >= maxSan) return false;
+
+            currentHp = maxHp;
+            currentSan = maxSan;
+            myInfo.Hp = currentHp;
+            myInfo.San = currentSan;
             return true;
         }
 

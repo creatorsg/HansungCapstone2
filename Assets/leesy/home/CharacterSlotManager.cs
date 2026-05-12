@@ -54,38 +54,6 @@ namespace Lsy
             return false;
         }
 
-        [Command(requiresAuthority = false)]
-        public void CmdClaimSlot(int characterIndex, uint playerNetId, NetworkConnectionToClient sender = null)
-        {
-            // 서버로 보낸다: 캐릭터 슬롯 선점 요청(characterIndex)
-            if (sender == null)
-            {
-                Debug.LogWarning("[CharacterSlotManager] sender connection is null.");
-                return;
-            }
-
-            if (sender.identity == null)
-            {
-                Debug.LogWarning("[CharacterSlotManager] sender identity is null.");
-                return;
-            }
-
-            if (slotOwners.ContainsKey(characterIndex))
-            {
-                Debug.LogWarning($"[CharacterSlotManager] 슬롯 {characterIndex}는 이미 선점됨");
-                return;
-            }
-
-            uint authoritativeNetId = sender.identity.netId;
-            slotOwners[characterIndex] = authoritativeNetId;
-            Debug.Log($"[CharacterSlotManager] conn:{sender.connectionId}, netId:{authoritativeNetId}가 슬롯 {characterIndex} 선점");
-
-            if (ReadySystem.Instance == null) return;
-
-            bool isHostConnection = sender == NetworkServer.localConnection || sender.connectionId == 0;
-            ReadySystem.Instance.ServerSetReady(sender.connectionId, authoritativeNetId, isHostConnection);
-        }
-
         public bool IsMySlot(int characterIndex)
         {
             if (!TryGetLocalNetId(out uint myNetId)) return false;

@@ -65,19 +65,9 @@ namespace Lsy
             if (CharacterSlotManager.Instance == null) return;
 
             bool isMySlot = CharacterSlotManager.Instance.IsMySlot(characterIndex);
-            bool isAvailable = CharacterSlotManager.Instance.IsSlotAvailable(characterIndex);
+            if (!isMySlot) return;
 
-            if (isMySlot)
-            {
-                PlayerAccount.LocalInstance.SelectCharacter(characterIndex);
-            }
-            else if (isAvailable)
-            {
-                if (!CharacterSlotManager.TryGetLocalNetId(out uint myNetId)) return;
-                // 서버로 보낸다
-                CharacterSlotManager.Instance.CmdClaimSlot(characterIndex, myNetId);
-                PlayerAccount.LocalInstance.SelectCharacter(characterIndex);
-            }
+            PlayerAccount.LocalInstance.SelectCharacter(characterIndex);
         }
 
         private void RefreshState()
@@ -86,9 +76,9 @@ namespace Lsy
             if (PlayerAccount.LocalInstance == null) return;
 
             bool isMySlot = CharacterSlotManager.Instance.IsMySlot(characterIndex);
-            bool isTaken = !isMySlot && !CharacterSlotManager.Instance.IsSlotAvailable(characterIndex);
+            bool isTaken = !isMySlot;
 
-            button.interactable = !isTaken;
+            button.interactable = isMySlot;
             if (_buttonImage != null)
                 _buttonImage.color = isTaken ? takenColor : _originalColor;
 
@@ -100,5 +90,3 @@ namespace Lsy
         }
     }
 }
-
-
