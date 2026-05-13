@@ -17687,7 +17687,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945280247}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 035eec5fb3eb15948a3960311f7f4e24, type: 3}
   m_Name: 
@@ -17700,6 +17700,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   clientReadyColor: {r: 0, g: 1, b: 0, a: 1}
+  battleSceneName: 00slum
   debugForceHostInteractable: 1
 --- !u!114 &1945280253
 MonoBehaviour:
@@ -17708,7 +17709,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945280247}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c357d2454a96aa4b990259b528e29d1, type: 3}
   m_Name: 

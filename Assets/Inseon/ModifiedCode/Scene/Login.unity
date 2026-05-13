@@ -1881,6 +1881,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoginWindow
   _id: {fileID: 84430315}
   _pw: {fileID: 747184749}
+  _guestLoginMode: 1
 --- !u!225 &580956336
 CanvasGroup:
   m_ObjectHideFlags: 0
