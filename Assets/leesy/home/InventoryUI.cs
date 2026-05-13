@@ -77,7 +77,7 @@ namespace Lsy
                                 shop.CmdEquipItem(foundData.itemName);
                             });
 
-                            slotScript.ShowItemMark(isEquipped);
+                            slotScript.ShowEquipOutline(isEquipped);
                         }
                         else
                         {
@@ -89,3 +89,4 @@ namespace Lsy
         }
     }
 }
+

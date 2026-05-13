@@ -30,16 +30,32 @@ namespace Lsy
         private Image _buttonImage;
         private bool _isReady = false;
 
-        private bool IsHost => NetworkServer.active;
+        private bool IsHost => NetworkServer.active && NetworkClient.active;
 
         private void Awake()
         {
-            _buttonImage = button.GetComponent<Image>();
-            button.transition = Selectable.Transition.None;
+            if (button == null)
+                button = GetComponent<Button>();
+            if (buttonText == null)
+                buttonText = GetComponentInChildren<TextMeshProUGUI>(true);
+
+            if (button != null)
+            {
+                _buttonImage = button.GetComponent<Image>();
+                button.transition = Selectable.Transition.None;
+                // 씬에 남아있는 영구 OnClick(GameStartBtn 등) 영향을 끊고 이 스크립트 분기만 사용한다.
+                button.onClick = new Button.ButtonClickedEvent();
+            }
         }
 
         private void Start()
         {
+            if (button == null || buttonText == null)
+            {
+                Debug.LogWarning("[ReadyOrStartButton] button 또는 buttonText가 연결되지 않아 초기화를 중단합니다.");
+                return;
+            }
+
             Debug.Log($"<color=cyan>[ReadyOrStartButton] Start - IsHost:{IsHost}</color>");
 
             if (IsHost)
@@ -67,8 +83,10 @@ namespace Lsy
         {
             ReadySystem.OnAllReadyChanged += OnAllReadyChanged;
             ReadySystem.OnPlayerReadyChanged += OnPlayerReadyChanged;
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(OnClick);
+            if (button != null)
+            {
+                button.onClick.AddListener(OnClick);
+            }
         }
 
         private void OnDisable()
@@ -111,7 +129,6 @@ namespace Lsy
 
         private void OnAllReadyChanged(bool allReady)
         {
-            Debug.Log($"<color=magenta>[ReadyOrStartButton] OnAllReadyChanged - allReady:{allReady}, IsHost:{IsHost}</color>");
             if (!IsHost) return;
             if (debugForceHostInteractable) return;
             SetButtonInteractable(allReady);
@@ -129,19 +146,18 @@ namespace Lsy
         private void SyncClientReadyVisual(bool isReady)
         {
             _isReady = isReady;
-            buttonText.text = _isReady ? clientReadyText : clientNotReadyText;
+            if (buttonText != null)
+                buttonText.text = _isReady ? clientReadyText : clientNotReadyText;
             if (_buttonImage != null)
                 _buttonImage.color = _isReady ? clientReadyColor : activeColor;
         }
 
         private void SetButtonInteractable(bool interactable)
         {
+            if (button == null) return;
             button.interactable = interactable;
             if (_buttonImage != null)
                 _buttonImage.color = interactable ? activeColor : lockedColor;
-            Debug.Log($"<color=cyan>[ReadyOrStartButton] 버튼 상태: {(interactable ? "활성화" : "비활성화")}</color>");
         }
     }
 }
-
-

@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 10000G
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
-  m_sharedMaterial: {fileID: -5793043790360626206, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 828a20f272835c34ba027b101fd2e3b1, type: 2}
+  m_sharedMaterial: {fileID: 716522532240295670, guid: 828a20f272835c34ba027b101fd2e3b1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -103,6 +103,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -203,8 +204,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: item
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
-  m_sharedMaterial: {fileID: -5793043790360626206, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 828a20f272835c34ba027b101fd2e3b1, type: 2}
+  m_sharedMaterial: {fileID: 716522532240295670, guid: 828a20f272835c34ba027b101fd2e3b1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -239,6 +240,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -339,8 +341,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAD6C\uB9E4"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
-  m_sharedMaterial: {fileID: -5793043790360626206, guid: 74f5d1f94c5ca8746936a41195e6b24e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b72bbdab46947c441bf4ce2c233fd1d0, type: 2}
+  m_sharedMaterial: {fileID: -6877058649849521230, guid: b72bbdab46947c441bf4ce2c233fd1d0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -375,6 +377,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
@@ -11,44 +11,47 @@ namespace Lsy
         public TextMeshProUGUI itemNameText;
         public TextMeshProUGUI itemAmountText;
 
-        public GameObject itemMark;
+        public Outline itemOutline;
         public Button interactButton;
 
         public void Setup(ItemData data, int amount, Action onClickAction)
         {
-            // 1. ¾ÆÀÌÅÛ µ¥ÀÌÅÍ ¿¬µ¿
             if (data != null)
             {
-                itemNameText.text = data.itemName;
+                if (itemNameText != null)
+                    itemNameText.text = data.itemName;
 
-                // ItemData¿¡ ½ºÇÁ¶óÀÌÆ® º¯¼ö°¡ ÀÖ´Ù¸é ¿¬°á
-                itemIcon.sprite = data.itemIcon; 
-                itemIcon.gameObject.SetActive(true);
+                if (itemIcon != null)
+                {
+                    itemIcon.sprite = data.itemIcon;
+                    itemIcon.gameObject.SetActive(true);
+                }
             }
             else
             {
-                itemNameText.text = "¾Ë ¼ö ¾øÀ½";
-                itemIcon.gameObject.SetActive(false);
+                if (itemNameText != null)
+                    itemNameText.text = "ì•Œ ìˆ˜ ì—†ìŒ";
+                if (itemIcon != null)
+                    itemIcon.gameObject.SetActive(false);
             }
 
-            // 2. ¼ÒÁö °³¼ö ÅØ½ºÆ® ¾÷µ¥ÀÌÆ®
-            itemAmountText.text = $"x{amount}";
+            if (itemAmountText != null)
+                itemAmountText.text = $"x{amount}";
 
-            // 3. ±âÁ¸ ¹öÆ° ÀÌº¥Æ® ÃÊ±âÈ­ ÈÄ »õ·Î¿î ÀÌº¥Æ®(ÀåÂø/»ç¿ë) ¿¬°á
-            interactButton.onClick.RemoveAllListeners();
-            if (onClickAction != null)
+            if (interactButton != null)
             {
-                interactButton.onClick.AddListener(() => onClickAction.Invoke());
+                interactButton.onClick.RemoveAllListeners();
+                if (onClickAction != null)
+                    interactButton.onClick.AddListener(() => onClickAction.Invoke());
             }
 
-            ShowItemMark(false);
+            ShowEquipOutline(false);
         }
-        public void ShowItemMark(bool isEquipped)
+
+        public void ShowEquipOutline(bool isEquipped)
         {
-            if (itemMark != null)
-            {
-                itemMark.SetActive(isEquipped);
-            }
+            if (itemOutline != null)
+                itemOutline.enabled = isEquipped;
         }
     }
 }

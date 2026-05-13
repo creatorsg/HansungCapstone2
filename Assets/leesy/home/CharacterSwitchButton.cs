@@ -19,7 +19,7 @@ namespace Lsy
         public Color activeOutlineColor = Color.white;
 
         [Header("아웃라인 두께")]
-        public Vector2 outlineEffectDistance = new Vector2(3f, -3f);
+        public Vector2 outlineEffectDistance = new Vector2(5f, -5f);
 
         private Image _buttonImage;
         private Color _originalColor;

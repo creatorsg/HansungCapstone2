@@ -101,7 +101,7 @@ namespace Lsy
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeWeapon(string weaponId, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeWeapon(string weaponId, int weaponIndex, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdUpgradeWeapon - weaponId:{weaponId}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
 
@@ -137,7 +137,7 @@ namespace Lsy
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeSkillWithLevel(string skillId, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeSkillWithLevel(string skillId, int skillIndex, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
 
