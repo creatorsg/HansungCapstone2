@@ -17,8 +17,22 @@ namespace Jun
 
         public UnitState State = UnitState.Waiting;
 
+        public readonly SyncList<ActiveEffect> Effects = new SyncList<ActiveEffect>();
+
+        public int EffectiveAtk => CombatCalculator.GetEffectiveAtk(Info.Atk, Effects);
+        public int EffectiveDef => CombatCalculator.GetEffectiveDef(Info.Def, Effects);
+        public int EffectiveAcc => CombatCalculator.GetEffectiveAcc(Info.Acc, Effects);
+        public int EffectiveDodge => CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects);
+
         private void Start()
         {
+            // 신 시스템(Statuses)·MaxHp 초기화 보강 — 옛 Effects 시스템과 병행 운영
+            if (Info != null)
+            {
+                if (Info.MaxHp <= 0f) Info.MaxHp = Info.Hp;
+                if (Info.Statuses == null) Info.Statuses = new System.Collections.Generic.List<ActiveStatus>();
+            }
+
             _model.SetUp(Info);
             _model.IsDamaged += _view.Damaged;
         }
@@ -51,6 +65,12 @@ namespace Jun
                     break;
             }
         }
+        [Server]
+        public void AddEffect(ActiveEffect effect)
+        {
+            Effects.Add(effect);
+        }
+
         [Command(requiresAuthority = false)]
         public void CMDDead()
         {
