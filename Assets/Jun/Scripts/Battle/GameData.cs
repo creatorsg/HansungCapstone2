@@ -176,7 +176,10 @@ namespace Jun
         public SkillType Type;
         public string anim;
         public int TagetNum;            // 대상 수
-
+        public Sprite icon;
+        [UnityEngine.TextArea(2, 4)]
+        public string description;
+        
         // 공격
         public float DamageRate;        // 공격력 배율  ex) 1.2 = 120%
 
