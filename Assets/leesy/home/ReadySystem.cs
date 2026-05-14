@@ -122,15 +122,23 @@ namespace Lsy
 
             Debug.Log($"<color=cyan>[ReadySystem][Server] 클라이언트:{clientCount}, 준비클라:{_readyConnectionIds.Count}, allReady:{allReady}</color>");
 
+            // Bug Fix: 이벤트 발화 경로를 RpcOnAllReadyChanged 하나로 통일한다.
+            // 이전 코드는 호스트 기준으로
+            //   ① _allReadySync = allReady  → SyncVar hook(OnAllReadySyncChanged) → 이벤트 1회
+            //   ② OnAllReadyChanged?.Invoke() → 이벤트 1회
+            //   ③ RpcOnAllReadyChanged        → 이벤트 1회  (총 3회 중복)
+            // 클라이언트도 SyncVar hook + RPC로 2회 중복 발화됐다.
+            // → SyncVar hook과 직접 호출을 제거하고 RPC 한 경로만 남긴다.
             _allReadySync = allReady;
-            OnAllReadyChanged?.Invoke(allReady);
             RpcOnAllReadyChanged(allReady);
         }
 
         private void OnAllReadySyncChanged(bool oldValue, bool newValue)
         {
-            // 서버에서 받아온다: 전체 준비 완료 여부(allReady)
-            OnAllReadyChanged?.Invoke(newValue);
+            // 순수 클라이언트(non-host)에서 SyncVar가 뒤늦게 동기화될 경우 보정용.
+            // 호스트는 RpcOnAllReadyChanged로 이미 처리되므로 중복 방지.
+            if (!isServer)
+                OnAllReadyChanged?.Invoke(newValue);
         }
 
         [ClientRpc]

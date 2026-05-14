@@ -492,7 +492,16 @@ public class CharacterSelectManager : MonoBehaviour
             Debug.LogWarning($"[CharacterSelectManager] 선택 수 불일치 ({myCount}/{_maxSelect})");
             return;
         }
+        
+        List<string> myCodes = new();
 
+        foreach (var e in _lastKnownQueue)
+        {
+            if (e.ownerNetId == _localRoomPlayer.netId)
+                myCodes.Add(e.heroCode);
+        }
+
+        _localRoomPlayer.CmdApplyConfirmedSelection(myCodes.ToArray());
         _localRoomPlayer.CmdConfirmSelection();
 
         if (confirmButton != null)

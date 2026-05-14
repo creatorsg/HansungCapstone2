@@ -10,6 +10,18 @@ namespace inseon.LoginWindows.Login
         [SerializeField] private TMP_InputField _id;
         [SerializeField] private TMP_InputField _pw;
 
+        public enum GuestLoginMode
+        {
+            [InspectorName("기기 계정 이어가기 (같은 기기면 기존 계정 유지)")]
+            ContinueExisting = 0,
+
+            [InspectorName("새 계정으로 시작 (매번 새 계정 생성)")]
+            AlwaysNew = 1
+        }
+
+        [Header("게스트 로그인 모드")]
+        [SerializeField] private GuestLoginMode _guestLoginMode = GuestLoginMode.ContinueExisting;
+
         public void LoginWithPlayFab()
         {
             var ID = _id.text?.Trim();
@@ -28,7 +40,7 @@ namespace inseon.LoginWindows.Login
                 onError: error =>
                 {
                     PlayfabUserManage.FailureLogin(error);
-                    ButtonGuard.Unlock();   
+                    ButtonGuard.Unlock();
                 });
         }
 
@@ -36,13 +48,16 @@ namespace inseon.LoginWindows.Login
         {
             if (!ButtonGuard.TryLock()) return;
 
+            bool forceNew = _guestLoginMode == GuestLoginMode.AlwaysNew;
+
             PlayfabUserManage.LoginAsGuest(
                 onOk: PlayfabUserManage.SuccessLogin,
                 onError: err =>
                 {
                     PlayfabUserManage.FailureLogin(err);
-                    ButtonGuard.Unlock();   
-                });
+                    ButtonGuard.Unlock();
+                },
+                forceNew: forceNew);
         }
     }
 }

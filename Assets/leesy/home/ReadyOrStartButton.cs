@@ -23,6 +23,9 @@ namespace Lsy
         public Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
         public Color clientReadyColor = Color.green;
 
+        // 씬 이름은 DistrictHover 클릭 시 GameRoomManager.GameplayScene에 자동 등록됩니다.
+        // 이 버튼은 별도 씬 이름 없이 GameplayScene을 그대로 사용합니다.
+
         [Header("디버그(테스트용 - 빌드 전 반드시 OFF)")]
         [Tooltip("켜면 호스트가 클라이언트 준비 여부와 상관없이 시작 버튼을 누를 수 있음")]
         [SerializeField] private bool debugForceHostInteractable = false;
@@ -93,6 +96,8 @@ namespace Lsy
         {
             ReadySystem.OnAllReadyChanged -= OnAllReadyChanged;
             ReadySystem.OnPlayerReadyChanged -= OnPlayerReadyChanged;
+            // Bug Fix: OnEnable에서 추가한 리스너를 반드시 제거해야 중복 등록 방지
+            button?.onClick.RemoveListener(OnClick);
         }
 
         private void OnClick()
@@ -125,6 +130,27 @@ namespace Lsy
         private void OnClickStartGame()
         {
             Debug.Log("[ReadyOrStartButton] 게임 시작!");
+
+            var rm = NetworkManager.singleton as Jun.GameRoomManager;
+
+            // 씬 이름은 DistrictHover.OnPointerClick에서 GameplayScene에 등록됩니다.
+            string targetScene = rm?.GameplayScene;
+
+            if (string.IsNullOrEmpty(targetScene))
+            {
+                Debug.LogWarning("[ReadyOrStartButton] GameplayScene이 비어있습니다. " +
+                                 "지도에서 영지를 먼저 클릭하세요.");
+                return;
+            }
+
+            if (NetworkManager.singleton != null)
+            {
+                NetworkManager.singleton.ServerChangeScene(targetScene);
+            }
+            else
+            {
+                Debug.LogWarning("[ReadyOrStartButton] NetworkManager.singleton이 NULL - 씬 전환 실패");
+            }
         }
 
         private void OnAllReadyChanged(bool allReady)

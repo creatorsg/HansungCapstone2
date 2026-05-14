@@ -141,11 +141,19 @@ namespace inseon.Playfab.User
             );
         }
 
+        /// <summary>
+        /// 게스트 로그인
+        /// forceNew = false : 같은 기기면 기존 계정 이어서 사용 (deviceUniqueIdentifier)
+        /// forceNew = true  : 매번 새 계정 생성 (GUID 기반 임시 ID)
+        /// </summary>
         public static void LoginAsGuest(
             Action<LoginResult> onOk,
-            Action<PlayFabError> onError)
+            Action<PlayFabError> onError,
+            bool forceNew = false)
         {
-            string customId = SystemInfo.deviceUniqueIdentifier; 
+            string customId = forceNew
+                ? "guest_new_" + System.Guid.NewGuid().ToString("N")
+                : SystemInfo.deviceUniqueIdentifier;
 
             var request = new LoginWithCustomIDRequest
             {
@@ -159,7 +167,8 @@ namespace inseon.Playfab.User
 
             PlayFabClientAPI.LoginWithCustomID(request, result =>
             {
-                if (result.NewlyCreated)
+                // 새로 만든 계정이거나 강제 신규인 경우 → 닉네임 지정
+                if (result.NewlyCreated || forceNew)
                 {
                     SetGuestDisplayName(result, onOk, onError);
                 }
