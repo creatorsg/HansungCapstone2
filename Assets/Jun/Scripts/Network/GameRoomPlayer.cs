@@ -65,7 +65,6 @@ namespace Jun
 
         void OnNicknameChanged(string _, string __)
         {
-            LobbyManager.Instance?.RefreshPlayerSlots();
             PlayerRoomManager.Instance?.RefreshPlayerSlots();
         }
 
@@ -101,7 +100,6 @@ namespace Jun
             // Jun GameRoom 씬 fallback (Jun.LobbyManager가 씬에 있는 경우만 실행됨)
             LobbyManager.Instance?.UpdatePlayerNum(true);
             LobbyManager.Instance?.ActiveBTN(isServer);
-            LobbyManager.Instance?.RefreshPlayerSlots();
 
             // 이미 선택된 캐릭터도 표시
             foreach (var item in CharaterNum)
@@ -132,7 +130,6 @@ namespace Jun
             PlayerRoomManager.Instance?.RefreshPlayerSlots();
 
             LobbyManager.Instance?.UpdatePlayerNum(false);
-            LobbyManager.Instance?.RefreshPlayerSlots();
         }
 
         // ── CharCount 서버 초기화 / 재배분 ──
@@ -281,7 +278,7 @@ namespace Jun
             if (window != null)
                 window.DisplayMessage(message);
             else
-                LobbyManager.Instance?.AddChatMessage(message);
+                Debug.Log($"[Chat] {message}"); // ChattingWindow가 없는 씬에서는 로그로 fallback
         }
 
         // ── 캐릭터 선택 ──
