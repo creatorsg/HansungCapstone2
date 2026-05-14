@@ -796,7 +796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
   cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
-  battleSprite: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
+  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
@@ -1121,7 +1121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C002
   cardIcon: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
-  battleSprite: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
+  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:

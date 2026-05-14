@@ -298,7 +298,32 @@ namespace Jun
             if (manager == null) return;
             manager.TrySelectCharacter(netId, code, CharCount);
         }
+        
+        [Command]
+        public void CmdApplyConfirmedSelection(string[] heroCodes)
+        {
+            CharaterNum.Clear();
 
+            foreach (var code in heroCodes)
+            {
+                int legacyIndex =
+                    CharacterDatabase.Stats.TryGetValue(code, out var cd)
+                        ? cd.index
+                        : -1;
+
+                CharaterNum.Add(new Charater
+                {
+                    HeroIndex = legacyIndex,
+                    HeroCode  = code
+                });
+            }
+
+            Debug.Log(
+                $"[GameRoomPlayer] {PlayerNickname} 확정 캐릭터 저장 완료 " +
+                $"count={CharaterNum.Count}"
+            );
+        }
+        
         /// <summary>
         /// 캐릭터 선택 확정. 모든 플레이어가 완료되면 서버가 Home 씬으로 전환합니다.
         /// </summary>
@@ -311,6 +336,12 @@ namespace Jun
             var manager = NetworkManager.singleton as GameRoomManager;
             manager?.OnPlayerConfirmedSelection();
         }
+        
+        /// <summary>
+        /// 두개 작업이 다른 작업을 수행 global queue는 동시에 알아야할 정보
+        /// sync은 각자가 알아야할 로컬 정보를 처리하여 서버로 보냄
+        /// </summary>
+        
 
         /// <summary>
         /// 서버가 전역 큐 상태를 모든 클라이언트에 동기화할 때 호출합니다.
