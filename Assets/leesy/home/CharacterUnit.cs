@@ -145,6 +145,7 @@ namespace Lsy
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
         {
             if (!isOwned) return;
+            OnLocalInventoryChanged?.Invoke();
             RefreshUpgradeUI();
         }
 

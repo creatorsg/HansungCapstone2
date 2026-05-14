@@ -19,14 +19,10 @@ namespace Lsy
     {
         public static PlayerAccount LocalInstance;
 
-        /// <summary>濡쒖뺄 PlayerAccount媛 以鍮꾨릱??????GoldUI ??珥덇린?붿슜</summary>
         public static event Action<PlayerAccount> OnLocalAccountReady;
         public static event Action OnCharacterSwitched;
-
-        /// <summary>紐⑤뱺 PlayerAccount(濡쒖뺄+?먭꺽)媛 myHeroCodes媛 梨꾩썙吏???諛쒖깮 ??珥덉긽???꾩껜 濡쒕뱶??/summary>
         public static event Action<PlayerAccount> OnAnyAccountReady;
 
-        // ??? 怨⑤뱶 (?뚮젅?댁뼱 洹?? ??????????????????????????????????????
         [SyncVar(hook = nameof(OnCurrentGoldChanged))]
         public int currentGold;
 
@@ -37,8 +33,6 @@ namespace Lsy
             if (!isOwned) return;
             OnGoldChanged?.Invoke(newVal);
         }
-
-        // ??? 罹먮┃??愿由???????????????????????????????????????????????
         public int currentActiveIndex { get; private set; } = -1;
 
         public CharacterUnit currentSelectedCharacter;
@@ -48,26 +42,20 @@ namespace Lsy
 
         [SyncVar] public int myCharacterCount = 0;
 
-        /// <summary>?닿? 議곗쥌?섎뒗 罹먮┃?곗쓽 heroPos 紐⑸줉 ??珥덉긽???뚯쑀沅??먮떒??/summary>
         public readonly SyncList<int> myHeroPositions = new SyncList<int>();
 
-        /// <summary>myHeroPositions? 1:1 ??묓븯??heroCode 紐⑸줉 ??珥덉긽???대?吏 ?쒖떆??/summary>
         public readonly SyncList<string> myHeroCodes = new SyncList<string>();
 
-        // ?쒕쾭 ?꾩슜: ??connection???좏깮??PlayerData 紐⑸줉 (FinalHeroPos ???뺣젹)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
         private Dictionary<int, CharacterSaveData> savedCharacterData = new Dictionary<int, CharacterSaveData>();
 
-        // ??? 珥덇린?????????????????????????????????????????????????????
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            // myHeroCodes媛 ?섏쨷??梨꾩썙吏??뚮? ?鍮꾪빐 肄쒕갚 ?깅줉
             myHeroCodes.Callback += OnHeroCodesChanged;
 
-            // ?쒕쾭?먯꽌 ?대? ?곗씠?곌? ?덉쑝硫?(???ъ쭊???? 利됱떆 諛쒕룞
             if (myHeroCodes.Count > 0)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -80,7 +68,6 @@ namespace Lsy
 
         private void OnHeroCodesChanged(SyncList<string>.Operation op, int index, string oldItem, string newItem)
         {
-            // 理쒖큹 ?곗씠?곌? ?꾩쟾???ㅼ뼱???쒖젏(myHeroPositions怨??ш린 ?쇱튂)???대깽??諛쒖깮
             if (myHeroCodes.Count > 0 && myHeroCodes.Count == myHeroPositions.Count)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -98,7 +85,6 @@ namespace Lsy
         {
             if (myCharacterPrefabs == null || myCharacterPrefabs.Count == 0) return;
 
-            // ??connection???랁븳 紐⑤뱺 PlayerData瑜??섏쭛 (FinalHeroPos ???뺣젹)
             _myPlayerDatas.Clear();
             var allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
             Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: ?꾩껜 PlayerData {allPlayerDatas.Length}媛?諛쒓껄, ??connectionToClient={connectionToClient}");
@@ -124,7 +110,6 @@ namespace Lsy
             CharacterUnit activeUnit = newCharObj.GetComponent<CharacterUnit>();
             if (activeUnit == null) return;
 
-            // ??Spawn ?꾩뿉 Setup ???ㅽ룿 硫붿떆吏??heroPos/heroCode媛 ?щ컮瑜닿쾶 ?ы븿??
             if (_myPlayerDatas.Count > 0)
             {
                 activeUnit.SetupFromPlayerData(_myPlayerDatas[0]);
@@ -150,7 +135,6 @@ namespace Lsy
             TargetRpcRefreshUI(connectionToClient, currentActiveIndex);
         }
 
-        // ??? 罹먮┃???꾪솚 ??????????????????????????????????????????????
 
         public void SelectCharacter(int profileIndex)
         {
@@ -170,7 +154,6 @@ namespace Lsy
             if (currentActiveIndex == targetIndex) return;
             if (currentSelectedCharacter == null) return;
 
-            // ?꾩옱 罹먮┃???곹깭 ???
             if (currentActiveIndex != -1)
             {
                 CharacterSaveData backup = new CharacterSaveData();
@@ -188,7 +171,6 @@ namespace Lsy
 
             currentActiveIndex = targetIndex;
 
-            // ??罹먮┃???곗씠?곕줈 珥덇린??(怨⑤뱶??嫄대뱶由ъ? ?딆쓬)
             if (hasPlayerDatas)
             {
                 PlayerData targetPd = _myPlayerDatas[targetIndex];
@@ -202,7 +184,6 @@ namespace Lsy
                 Debug.Log($"<color=cyan>[?쒕쾭] {targetData.charName}?쇰줈 ?ㅼ솑 ?꾨즺! (?대갚)</color>");
             }
 
-            // ??λ맂 ?몃깽?좊━/?ㅽ궗 蹂듭썝
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
             currentSelectedCharacter.unlockedNodeIds.Clear();
@@ -247,7 +228,6 @@ namespace Lsy
             OnCharacterSwitched?.Invoke();
         }
 
-        // ??? NPC ?곹샇?묒슜 而ㅻ㎤??(怨⑤뱶 泥댄겕/李④컧 ?대떦) ????????????????
 
         [Command]
         public void CmdPurchaseTreeNode(string nodeId)
@@ -317,11 +297,6 @@ namespace Lsy
             return currentSelectedCharacter.characterName;
         }
 
-        /// <summary>
-        /// 罹먮┃?곗쓽 Lv1 ?몃뱶 4媛?湲곕낯 ?ㅽ궗)瑜?unlockedNodeIds???먮룞 異붽??⑸땲??
-        /// 罹먮┃??珥덇린 ?ㅽ룿 吏곹썑, 洹몃━怨???罹먮┃?곕줈 ?ㅼ솑??吏곹썑(諛깆뾽 ?놁쓣 ?? ?몄텧?섏꽭??
-        /// SyncHashSet.Add ??硫깅벑?섎?濡?以묐났 ?몄텧?섏뼱???덉쟾?⑸땲??
-        /// </summary>
         [Server]
         private void AutoUnlockLv1Nodes(CharacterUnit unit)
         {
@@ -388,11 +363,6 @@ namespace Lsy
             currentSelectedCharacter.ApplyInformantUpgrade(targetSkillName, npcLevel);
         }
 
-        // ??? ?ы띁 ?????????????????????????????????????????????????????
-
-        /// <summary>
-        /// DontDestroyOnLoad濡??좎??섎뒗 PlayerData 以???connection???뚯쑀??寃껋쓣 諛섑솚?⑸땲??
-        /// </summary>
         [Server]
         private PlayerData FindPlayerDataForConnection()
         {

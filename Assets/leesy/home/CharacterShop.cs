@@ -22,6 +22,47 @@ namespace Lsy
             return null;
         }
 
+        [Server]
+        private bool TryGetWeaponDataById(string weaponId, out WeaponUpgradeData data)
+        {
+            foreach (var row in FindObjectsByType<BlacksmithWeaponRow>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (row == null || row.weaponData == null) continue;
+                if (row.weaponData.weaponId != weaponId) continue;
+                data = row.weaponData;
+                return true;
+            }
+
+            data = null;
+            return false;
+        }
+
+        [Server]
+        private string ResolveWeaponInventoryKey(string weaponId)
+        {
+            if (TryGetWeaponDataById(weaponId, out WeaponUpgradeData data))
+            {
+                if (!string.IsNullOrWhiteSpace(data.inventoryItemName)) return data.inventoryItemName;
+                if (!string.IsNullOrWhiteSpace(data.weaponName)) return data.weaponName;
+            }
+
+            return weaponId;
+        }
+
+        [Server]
+        private string ResolveWeaponIdFromInventoryKey(string key)
+        {
+            foreach (var row in FindObjectsByType<BlacksmithWeaponRow>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (row == null || row.weaponData == null) continue;
+                if (row.weaponData.weaponId == key) return row.weaponData.weaponId;
+                if (row.weaponData.weaponName == key) return row.weaponData.weaponId;
+                if (row.weaponData.inventoryItemName == key) return row.weaponData.weaponId;
+            }
+
+            return key;
+        }
+
         // ─── 커맨드 ────────────────────────────────────────────────────
 
         [Command(requiresAuthority = false)]
@@ -120,6 +161,9 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
+                string weaponInventoryKey = ResolveWeaponInventoryKey(weaponId);
+                if (nodeIndex == 0)
+                    unit.AddItem(weaponInventoryKey, 1);
                 Debug.Log($"<color=green>[CharacterShop][Server] 강화 성공! weaponId:{weaponId}, node:{nodeIndex}</color>");
                 SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}단계 강화 완료!");
             }
@@ -189,8 +233,18 @@ namespace Lsy
                 return;
             }
 
-            unit.selectedWeaponId = itemName;
-            SendNotification(sender, $"[{itemName}] 장착 완료.");
+            string resolvedWeaponId = ResolveWeaponIdFromInventoryKey(itemName);
+
+            if (unit.selectedWeaponId == resolvedWeaponId)
+            {
+                unit.selectedWeaponId = "";
+                SendNotification(sender, $"[{itemName}] 장착 해제.");
+            }
+            else
+            {
+                unit.selectedWeaponId = resolvedWeaponId;
+                SendNotification(sender, $"[{itemName}] 장착 완료.");
+            }
         }
 
         // ─── 알림 ──────────────────────────────────────────────────────

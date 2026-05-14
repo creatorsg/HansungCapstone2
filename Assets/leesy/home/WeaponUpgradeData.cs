@@ -8,6 +8,7 @@ namespace Lsy
     {
         public string weaponId;
         public string weaponName;
+        public string inventoryItemName;
 
         public List<WeaponUpgradeNode> nodes = new List<WeaponUpgradeNode>();
     }

@@ -15,6 +15,10 @@ namespace Lsy
         // ItemManager.allItems에 아이템이 모두 등록되어 있다면 비워도 됩니다
         [Header("아이템 DB 폴백 (ItemManager 미사용 시)")]
         public List<ItemData> allItemDatabase = new List<ItemData>();
+        private readonly HashSet<string> _equipmentIds = new HashSet<string>();
+        private readonly Dictionary<string, string> _equipKeyToWeaponId = new Dictionary<string, string>();
+        private CharacterUnit _lastCharacter;
+        private string _visualEquippedItemKey = null;
 
         private void Awake()
         {
@@ -33,10 +37,16 @@ namespace Lsy
 
         public void RefreshInventory()
         {
-            // 서버에서 받아온다: 현재 캐릭터 인벤토리/장착 상태(myInventory, selectedWeaponId)
+            // 서버에서 받아온다: 현재 캐릭터 인벤토리 상태(myInventory)
             if (PlayerAccount.LocalInstance == null || PlayerAccount.LocalInstance.currentSelectedCharacter == null) return;
 
             CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
+            if (_lastCharacter != myChar)
+            {
+                _lastCharacter = myChar;
+                _visualEquippedItemKey = null;
+            }
+            RefreshEquipmentIds();
 
             foreach (Transform child in slotContainer)
             {
@@ -61,23 +71,31 @@ namespace Lsy
 
                         if (foundData != null)
                         {
-                            bool isEquipped = myChar.selectedWeaponId == foundData.itemName;
+                            bool isEquipment = IsEquipmentItem(item.itemName);
+                            bool isEquipped = isEquipment && _visualEquippedItemKey == item.itemName;
 
-                            slotScript.Setup(foundData, item.amount, () =>
+                            if (isEquipment)
                             {
-                                CharacterShop shop = myChar.GetComponent<CharacterShop>();
-                                if (shop == null)
+                                slotScript.Setup(foundData, item.amount, true, isEquipped, () =>
                                 {
-                                    Debug.LogWarning("[InventoryUI] CharacterShop 컴포넌트를 찾지 못했습니다.");
-                                    return;
-                                }
+                                    CharacterShop shop = myChar.GetComponent<CharacterShop>();
+                                    if (shop == null)
+                                    {
+                                        Debug.LogWarning("[InventoryUI] CharacterShop 컴포넌트를 찾지 못했습니다.");
+                                        return;
+                                    }
 
-                                Debug.Log($"<color=yellow>{foundData.itemName} 장착 요청</color>");
-                                // 서버로 보낸다: 장착 요청 아이템(itemName)
-                                shop.CmdEquipItem(foundData.itemName);
-                            });
+                                    if (_visualEquippedItemKey == item.itemName) _visualEquippedItemKey = null;
+                                    else _visualEquippedItemKey = item.itemName;
 
-                            slotScript.ShowEquipOutline(isEquipped);
+                                    shop.CmdEquipItem(item.itemName);
+                                    RefreshInventory();
+                                });
+                            }
+                            else
+                            {
+                                slotScript.Setup(foundData, item.amount, false, false, null);
+                            }
                         }
                         else
                         {
@@ -87,6 +105,38 @@ namespace Lsy
                 }
             }
         }
+
+        private void RefreshEquipmentIds()
+        {
+            _equipmentIds.Clear();
+            _equipKeyToWeaponId.Clear();
+
+            var rows = FindObjectsByType<BlacksmithWeaponRow>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var row in rows)
+            {
+                if (row == null || row.weaponData == null) continue;
+                if (string.IsNullOrWhiteSpace(row.weaponData.weaponId)) continue;
+                AddEquipmentKey(row.weaponData.weaponId, row.weaponData.weaponId);
+                if (!string.IsNullOrWhiteSpace(row.weaponData.weaponName))
+                    AddEquipmentKey(row.weaponData.weaponName, row.weaponData.weaponId);
+                if (!string.IsNullOrWhiteSpace(row.weaponData.inventoryItemName))
+                    AddEquipmentKey(row.weaponData.inventoryItemName, row.weaponData.weaponId);
+            }
+        }
+
+        private void AddEquipmentKey(string key, string weaponId)
+        {
+            if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(weaponId)) return;
+            _equipmentIds.Add(key);
+            _equipKeyToWeaponId[key] = weaponId;
+        }
+
+        private bool IsEquipmentItem(string itemName)
+        {
+            if (string.IsNullOrWhiteSpace(itemName)) return false;
+            return _equipmentIds.Contains(itemName);
+        }
+
     }
 }
 
