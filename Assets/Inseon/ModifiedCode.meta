@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: a7acfe861cda7a3489361fe41611d509
+=======
+guid: 9667a54eaf7d67a47bdcdd7b88d46610
+>>>>>>> prepare2_won
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
