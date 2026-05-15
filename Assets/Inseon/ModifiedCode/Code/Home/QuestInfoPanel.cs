@@ -94,24 +94,19 @@ public class QuestInfoPanel : MonoBehaviour
             return;
         }
 
+        // QuestInfoPanel은 데이터 설정만 담당합니다.
+        // 실제 씬 전환은 ReadyOrStartButton(또는 BattleStartBtn)이 단독으로 처리합니다.
+        // 두 곳에서 ServerChangeScene을 호출하면 "already in progress" 에러가 발생합니다.
         SelectedQuest.Current = _currentQuest;
 
-        // 호스트/서버 : Mirror 정식 흐름으로 모든 클라이언트 씬 동기 전환
+        // 호스트라면 GameplayScene을 미리 갱신해 ReadyOrStartButton이 올바른 씬을 읽도록 합니다.
         if (NetworkServer.active)
         {
-            NetworkManager.singleton.ServerChangeScene(_currentQuest.battleSceneName);
-            return;
+            var rm = NetworkManager.singleton as Jun.GameRoomManager;
+            if (rm != null)
+                rm.GameplayScene = _currentQuest.battleSceneName;
         }
 
-        // 클라이언트 : 호스트만 시작 가능 (leesy의 Ready 시스템과 동일 규칙)
-        if (NetworkClient.isConnected)
-        {
-            Debug.LogWarning("[QuestInfoPanel] 클라이언트는 직접 씬 전환 불가 — 호스트가 시작해야 함");
-            return;
-        }
-
-        // 네트워크 미연결 : 오프라인 테스트 폴백
-        Debug.Log($"[QuestInfoPanel] 오프라인 모드 — SceneManager.LoadScene({_currentQuest.battleSceneName})");
-        SceneManager.LoadScene(_currentQuest.battleSceneName);
+        Debug.Log($"[QuestInfoPanel] 퀘스트 선택 완료: {_currentQuest.battleSceneName}. ReadyOrStartButton이 씬 전환을 담당합니다.");
     }
 }

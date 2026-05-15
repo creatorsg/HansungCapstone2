@@ -63,9 +63,13 @@ public class HideoutManager : NetworkBehaviour
     }
 
     [Server]
-    public void CmdGoToBattleScene()
+    public void CmdGoToBattleScene(string sceneName)
     {
-        NetworkManager.singleton.ServerChangeScene("GamePlay");
+        var rm = NetworkManager.singleton as Jun.GameRoomManager;
+        if (rm != null)
+            rm.GameplayScene = sceneName;
+
+        NetworkManager.singleton.ServerChangeScene(sceneName);
     }
 
     /// <summary>

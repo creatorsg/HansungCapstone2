@@ -3,19 +3,18 @@ using UnityEngine.SceneManagement;
 using Mirror;
 using Lsy;
 
+/// <summary>
+/// 씬 이름은 DistrictHover.OnPointerClick에서 GameRoomManager.GameplayScene에 자동 등록됩니다.
+/// 이 버튼은 GameplayScene을 읽어 실행만 합니다.
+/// </summary>
 public class BattleStartBtn : MonoBehaviour
 {
-    [SerializeField] private string battleSceneName = "00slum";
-
     public void GameStartBtn()
     {
-        if (string.IsNullOrEmpty(battleSceneName))
-        {
-            Debug.LogWarning("[BattleStartBtn] battleSceneName이 비어있습니다.");
-            return;
-        }
+        var rm = NetworkManager.singleton as Jun.GameRoomManager;
+        string targetScene = rm?.GameplayScene;
 
-        // 클라이언트가 누르면 시작이 아니라 준비 토글로 동작
+        // 클라이언트: 준비 토글
         if (NetworkClient.isConnected && !NetworkServer.active)
         {
             if (ReadySystem.Instance != null && CharacterSlotManager.TryGetLocalNetId(out uint myNetId))
@@ -28,14 +27,23 @@ public class BattleStartBtn : MonoBehaviour
             return;
         }
 
-        // 호스트는 정상적으로 게임 시작(씬 전환)
+        // 호스트: 씬 전환
         if (NetworkServer.active && NetworkManager.singleton != null)
         {
-            NetworkManager.singleton.ServerChangeScene(battleSceneName);
+            if (string.IsNullOrEmpty(targetScene))
+            {
+                Debug.LogWarning("[BattleStartBtn] GameplayScene이 비어있습니다. 지도에서 영지를 먼저 클릭하세요.");
+                return;
+            }
+
+            NetworkManager.singleton.ServerChangeScene(targetScene);
             return;
         }
 
-        // 싱글 플레이 fallback
-        SceneManager.LoadScene(battleSceneName);
+        // 오프라인 테스트 fallback
+        if (!string.IsNullOrEmpty(targetScene))
+            SceneManager.LoadScene(targetScene);
+        else
+            Debug.LogWarning("[BattleStartBtn] GameplayScene이 비어있습니다.");
     }
 }

@@ -221,7 +221,7 @@ namespace Jun {
 
             _playerDataPreSpawned = true;
 
-            Debug.Log($"[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → Home 씬으로 전환 (HeroNum={HeroNum})");
+            Debug.Log($"[GameRoomManager] 모든 플레이어 캐릭터 선택 완료 → Home씬으로 이동 (HeroNum={HeroNum})");
             ServerChangeScene(HomeScene);
         }
 
@@ -482,6 +482,28 @@ namespace Jun {
                 // base.OnServerReady 전체를 건너뛰면 SceneLoadedForPlayer 체인
                 // (→ OnRoomServerCreateGamePlayer 중복 호출)은 실행되지 않으면서
                 // SyncList/SyncVar 최신 상태는 클라이언트에 정상 전달됩니다.
+
+                // [Home 경로 버그 수정]
+                // Home → Battle 경로에서 conn.identity 가 PlayerAccount / CharacterUnit 으로
+                // 교체된 뒤 Home 씬이 언로드되면 해당 오브젝트가 파괴되어 conn.identity = null.
+                // Mirror SetClientReady 내부: "if (conn.identity != null) SpawnObserversForConnection"
+                // → identity 가 null 이면 SpawnObserversForConnection 이 스킵되어
+                //   DontDestroyOnLoad PlayerData 가 클라이언트에게 전달되지 않음.
+                // GameRoomPlayer 는 DontDestroyOnLoad 로 항상 생존하므로
+                // ReplacePlayerForConnection 으로 identity 를 복원한다.
+                if (conn.identity == null)
+                {
+                    foreach (var slot in roomSlots)
+                    {
+                        if (slot is GameRoomPlayer rp && rp.connectionToClient == conn)
+                        {
+                            Debug.Log($"[GameRoomManager] conn.identity null 감지 → GameRoomPlayer(netId={rp.netId}) 로 identity 복원");
+                            NetworkServer.ReplacePlayerForConnection(conn, rp.gameObject, ReplacePlayerOptions.KeepAuthority);
+                            break;
+                        }
+                    }
+                }
+
                 NetworkServer.SetClientReady(conn);
 
                 Debug.Log($"[GameRoomManager] OnServerReady: SceneLoadedForPlayer 차단 (SetClientReady 수동 호출). conn={conn}, scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
