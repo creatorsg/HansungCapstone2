@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/TextMesh Pro/Examples & Extras/Scripts/SkewTextExample.cs.meta
+guid: d412675cfb3441efa3bf8dcd9b7624dc
+timeCreated: 1458801336
+========
+guid: 53d91f98a2664f5cb9af11de72ac54ec
+timeCreated: 1487197841
+>>>>>>>> 1a0e02e2bc7a0ba114394ebe25bd9120d346e1ab:Assets/TextMesh Pro/Examples & Extras/Scripts/ChatController.cs.meta
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -5,9 +5,42 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+<<<<<<< HEAD
   - enabled: 0
     path: Assets/Scenes/glue.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+=======
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Login.unity
+    guid: 9361a38f8b41b814fb88913818127298
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Lobby.unity
+    guid: fe2dc269b69a24c4f8449d7387577afc
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Room.unity
+    guid: caa2015d96dfe8e4fab2d61e206c1372
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/CharacterSelect.unity
+    guid: 87dac11d330ba3341859235cebd824f3
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Home.unity
+    guid: af8ec141de41c884299bd3e020c8c9c1
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Cathedral.unity
+    guid: cc0ff7797367d4d46b580d685620be1e
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Harbor.unity
+    guid: 8f8aea4a942c52248bab888e15992410
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Industrial.unity
+    guid: 4f3d097514a3f1a4096fda87ea49b05d
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Noble.unity
+    guid: 460be84b24b66d647a6aadcffbd8e30e
+  - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Slum.unity
+    guid: bd0b854a879576a48bfe2a37ab0fd2ad
+>>>>>>> prepare2_won
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
