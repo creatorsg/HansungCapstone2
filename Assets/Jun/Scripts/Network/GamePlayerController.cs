@@ -39,7 +39,8 @@ namespace Jun
         public void InjectData(PlayerData data)
         {
             var info = data.Info;
-            info.MaxHp = info.Hp; 
+            info.MaxHp = info.Hp;
+            info.MaxSan = info.San;
             this.Info = info;
             this.PingIndex = data.PingIndex;
             this.FinalHeroIndex = data.FinalHeroIndex;
@@ -210,7 +211,13 @@ namespace Jun
             info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
             Info = info; // SyncVar ���Ҵ��ؾ� Ŭ���̾�Ʈ�� ����ȭ��
         }
-
+        [Server]
+        public void ApplySanChange(float delta)
+        {
+            var info = Info;
+            info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
+            Info = info; 
+        }
         [Server]
         public void AddEffect(ActiveEffect effect)
         {

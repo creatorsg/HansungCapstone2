@@ -255,6 +255,7 @@ GameObject:
   - component: {fileID: 4577554797184198673}
   - component: {fileID: 1995574499092294214}
   - component: {fileID: 4140751340168227031}
+  - component: {fileID: 985979466548681422}
   m_Layer: 5
   m_Name: Enemy
   m_TagString: Untagged
@@ -390,10 +391,12 @@ MonoBehaviour:
     Lvl: 0
     Exp: 0
     Hp: 10
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -403,6 +406,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
   PingLayout: {fileID: 5640175735705552485}
   State: 0
 --- !u!114 &4577554797184198673
@@ -429,10 +433,12 @@ MonoBehaviour:
     Lvl: 0
     Exp: 0
     Hp: 0
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -442,6 +448,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
 --- !u!114 &1995574499092294214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -475,6 +482,23 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &985979466548681422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5956674689954456675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6b10c7d57e61548bbcf6f1b02de4ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.EnemyAI
+  _skills:
+  - Skill: {fileID: 0}
+    Weight: 0
+  - Skill: {fileID: 0}
+    Weight: 0
 --- !u!1 &8821452043238540888
 GameObject:
   m_ObjectHideFlags: 0

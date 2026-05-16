@@ -22,6 +22,8 @@ namespace Jun
         private float _currentHp;
         private float _maxHp;
 
+        private int _currentSan;
+        private int _maxSan;
         public void Start()
         {
             anim = GetComponent<Animator>();
@@ -33,10 +35,13 @@ namespace Jun
             if (_info != null)
             {
                 if (_info.MaxHp <= 0f) _info.MaxHp = info.Hp;
+                if (_info.MaxSan <= 0f) _info.MaxSan = info.San;
                 if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
             }
             _currentHp = info.Hp;
-            _maxHp     = info.MaxHp > 0f ? info.MaxHp : info.Hp;
+            _maxHp = info.MaxHp > 0f ? info.MaxHp : info.Hp;
+            _currentSan = info.San;
+            _maxSan = info.MaxSan > 0f ? info.MaxSan : info.San;
         }
 
         public void SelectSkill(int index)

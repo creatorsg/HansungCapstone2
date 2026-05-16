@@ -253,7 +253,7 @@ public class RootingSystem : NetworkBehaviour
         if (rm != null)
             rm.OnRoundCleared();
         else
-            NetworkManager.singleton.ServerChangeScene("Home 1");
+            NetworkManager.singleton.ServerChangeScene("Home");
     }
     //占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙
     IEnumerator RockPaperScissors(List<int> RPS)

@@ -276,7 +276,7 @@ namespace Jun
                 Debug.Log("[BattleManager] 전멸 — defeat");
                 var rmFail = RoundManager.Instance;
                 if (rmFail != null) rmFail.OnAllPlayersDead();
-                else NetworkManager.singleton.ServerChangeScene("Home 1");
+                else NetworkManager.singleton.ServerChangeScene("Home");
                 return;
             }
 

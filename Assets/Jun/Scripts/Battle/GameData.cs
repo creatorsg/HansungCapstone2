@@ -14,6 +14,14 @@ namespace Jun
         Enforce     // 자기강화
     }
 
+    public enum ItemType
+    {
+        HPHeal,
+        SanHeal,
+        BleedHeal,
+        PoisonHeal,
+        StunHeal
+    }
     // 유닛 행동 상태
     public enum UnitState
     {
@@ -149,10 +157,12 @@ namespace Jun
         public float Hp;        // 현재 HP
         public float MaxHp;     // 최대 HP (SetUp 시 초기화)
 
+        public int San;         // 현재 정신력
+        public int MaxSan;         // 최대 정신력 (SetUp 시 초기화)
+
         public int Atk;         // 공격력
         public int Def;         // 방어력
         public int Spd;         // 속도 (턴 순서)
-        public int San;         // 정신력
         public int Crit;        // 치명타 확률 (%)
         public int Ctm;         // 치명타 배율 추가 (%)  ex) 50 → 1.5배
         public int Dodge;       // 회피율 (%)
@@ -206,7 +216,14 @@ namespace Jun
     public class ItemInfo
     {
         public string Name;
+        public ItemType Type;
         public int TagetNum;
+        public Sprite icon;
+        public string anim;
+
+        [UnityEngine.TextArea(2, 4)]
+        public string description;
+
         public float HealRate;          // 회복 비율
 
         // 신 시스템: 자동 타깃 라우팅 (Self / AllAllies / SingleAlly 등)
