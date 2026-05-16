@@ -40,6 +40,10 @@ PrefabInstance:
       propertyPath: Info.Spd
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].DamageRate
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2427257720350013467, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
       propertyPath: _assetId
       value: 3896285702

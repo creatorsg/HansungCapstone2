@@ -33,9 +33,9 @@ public class PlayerData : NetworkBehaviour
         base.OnStartClient();
 
         // Hideout 씬이 활성화되어 있을 때만 UI 업데이트
-        if (HideoutManager.Instance != null && FinalHeroPos != -1 && !string.IsNullOrEmpty(FinalHeroCode))
+        if (HideoutManager.Instance != null && FinalHeroPos != -1 && FinalHeroIndex >= 0)
         {
-            HideoutManager.Instance.UpdateHideoutUILocal(FinalHeroPos, FinalHeroCode);
+            HideoutManager.Instance.UpdateHideoutUILocal(FinalHeroPos, FinalHeroIndex);
         }
     }
 

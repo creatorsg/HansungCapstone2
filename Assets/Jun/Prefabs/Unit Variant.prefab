@@ -22,18 +22,94 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
       propertyPath: Info.Skills.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Name
       value: q
       objectReference: {fileID: 0}
     - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
       propertyPath: Info.Skills.Array.data[0].anim
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].Type
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].anim
+      value: Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].Name
+      value: a
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].Type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].anim
+      value: Attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].HealRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
       propertyPath: Info.Skills.Array.data[0].TagetNum
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].TagetNum
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].TagetNum
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].DamageRate
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].EffectType
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].DamageRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].EffectType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].DamageRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].EffectValue
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].EffectValue
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].EffectDuration
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517143502479635723, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].EffectDuration
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2427257720350013467, guid: 2ba4cc0cc9213824580ae57af4f9a92c, type: 3}
