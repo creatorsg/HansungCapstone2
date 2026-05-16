@@ -1,4 +1,5 @@
 using Mirror;
+//using PlayFab.EconomyModels;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace Jun
         public List<Button> ItemBtn;
         public List<Button> EnemyBtn;  //�� ��ư
         public Slider HpBar;
+        public Slider SanBar;
         public Image Sel; //�ڽ��� �����϶� ��Ÿ���� �̹���
         void Awake()
         {
@@ -26,6 +28,11 @@ namespace Jun
             if (HpBar != null)
             {
                 foreach (var img in HpBar.GetComponentsInChildren<Image>(true))
+                    img.raycastTarget = false;
+            }
+            if (SanBar != null)
+            {
+                foreach (var img in SanBar.GetComponentsInChildren<Image>(true))
                     img.raycastTarget = false;
             }
             if (Sel != null)
@@ -50,10 +57,13 @@ namespace Jun
                 if (btn != null) btn.interactable = state;
             }
         }
-        public void PlDamaged(float currentHp)
+        public void PlHPChanged(float currentHp)
         {
             HpBar.value = currentHp;
-
+        }
+        public void PlSanChanged(float currentSan)
+        {
+            SanBar.value = currentSan;
         }
 
         public void SkillAnim(string skill)

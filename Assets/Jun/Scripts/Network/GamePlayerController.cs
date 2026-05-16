@@ -109,6 +109,7 @@ namespace Jun
             {
                 _model.SelectItem(index);
                 _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                Debug.Log("Item selection");
             }
         }
 
@@ -193,7 +194,7 @@ namespace Jun
         // ���� ����
         public void PlDamaged(float Attack)
         {
-            _view.PlDamaged(_model.PlDamaged(Attack) / Info.MaxHp);
+            _view.PlHPChanged(_model.PlDamaged(Attack) / Info.MaxHp);
 
         }
 
@@ -202,7 +203,7 @@ namespace Jun
         public void RpcShowDamage(float damage)
         {
             if (_view != null && Info != null && Info.MaxHp > 0f)
-                _view.PlDamaged(Info.Hp / Info.MaxHp);
+                _view.PlHPChanged(Info.Hp / Info.MaxHp);
         }
         [Server]
         public void ApplyHpChange(float delta)
@@ -210,13 +211,15 @@ namespace Jun
             var info = Info;
             info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
             Info = info; // SyncVar ���Ҵ��ؾ� Ŭ���̾�Ʈ�� ����ȭ��
+            _view.PlHPChanged(info.Hp);
         }
         [Server]
         public void ApplySanChange(float delta)
         {
             var info = Info;
             info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
-            Info = info; 
+            Info = info;
+            _view.PlSanChanged(info.Hp);
         }
         [Server]
         public void AddEffect(ActiveEffect effect)

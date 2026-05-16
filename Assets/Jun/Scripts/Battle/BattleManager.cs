@@ -29,7 +29,7 @@ namespace Jun
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
-        [SerializeField] private List<Button> _items; public List<Button> Items => _items;
+        [SerializeField] private List<Button> _itemBTN; public List<Button> ItemsBTN => _itemBTN;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
         [SerializeField] private TextMeshProUGUI _san; public TextMeshProUGUI San => _san;
         [SerializeField] private TextMeshProUGUI _acc; public TextMeshProUGUI Acc => _acc;
@@ -70,8 +70,6 @@ namespace Jun
 
         [Header("�� �ý���")]
         [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
-
-
 
         public int Order = -1;
 
@@ -472,7 +470,17 @@ namespace Jun
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
 
-                // ��ų �����ܵ� ���ֿ� �°� ���� ����
+                // 여기서 스킬 아이콘이나 이런 거 바꾸기
+                // _skillBTN[i].image.sprite = unit.SkillSprites[i];
+
+            }
+            for (int i = 0; i < _itemBTN.Count; i++)
+            {
+                int index = i;
+                _itemBTN[i].onClick.RemoveAllListeners();
+                _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+
+                // 여기서 아이템 아이콘이나 이런 거 바꾸기
                 // _skillBTN[i].image.sprite = unit.SkillSprites[i];
 
             }

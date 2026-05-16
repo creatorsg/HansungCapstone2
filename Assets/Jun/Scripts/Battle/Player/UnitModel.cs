@@ -91,8 +91,10 @@ namespace Jun
             _targetNum          = item.TagetNum;
             _selectedTargetType = item.Target;
             _isEnemy            = false;
-
-            if (IsAutoTarget(_selectedTargetType)) FireSelection();
+            // 아이템은 우선 자기자신한테만 쓸 수 있게끔 구현
+            //if (IsAutoTarget(_selectedTargetType)) FireSelection();
+            _selectedTarget.Add(BattleManager.Instance._players.IndexOf(this.GetComponent<GamePlayerController>())); 
+            FireSelection();
         }
 
         public void SelectEnemy(int index)

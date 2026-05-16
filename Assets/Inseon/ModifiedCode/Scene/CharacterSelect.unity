@@ -6199,7 +6199,23 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items: []
+  items:
+  - Name: 1
+    Type: 0
+    TagetNum: 1
+    icon: {fileID: 0}
+    anim: Attack
+    description: 
+    HealRate: 10
+    Target: 0
+  - Name: 2
+    Type: 0
+    TagetNum: 1
+    icon: {fileID: 0}
+    anim: Attack
+    description: 
+    HealRate: 10
+    Target: 0
   characterImage: {fileID: 801427239}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 805157006}
