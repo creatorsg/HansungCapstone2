@@ -1905,6 +1905,8 @@ MonoBehaviour:
   - {fileID: 1140889733}
   - {fileID: 1463521779}
   - {fileID: 1607407617}
+  _playerImages: []
+  _battleUnitPrefabs: []
   _unitPanel: {fileID: 1768533982}
   _charaterIMG: {fileID: 2129562758}
   _skillBTN:
@@ -4840,6 +4842,10 @@ PrefabInstance:
     - target: {fileID: 6609481574922999214, guid: 4225f4394470cdf4ab097340b39ca071, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.000091552734
+      objectReference: {fileID: 0}
+    - target: {fileID: 7322511714627083666, guid: 4225f4394470cdf4ab097340b39ca071, type: 3}
+      propertyPath: Info.Atk
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7352989018447791791, guid: 4225f4394470cdf4ab097340b39ca071, type: 3}
       propertyPath: m_AnchorMax.y
@@ -8097,6 +8103,10 @@ PrefabInstance:
     - target: {fileID: 1525743452915183674, guid: e3e0436a063491e4d812302ee56e9358, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -26.309792
+      objectReference: {fileID: 0}
+    - target: {fileID: 2106061662978562246, guid: e3e0436a063491e4d812302ee56e9358, type: 3}
+      propertyPath: Info.Atk
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2211235508870300667, guid: e3e0436a063491e4d812302ee56e9358, type: 3}
       propertyPath: m_AnchorMax.y

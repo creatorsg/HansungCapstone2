@@ -21,22 +21,51 @@ namespace Jun
                 foreach (int targetIdx in targets)
                 {
                     if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
+                    float healAmount = 0f;
 
-                    float healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, item.HealRate);
-                    target.ApplyHpChange(healAmount);
-                    Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} HP");
-
-                    manager.RpcShowCombatResult(new CombatResult
-                    {
-                        isHit = true,
-                        isCrit = false,
-                        value = healAmount,
-                        targetIndex = targetIdx,
-                        isEnemy = false
-                    });
+                    var info = target.Info;         
+                    switch (item.Type)
+                    { 
+                        case ItemType.HPHeal:
+                            healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, item.HealRate);
+                            target.ApplyHpChange(healAmount);
+                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} HP");
+                            break;
+                        case ItemType.SanHeal:
+                            healAmount = CombatCalculator.CalcHeal(target.Info.MaxSan, item.HealRate);
+                            target.ApplySanChange(healAmount);
+                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} San");
+                            break;
+                        // 상태이상 회복 하는 거 해당하는 상태이상 PlayerInfo에서 지우기
+                        case ItemType.BleedHeal:
+                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                if (info.Statuses[i].Type == StatusType.Bleed)
+                                    info.Statuses.RemoveAt(i);
+                            target.Info = info;
+                            break;
+                        case ItemType.PoisonHeal:
+                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                if (info.Statuses[i].Type == StatusType.Poison)
+                                    info.Statuses.RemoveAt(i);
+                            target.Info = info;
+                            break;
+                        case ItemType.StunHeal:
+                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                if (info.Statuses[i].Type == StatusType.Stun)
+                                    info.Statuses.RemoveAt(i);
+                            target.Info = info;
+                            break;
+                    }
                 }
-
                 CloseEnemyPanel(manager);
+                // 애니메이션이 없을때도 턴 종료
+                if (!string.IsNullOrEmpty(item.anim))
+                    caster.RpcPlaySkillAnim(item.anim);
+                else
+                {
+                    caster.MyTurn(false);
+                    BattleManager.Instance.QueueNextTurn();
+                }
                 return;
             }
 
