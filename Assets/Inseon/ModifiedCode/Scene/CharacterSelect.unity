@@ -796,7 +796,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
   cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
-  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
+  battleSprite: {fileID: -4991079725121273491, guid: 09627a67dcc44d0409ae7e48e00a45aa, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
@@ -1030,7 +1030,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1120,8 +1120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C002
-  cardIcon: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
-  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
+  cardIcon: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
+  battleSprite: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
@@ -2679,10 +2679,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2024941243}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -0.9375}
-  m_SizeDelta: {x: 100, y: 98.125}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801427239
 MonoBehaviour:
@@ -2704,7 +2704,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
+  m_Sprite: {fileID: -2007969409190066755, guid: 41832fb6c4702fd4ca4da58e6564cd54, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3897,7 +3897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C004
-  cardIcon: {fileID: 4923159571906479061, guid: 768a85fee8512c44fb9d5aeea238348c, type: 3}
+  cardIcon: {fileID: 2648219815020983868, guid: aab1ca1ebcc4fce49b4ecb3a7e57e961, type: 3}
   battleSprite: {fileID: 4923159571906479061, guid: 585475402fc5de341a89f808bca5145e, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
@@ -4740,7 +4740,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
+  m_Sprite: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5337,7 +5337,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 4923159571906479061, guid: 585475402fc5de341a89f808bca5145e, type: 3}
+  m_Sprite: {fileID: 2498668864523337785, guid: 6759e10bea941904e9f3d454dec537ef, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5945,7 +5945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C001
-  cardIcon: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
+  cardIcon: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
   battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
