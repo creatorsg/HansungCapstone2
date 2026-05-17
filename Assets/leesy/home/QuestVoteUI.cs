@@ -4,13 +4,12 @@ using UnityEngine;
 
 namespace Lsy
 {
-    // [수정] 퀘스트창 내부 표시 전용 UI. 버튼/루트 활성 제어는 QuestVoteController가 담당.
     public class QuestVoteUI : MonoBehaviour
     {
         [Header("UI text")]
         [SerializeField] private TextMeshProUGUI timerText;
         [SerializeField] private TextMeshProUGUI countText;
-        [SerializeField] private TextMeshProUGUI resultText;
+        [SerializeField] private TextMeshProUGUI stageNameText;
 
         private void OnEnable()
         {
@@ -45,7 +44,7 @@ namespace Lsy
                 if (countText != null) countText.gameObject.SetActive(false);
                 if (countText != null) countText.text = string.Empty;
                 if (timerText != null) timerText.text = string.Empty;
-                if (resultText != null) resultText.text = string.Empty;
+                if (stageNameText != null) stageNameText.text = string.Empty;
                 return;
             }
 
@@ -56,9 +55,8 @@ namespace Lsy
             if (!vote.VoteInProgress && timerText != null)
                 timerText.text = string.Empty;
 
-            // [수정] 투표 중에만 고정된 districtType 표시
-            if (resultText != null)
-                resultText.text = vote.VoteInProgress ? vote.SelectedDistrictType : string.Empty;
+            if (stageNameText != null)
+                stageNameText.text = vote.VoteInProgress ? vote.SelectedStageName : string.Empty;
         }
     }
 }

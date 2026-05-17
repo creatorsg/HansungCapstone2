@@ -72,6 +72,16 @@ namespace Lsy
                     _rejectImage = rejectButton.targetGraphic as Image;
                 rejectButton.transition = Selectable.Transition.None;
             }
+
+            // [수정] 참조 실수(부모-자식) 경고
+            if (hostVoteStartButtonRoot != null && clientVotePanelRoot != null)
+            {
+                if (clientVotePanelRoot.transform.IsChildOf(hostVoteStartButtonRoot.transform) ||
+                    hostVoteStartButtonRoot.transform.IsChildOf(clientVotePanelRoot.transform))
+                {
+                    Debug.LogWarning("[QuestVoteController] hostVoteStartButtonRoot/clientVotePanelRoot is parent-child. Split them.");
+                }
+            }
         }
 
         private void OnEnable()
@@ -91,7 +101,6 @@ namespace Lsy
 
         private void Update()
         {
-            // [수정] 이벤트 누락 대비 폴링 동기화
             RefreshState();
         }
 
@@ -194,6 +203,14 @@ namespace Lsy
             SetActiveSafe(clientVotePanelRoot, false);
             SetClientVoteInteractable(false);
             _submitted = false;
+
+            // [수정] 투표 성공 직후 게임 시작 버튼 상태 재평가 강제
+            if (readyOrStartButtonRoot != null)
+            {
+                ReadyOrStartButton ready = readyOrStartButtonRoot.GetComponent<ReadyOrStartButton>();
+                if (ready != null)
+                    ready.RefreshHostInteractableNow();
+            }
         }
 
         private void ApplyFailState()

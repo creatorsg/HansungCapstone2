@@ -5196,7 +5196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.QuestVoteUI
   timerText: {fileID: 162135544}
   countText: {fileID: 1615047999}
-  resultText: {fileID: 549301861}
+  stageNameText: {fileID: 549301861}
 --- !u!114 &526212996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5421,7 +5421,7 @@ GameObject:
   - component: {fileID: 549301862}
   - component: {fileID: 549301861}
   m_Layer: 5
-  m_Name: "\uACB0\uACFC \uD14D\uC2A4\uD2B8"
+  m_Name: "\uD22C\uD45C\uC911\uC778 \uD018\uC2A4\uD2B8 \uD14D\uC2A4\uD2B8"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
