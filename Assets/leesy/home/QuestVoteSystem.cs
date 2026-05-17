@@ -17,6 +17,7 @@ namespace Lsy
         [SyncVar(hook = nameof(OnVoteTimeSync))] private double _voteEndTime;
         [SyncVar(hook = nameof(OnVoteSceneSync))] private string _selectedSceneName = string.Empty;
         [SyncVar(hook = nameof(OnVoteDistrictSync))] private string _selectedDistrictType = string.Empty;
+        [SyncVar(hook = nameof(OnVoteStageNameSync))] private string _selectedStageName = string.Empty;
         [SyncVar(hook = nameof(OnVoteCountSync))] private int _acceptCount;
         [SyncVar(hook = nameof(OnVoteCountSync))] private int _rejectCount;
 
@@ -31,6 +32,7 @@ namespace Lsy
         public double VoteEndTime => _voteEndTime;
         public string SelectedSceneName => _selectedSceneName;
         public string SelectedDistrictType => _selectedDistrictType;
+        public string SelectedStageName => _selectedStageName;
         public int AcceptCount => _acceptCount;
         public int RejectCount => _rejectCount;
 
@@ -67,10 +69,11 @@ namespace Lsy
             if (!isServer) return;
             if (!IsHostConnection(sender)) return;
             if (_voteInProgress) return;
-            if (!TryResolveCurrentBattleScene(out string sceneName, out string districtType)) return;
+            if (!TryResolveCurrentBattleScene(out string sceneName, out string districtType, out string stageName)) return;
 
             _selectedSceneName = sceneName;
             _selectedDistrictType = districtType;
+            _selectedStageName = stageName;
             _voteResolved = false;
             _votePassed = false;
             _voteInProgress = true;
@@ -160,12 +163,20 @@ namespace Lsy
             return sender != null && sender.connectionId == 0;
         }
 
-        private static bool TryResolveCurrentBattleScene(out string sceneName, out string districtType)
+        private static bool TryResolveCurrentBattleScene(out string sceneName, out string districtType, out string stageName)
         {
             sceneName = string.Empty;
             districtType = string.Empty;
+            stageName = string.Empty;
 
-            if (SelectedQuest.Current == null)
+            // [수정] 투표는 "방금 눌린 퀘스트 버튼" 기준이 되도록 브리지 선택값을 우선 사용
+            QuestData selectedQuest = null;
+            if (QuestVoteSelectionBridge.Instance != null && QuestVoteSelectionBridge.Instance.CurrentQuest != null)
+                selectedQuest = QuestVoteSelectionBridge.Instance.CurrentQuest;
+            else
+                selectedQuest = SelectedQuest.Current;
+
+            if (selectedQuest == null)
             {
                 Debug.LogWarning("[QuestVoteSystem] SelectedQuest.Current is null. Host must select quest first.");
                 return false;
@@ -179,34 +190,22 @@ namespace Lsy
             }
 
             sceneName = rm.GameplayScene;
-            districtType = SelectedQuest.Current.districtType.ToString();
+            districtType = selectedQuest.districtType.ToString();
+
+            // [수정] stageName이 비어 있으면 districtType 문자열로 fallback
+            string resolvedStageName = selectedQuest.stageName;
+            if (string.IsNullOrWhiteSpace(resolvedStageName))
+                resolvedStageName = districtType;
+            stageName = resolvedStageName;
             return true;
         }
 
-        private void OnVoteStateSync(bool _, bool __)
-        {
-            OnVoteStateChanged?.Invoke();
-        }
-
-        private void OnVoteTimeSync(double _, double __)
-        {
-            OnVoteStateChanged?.Invoke();
-        }
-
-        private void OnVoteSceneSync(string _, string __)
-        {
-            OnVoteStateChanged?.Invoke();
-        }
-
-        private void OnVoteDistrictSync(string _, string __)
-        {
-            OnVoteStateChanged?.Invoke();
-        }
-
-        private void OnVoteCountSync(int _, int __)
-        {
-            OnVoteStateChanged?.Invoke();
-        }
+        private void OnVoteStateSync(bool _, bool __) { OnVoteStateChanged?.Invoke(); }
+        private void OnVoteTimeSync(double _, double __) { OnVoteStateChanged?.Invoke(); }
+        private void OnVoteSceneSync(string _, string __) { OnVoteStateChanged?.Invoke(); }
+        private void OnVoteDistrictSync(string _, string __) { OnVoteStateChanged?.Invoke(); }
+        private void OnVoteStageNameSync(string _, string __) { OnVoteStateChanged?.Invoke(); }
+        private void OnVoteCountSync(int _, int __) { OnVoteStateChanged?.Invoke(); }
 
         [ClientRpc]
         private void RpcNotifyVoteStateChanged()
