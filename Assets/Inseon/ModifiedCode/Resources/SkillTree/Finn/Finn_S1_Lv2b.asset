@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S1_Lv2b
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
-  characterCode: "C002"
-  characterName: "Finn"
+  characterCode: C002
+  characterName: Finn
   skillNumber: 1
-  skillId: "Finn_1"
-  skillName: "Experimental Throw"
-  nodeId: "finn_s1_lv2b"
-  displayName: "Experimental Throw"
-  icon: {fileID: 0}
-  description: "Grants 1 extra action on the same turn after use"
+  skillId: Finn_1
+  skillName: Experimental Throw
+  nodeId: finn_s1_lv2b
+  displayName: Experimental Throw
+  icon: {fileID: -7803066186156459161, guid: 7e90fe2cfa2959048a0ecfa7a506cd9a, type: 3}
+  description: Grants 1 extra action on the same turn after use
   skillIndex: 0
   level: 2
   branchIndex: 1

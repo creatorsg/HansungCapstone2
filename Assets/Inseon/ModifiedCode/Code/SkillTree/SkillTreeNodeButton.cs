@@ -1,5 +1,6 @@
 using Lsy;
 using Mirror;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,40 +40,74 @@ public class SkillTreeNodeButton : MonoBehaviour
 
     private SkillTreeNodeSO _resolvedNode;
     private CharacterUnit _subscribedUnit;
+    private Coroutine _refreshAfterSwitchRoutine;
 
     void Awake()
     {
         if (button == null) button = GetComponent<Button>();
+        if (icon == null) icon = GetComponent<Image>();
         if (button != null) button.onClick.AddListener(OnClick);
     }
 
     void OnEnable()
     {
         PlayerAccount.OnCharacterSwitched += HandleCharacterSwitched;
+        CharacterUnit.OnLocalUnitSpawned += HandleLocalUnitReady;
         ResubscribeToUnit();
         HookGoldChanged();
-        Refresh();
+        RefreshWithNetworkDelay();
     }
 
     void OnDisable()
     {
         PlayerAccount.OnCharacterSwitched -= HandleCharacterSwitched;
+        CharacterUnit.OnLocalUnitSpawned -= HandleLocalUnitReady;
         UnsubscribeFromUnit();
         UnhookGoldChanged();
+        if (_refreshAfterSwitchRoutine != null)
+        {
+            StopCoroutine(_refreshAfterSwitchRoutine);
+            _refreshAfterSwitchRoutine = null;
+        }
     }
 
     private void HandleCharacterSwitched()
     {
         UnsubscribeFromUnit();
         ResubscribeToUnit();
+        RefreshWithNetworkDelay();
+    }
+
+    private void HandleLocalUnitReady(CharacterUnit _)
+    {
+        UnsubscribeFromUnit();
+        ResubscribeToUnit();
+        RefreshWithNetworkDelay();
+    }
+
+    private void RefreshWithNetworkDelay()
+    {
         Refresh();
+
+        if (!isActiveAndEnabled) return;
+
+        if (_refreshAfterSwitchRoutine != null)
+            StopCoroutine(_refreshAfterSwitchRoutine);
+
+        _refreshAfterSwitchRoutine = StartCoroutine(RefreshAfterNetworkSync());
+    }
+
+    private IEnumerator RefreshAfterNetworkSync()
+    {
+        yield return null;
+        yield return null;
+        Refresh();
+        _refreshAfterSwitchRoutine = null;
     }
 
     private void ResubscribeToUnit()
     {
-        var account = PlayerAccount.LocalInstance;
-        if (account == null) return;
-        var unit = account.currentSelectedCharacter;
+        var unit = ResolveCurrentUnit();
         if (unit == null) return;
 
         _subscribedUnit = unit;
@@ -108,7 +143,7 @@ public class SkillTreeNodeButton : MonoBehaviour
     public void Refresh()
     {
         var account = PlayerAccount.LocalInstance;
-        var unit = account != null ? account.currentSelectedCharacter : null;
+        var unit = ResolveCurrentUnit();
         if (unit == null)
         {
             Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) — unit null, 빈 상태로 표시");
@@ -144,7 +179,7 @@ public class SkillTreeNodeButton : MonoBehaviour
         bool prereqOk = _resolvedNode.prerequisite == null
                         || unit.unlockedNodeIds.Contains(_resolvedNode.prerequisite.nodeId);
         bool branchTaken = !owned && IsOtherBranchTaken(unit, code);
-        bool canAfford = account.currentGold >= _resolvedNode.unlockCost;
+        bool canAfford = account != null && account.currentGold >= _resolvedNode.unlockCost;
 
         Color tint;
         bool interactable;
@@ -178,6 +213,31 @@ public class SkillTreeNodeButton : MonoBehaviour
         if (button != null) button.interactable = interactable;
         if (ownedMark != null) ownedMark.SetActive(showOwned);
         if (lockedMark != null) lockedMark.SetActive(showLocked);
+    }
+
+    private CharacterUnit ResolveCurrentUnit()
+    {
+        var account = PlayerAccount.LocalInstance;
+        if (account != null && account.currentSelectedCharacter != null)
+            return account.currentSelectedCharacter;
+
+        if (CharacterUnit.LocalOwnedUnit != null)
+        {
+            if (account != null)
+                account.currentSelectedCharacter = CharacterUnit.LocalOwnedUnit;
+            return CharacterUnit.LocalOwnedUnit;
+        }
+
+        foreach (var unit in FindObjectsByType<CharacterUnit>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            if (unit == null || !unit.isOwned) continue;
+
+            if (account != null)
+                account.currentSelectedCharacter = unit;
+            return unit;
+        }
+
+        return null;
     }
 
     private bool IsOtherBranchTaken(CharacterUnit unit, string code)
