@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Glue_S4_Lv3a
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C001
+  characterName: Glue
+  skillNumber: 4
+  skillId: Glue_4
+  skillName: Headbutt
+  nodeId: glue_s4_lv3a
+  displayName: Headbutt
+  icon: {fileID: -1334649905525160474, guid: e05c3205fb14a2f40a791288088f6262, type: 3}
+  description: Targetable positions 1-2 -> 1-2-3
+  skillIndex: 3
+  level: 3
+  branchIndex: 0
+  prerequisite: {fileID: 11400000, guid: e4fddb5c6cb94dafbf203191773199d4, type: 2}
+  unlockCost: 100
+  axis: 3
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 3
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 0
+  healAmount: 0
+  range: 3
+  durationTurns: 0
+  debuffPotency: 0

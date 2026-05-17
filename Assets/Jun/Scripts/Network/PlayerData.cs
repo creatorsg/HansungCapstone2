@@ -16,6 +16,9 @@ public class PlayerData : NetworkBehaviour
     [SyncVar] public PlayerInfo Info;
     [SyncVar] public int PingIndex;
 
+    /// <summary>Home 씬에서 구매한 스킬트리 노드 ID 목록. 전투 씬 진입 직전에 스냅샷됩니다.</summary>
+    public readonly SyncList<string> unlockedNodeIds = new SyncList<string>();
+
     // ────────────────────────────────────────────────────────────────────────
     // Awake에서 DontDestroyOnLoad를 호출합니다.
     // Start()에서 호출하면 ServerChangeScene() 이후 씬 전환이 시작될 때

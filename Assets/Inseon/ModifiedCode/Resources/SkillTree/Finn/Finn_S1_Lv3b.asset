@@ -12,17 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S1_Lv3b
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 1
+  skillId: Finn_1
+  skillName: Experimental Throw
   nodeId: finn_s1_lv3b
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  displayName: Experimental Throw
+  icon: {fileID: -7803066186156459161, guid: 7e90fe2cfa2959048a0ecfa7a506cd9a, type: 3}
+  description: Base damage 6 -> 9, poison duration 2 -> 3 turns
   skillIndex: 0
   level: 3
   branchIndex: 1
   prerequisite: {fileID: 11400000, guid: b66d7b97f85b22842938876ce0ae6af9, type: 2}
-  unlockCost: 0
-  damage: 0
+  unlockCost: 100
+  axis: 1
+  damageDelta: 3
+  dotDamageDelta: 0
+  durationDelta: 1
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 3
   healAmount: 0
   range: 1
-  durationTurns: 0
+  durationTurns: 1
   debuffPotency: 0

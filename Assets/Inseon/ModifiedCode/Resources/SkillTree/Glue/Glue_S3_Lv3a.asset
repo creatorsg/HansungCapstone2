@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Glue_S3_Lv3a
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C001
+  characterName: Glue
+  skillNumber: 3
+  skillId: Glue_3
+  skillName: Trench Charge
+  nodeId: glue_s3_lv3a
+  displayName: Trench Charge
+  icon: {fileID: 32788246762942611, guid: a5b1769e993483f4885b59a226929591, type: 3}
+  description: Can move to row 1 from any position without knockback condition
+  skillIndex: 2
+  level: 3
+  branchIndex: 0
+  prerequisite: {fileID: 11400000, guid: d26defb8cb4f46f78d7d3f20baaa0aff, type: 2}
+  unlockCost: 100
+  axis: 3
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 0
+  healAmount: 0
+  range: 1
+  durationTurns: 0
+  debuffPotency: 0

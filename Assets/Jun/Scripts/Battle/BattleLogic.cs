@@ -24,6 +24,10 @@ namespace Jun
                 }
 
                 SkillInfo skill = caster.Info.Skills[skillIndex];
+                int damageDelta = caster.GetTotalDamageDelta(skillIndex);
+                int totalDamage = caster.Info.Atk + damageDelta;
+                if (damageDelta != 0)
+                    Debug.Log($"[BattleLogic] 스킬트리 강화 적용: Atk={caster.Info.Atk} + damageDelta={damageDelta} = {totalDamage}");
 
                 foreach (int targetIdx in targets)
                 {
@@ -36,7 +40,7 @@ namespace Jun
                             continue;
                         }
                         var target = enemyList[targetIdx].GetComponent<EnemyModel>();
-                        if (target != null) target.Damaged(caster.Info.Atk);
+                        if (target != null) target.Damaged(totalDamage);
                     }
                     else
                     {

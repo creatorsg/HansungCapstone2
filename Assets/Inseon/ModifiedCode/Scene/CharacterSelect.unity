@@ -804,25 +804,25 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: 2211368458654073353, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 2
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: 7389082159000606099, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 3
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -8338433773514870343, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 4
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 6653561137313460520, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   items: []
   characterImage: {fileID: 1975854966}
@@ -1129,25 +1129,25 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: -2833775182555582667, guid: f8705bf1ae83c5044b3f82eada7f3da3, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 2
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -8836685135467796054, guid: a13954d1e700ba245b08b7d4d49daeaf, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 3
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: 3499149529287642153, guid: d9cc460e30aa15d41a5ff9295a060ff1, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 4
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: -4164578016646140414, guid: f0eab2aa59066df4bbaf88cf664fea3e, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   items: []
   characterImage: {fileID: 1636315041}
@@ -3906,25 +3906,25 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: -7803066186156459161, guid: 7e90fe2cfa2959048a0ecfa7a506cd9a, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 2
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -6286060828788350423, guid: 6d873b900180ad543bd8fe23c33daed3, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 3
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -2746435884744161489, guid: 50f2c2d8af506d54baafc476a86b1d20, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 4
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 8234797298231545583, guid: d7291509e2574ed48bf0341cc86a2a36, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   items: []
   characterImage: {fileID: 1866288786}
@@ -5954,26 +5954,26 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: 9204973257487272213, guid: af08e630107e3e64cb632505048a293e, type: 3}
     description: "2\uBA85 \uACF5\uACA9\uD55C\uB2E4!! \uC640!!!!!"
   - Name: 2
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: 4164413579519221649, guid: f7f843b5db17ebd4888d3829c7270511, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 3
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: 32788246762942611, guid: a5b1769e993483f4885b59a226929591, type: 3}
     description: "\uADF8\uB7FC \uB098\uB3C4 2\uBA85 \uACF5\uACA9\uAC04\uB2E4!!!!
       \uC640!!!!!!!!"
   - Name: 4
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: -1334649905525160474, guid: e05c3205fb14a2f40a791288088f6262, type: 3}
     description: "\uADF8\uB7FC \uB098\uB3C4\uB2E4!!!!! \uC640!!!!!!!!!"
   items: []
   characterImage: {fileID: 801427239}

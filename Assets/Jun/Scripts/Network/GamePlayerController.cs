@@ -24,6 +24,9 @@ namespace Jun
         [SyncVar] public PlayerInfo Info;
         [SyncVar] public int PingIndex;
 
+        /// <summary>Home에서 구매한 스킬트리 노드 목록 (전투 중 읽기 전용)</summary>
+        public readonly SyncList<string> unlockedNodeIds = new SyncList<string>();
+
         [Header("�� �ý���")]
         public Transform PingLayout; // �� ������ ����
 
@@ -38,6 +41,29 @@ namespace Jun
             this.FinalHeroCode  = data.FinalHeroCode;
             this.FinalHeroIndex = data.FinalHeroIndex;
             this.FinalHeroPos   = data.FinalHeroPos;
+
+            this.unlockedNodeIds.Clear();
+            foreach (string nodeId in data.unlockedNodeIds)
+                this.unlockedNodeIds.Add(nodeId);
+        }
+
+        /// <summary>
+        /// 활성 노드의 damageDelta 합계를 반환합니다.
+        /// 특정 스킬(skillIndex)에 해당하는 노드만 필터링합니다.
+        /// </summary>
+        [Server]
+        public int GetTotalDamageDelta(int skillIndex)
+        {
+            int total = 0;
+            string charCode = FinalHeroCode;
+            foreach (string nodeId in unlockedNodeIds)
+            {
+                if (!SkillTreeRegistry.TryFind(charCode, nodeId, out SkillTreeNodeSO node))
+                    continue;
+                if (node.skillIndex != skillIndex) continue;
+                total += node.damageDelta;
+            }
+            return total;
         }
         // ��ġ�� ��� ������ ���� �Լ��� �и��ؼ� ȣ��
         void OnPosIndexChanged(int oldPos, int newPos)

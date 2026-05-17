@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Hamel_S3_Lv3b
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C004
+  characterName: Hamel
+  skillNumber: 3
+  skillId: Hamel_3
+  skillName: Dissonance
+  nodeId: hamel_s3_lv3b
+  displayName: Dissonance
+  icon: {fileID: -8338433773514870343, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
+  description: Ally SAN side effect -2 -> 0 (removed)
+  skillIndex: 2
+  level: 3
+  branchIndex: 1
+  prerequisite: {fileID: 11400000, guid: d3000bcd3d0c41409d83cc1b38b1641b, type: 2}
+  unlockCost: 100
+  axis: 1
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 0
+  healAmount: 0
+  range: 1
+  durationTurns: 0
+  debuffPotency: 0

@@ -12,15 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S3_Lv2a
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 3
+  skillId: Finn_3
+  skillName: Explosive Experiment
   nodeId: finn_s3_lv2a
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  displayName: Explosive Experiment
+  icon: {fileID: -2746435884744161489, guid: 50f2c2d8af506d54baafc476a86b1d20, type: 3}
+  description: Damage 5 -> 7
   skillIndex: 2
   level: 2
+  branchIndex: 0
   prerequisite: {fileID: 11400000, guid: b465d4a41e0efd94fbf99537adad2379, type: 2}
-  unlockCost: 0
-  damage: 0
+  unlockCost: 50
+  axis: 1
+  damageDelta: 2
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 2
   healAmount: 0
   range: 1
   durationTurns: 0

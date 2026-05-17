@@ -12,14 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S4_Lv1
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
-  nodeId: 
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 4
+  skillId: Finn_4
+  skillName: Self Experiment
+  nodeId: finn_s4_lv1
+  displayName: Self Experiment
+  icon: {fileID: 8234797298231545583, guid: d7291509e2574ed48bf0341cc86a2a36, type: 3}
+  description: Self HP -20%, SPD +10/CRIT +50% for 2 turns, SAN -10
   skillIndex: 3
   level: 1
+  branchIndex: 0
   prerequisite: {fileID: 0}
   unlockCost: 0
+  axis: 0
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
   damage: 0
   healAmount: 0
   range: 1

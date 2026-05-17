@@ -374,6 +374,53 @@ namespace Lsy
             }
             return null;
         }
+
+        /// <summary>
+        /// Home → Battle 씬 전환 직전에 호출.
+        /// 각 캐릭터의 unlockedNodeIds를 대응하는 PlayerData에 스냅샷 복사합니다.
+        /// </summary>
+        [Server]
+        public void SnapshotUpgradesToPlayerData()
+        {
+            if (_myPlayerDatas == null || _myPlayerDatas.Count == 0)
+            {
+                Debug.LogWarning("[PlayerAccount] SnapshotUpgrades: _myPlayerDatas 비어있음");
+                return;
+            }
+
+            for (int i = 0; i < _myPlayerDatas.Count; i++)
+            {
+                PlayerData pd = _myPlayerDatas[i];
+                if (pd == null) continue;
+
+                pd.unlockedNodeIds.Clear();
+
+                if (i == currentActiveIndex && currentSelectedCharacter != null)
+                {
+                    foreach (string nodeId in currentSelectedCharacter.unlockedNodeIds)
+                        pd.unlockedNodeIds.Add(nodeId);
+                }
+                else if (savedCharacterData.TryGetValue(i, out CharacterSaveData saved))
+                {
+                    foreach (string nodeId in saved.unlockedNodeIds)
+                        pd.unlockedNodeIds.Add(nodeId);
+                }
+
+                Debug.Log($"[PlayerAccount] Snapshot: PlayerData[{i}] code={pd.FinalHeroCode}, nodes={pd.unlockedNodeIds.Count}개");
+            }
+        }
+
+        /// <summary>
+        /// 모든 PlayerAccount에서 SnapshotUpgradesToPlayerData를 호출합니다.
+        /// GameRoomManager.OnServerChangeScene에서 사용합니다.
+        /// </summary>
+        [Server]
+        public static void SnapshotAllUpgrades()
+        {
+            var accounts = FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None);
+            foreach (var account in accounts)
+                account.SnapshotUpgradesToPlayerData();
+        }
     }
 }
 
