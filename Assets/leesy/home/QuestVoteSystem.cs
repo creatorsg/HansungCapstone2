@@ -82,6 +82,12 @@ namespace Lsy
             _votes.Clear();
 
             BuildEligibleConnections();
+            if (_eligibleConnectionIds.Count == 0)
+            {
+                ResolveVote(true);
+                return;
+            }
+
             _voteEndTime = NetworkTime.time + 60d;
 
             RpcNotifyVoteStateChanged();
@@ -102,6 +108,13 @@ namespace Lsy
 
             _votes[netId] = accept ? (sbyte)1 : (sbyte)-1;
             RecountVotes();
+
+            if (_votes.Count >= _eligibleConnectionIds.Count)
+            {
+                ResolveVote(_acceptCount > _rejectCount);
+                return;
+            }
+
             RpcNotifyVoteStateChanged();
         }
 
@@ -124,13 +137,7 @@ namespace Lsy
 
             RecountVotes();
 
-            _votePassed = _acceptCount > _rejectCount;
-            _voteResolved = true;
-            _voteInProgress = false;
-            _voteEndTime = 0d;
-
-            RpcNotifyVoteResolved(_votePassed);
-            RpcNotifyVoteStateChanged();
+            ResolveVote(_acceptCount > _rejectCount);
         }
 
         private void RecountVotes()
@@ -156,6 +163,18 @@ namespace Lsy
                 if (conn.connectionId == 0) continue;
                 _eligibleConnectionIds.Add(conn.connectionId);
             }
+        }
+
+        [Server]
+        private void ResolveVote(bool passed)
+        {
+            _votePassed = passed;
+            _voteResolved = true;
+            _voteInProgress = false;
+            _voteEndTime = 0d;
+
+            RpcNotifyVoteResolved(_votePassed);
+            RpcNotifyVoteStateChanged();
         }
 
         private bool IsHostConnection(NetworkConnectionToClient sender)

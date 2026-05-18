@@ -19517,7 +19517,7 @@ MonoBehaviour:
   activeColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   clientReadyColor: {r: 0, g: 1, b: 0, a: 1}
-  debugForceHostInteractable: 1
+  debugForceHostInteractable: 0
 --- !u!114 &1945280253
 MonoBehaviour:
   m_ObjectHideFlags: 0

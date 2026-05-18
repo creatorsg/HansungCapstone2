@@ -162,13 +162,14 @@ namespace Lsy
 
         private void ApplyIdleState()
         {
-            SetActiveSafe(readyOrStartButtonRoot, lockReadyStartUntilVotePass ? false : true);
+            bool singlePlayerHost = IsSinglePlayerHost();
+            SetActiveSafe(readyOrStartButtonRoot, singlePlayerHost || !lockReadyStartUntilVotePass);
 
             if (IsHost)
             {
-                SetActiveSafe(hostVoteStartButtonRoot, true);
+                SetActiveSafe(hostVoteStartButtonRoot, !singlePlayerHost);
                 SetActiveSafe(clientVotePanelRoot, false);
-                SetHostVoteStartInteractable(HasQuestSelection);
+                SetHostVoteStartInteractable(!singlePlayerHost && HasQuestSelection);
             }
             else
             {
@@ -213,12 +214,13 @@ namespace Lsy
 
         private void ApplyFailState()
         {
-            SetActiveSafe(readyOrStartButtonRoot, false);
+            bool singlePlayerHost = IsSinglePlayerHost();
+            SetActiveSafe(readyOrStartButtonRoot, singlePlayerHost);
 
             if (IsHost)
             {
-                SetActiveSafe(hostVoteStartButtonRoot, true);
-                SetHostVoteStartInteractable(HasQuestSelection);
+                SetActiveSafe(hostVoteStartButtonRoot, !singlePlayerHost);
+                SetHostVoteStartInteractable(!singlePlayerHost && HasQuestSelection);
                 SetActiveSafe(clientVotePanelRoot, false);
             }
             else
@@ -290,6 +292,20 @@ namespace Lsy
         {
             if (go != null && go.activeSelf != value)
                 go.SetActive(value);
+        }
+
+        private static bool IsSinglePlayerHost()
+        {
+            if (!NetworkServer.active || !NetworkClient.active)
+                return false;
+
+            foreach (var conn in NetworkServer.connections.Values)
+            {
+                if (conn == null) continue;
+                if (conn.connectionId != 0) return false;
+            }
+
+            return true;
         }
 
         // [수정] 인스펙터 참조가 없을 때만 안전하게 탐색

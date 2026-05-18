@@ -64,6 +64,10 @@ namespace Lsy
             if (IsHost)
             {
                 buttonText.text = hostReadyText;
+
+                if (ReadySystem.Instance != null && NetworkServer.active)
+                    ReadySystem.Instance.ServerRefreshReadyState();
+
                 if (debugForceHostInteractable)
                 {
                     SetButtonInteractable(true);
@@ -130,6 +134,12 @@ namespace Lsy
         private void OnClickStartGame()
         {
             Debug.Log("[ReadyOrStartButton] 게임 시작!");
+
+            if (!debugForceHostInteractable && ReadySystem.Instance != null && !ReadySystem.Instance.AllReady)
+            {
+                Debug.LogWarning("[ReadyOrStartButton] 아직 준비하지 않은 클라이언트가 있어 시작할 수 없습니다.");
+                return;
+            }
 
             var rm = NetworkManager.singleton as Jun.GameRoomManager;
 

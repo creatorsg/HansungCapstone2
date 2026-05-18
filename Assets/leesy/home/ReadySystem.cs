@@ -24,6 +24,12 @@ namespace Lsy
             if (Instance == null) Instance = this;
         }
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            CheckAllReady();
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -70,6 +76,12 @@ namespace Lsy
             CheckAllReady();
         }
 
+        [Server]
+        public void ServerRefreshReadyState()
+        {
+            CheckAllReady();
+        }
+
         [Command(requiresAuthority = false)]
         public void CmdToggleReady(uint playerNetId, NetworkConnectionToClient sender = null)
         {
@@ -110,17 +122,20 @@ namespace Lsy
         [Server]
         private void CheckAllReady()
         {
-            int clientCount = 0;
+            HashSet<int> activeClientIds = new HashSet<int>();
             foreach (var conn in NetworkServer.connections.Values)
             {
                 if (conn == null) continue;
                 if (conn.connectionId == 0) continue;
-                clientCount++;
+                activeClientIds.Add(conn.connectionId);
             }
 
-            bool allReady = clientCount > 0 && _readyConnectionIds.Count == clientCount;
+            _readyConnectionIds.RemoveWhere(connectionId => !activeClientIds.Contains(connectionId));
 
-            Debug.Log($"<color=cyan>[ReadySystem][Server] 클라이언트:{clientCount}, 준비클라:{_readyConnectionIds.Count}, allReady:{allReady}</color>");
+            // 호스트 혼자 있는 방은 기다릴 클라이언트가 없으므로 즉시 시작 가능.
+            bool allReady = _readyConnectionIds.Count == activeClientIds.Count;
+
+            Debug.Log($"<color=cyan>[ReadySystem][Server] 클라이언트:{activeClientIds.Count}, 준비클라:{_readyConnectionIds.Count}, allReady:{allReady}</color>");
 
             // Bug Fix: 이벤트 발화 경로를 RpcOnAllReadyChanged 하나로 통일한다.
             // 이전 코드는 호스트 기준으로
