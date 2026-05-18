@@ -65,7 +65,31 @@ namespace Jun
             anim.SetBool(name, false);
             EndMyTurn?.Invoke();
         }
-        
-        
+
+        // ── 피격 / 회피 / 사망 애니메이션 ───────────────────────────
+        // 기존 attack(Bool)과 달리 Trigger를 사용합니다.
+        // Trigger는 SetTrigger 한 번만 호출하면 자동 소모되므로
+        // 별도의 "끄기" 호출이 필요 없습니다.
+
+        /// <summary>피격(damaged) 애니메이션 재생. 종료 후 idle로 자동 복귀합니다.</summary>
+        public void PlayDamaged()
+        {
+            if (anim == null) return;
+            anim.SetTrigger("Damaged");
+        }
+
+        /// <summary>회피(dodge) 애니메이션 재생. 종료 후 idle로 자동 복귀합니다.</summary>
+        public void PlayDodge()
+        {
+            if (anim == null) return;
+            anim.SetTrigger("Dodge");
+        }
+
+        /// <summary>사망(dead) 애니메이션 재생. dead 상태에서 idle로 돌아오지 않습니다.</summary>
+        public void PlayDead()
+        {
+            if (anim == null) return;
+            anim.SetBool("Dead", true);
+        }
     }
 }

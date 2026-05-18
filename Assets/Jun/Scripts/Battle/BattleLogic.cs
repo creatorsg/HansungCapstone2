@@ -37,6 +37,7 @@ namespace Jun
                         }
                         var target = enemyList[targetIdx].GetComponent<EnemyModel>();
                         if (target != null) target.Damaged(caster.Info.Atk);
+                        // TODO: 적 dodge 판정 구현 시 이 위치에서 target의 RpcPlayDodgeAnim() 호출
                     }
                     else
                     {

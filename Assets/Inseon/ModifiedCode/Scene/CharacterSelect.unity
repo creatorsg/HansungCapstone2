@@ -796,9 +796,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
   cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
-  battleSprite: {fileID: -4991079725121273491, guid: 09627a67dcc44d0409ae7e48e00a45aa, type: 3}
+  battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
-  battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
+  battleUnitPrefab: {fileID: 440238353247304416, guid: 80961da7912ed7f498f5f84ec2930479, type: 3}
   skills:
   - Name: 1
     Type: 0
@@ -1121,31 +1121,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C002
   cardIcon: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
-  battleSprite: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
+  battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
-  battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
+  battleUnitPrefab: {fileID: 440238353247304416, guid: b8bcd3a3c3526dc4ba400d752b178efe, type: 3}
   skills:
   - Name: 1
     Type: 0
-    anim: 
+    anim: Attack
     TagetNum: 2
     icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 2
     Type: 0
-    anim: 
+    anim: Attack
     TagetNum: 2
     icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 3
     Type: 0
-    anim: 
+    anim: Attack
     TagetNum: 2
     icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 4
     Type: 0
-    anim: 
+    anim: Attack
     TagetNum: 2
     icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
@@ -3898,9 +3898,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C004
   cardIcon: {fileID: 2648219815020983868, guid: aab1ca1ebcc4fce49b4ecb3a7e57e961, type: 3}
-  battleSprite: {fileID: 4923159571906479061, guid: 585475402fc5de341a89f808bca5145e, type: 3}
+  battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
-  battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
+  battleUnitPrefab: {fileID: 440238353247304416, guid: 93828e55126f8134abaea6e091ec4e0b, type: 3}
   skills:
   - Name: 1
     Type: 0
@@ -5946,9 +5946,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C001
   cardIcon: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
-  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
+  battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
-  battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
+  battleUnitPrefab: {fileID: 440238353247304416, guid: 519eb89d86857f840a00f7fe9075fbc0, type: 3}
   skills:
   - Name: 1
     Type: 0

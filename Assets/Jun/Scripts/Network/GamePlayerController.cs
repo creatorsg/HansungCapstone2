@@ -29,6 +29,30 @@ namespace Jun
 
         public bool IsMovePos = false;
 
+        // ── 애니메이션 래퍼 ────────────────────────────────────────────
+        // BattleLogic / EnemyController 등 서버 코드에서 호출합니다.
+
+        /// <summary>피격 애니메이션을 모든 클라이언트에 재생합니다.</summary>
+        [ClientRpc]
+        public void RpcPlayDamagedAnim()
+        {
+            _view.PlayDamaged();
+        }
+
+        /// <summary>회피 애니메이션을 모든 클라이언트에 재생합니다.</summary>
+        [ClientRpc]
+        public void RpcPlayDodgeAnim()
+        {
+            _view.PlayDodge();
+        }
+
+        /// <summary>사망 애니메이션을 모든 클라이언트에 재생합니다.</summary>
+        [ClientRpc]
+        public void RpcPlayDeadAnim()
+        {
+            _view.PlayDead();
+        }
+
         // 데이터 주입
         [Server]
         public void InjectData(PlayerData data)
