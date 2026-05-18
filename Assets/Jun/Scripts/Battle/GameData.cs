@@ -4,6 +4,11 @@ using UnityEngine.UI;
 
 namespace Jun
 {
+    public enum SkillUser
+    {
+        Player,
+        Enemy
+    }
     // 스킬 타입
     public enum SkillType
     {
@@ -183,10 +188,12 @@ namespace Jun
     public class SkillInfo
     {
         public string Name;
+        public SkillUser User; //User에 따른 인스펙터창에 나타나는 정보 제한
         public SkillType Type;
         public string anim;
         public int TagetNum;            // 대상 수
         public Sprite icon;
+
         [UnityEngine.TextArea(2, 4)]
         public string description;
         

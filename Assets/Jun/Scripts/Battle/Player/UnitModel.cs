@@ -91,7 +91,7 @@ namespace Jun
             _targetNum          = item.TagetNum;
             _selectedTargetType = item.Target;
             _isEnemy            = false;
-            // 아이템은 우선 자기자신한테만 쓸 수 있게끔 구현
+            // 아이템은 우선 자기자신한테만 쓸 수 있게끔 구현(아군도 되게끔 가능)
             //if (IsAutoTarget(_selectedTargetType)) FireSelection();
             _selectedTarget.Add(BattleManager.Instance._players.IndexOf(this.GetComponent<GamePlayerController>())); 
             FireSelection();

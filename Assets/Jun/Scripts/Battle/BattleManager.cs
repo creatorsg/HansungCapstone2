@@ -25,11 +25,12 @@ namespace Jun
         [Header("ĳ���� ���� â")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
-        [Header("ĳ���� ���� UI��")]
+        [Header("플레이어 정보창 UI")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
         [SerializeField] private List<Button> _itemBTN; public List<Button> ItemsBTN => _itemBTN;
+        [SerializeField] private TextMeshProUGUI _type; public TextMeshProUGUI Type => _type;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
         [SerializeField] private TextMeshProUGUI _san; public TextMeshProUGUI San => _san;
         [SerializeField] private TextMeshProUGUI _acc; public TextMeshProUGUI Acc => _acc;
@@ -43,10 +44,20 @@ namespace Jun
         [Header("��")]// ������ ���� ��� ��ư���� ����, �Ŀ� GameObject�� �ٲ� ����
         [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
+        [Header("적 정보창 UI")]
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
         [SerializeField] private Image _enemyUI;
         [SerializeField] private TextMeshProUGUI _enemyName;
-
+        [SerializeField] private TextMeshProUGUI _enemyType; public TextMeshProUGUI EnemyType => _enemyType;
+        [SerializeField] private List<Button> _enemySkillBTN; public List<Button> EnemySkillBTN => _enemySkillBTN;
+        [SerializeField] private TextMeshProUGUI _enemyhp; public TextMeshProUGUI EnemyHp => _enemyhp;
+        [SerializeField] private TextMeshProUGUI _enemysan; public TextMeshProUGUI EnemySan => _enemysan;
+        [SerializeField] private TextMeshProUGUI _enemyacc; public TextMeshProUGUI EnemyAcc => _enemyacc;
+        [SerializeField] private TextMeshProUGUI _enemycrit; public TextMeshProUGUI EnemyCrit => _enemycrit;
+        [SerializeField] private TextMeshProUGUI _enemydmg; public TextMeshProUGUI EnemyDmg => _enemydmg;
+        [SerializeField] private TextMeshProUGUI _enemyprot; public TextMeshProUGUI EnemyProt => _enemyprot;
+        [SerializeField] private TextMeshProUGUI _enemyres; public TextMeshProUGUI EnemyRes => _enemyres;
+        [SerializeField] private TextMeshProUGUI _enemydodge; public TextMeshProUGUI EnemyDodge => _enemydodge;
         public int EnemyNum;
 
         [Header("�� ����")]
@@ -356,7 +367,7 @@ namespace Jun
             {
                 var targetPlayer = _players[turnNum];
                 CurrentTurnUnit = targetPlayer; //���� �� ���� ���� ����
-                _turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
+                //_turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
                 
                 //���� ���̵� ������� ������ ��� ���� ǥ��
                 targetPlayer.MyTurn(true);
@@ -454,8 +465,8 @@ namespace Jun
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
             // ���õ� ������ ������ ��ü
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
-            _hp.text = unit.Info.Hp.ToString();
-            _san.text = unit.Info.San.ToString();
+            _hp.text = $"{unit.Info.MaxHp} / {unit.Info.Hp}";
+            _san.text = $"{unit.Info.MaxSan} / {unit.Info.San}";
             _acc.text = unit.EffectiveAcc.ToString();
             _crit.text = unit.Info.Crit.ToString();
             _dmg.text = unit.EffectiveAtk.ToString();
@@ -470,8 +481,22 @@ namespace Jun
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
 
-                // 여기서 스킬 아이콘이나 이런 거 바꾸기
-                // _skillBTN[i].image.sprite = unit.SkillSprites[i];
+                // 스킬 호버링 기능 추가
+                SkillHover hover = _skillBTN[i].GetComponent<SkillHover>();
+                if (hover != null)
+                {
+                    // 캐릭터가 가진 스킬 개수 안에 포함된다면 정보 갱신
+                    if (unit.Info.Skills != null && index < unit.Info.Skills.Count)
+                    {
+                        string name = unit.Info.Skills[index].Name;
+                        string desc = unit.Info.Skills[index].description;
+                        hover.SetSkillInfo(name, desc);
+                    }
+                    else
+                    {
+                        hover.SetSkillInfo("", "");
+                    }
+                }
 
             }
             for (int i = 0; i < _itemBTN.Count; i++)
@@ -500,6 +525,36 @@ namespace Jun
             var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
             _enemyPanel.SetActive(true);
             _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
+            _enemyhp.text = $"{enemy.Info.MaxHp} / {enemy.Info.Hp}";
+            _enemysan.text = $"{enemy.Info.MaxSan} / {enemy.Info.San}";
+            _enemyacc.text = enemy.EffectiveAcc.ToString();
+            _enemycrit.text = enemy.Info.Crit.ToString();
+            _enemydmg.text = enemy.EffectiveAtk.ToString();
+            _enemyprot.text = enemy.EffectiveDef.ToString();
+            _enemyres.text = enemy.Info.Res.ToString();
+            _enemydodge.text = enemy.EffectiveDodge.ToString();
+            
+            for (int i = 0; i < _skillBTN.Count; i++)
+            {
+                int n = i;
+                // 스킬 호버링 기능 추가
+                SkillHover hover = _enemySkillBTN[i].GetComponent<SkillHover>();
+                if (hover != null)
+                {
+                    // 캐릭터가 가진 스킬 개수 안에 포함된다면 정보 갱신
+                    if (enemy.Info.Skills != null && index < enemy.Info.Skills.Count)
+                    {
+                        string name = enemy.Info.Skills[index].Name;
+                        string desc = enemy.Info.Skills[index].description;
+                        hover.SetSkillInfo(name, desc);
+                    }
+                    else
+                    {
+                        hover.SetSkillInfo("", "");
+                    }
+                }
+
+            }
         }
         //���� ��ġ �̵�
         [Server]

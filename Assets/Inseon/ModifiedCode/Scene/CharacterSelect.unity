@@ -801,6 +801,7 @@ MonoBehaviour:
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
   - Name: 1
+    User: 0
     Type: 0
     anim: Attack
     TagetNum: 2
@@ -821,6 +822,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 2
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -841,6 +843,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 3
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -861,6 +864,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 4
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -1181,12 +1185,13 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
-  - Name: 1
+  - Name: "\uAC15\uD654"
+    User: 0
     Type: 4
     anim: Attack
     TagetNum: 1
     icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uB098 \uAC15\uD654"
     DamageRate: 0
     HealRate: 0
     EffectType: 0
@@ -1197,11 +1202,12 @@ MonoBehaviour:
       description: 
       goldCost: 0
       statValues: []
-    Target: 0
+    Target: 4
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
   - Name: 2
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -1222,6 +1228,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 3
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -1242,6 +1249,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 4
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -4015,6 +4023,7 @@ MonoBehaviour:
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
   - Name: 1
+    User: 0
     Type: 0
     anim: Attack
     TagetNum: 2
@@ -4035,6 +4044,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 2
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -4055,6 +4065,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 3
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -4075,6 +4086,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 4
+    User: 0
     Type: 0
     anim: 
     TagetNum: 2
@@ -6118,13 +6130,14 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
-  - Name: 1
+  - Name: Skill1
+    User: 1
     Type: 0
     anim: Attack
     TagetNum: 2
     icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
     description: "2\uBA85 \uACF5\uACA9\uD55C\uB2E4!! \uC640!!!!!"
-    DamageRate: 0
+    DamageRate: 1
     HealRate: 0
     EffectType: 0
     EffectValue: 0
@@ -6139,6 +6152,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 2
+    User: 0
     Type: 1
     anim: Attack
     TagetNum: 2
@@ -6159,6 +6173,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 3
+    User: 0
     Type: 2
     anim: Attack
     TagetNum: 2
@@ -6180,6 +6195,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   - Name: 4
+    User: 0
     Type: 3
     anim: Attack
     TagetNum: 1
