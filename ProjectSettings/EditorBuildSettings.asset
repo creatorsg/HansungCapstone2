@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Inseon/ModifiedCode/Scene/Start.unity
+    guid: 113e88052bbd9ef44b9b3e9c8e5b0f8e
+  - enabled: 1
     path: Assets/Inseon/ModifiedCode/Scene/Login.unity
     guid: 9361a38f8b41b814fb88913818127298
   - enabled: 1
