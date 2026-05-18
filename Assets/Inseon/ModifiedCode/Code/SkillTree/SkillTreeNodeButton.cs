@@ -1,27 +1,19 @@
 using Lsy;
-using Mirror;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 스킬트리에서 노드 1개에 해당하는 버튼.
-/// 위치(skillIndex, level, branchIndex)를 인스펙터에서 고정하고,
-/// 현재 선택된 캐릭터의 트리에서 매칭되는 노드를 자동으로 찾아 표시한다.
-///
-/// 4가지 상태:
-///   - 구매됨(owned) : 초록 + 비활성
-///   - 잠김(locked) : 회색 + 비활성 (선행 미충족 또는 분기로 잠김)
-///   - 골드부족(noGold) : 주황 + 활성 (눌러도 서버에서 거부)
-///   - 구매가능(buyable) : 흰색 + 활성
+/// 스킬트리에서 노드 1개에 해당하는 버튼입니다.
+/// Inspector에서 고정한 위치(skillIndex, level, branchIndex)에 맞는 노드를 현재 캐릭터의 스킬트리에서 찾아 표시합니다.
 /// </summary>
 public class SkillTreeNodeButton : MonoBehaviour
 {
-    [Header("위치 (인스펙터에서 고정)")]
+    [Header("노드 위치")]
     [Min(0)] public int skillIndex;
     [Range(1, 3)] public int level = 1;
-    [Tooltip("Lv1은 0, Lv2/Lv3은 0(a) 또는 1(b)")]
+    [Tooltip("Lv1은 0, Lv2/Lv3는 0(a) 또는 1(b)")]
     [Range(0, 1)] public int branchIndex;
 
     [Header("UI 참조")]
@@ -146,7 +138,7 @@ public class SkillTreeNodeButton : MonoBehaviour
         var unit = ResolveCurrentUnit();
         if (unit == null)
         {
-            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) — unit null, 빈 상태로 표시");
+            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) - unit이 null이라 빈 상태로 표시합니다.");
             ApplyEmpty();
             return;
         }
@@ -156,25 +148,23 @@ public class SkillTreeNodeButton : MonoBehaviour
 
         if (tree == null)
         {
-            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) — tree 못 찾음, code={code}");
+            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) - 스킬트리를 찾지 못했습니다. code={code}");
         }
 
         _resolvedNode = tree != null ? tree.FindByPosition(skillIndex, level, branchIndex) : null;
 
         if (_resolvedNode == null)
         {
-            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) — 매칭 노드 없음, code={code}");
+            Debug.LogWarning($"[SkillTree][Button] ({skillIndex},{level},{branchIndex}) - 매칭되는 노드가 없습니다. code={code}");
             ApplyEmpty();
             return;
         }
 
-        // 표시 정보
         if (icon != null && _resolvedNode.icon != null) icon.sprite = _resolvedNode.icon;
         if (displayNameText != null) displayNameText.text = _resolvedNode.displayName;
         if (costText != null)
             costText.text = _resolvedNode.unlockCost > 0 ? $"{_resolvedNode.unlockCost}G" : "";
 
-        // 상태 판정
         bool owned = unit.unlockedNodeIds.Contains(_resolvedNode.nodeId);
         bool prereqOk = _resolvedNode.prerequisite == null
                         || unit.unlockedNodeIds.Contains(_resolvedNode.prerequisite.nodeId);
@@ -201,7 +191,7 @@ public class SkillTreeNodeButton : MonoBehaviour
         else if (!canAfford)
         {
             tint = colorNoGold;
-            interactable = true; // 눌러도 서버가 거부 — 일관성 위해 클릭은 허용
+            interactable = true;
         }
         else
         {
@@ -264,11 +254,11 @@ public class SkillTreeNodeButton : MonoBehaviour
 
     private void OnClick()
     {
-        Debug.Log($"<color=orange>[SkillTree][Button] 클릭 — ({skillIndex},{level},{branchIndex})</color>");
-        if (_resolvedNode == null) { Debug.LogWarning("[SkillTree][Button] 클릭 무시: resolvedNode null"); return; }
+        Debug.Log($"<color=orange>[SkillTree][Button] 클릭 - ({skillIndex},{level},{branchIndex})</color>");
+        if (_resolvedNode == null) { Debug.LogWarning("[SkillTree][Button] 클릭 무시: resolvedNode가 null입니다."); return; }
         var account = PlayerAccount.LocalInstance;
-        if (account == null) { Debug.LogWarning("[SkillTree][Button] 클릭 무시: LocalInstance null"); return; }
-        Debug.Log($"[SkillTree][Button] CmdPurchaseTreeNode 호출 — nodeId={_resolvedNode.nodeId}");
+        if (account == null) { Debug.LogWarning("[SkillTree][Button] 클릭 무시: LocalInstance가 null입니다."); return; }
+        Debug.Log($"[SkillTree][Button] CmdPurchaseTreeNode 호출 - nodeId={_resolvedNode.nodeId}");
         account.CmdPurchaseTreeNode(_resolvedNode.nodeId);
     }
 }

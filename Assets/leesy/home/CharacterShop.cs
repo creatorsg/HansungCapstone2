@@ -4,14 +4,10 @@ using UnityEngine;
 namespace Lsy
 {
     /// <summary>
-    /// NPC 상호작용 커맨드 처리.
-    /// 골드는 PlayerAccount 귀속이므로 sender의 PlayerAccount를 찾아 처리합니다.
-    /// requiresAuthority = false: 어떤 클라이언트든 호출 가능 (sender로 호출자 식별).
+    /// NPC 상호작용 관련 서버 Command를 처리합니다.
     /// </summary>
     public class CharacterShop : NetworkBehaviour
     {
-        // ─── sender → PlayerAccount 헬퍼 ──────────────────────────────
-
         [Server]
         private PlayerAccount FindAccount(NetworkConnectionToClient sender)
         {
@@ -63,12 +59,10 @@ namespace Lsy
             return key;
         }
 
-        // ─── 커맨드 ────────────────────────────────────────────────────
-
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
+            Debug.Log($"[CharacterShop][Server] 아이템 구매 요청 - item:{itemName}, price:{price}G");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -80,9 +74,10 @@ namespace Lsy
                 SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
+
             if (unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}은(는) 이미 5개를 소지하고 있습니다.");
+                SendNotification(sender, $"{itemName}은(는) 이미 5개를 가지고 있습니다.");
                 return;
             }
 
@@ -94,7 +89,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdInvestToNPC(uint npcNetId, int amount, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdInvestToNPC - netId:{npcNetId}, amount:{amount}");
+            Debug.Log($"[CharacterShop][Server] NPC 투자 요청 - netId:{npcNetId}, amount:{amount}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -104,6 +99,7 @@ namespace Lsy
                 SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
+
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
             {
                 NPCState npc = identity.GetComponent<NPCState>();
@@ -118,7 +114,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdUseBartender(int price, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdUseBartender - price:{price}");
+            Debug.Log($"[CharacterShop][Server] 바텐더 회복 요청 - price:{price}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -130,6 +126,7 @@ namespace Lsy
                 SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
+
             if (unit.ApplyBartenderHeal())
             {
                 account.currentGold -= price;
@@ -144,7 +141,7 @@ namespace Lsy
         [Command(requiresAuthority = false)]
         public void CmdUpgradeWeapon(string weaponId, int weaponIndex, int nodeIndex, int npcLevel, int price, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdUpgradeWeapon - weaponId:{weaponId}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
+            Debug.Log($"[CharacterShop][Server] 무기 강화 요청 - weaponId:{weaponId}, node:{nodeIndex}, npcLv:{npcLevel}, price:{price}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -164,7 +161,8 @@ namespace Lsy
                 string weaponInventoryKey = ResolveWeaponInventoryKey(weaponId);
                 if (nodeIndex == 0)
                     unit.AddItem(weaponInventoryKey, 1);
-                Debug.Log($"<color=green>[CharacterShop][Server] 강화 성공! weaponId:{weaponId}, node:{nodeIndex}</color>");
+
+                Debug.Log($"<color=green>[CharacterShop][Server] 무기 강화 성공 - weaponId:{weaponId}, node:{nodeIndex}</color>");
                 SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}단계 강화 완료!");
             }
             else
@@ -181,41 +179,45 @@ namespace Lsy
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeSkillWithLevel(string skillId, int skillIndex, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeSkillWithLevel(string nodeId, int npcLevel, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
+            Debug.Log($"[CharacterShop][Server] 스킬 강화 요청 - nodeId:{nodeId}, npcLv:{npcLevel}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
             CharacterUnit unit = account.currentSelectedCharacter;
             if (unit == null) return;
 
+            if (!unit.CanUnlockSkillNode(nodeId, npcLevel, out SkillTreeNodeSO node))
+            {
+                SendNotification(sender, "구매할 수 없는 스킬 강화입니다.");
+                return;
+            }
+
+            int price = node.unlockCost;
             if (account.currentGold < price)
             {
                 SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
 
-            bool success = unit.ApplySkillPurchase(skillId, npcLevel, requiredNpcLevel);
+            bool success = unit.ApplySkillPurchase(nodeId, npcLevel);
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 스킬 습득 성공! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] 스킬 습득 완료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] 스킬 강화 성공 - nodeId:{nodeId}</color>");
+                SendNotification(sender, $"[{node.displayName}] 강화 완료!");
             }
             else
             {
-                if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC 레벨이 부족합니다.");
-                else
-                    SendNotification(sender, "이미 보유한 스킬입니다.");
+                SendNotification(sender, "구매할 수 없는 스킬 강화입니다.");
             }
         }
 
         [Command(requiresAuthority = false)]
         public void CmdEquipItem(string itemName, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdEquipItem - item:{itemName}");
+            Debug.Log($"[CharacterShop][Server] 장비 장착 요청 - item:{itemName}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -227,6 +229,7 @@ namespace Lsy
                 SendNotification(sender, "장착할 아이템 이름이 비어 있습니다.");
                 return;
             }
+
             if (unit.GetItemAmount(itemName) <= 0)
             {
                 SendNotification(sender, $"[{itemName}] 아이템이 인벤토리에 없습니다.");
@@ -246,8 +249,6 @@ namespace Lsy
                 SendNotification(sender, $"[{itemName}] 장착 완료.");
             }
         }
-
-        // ─── 알림 ──────────────────────────────────────────────────────
 
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)

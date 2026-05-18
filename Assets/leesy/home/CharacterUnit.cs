@@ -1,4 +1,4 @@
-using Mirror;
+﻿using Mirror;
 using System;
 using UnityEngine;
 
@@ -29,11 +29,11 @@ namespace Lsy
 
         [SyncVar] public string characterName;
 
-        /// <summary>FinalHeroPos — 초상화 슬롯 인덱스 (0~3). 설정되면 OnAnyUnitReady 발화.</summary>
+
         [SyncVar(hook = nameof(OnHeroPosChanged))]
         public int heroPos = -1;
 
-        /// <summary>FinalHeroCode — 초상화 이미지 매핑용</summary>
+
         [SyncVar(hook = nameof(OnHeroCodeChanged))]
         public string heroCode = "";
 
@@ -45,21 +45,15 @@ namespace Lsy
         [SyncVar(hook = nameof(OnPurchasedNodeCountChanged))]
         public int purchasedNodeCount = 0;
 
-        // ─── UI 레이어용 이벤트 ───────────────────────────────────────────
-        /// <summary>로컬 권한 획득 시 — 초기화용</summary>
         public static event Action<CharacterUnit> OnLocalUnitSpawned;
         public static CharacterUnit LocalOwnedUnit { get; private set; }
-        /// <summary>heroPos가 설정된 유닛 — 초상화 UI 갱신용 (전체 클라이언트)</summary>
         public static event Action<CharacterUnit> OnAnyUnitReady;
-        /// <summary>인벤토리 변경 시 — InventoryUI 갱신용</summary>
         public static event Action OnLocalInventoryChanged;
-        /// <summary>강화/스킬 상태 변경 시 — BaseUpgradeUI 갱신용</summary>
         public static event Action OnLocalUpgradeStateChanged;
-        /// <summary>HP 또는 San이 변경됐을 때 — 초상화 슬라이더 갱신용</summary>
         public static event Action<CharacterUnit> OnAnyUnitStatsChanged;
 
         private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
-        private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
+        private void OnCurrentSanChanged(int oldVal, int newVal) => OnAnyUnitStatsChanged?.Invoke(this);
 
         private void OnHeroCodeChanged(string oldVal, string newVal)
         {
@@ -73,11 +67,6 @@ namespace Lsy
                 OnAnyUnitReady?.Invoke(this);
         }
 
-        /// <summary>
-        /// 클라이언트에서 이 오브젝트가 완전히 초기화된 후 호출됩니다.
-        /// 초기 스폰 시 SyncVar 훅이 발동하지 않는 Mirror 버전 대비용.
-        /// heroPos가 이미 유효하면 여기서 명시적으로 OnAnyUnitReady를 발화합니다.
-        /// </summary>
         public override void OnStartClient()
         {
             base.OnStartClient();
@@ -91,7 +80,7 @@ namespace Lsy
             characterName = data.charName;
             maxHp = data.maxHp;
             maxSan = data.maxSan;
-            currentHp  = maxHp;
+            currentHp = maxHp;
             currentSan = maxSan;
 
             if (myInfo == null) myInfo = new PlayerInfo();
@@ -102,22 +91,22 @@ namespace Lsy
         }
 
         /// <summary>
-        /// CharacterSelect → PlayerData 경로로 넘어온 데이터로 초기화합니다.
-        /// 골드는 PlayerAccount에서 관리하므로 여기서 설정하지 않습니다.
+        /// CharacterSelect에서 생성된 PlayerData를 기반으로 캐릭터를 초기화합니다.
+
         /// </summary>
         [Server]
         public void SetupFromPlayerData(PlayerData pd)
         {
             characterName = string.IsNullOrEmpty(pd.Info.Name) ? pd.FinalHeroCode : pd.Info.Name;
-            heroCode      = pd.FinalHeroCode;
-            heroPos       = pd.FinalHeroPos; // hook → OnAnyUnitReady 발화
-            maxHp         = pd.Info.Hp;
-            maxSan        = pd.Info.San;
-            currentHp     = maxHp;
-            currentSan    = maxSan;
+            heroCode = pd.FinalHeroCode;
+            heroPos = pd.FinalHeroPos;
+            maxHp = pd.Info.Hp;
+            maxSan = pd.Info.San;
+            currentHp = maxHp;
+            currentSan = maxSan;
 
             if (myInfo == null) myInfo = new PlayerInfo();
-            myInfo.Hp  = maxHp;
+            myInfo.Hp = maxHp;
             myInfo.San = maxSan;
 
             Debug.Log($"<color=green>[캐릭터] 초기화 완료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
@@ -222,17 +211,17 @@ namespace Lsy
         public bool ApplyBartenderHeal()
         {
             if (currentHp >= maxHp && currentSan >= maxSan) return false;
-            currentHp  = maxHp;
+            currentHp = maxHp;
             currentSan = maxSan;
             if (myInfo == null) myInfo = new PlayerInfo();
-            myInfo.Hp  = maxHp;
+            myInfo.Hp = maxHp;
             myInfo.San = maxSan;
             return true;
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdBlacksmithUpgrade에서 처리합니다.
-        /// 이 메서드는 무기 강화 상태만 변경합니다.
+
+
         /// </summary>
         [Server]
         public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel)
@@ -249,20 +238,88 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdSkillPurchase에서 처리합니다.
-        /// 이 메서드는 스킬 추가 상태만 변경합니다.
+
         /// </summary>
         [Server]
-        public bool ApplySkillPurchase(string skillId, int npcLevel, int requiredNpcLevel)
+        public bool ApplySkillPurchase(string skillId, int npcLevel, int requiredNpcLevel, string nodeId = "")
         {
-            if (npcLevel < requiredNpcLevel) return false;
+            return ApplySkillPurchase(string.IsNullOrEmpty(nodeId) ? skillId : nodeId, npcLevel);
+        }
 
-            foreach (var skill in mySkills)
-                if (skill.skillName == skillId) return false;
+        [Server]
+        public bool ApplySkillPurchase(string nodeId, int npcLevel)
+        {
+            if (!CanUnlockSkillNode(nodeId, npcLevel, out SkillTreeNodeSO node))
+                return false;
 
-            mySkills.Add(new PlayerSkill { skillName = skillId, currentLevel = 1 });
+            unlockedNodeIds.Add(nodeId);
+            RecordInformantSkillNode(node);
 
             return true;
+        }
+
+        public bool CanUnlockSkillNode(string nodeId, out SkillTreeNodeSO node)
+        {
+            return CanUnlockSkillNode(nodeId, int.MaxValue, out node);
+        }
+
+        public bool CanUnlockSkillNode(string nodeId, int npcLevel, out SkillTreeNodeSO node)
+        {
+            node = null;
+            if (string.IsNullOrEmpty(nodeId)) return false;
+
+            string characterCode = SkillTreeCharacterCode;
+            if (string.IsNullOrEmpty(characterCode)) return false;
+
+            if (!SkillTreeRegistry.TryFind(characterCode, nodeId, out node))
+                return false;
+
+            if (npcLevel < GetRequiredInformantNpcLevel(node))
+                return false;
+
+            if (unlockedNodeIds.Contains(nodeId))
+                return false;
+
+            if (node.prerequisite != null && !unlockedNodeIds.Contains(node.prerequisite.nodeId))
+                return false;
+
+            foreach (string unlockedNodeId in unlockedNodeIds)
+            {
+                SkillTreeNodeSO unlockedNode = SkillTreeRegistry.Find(characterCode, unlockedNodeId);
+                if (unlockedNode == null) continue;
+
+                bool sameBranchChoice =
+                    unlockedNode.skillIndex == node.skillIndex &&
+                    unlockedNode.level == node.level;
+
+                if (sameBranchChoice)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public string SkillTreeCharacterCode => !string.IsNullOrEmpty(heroCode) ? heroCode : characterName;
+
+        public static int GetRequiredInformantNpcLevel(SkillTreeNodeSO node)
+        {
+            if (node == null) return int.MaxValue;
+            return Mathf.Max(1, node.level - 1);
+        }
+
+        private void RecordInformantSkillNode(SkillTreeNodeSO node)
+        {
+            string recordId = node != null ? node.nodeId : null;
+            if (string.IsNullOrEmpty(recordId)) return;
+
+            foreach (var skill in mySkills)
+                if (skill.skillName == recordId) return;
+
+            mySkills.Add(new PlayerSkill
+            {
+                skillName = recordId,
+                currentLevel = node != null ? node.level : 1
+            });
         }
 
         [Server]

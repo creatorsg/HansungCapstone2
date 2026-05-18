@@ -1,11 +1,11 @@
-using Mirror;
+﻿using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ��Ʋ�� ���������� ��ϴ� ����
+// 전투 씬의 유닛, 턴, UI 흐름을 관리합니다.
 namespace Jun
 {
     public class BattleManager : NetworkBehaviour
@@ -13,16 +13,16 @@ namespace Jun
         [SerializeField] private BattleLogic _logic;
         public static BattleManager Instance;
 
-        [Header("���� ���� ����Ʈ")]
+        [Header("플레이어 목록")]
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
-        [Header("���� ���� ��ġ")]
+        [Header("플레이어 스폰 위치")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("ĳ���͵��� �̹���")]
+        [Header("캐릭터 이미지")]
         [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
 
-        [Header("���� ���� ������")]
+        [Header("전투 유닛 프리팹")]
         [SerializeField] private List<GameObject> _battleUnitPrefabs; public List<GameObject> BattleUnitPrefabs => _battleUnitPrefabs;
-        [Header("ĳ���� ���� â")]
+        [Header("캐릭터 정보 창")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
         [Header("플레이어 정보창 UI")]
@@ -41,7 +41,7 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _dodge; public TextMeshProUGUI Dodge => _dodge;
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
-        [Header("��")]// ������ ���� ��� ��ư���� ����, �Ŀ� GameObject�� �ٲ� ����
+        [Header("스테이지")]
         [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
         [Header("적 정보창 UI")]
@@ -60,9 +60,9 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _enemydodge; public TextMeshProUGUI EnemyDodge => _enemydodge;
         public int EnemyNum;
 
-        [Header("�� ����")]
-        [SerializeField] private Transform _turnPanel;  //�� �����ִ� ���
-        [SerializeField] private Image _turnUi;  // ���� �������� �̹���
+        [Header("턴 UI")]
+        [SerializeField] private Transform _turnPanel;
+        [SerializeField] private Image _turnUi;
         [SerializeField] private List<Image> _turnUIList; 
         [SerializeField] private TextMeshProUGUI _turnUI;  
         public List<TurnData> _turnList = new List<TurnData>();
@@ -79,7 +79,7 @@ namespace Jun
            
         }
 
-        [Header("�� �ý���")]
+        [Header("핑 시스템")]
         [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
 
         public int Order = -1;
@@ -88,7 +88,7 @@ namespace Jun
         private void Awake()
         {
             Instance = this;
-            //  �г� ��Ȱ�� ó��
+
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha =  0.5f;
@@ -98,12 +98,12 @@ namespace Jun
         {
             base.OnStartServer();
 
-            // ������ ���� ������ ������ �ʱ�ȭ 
+
             _players.Clear();
             _turnList.Clear();
             Order = -1;
 
-            // ���������� �� �� ������ �߰�.
+
             for (int i = 0; i < _enemys[StageNum - 1].Enemys.Count; i++)
             {
                 _turnList.Add(new TurnData("Enemy", _enemys[StageNum - 1].Enemys[i].GetComponent<EnemyController>().Info.Spd, i));
@@ -132,7 +132,7 @@ namespace Jun
                 yield return null;
             }
 
-            Debug.Log("���� ����! ���� ������ �����մϴ�.");
+            Debug.Log("[BattleManager] 전투 시작! 플레이어 데이터 적용을 시작합니다.");
 
             if (survivors.Length == 0)
             {
@@ -159,10 +159,10 @@ namespace Jun
                     Debug.LogWarning($"[BattleManager] BattleUnitPrefab is null. index={data.FinalHeroIndex}");
                     continue;
                 }
-                // 1. ������(FinalHeroIndex)�� �´� ������ ������ ����! (��ġ�� ���� ����Ʈ��)
+
                 GameObject battleObj = Instantiate(BattleUnitPrefabs[data.FinalHeroIndex], SpawnPoints[data.FinalHeroPos].position, Quaternion.identity);
 
-                // 2. ������ ���� ��Ʈ�ѷ��� ������ ������(��ȥ) ����!
+
                 var controller = battleObj.GetComponent<GamePlayerController>();
                 if (controller == null)
                 {
@@ -173,16 +173,16 @@ namespace Jun
 
                 controller.InjectData(data);
 
-                // 3. [���� �߿�] ������ �����ϸ鼭, �ش� Ŭ���̾�Ʈ���� ���� ���� �ֱ�!
-                // PlayerData�� ������ �� ���� ������ ����(connectionToClient)�� �� ���뿡 �������ݴϴ�.
+
+
                 NetworkServer.Spawn(battleObj, data.connectionToClient);
 
-                // 4. ���� ����Ʈ�� ��Ʈ�ѷ� ���
+
                 _players.Add(controller);
                 _turnList.Add(new TurnData("Player", data.Info.Spd, _players.Count - 1));
             }
 
-            // 5. �� ����
+
             if (_players.Count == 0)
             {
                 Debug.LogError("[BattleManager] 생성된 플레이어 유닛이 없어 전투를 시작할 수 없습니다.");
@@ -198,7 +198,7 @@ namespace Jun
             Order = -1;
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
-            RpcResetAllHighlights();   // prefab 기본값이 active 인 경우 대비
+            RpcResetAllHighlights();   // prefab 기본값이 active인 경우 대비
             NextTurn();
         }
         [ClientRpc]
@@ -219,14 +219,14 @@ namespace Jun
                 }
                 else
                 {
-                    // �÷��̾�� ������ �� �ð��� �ɸ� �� ������ ��� �ڵ� ���
+
                     if (targetNum < _players.Count)
                     {
                         sp = _players[targetNum].GetComponent<SpriteRenderer>().sprite;
                     }
                     else
                     {
-                        Debug.LogWarning($"���� {targetNum}�� �÷��̾ �� ���Խ��ϴ�.");
+                        Debug.LogWarning($"[BattleManager] 턴 순서 {targetNum}번 플레이어가 아직 없습니다.");
                     }
                 }
 
@@ -253,7 +253,7 @@ namespace Jun
             t.gameObject.SetActive(isTurn);
         }
 
-        // 라운드 시작 / 새 턴 리스트 빌드 시 모든 highlight 를 일괄 OFF (prefab 기본값이 active 인 경우 대비)
+
         [ClientRpc]
         private void RpcResetAllHighlights()
         {
@@ -265,7 +265,7 @@ namespace Jun
                 if (t != null) t.gameObject.SetActive(false);
             }
         }
-        // ���� ������ ����
+
         [Server]
         public void NextTurn()
         {
@@ -275,14 +275,14 @@ namespace Jun
                 return;
             }
 
-            // 패배 / 승리 종료 체크
+            // 승리 / 전멸 종료 체크
             int alivePlayers = 0;
             foreach (var p in _players)
                 if (p != null && p.Info != null && p.Info.Hp > 0f) alivePlayers++;
 
             if (alivePlayers == 0)
             {
-                Debug.Log("[BattleManager] 전멸 — defeat");
+                Debug.Log("[BattleManager] 아군 전멸 - 패배 처리");
                 var rmFail = RoundManager.Instance;
                 if (rmFail != null) rmFail.OnAllPlayersDead();
                 else NetworkManager.singleton.ServerChangeScene("Home");
@@ -291,14 +291,14 @@ namespace Jun
 
             if (EnemyNum <= 0)
             {
-                Debug.Log("[BattleManager] 적 전멸 — round clear");
+                Debug.Log("[BattleManager] 적 전멸 - 라운드 클리어");
                 NextStage();
                 return;
             }
 
             RpcSetHighlight(Order, false);
 
-            // 살아있는 다음 유닛 찾기 (죽은 유닛은 스킵)
+
             int safety = 0;
             do
             {
@@ -314,7 +314,7 @@ namespace Jun
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
 
-            Debug.Log($"[BattleManager] Turn: {currentType}#{currentNum} (적:{EnemyNum} 생존:{alivePlayers})");
+            Debug.Log($"[BattleManager] Turn: {currentType}#{currentNum} (적:{EnemyNum}, 생존:{alivePlayers})");
 
             RpcChangeTurn(currentType, currentNum);
             RpcSetHighlight(Order, true);
@@ -326,7 +326,7 @@ namespace Jun
             }
         }
 
-        // 턴 리스트 항목이 사망 상태인지 (스킵 판정)
+
         private bool IsTurnEntryDead(TurnData t)
         {
             if (t == null) return true;
@@ -345,7 +345,7 @@ namespace Jun
             var pl = _players[t.num];
             return pl == null || pl.Info == null || pl.Info.Hp <= 0f;
         }
-        // �� ����
+
         [ClientRpc]
         public void RpcChangeTurn(string typeTurn, int turnNum)
         {
@@ -356,9 +356,9 @@ namespace Jun
 
             if (typeTurn == "Enemy")
             {
-                CurrentTurnUnit = null; // �� ���̴ϱ� 
+                CurrentTurnUnit = null;
                 _turnUI.text = "Enemy" + turnNum.ToString();
-                //  �г� ��Ȱ�� ó��
+
                 _unitPanel.interactable = false;
                 _unitPanel.blocksRaycasts = false;
                 _unitPanel.alpha = 0.5f;
@@ -366,10 +366,10 @@ namespace Jun
             else
             {
                 var targetPlayer = _players[turnNum];
-                CurrentTurnUnit = targetPlayer; //���� �� ���� ���� ����
+                CurrentTurnUnit = targetPlayer;
                 //_turnUI.text = "Turn: " + _players[turnNum].Info.Id.ToString();
                 
-                //���� ���̵� ������� ������ ��� ���� ǥ��
+
                 targetPlayer.MyTurn(true);
 
                 bool isMyTurn = targetPlayer.isOwned;
@@ -377,13 +377,13 @@ namespace Jun
                 {
                     UpdateUnitUI(targetPlayer);
                 }
-                // ���������� ���� �г� Ȱ��/��Ȱ�� ó��
+
                 _unitPanel.interactable = isMyTurn;
                 _unitPanel.blocksRaycasts = isMyTurn;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
         }
-        // 적 차례 — EnemyAI로 스킬/타깃 결정 후 BattleLogic.EnemyAction 실행
+
         [Server]
         private IEnumerator EnemyTurnServer()
         {
@@ -415,7 +415,7 @@ namespace Jun
                 yield break;
             }
 
-            // EnemyAI 가 있으면 가중치 기반 스킬 픽, 없으면 기본 공격
+
             SkillInfo skill;
             List<int> targets;
             var ai = btn.GetComponent<EnemyAI>();
@@ -459,11 +459,11 @@ namespace Jun
         {
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
-            // ���õ� ������ ���ʿ� �� ���������� ���� �г� Ȱ��/��Ȱ�� ó��
+
             _unitPanel.interactable = isUnitTurn;
             _unitPanel.blocksRaycasts = isUnitTurn;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
-            // ���õ� ������ ������ ��ü
+
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
             _name.text = unit.Info.Name;
             _type.text = unit.Info.Type;
@@ -476,18 +476,18 @@ namespace Jun
             _res.text = unit.Info.Res.ToString();
             _dodge.text = unit.EffectiveDodge.ToString();
 
-            // ��ų ��ư �̺�Ʈ �翬��
+
             for (int i = 0; i < _skillBTN.Count; i++)
             {
                 int index = i;
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
                 _skillBTN[i].image.sprite = unit.Info.Skills[index].icon;
-                // 스킬 호버링 기능 추가
+
                 SkillHover hover = _skillBTN[i].GetComponent<SkillHover>();
                 if (hover != null)
                 {
-                    // 캐릭터가 가진 스킬 개수 안에 포함된다면 정보 갱신
+
                     if (unit.Info.Skills != null && index < unit.Info.Skills.Count)
                     {
                         string name = unit.Info.Skills[index].Name;
@@ -519,7 +519,7 @@ namespace Jun
             _movePosBTN.onClick.RemoveAllListeners();
             _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
         }
-        //�� ���� �̹��� ����
+
         public void UpdateEnemyUI(int index)
         {
             var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
@@ -539,11 +539,11 @@ namespace Jun
             for (int i = 0; i < _skillBTN.Count; i++)
             {
                 _enemySkillBTN[i].image.sprite = enemy.Info.Skills[i].icon;
-                // 스킬 호버링 기능 추가
+
                 SkillHover hover = _enemySkillBTN[i].GetComponent<SkillHover>();
                 if (hover != null)
                 {
-                    // 캐릭터가 가진 스킬 개수 안에 포함된다면 정보 갱신
+
                     if (enemy.Info.Skills != null && index < enemy.Info.Skills.Count)
                     {
                         string name = enemy.Info.Skills[i].Name;
@@ -558,7 +558,7 @@ namespace Jun
 
             }
         }
-        //���� ��ġ �̵�
+
         [Server]
         public void ChangeUnitPos(GamePlayerController unit1, GamePlayerController unit2)
         {
@@ -566,7 +566,7 @@ namespace Jun
             unit1.FinalHeroPos = unit2.FinalHeroPos;
             unit2.FinalHeroPos = tempPos;
 
-            // ���� �� ������ tick ó�� �� NextTurn
+
             var current = _players[_turnList[Order].num];
             var ticked = CombatCalculator.TickEffects(current.Effects);
             current.Effects.Clear();
@@ -600,16 +600,16 @@ namespace Jun
             if (_pingList[pingIndex] != null) {
                 _pingList[pingIndex].SetActive(false);
             }
-            // �ڽ� �� Ȯ��
-            Debug.Log($"pingIndex: {pingIndex} / PingLayout �ڽ� ��: {pingLayout.childCount}");
+
+            Debug.Log($"pingIndex: {pingIndex} / PingLayout 자식 수: {pingLayout.childCount}");
 
             if (pingIndex >= pingLayout.childCount)
             {
-                Debug.LogWarning("PingLayout �ڽ��� ������!");
+                Debug.LogWarning("PingLayout 자식이 부족합니다!");
                 return;
             }
 
-            // �ش� �ε��� �ڽ� ������Ʈ �ѱ�
+
             GameObject ping = pingLayout.GetChild(pingIndex).gameObject;
             ping.SetActive(true);
             _pingList[pingIndex] = ping;
@@ -623,10 +623,10 @@ namespace Jun
             ping.SetActive(false);
         }
 
-        //���Ἲ �˻�
+
         public void VerifyClientRequest(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy,List<int> targets)
         {
-            // ��Ģ Ȯ�� ��(���� �������ص�)
+
 
 
 
@@ -639,11 +639,11 @@ namespace Jun
             if (!result.isHit)
             {
                 Debug.Log("[CLIENT] MISS");
-                // TODO: MISS �÷��� �ؽ�Ʈ
+
                 return;
             }
             string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
-            // TODO: �÷��� ������/�� �ؽ�Ʈ ����
+
             Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
         }
         [Server]
@@ -660,8 +660,8 @@ namespace Jun
             go.SetActive(false);
         }
 
-        // ── 던전/라운드 시스템 ─────────────────────────────────
-        // RoundManager 가 SyncVar hook 으로 호출. 새 라운드의 적을 활성화하고 턴 리스트 재구성.
+        // ── 사전/라운드 시스템 ──────────────────────────────────
+
         [Server]
         public void ServerSetupRound(int round)
         {
@@ -681,7 +681,7 @@ namespace Jun
 
             _stageNum = round;
 
-            // 모든 스테이지의 적 비활성 → 새 라운드만 활성화
+
             for (int s = 0; s < _enemys.Count; s++)
             {
                 if (_enemys[s].Enemys == null) continue;
@@ -692,7 +692,7 @@ namespace Jun
                 }
             }
 
-            // 새 라운드 적 HP 리셋 + HP바 동기화
+
             var roster = _enemys[round - 1].Enemys;
             for (int i = 0; i < roster.Count; i++)
             {
@@ -708,7 +708,7 @@ namespace Jun
             }
             EnemyNum = roster.Count;
 
-            // 턴 리스트 재구성 (살아있는 플레이어 + 새 적)
+
             _turnList.Clear();
             for (int i = 0; i < _players.Count; i++)
             {
@@ -753,14 +753,14 @@ namespace Jun
             _turnUIList.Clear();
         }
 
-        // EndMyTurn 등에서 호출. 현재는 NextTurn 직결 (큐 시스템 도입 시 확장).
+
         [Server]
         public void QueueNextTurn()
         {
             NextTurn();
         }
 
-        // 적 HP 변동을 모든 클라이언트에 동기화 (EnemyModel.Damaged 가 서버에서 호출)
+
         [ClientRpc]
         public void RpcSyncEnemyHp(int enemyIdx, float hp, float maxHp)
         {
@@ -784,13 +784,13 @@ namespace Jun
             var rm = RoundManager.Instance;
             if (rm != null && rm.State == DungeonState.InBattle && rm.CurrentRound < rm.TotalRounds)
             {
-                // 다음 라운드 — Rooting 없이 바로 진행 (hook 이 ServerSetupRound 호출)
-                Debug.Log($"[BattleManager] Round {rm.CurrentRound}/{rm.TotalRounds} clear → 다음 라운드");
+
+                Debug.Log($"[BattleManager] Round {rm.CurrentRound}/{rm.TotalRounds} clear - 다음 라운드");
                 rm.OnRoundCleared();
                 return;
             }
 
-            // 마지막 라운드 또는 RoundManager 미사용 — 기존 Rooting 흐름
+            // 마지막 라운드가 아니면 RoundManager 미사용 시 기존 Rooting 호출
             StageClear();
         }
         public void StageClear()

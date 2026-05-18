@@ -14,7 +14,7 @@ namespace Lsy
                 Debug.Log($"<color=green>[BlacksmithWeaponRow] {gameObject.name} 초기화 완료. 무기:{weaponData.weaponId}, 노드 수:{weaponData.nodes.Count}</color>");
         }
 
-        protected override int GetNodePrice(int nodeIndex)
+        protected override int GetNodePrice(int nodeIndex, CharacterUnit unit)
         {
             if (weaponData == null || nodeIndex >= weaponData.nodes.Count) return 0;
             return weaponData.nodes[nodeIndex].price;

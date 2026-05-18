@@ -1,24 +1,22 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
-
-
 
 public class HideoutManager : NetworkBehaviour
 {
     public static HideoutManager Instance;
 
-    [Header("���� ����Ʈ")]
+    [Header("플레이어 목록")]
     public readonly SyncList<PlayerData> _players = new SyncList<PlayerData>();
 
-    [Header("���� ���� ��ġ")]
+    [Header("플레이어 표시 위치")]
     [SerializeField] private List<Image> _spawnPoints;
 
-    [Header("���ֵ��� �̹���")]
-    [SerializeField] private List<Sprite> _playerImages; public List<Sprite> PlayerImages => _playerImages;
+    [Header("캐릭터 이미지")]
+    [SerializeField] private List<Sprite> _playerImages;
+    public List<Sprite> PlayerImages => _playerImages;
 
     private void Awake()
     {
@@ -27,22 +25,20 @@ public class HideoutManager : NetworkBehaviour
             Instance = this;
         }
     }
+
     public override void OnStartClient()
     {
         base.OnStartClient();
-        PlayerData[] players;
-        players = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+        PlayerData[] players = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
 
-        foreach(var player in players)
+        foreach (var player in players)
         {
             UpdateHideoutUILocal(player.FinalHeroPos, player.FinalHeroIndex);
         }
     }
 
-    //���� �� �÷��̾� �߰�(�����ϱ� ���ؼ�
     public void RegisterPlayer(PlayerData pl)
     {
-
         var manager = NetworkManager.singleton as GameRoomManager;
         _players.Add(pl);
 
@@ -51,6 +47,7 @@ public class HideoutManager : NetworkBehaviour
             RpcAllPlayersReady();
         }
     }
+
     public void UpdateHideoutUILocal(int pos, int heroIndex)
     {
         _spawnPoints[pos].sprite = _playerImages[heroIndex];
@@ -59,7 +56,7 @@ public class HideoutManager : NetworkBehaviour
     [ClientRpc]
     private void RpcAllPlayersReady()
     {
-        Debug.Log("���� �Ϸ�");
+        Debug.Log("[HideoutManager] 모든 플레이어 준비 완료");
     }
 
     [Server]
@@ -73,9 +70,7 @@ public class HideoutManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// 던전 진입 버튼 콜백 (호스트 전용).
-    /// RegionConfig 를 들고 있는 UI 버튼 OnClick 에 연결합니다.
-    /// 클라이언트가 누르면 무시되며, 호스트가 누르면 RoundManager.StartDungeon → 던전 씬 전환.
+    /// 던전 진입 버튼 콜백입니다. 호스트만 RoundManager를 통해 던전을 시작할 수 있습니다.
     /// </summary>
     public void OnClickEnterDungeon(Jun.RegionConfig cfg)
     {
@@ -84,11 +79,13 @@ public class HideoutManager : NetworkBehaviour
             Debug.LogWarning("[HideoutManager] 호스트만 던전을 시작할 수 있습니다.");
             return;
         }
+
         if (cfg == null)
         {
-            Debug.LogError("[HideoutManager] RegionConfig 가 비어 있습니다.");
+            Debug.LogError("[HideoutManager] RegionConfig가 비어 있습니다.");
             return;
         }
+
         if (Jun.RoundManager.Instance == null)
         {
             Debug.LogError("[HideoutManager] RoundManager 인스턴스가 없습니다. GameRoomManager.RoundManagerPrefab 할당을 확인하세요.");

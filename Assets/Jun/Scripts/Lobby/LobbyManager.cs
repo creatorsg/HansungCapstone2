@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 
-
 namespace Jun
 {
     public class LobbyManager : NetworkBehaviour
@@ -26,12 +25,13 @@ namespace Jun
         {
             Instance = this;
         }
-        public  void ActiveBTN(bool IsServer)
+
+        public void ActiveBTN(bool IsServer)
         {
             if (IsServer) _startBTN.gameObject.SetActive(true);
             else _readyBTN.gameObject.SetActive(true);
         }
-        //ĳ���� ���� ��ư
+
         public void OnClickedHero(int index)
         {
             var player = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
@@ -39,17 +39,22 @@ namespace Jun
             string code = null;
             foreach (var kvp in CharacterDatabase.Stats)
             {
-                if (kvp.Value.index == index) { code = kvp.Key; break; }
+                if (kvp.Value.index == index)
+                {
+                    code = kvp.Key;
+                    break;
+                }
             }
+
             if (string.IsNullOrEmpty(code))
             {
                 Debug.LogWarning($"[LobbyManager] HeroIndex {index}에 해당하는 CharacterCode를 찾지 못했습니다.");
                 return;
             }
+
             player.CMDChoiceHero(code);
         }
 
-        // 아지트 스킬 강화 시설 버튼 (HeroIndex 전달)
         public void OnClickedSkillFacility(int heroIndex)
         {
             if (_skillTreeUI == null || _characterSkillSets == null) return;
@@ -57,47 +62,47 @@ namespace Jun
 
             _skillTreeUI.Open(_characterSkillSets[heroIndex]);
         }
+
         public void UpdatePlayerNum(bool In)
         {
             _playerNum = In ? _playerNum + 1 : _playerNum - 1;
             _playerNumText.text = _playerNum.ToString();
         }
+
         public void OnClickedReady()
         {
-            // ���� �÷��̾��� ���� ���� ����
             var localPlayer = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
-            //�غ� ����
-            if (localPlayer.readyToBegin == true)
+
+            if (localPlayer.readyToBegin)
             {
-                localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin); // readyToBegin�� �ٲٷ���CmdChangeReadyState�Լ� �ʿ�
+                localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin);
                 _readyBTN.GetComponent<Image>().color = Color.white;
                 foreach (var hero in _heroBTN) hero.interactable = true;
                 return;
             }
-            //�غ�Ϸ�( ������ ������ ���ٸ� �غ�Ϸ� x)
+
             if (localPlayer.CharaterNum.Count == 0) return;
             localPlayer.CmdChangeReadyState(!localPlayer.readyToBegin);
             _readyBTN.GetComponent<Image>().color = Color.gray;
             foreach (var hero in _heroBTN) hero.interactable = false;
         }
+
         public void OnClickedStart()
         {
             var localPlayer = NetworkClient.localPlayer.GetComponent<GameRoomPlayer>();
             var manager = NetworkManager.singleton as GameRoomManager;
 
-            // �ٸ� ��� �÷��̾���� �غ���� Ȯ��
             bool isReadyAllPlayer = true;
-            foreach(var player in manager.roomSlots)
+            foreach (var player in manager.roomSlots)
             {
                 if (player == localPlayer) continue;
-                if (player.readyToBegin == false) isReadyAllPlayer = false;
+                if (!player.readyToBegin) isReadyAllPlayer = false;
             }
+
             if (isReadyAllPlayer) manager.ServerChangeScene(manager.GameplayScene);
-            else
-            {
-                Debug.Log("��� �÷��̾ �غ���� �ʾҽ��ϴ�.");
-            }
+            else Debug.Log("[LobbyManager] 모든 플레이어가 준비되지 않았습니다.");
         }
+
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;

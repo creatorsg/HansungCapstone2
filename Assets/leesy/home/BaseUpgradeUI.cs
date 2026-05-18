@@ -9,24 +9,21 @@ namespace Lsy
 
         public void InitializeUI(NPCState npcState)
         {
-            // ���� ���� ����
             if (NpcState != null)
                 NpcState.OnStateChanged -= OnNpcStateChanged;
 
             NpcState = npcState;
 
-            // NPC ����/��� ���� �� �ڵ����� ��� ����
             if (NpcState != null)
                 NpcState.OnStateChanged += OnNpcStateChanged;
 
-            Debug.Log($"<color=cyan>[UpgradeUI] InitializeUI - NPC:{(npcState != null ? npcState.name : "NULL")}</color>");
+            Debug.Log($"<color=cyan>[UpgradeUI] 초기화 - NPC:{(npcState != null ? npcState.name : "NULL")}</color>");
             RefreshAllRows();
         }
 
-        // NPC ���� ���� �� (������ ��) �ڵ� ȣ��
         private void OnNpcStateChanged()
         {
-            Debug.Log($"<color=cyan>[UpgradeUI] NPC ���� ���� ���� - Lv:{NpcState?.currentLevel} �� ��� ����</color>");
+            Debug.Log($"<color=cyan>[UpgradeUI] NPC 상태 변경 - Lv:{NpcState?.currentLevel}, 강화 UI 갱신</color>");
             RefreshAllRows();
         }
 
@@ -34,12 +31,12 @@ namespace Lsy
         {
             if (NpcState == null)
             {
-                Debug.LogWarning("[UpgradeUI] RefreshAllRows - NpcState�� NULL");
+                Debug.LogWarning("[UpgradeUI] RefreshAllRows 실패 - NpcState가 NULL입니다.");
                 return;
             }
 
             CharacterUnit unit = PlayerAccount.LocalInstance?.currentSelectedCharacter;
-            Debug.Log($"<color=cyan>[UpgradeUI] RefreshAllRows - NPC Lv:{NpcState.currentLevel}, Unit:{(unit != null ? unit.characterName : "NULL")}</color>");
+            Debug.Log($"<color=cyan>[UpgradeUI] 전체 강화 줄 갱신 - NPC Lv:{NpcState.currentLevel}, Unit:{(unit != null ? unit.characterName : "NULL")}</color>");
 
             foreach (var row in GetRows())
             {
@@ -50,7 +47,6 @@ namespace Lsy
 
         private void OnEnable()
         {
-            // 캐릭터 강화/스킬 상태가 바뀌면 자동으로 행 갱신
             CharacterUnit.OnLocalUpgradeStateChanged += RefreshAllRows;
         }
 

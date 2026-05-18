@@ -52,7 +52,7 @@ namespace Lsy
         {
             if (readyOrStartButtonRoot == null)
             {
-                ReadyOrStartButton ready = FindObjectOfType<ReadyOrStartButton>(true);
+                ReadyOrStartButton ready = FindFirstObjectByType<ReadyOrStartButton>(FindObjectsInactive.Include);
                 if (ready != null) readyOrStartButtonRoot = ready.gameObject;
             }
 

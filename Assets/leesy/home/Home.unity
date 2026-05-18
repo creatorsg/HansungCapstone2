@@ -1062,7 +1062,6 @@ MonoBehaviour:
   - {fileID: 1017056682}
   - {fileID: 630802362}
   - {fileID: 1765504622}
-  skillData: {fileID: 11400000, guid: 3a40cf649eee17a4caabe3905e4a98e4, type: 2}
 --- !u!1 &176132586
 GameObject:
   m_ObjectHideFlags: 0

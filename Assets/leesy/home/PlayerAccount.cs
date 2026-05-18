@@ -75,7 +75,7 @@ namespace Lsy
         public override void OnStartLocalPlayer()
         {
             LocalInstance = this;
-            Debug.Log("<color=green>[怨꾩젙] ?묒냽 ?깃났!</color>");
+            Debug.Log("<color=green>[PlayerAccount] 로컬 계정 연결 완료</color>");
             OnLocalAccountReady?.Invoke(this);
             CmdRequestMyCharacters();
         }
@@ -87,16 +87,16 @@ namespace Lsy
 
             _myPlayerDatas.Clear();
             var allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: ?꾩껜 PlayerData {allPlayerDatas.Length}媛?諛쒓껄, ??connectionToClient={connectionToClient}");
+            Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: 전체 PlayerData {allPlayerDatas.Length}개 발견, 요청 connection={connectionToClient}");
             foreach (var pd in allPlayerDatas)
             {
-                Debug.Log($"[PlayerAccount] PlayerData 寃?? code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, ?쇱튂={pd.connectionToClient == connectionToClient}");
+                Debug.Log($"[PlayerAccount] PlayerData 검사: code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, 일치={pd.connectionToClient == connectionToClient}");
                 if (pd.connectionToClient == connectionToClient)
                     _myPlayerDatas.Add(pd);
             }
             _myPlayerDatas.Sort((a, b) => a.FinalHeroPos.CompareTo(b.FinalHeroPos));
             myCharacterCount = _myPlayerDatas.Count;
-            Debug.Log($"[PlayerAccount] ??PlayerData {myCharacterCount}媛??섏쭛 ?꾨즺");
+            Debug.Log($"[PlayerAccount] 내 PlayerData {myCharacterCount}개 수집 완료");
 
             myHeroPositions.Clear();
             myHeroCodes.Clear();
@@ -116,12 +116,12 @@ namespace Lsy
                 currentGold = 2000;
                 currentActiveIndex = 0;
                 savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
-                Debug.Log($"[PlayerAccount] PlayerData 湲곕컲 珥덇린?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
+                Debug.Log($"[PlayerAccount] PlayerData 기반 초기화: code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
             }
             else
             {
                 if (myCharacterDataList == null || myCharacterDataList.Count == 0) return;
-                Debug.LogWarning("[PlayerAccount] PlayerData ?놁쓬 ??CharacterData ?먯뀑?쇰줈 ?대갚?⑸땲??");
+                Debug.LogWarning("[PlayerAccount] PlayerData가 없어 CharacterData 에셋으로 fallback합니다.");
                 activeUnit.SetupFromData(myCharacterDataList[0]);
                 currentGold = myCharacterDataList[0].gold;
                 savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
@@ -175,13 +175,13 @@ namespace Lsy
             {
                 PlayerData targetPd = _myPlayerDatas[targetIndex];
                 currentSelectedCharacter.SetupFromPlayerData(targetPd);
-                Debug.Log($"<color=cyan>[?쒕쾭] {targetPd.FinalHeroCode}?쇰줈 ?ㅼ솑 ?꾨즺!</color>");
+                Debug.Log($"<color=cyan>[Server] {targetPd.FinalHeroCode}로 전환 완료!</color>");
             }
             else
             {
                 CharacterData targetData = myCharacterDataList[targetIndex];
                 currentSelectedCharacter.SetupFromData(targetData);
-                Debug.Log($"<color=cyan>[?쒕쾭] {targetData.charName}?쇰줈 ?ㅼ솑 ?꾨즺! (?대갚)</color>");
+                Debug.Log($"<color=cyan>[Server] {targetData.charName}로 전환 완료! (fallback)</color>");
             }
 
             currentSelectedCharacter.myInventory.Clear();
@@ -217,7 +217,7 @@ namespace Lsy
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
         {
             currentActiveIndex = newActiveIndex;
-            Debug.Log($"<color=cyan>[?대씪?댁뼵?? currentActiveIndex: {newActiveIndex}</color>");
+            Debug.Log($"<color=cyan>[Client] currentActiveIndex 변경: {newActiveIndex}</color>");
 
             if (InventoryUI.Instance != null)
                 InventoryUI.Instance.RefreshInventory();
@@ -232,33 +232,33 @@ namespace Lsy
         [Command]
         public void CmdPurchaseTreeNode(string nodeId)
         {
-            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode 吏꾩엯 ??nodeId={nodeId}</color>");
+            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode 진입 - nodeId={nodeId}</color>");
 
-            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] 嫄곕?: currentSelectedCharacter null"); return; }
-            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] 嫄곕?: nodeId 鍮꾩뼱?덉쓬"); return; }
+            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] 거부: currentSelectedCharacter가 null입니다."); return; }
+            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] 거부: nodeId가 비어 있습니다."); return; }
 
             string characterCode = GetCurrentCharacterCode();
             if (string.IsNullOrEmpty(characterCode))
             {
-                Debug.LogWarning("[SkillTree] 嫄곕?: characterCode 鍮꾩뼱?덉쓬");
+                Debug.LogWarning("[SkillTree] 거부: characterCode가 비어 있습니다.");
                 return;
             }
 
             if (!SkillTreeRegistry.TryFind(characterCode, nodeId, out SkillTreeNodeSO node))
             {
-                Debug.LogWarning($"[SkillTree] 嫄곕?: ?몃뱶 紐?李얠쓬 ??character={characterCode}, node={nodeId}");
+                Debug.LogWarning($"[SkillTree] 거부: 노드를 찾지 못했습니다. character={characterCode}, node={nodeId}");
                 return;
             }
 
             if (currentSelectedCharacter.unlockedNodeIds.Contains(nodeId))
             {
-                Debug.Log($"[SkillTree] 嫄곕?: ?대? 蹂댁쑀 ??{nodeId}");
+                Debug.Log($"[SkillTree] 거부: 이미 보유한 노드입니다. node={nodeId}");
                 return;
             }
 
             if (node.prerequisite != null && !currentSelectedCharacter.unlockedNodeIds.Contains(node.prerequisite.nodeId))
             {
-                Debug.Log($"[SkillTree] 嫄곕?: prereq 誘몄땐議???{nodeId} requires {node.prerequisite.nodeId}");
+                Debug.Log($"[SkillTree] 거부: 선행 노드가 없습니다. node={nodeId}, required={node.prerequisite.nodeId}");
                 return;
             }
 
@@ -273,20 +273,20 @@ namespace Lsy
 
                 if (sameBranchChoice)
                 {
-                    Debug.Log($"[SkillTree] 嫄곕?: 遺꾧린 ?묒옄?앹씪 ??{nodeId} vs ?대? 蹂댁쑀 {unlockedNodeId}");
+                    Debug.Log($"[SkillTree] 거부: 같은 레벨의 다른 분기를 이미 선택했습니다. requested={nodeId}, owned={unlockedNodeId}");
                     return;
                 }
             }
 
             if (currentGold < node.unlockCost)
             {
-                Debug.Log($"[SkillTree] 嫄곕?: 怨⑤뱶 遺議????꾩슂 {node.unlockCost}, 蹂댁쑀 {currentGold}");
+                Debug.Log($"[SkillTree] 거부: 골드 부족. 필요={node.unlockCost}, 보유={currentGold}");
                 return;
             }
 
             currentGold -= node.unlockCost;
             currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
-            Debug.Log($"<color=green>[SkillTree] 援щℓ ?깃났 ??{nodeId}, ?붿븸 {currentGold}G</color>");
+            Debug.Log($"<color=green>[SkillTree] 구매 성공 - node={nodeId}, 잔액={currentGold}G</color>");
         }
 
         private string GetCurrentCharacterCode()
@@ -302,21 +302,21 @@ namespace Lsy
         {
             if (unit == null)
             {
-                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: unit??null");
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: unit이 null입니다.");
                 return;
             }
 
             string code = !string.IsNullOrEmpty(unit.heroCode) ? unit.heroCode : unit.characterName;
             if (string.IsNullOrEmpty(code))
             {
-                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName 紐⑤몢 鍮꾩뼱?덉쓬 ???ㅽ궗?몃━ 留ㅼ묶 遺덇?");
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode와 characterName이 모두 비어 있어 스킬트리 매칭이 불가능합니다.");
                 return;
             }
 
             CharacterSkillTreeSO tree = SkillTreeRegistry.GetTree(code);
             if (tree == null || tree.allNodes == null)
             {
-                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree ?놁쓬 ??code={code}");
+                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: 스킬트리를 찾지 못했습니다. code={code}");
                 return;
             }
 
@@ -328,7 +328,7 @@ namespace Lsy
                 if (string.IsNullOrEmpty(node.nodeId)) continue;
                 if (unit.unlockedNodeIds.Add(node.nodeId)) added++;
             }
-            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 ?몃뱶 {added}媛?異붽? (珥?unlocked={unit.unlockedNodeIds.Count})</color>");
+            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 노드 {added}개 추가 (총 unlocked={unit.unlockedNodeIds.Count})</color>");
         }
 
         [Command]
@@ -394,19 +394,27 @@ namespace Lsy
                 if (pd == null) continue;
 
                 pd.unlockedNodeIds.Clear();
+                pd.SelectedWeaponId = "";
+                pd.PurchasedWeaponNodeCount = 0;
 
                 if (i == currentActiveIndex && currentSelectedCharacter != null)
                 {
                     foreach (string nodeId in currentSelectedCharacter.unlockedNodeIds)
                         pd.unlockedNodeIds.Add(nodeId);
+
+                    pd.SelectedWeaponId = currentSelectedCharacter.selectedWeaponId;
+                    pd.PurchasedWeaponNodeCount = currentSelectedCharacter.purchasedNodeCount;
                 }
                 else if (savedCharacterData.TryGetValue(i, out CharacterSaveData saved))
                 {
                     foreach (string nodeId in saved.unlockedNodeIds)
                         pd.unlockedNodeIds.Add(nodeId);
+
+                    pd.SelectedWeaponId = saved.selectedWeaponId;
+                    pd.PurchasedWeaponNodeCount = saved.purchasedNodeCount;
                 }
 
-                Debug.Log($"[PlayerAccount] Snapshot: PlayerData[{i}] code={pd.FinalHeroCode}, nodes={pd.unlockedNodeIds.Count}개");
+                Debug.Log($"[PlayerAccount] Snapshot: PlayerData[{i}] code={pd.FinalHeroCode}, nodes={pd.unlockedNodeIds.Count}개, weapon={pd.SelectedWeaponId}, weaponNodes={pd.PurchasedWeaponNodeCount}");
             }
         }
 

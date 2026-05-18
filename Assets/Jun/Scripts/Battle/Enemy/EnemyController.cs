@@ -2,7 +2,6 @@ using Jun;
 using Mirror;
 using UnityEngine;
 
-// ��Ƽ���� ��������� ���� �� ��Ʈ�ѷ�
 namespace Jun
 {
     public class EnemyController : NetworkBehaviour
@@ -10,10 +9,9 @@ namespace Jun
         [SerializeField] private EnemyModel _model;
         [SerializeField] private EnemyView _view;
         public PlayerInfo Info;
-        //[SerializeField] private EnemyView _view;
 
-        [Header("�� �ý���")]
-        public Transform PingLayout; // �� ������ ����
+        [Header("핑 시스템")]
+        public Transform PingLayout;
 
         public UnitState State = UnitState.Waiting;
 
@@ -26,7 +24,6 @@ namespace Jun
 
         private void Start()
         {
-            // 신 시스템(Statuses)·MaxHp 초기화 보강 — 옛 Effects 시스템과 병행 운영
             if (Info != null)
             {
                 if (Info.MaxHp <= 0f) Info.MaxHp = Info.Hp;
@@ -36,9 +33,10 @@ namespace Jun
             _model.SetUp(Info);
             _model.IsDamaged += _view.Damaged;
         }
+
         public void IsMyTurn(int index)
         {
-            bool isMyTurn = _model.Info.Id == index ? true : false;
+            bool isMyTurn = _model.Info.Id == index;
             if (State == UnitState.Incapacitated && isMyTurn)
             {
                 ChangeState();
@@ -53,18 +51,14 @@ namespace Jun
             switch (State)
             {
                 case UnitState.Waiting:
-                    break;// ��� �ൿ ����
-                case UnitState.Incapacitated:
-
-                    //���߿� �ൿ�Ҵ� �ϼ� �����ؼ� �Ұ�
                     break;
-
+                case UnitState.Incapacitated:
+                    break;
                 case UnitState.Acting:
-                    // �ൿ ����
-
                     break;
             }
         }
+
         [Server]
         public void AddEffect(ActiveEffect effect)
         {

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Lsy
@@ -7,27 +6,27 @@ namespace Lsy
     public class CharacterData : ScriptableObject
     {
         [Header("기본 정보")]
-        public int charId;           // 내부 ID
-        public string charName;      // 캐릭터 이름
+        public int charId;
+        public string charName;
 
-        [Header("��ȭ �� ����")]
+        [Header("성장 및 재화")]
         public int level = 1;
         public int exp = 0;
-        public int gold = 2000; // �ʱ� ���� ���
+        public int gold = 2000;
 
-        [Header("���� ���� (�ִ�ġ ����)")]
-        public float maxHp;          // �ִ� ü��
-        public int maxSan;           // �ִ� ���ŷ�
-        public int atk;              // ���ݷ�
-        public int def;              // ����
-        public int spd;              // ���ǵ�
-        public int crit;             // ġ��Ÿ Ȯ��
-        public int ctm;              // ġ��Ÿ ���
-        public int dodge;            // ȸ����
-        public int acc;              // ���߷�
-        public int res;              // �����̻� ����
+        [Header("전투 능력치")]
+        public float maxHp;
+        public int maxSan;
+        public int atk;
+        public int def;
+        public int spd;
+        public int crit;
+        public int ctm;
+        public int dodge;
+        public int acc;
+        public int res;
 
-        [Header("�ʱ� ���� ��� ID (0 = ������)")]
+        [Header("초기 장비 ID (0 = 없음)")]
         public int weaponId;
         public int armorId;
         public int trinket1Id;

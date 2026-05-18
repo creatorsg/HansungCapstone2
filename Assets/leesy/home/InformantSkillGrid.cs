@@ -1,34 +1,36 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Lsy
 {
     public class InformantSkillGrid : BaseUpgradeRow
     {
-        public SkillUpgradeData skillData;
+        [SerializeField, Range(0, 3)] private int skillIndex;
 
-        protected override int GetNodePrice(int nodeIndex)
+        [Tooltip("Use this when one grid has 16 buttons. Every 4 buttons advance to the next skill.")]
+        [SerializeField] private bool advanceSkillEveryFourNodes;
+
+        protected override int GetNodePrice(int nodeIndex, CharacterUnit unit)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return 0;
-            return skillData.nodes[nodeIndex].price;
+            SkillTreeNodeSO node = ResolveNode(nodeIndex, unit);
+            return node != null ? node.unlockCost : 0;
         }
 
         protected override bool CanPurchaseNode(int nodeIndex, int npcLevel, CharacterUnit unit)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return false;
+            SkillTreeNodeSO node = ResolveNode(nodeIndex, unit);
+            if (node == null || unit == null) return false;
 
-            SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
-
-            if (npcLevel < nodeData.requiredNpcLevel) return false;
-
-            if (unit != null && IsSkillPurchased(nodeData.skillId, unit))
-                return false;
-
-            return true;
+            return unit.CanUnlockSkillNode(node.nodeId, npcLevel, out _);
         }
 
         protected override void OnNodeClicked(int nodeIndex)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return;
+            CharacterUnit unit = PlayerAccount.LocalInstance != null
+                ? PlayerAccount.LocalInstance.currentSelectedCharacter
+                : null;
+
+            SkillTreeNodeSO node = ResolveNode(nodeIndex, unit);
+            if (node == null) return;
 
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
@@ -36,18 +38,33 @@ namespace Lsy
             NPCState npcState = GetNpcState();
             int npcLevel = npcState != null ? npcState.currentLevel : 1;
 
-            SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
-            int skillIndex = nodeIndex;
-
-            // 서버로 보낸다: 구매/강화할 스킬 인덱스(skillIndex)
-            shop.CmdUpgradeSkillWithLevel(nodeData.skillId, skillIndex, nodeData.price, npcLevel, nodeData.requiredNpcLevel);
+            shop.CmdUpgradeSkillWithLevel(node.nodeId, npcLevel);
         }
 
-        private bool IsSkillPurchased(string skillId, CharacterUnit unit)
+        private SkillTreeNodeSO ResolveNode(int nodeIndex, CharacterUnit unit)
         {
-            foreach (var skill in unit.mySkills)
-                if (skill.skillName == skillId) return true;
-            return false;
+            if (unit == null) return null;
+
+            CharacterSkillTreeSO tree = SkillTreeRegistry.GetTree(unit.SkillTreeCharacterCode);
+            if (tree == null) return null;
+
+            ResolveNodePosition(nodeIndex, out int resolvedSkillIndex, out int level, out int branchIndex);
+            return tree.FindByPosition(resolvedSkillIndex, level, branchIndex);
+        }
+
+        private void ResolveNodePosition(int nodeIndex, out int resolvedSkillIndex, out int level, out int branchIndex)
+        {
+            int slotIndex = nodeIndex;
+            resolvedSkillIndex = skillIndex;
+
+            if (advanceSkillEveryFourNodes)
+            {
+                resolvedSkillIndex = nodeIndex / 4;
+                slotIndex = nodeIndex % 4;
+            }
+
+            level = slotIndex < 2 ? 2 : 3;
+            branchIndex = slotIndex % 2;
         }
     }
 }
