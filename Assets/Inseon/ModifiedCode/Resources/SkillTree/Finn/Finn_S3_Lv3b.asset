@@ -12,15 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S3_Lv3b
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
-  nodeId: 
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 3
+  skillId: Finn_3
+  skillName: Explosive Experiment
+  nodeId: finn_s3_lv3b
+  displayName: Explosive Experiment
+  icon: {fileID: -2746435884744161489, guid: 50f2c2d8af506d54baafc476a86b1d20, type: 3}
+  description: Knockback chance 50% -> 100% + 25% chance for 1 turn stun
   skillIndex: 2
   level: 3
   branchIndex: 1
   prerequisite: {fileID: 11400000, guid: 324991fc0f690d84786d37096b57c2cd, type: 2}
-  unlockCost: 0
+  unlockCost: 100
+  axis: 1
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
   damage: 0
   healAmount: 0
   range: 1

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.WeaponUpgradeData
   weaponId: 1
   weaponName: "\uB3C4\uB07C"
+  inventoryItemName: "\uB300\uC7A5\uC7A5\uC774"
   nodes:
   - nodeName: "\uD5C8\uC811\uD55C \uB3C4\uB07C"
     price: 100

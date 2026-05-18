@@ -12,15 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S2_Lv2b
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 2
+  skillId: Finn_2
+  skillName: Stimulant Injection
   nodeId: finn_s2_lv2b
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  displayName: Stimulant Injection
+  icon: {fileID: -6286060828788350423, guid: 6d873b900180ad543bd8fe23c33daed3, type: 3}
+  description: Grants 1 extra action on the same turn after use
   skillIndex: 1
   level: 2
   branchIndex: 1
   prerequisite: {fileID: 11400000, guid: b817979f8100c6541b35776d5f74fe59, type: 2}
-  unlockCost: 0
+  unlockCost: 50
+  axis: 2
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 1
   damage: 0
   healAmount: 0
   range: 1

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Hamel_S2_Lv3a
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C004
+  characterName: Hamel
+  skillNumber: 2
+  skillId: Hamel_2
+  skillName: March
+  nodeId: hamel_s2_lv3a
+  displayName: March
+  icon: {fileID: 7389082159000606099, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
+  description: Duration 1 -> 2 turns
+  skillIndex: 1
+  level: 3
+  branchIndex: 0
+  prerequisite: {fileID: 11400000, guid: 9609e8b3a00442bbbface7bb4a2755e2, type: 2}
+  unlockCost: 100
+  axis: 3
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 1
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 0
+  healAmount: 0
+  range: 1
+  durationTurns: 1
+  debuffPotency: 0

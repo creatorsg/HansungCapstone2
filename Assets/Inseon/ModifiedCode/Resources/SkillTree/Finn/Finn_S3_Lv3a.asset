@@ -12,16 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
   m_Name: Finn_S3_Lv3a
   m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
-  nodeId: 
-  displayName: 
-  icon: {fileID: 0}
-  description: 
+  characterCode: C002
+  characterName: Finn
+  skillNumber: 3
+  skillId: Finn_3
+  skillName: Explosive Experiment
+  nodeId: finn_s3_lv3a
+  displayName: Explosive Experiment
+  icon: {fileID: -2746435884744161489, guid: 50f2c2d8af506d54baafc476a86b1d20, type: 3}
+  description: AoE range enemy rows 1-2 -> 1-3
   skillIndex: 2
   level: 3
+  branchIndex: 0
   prerequisite: {fileID: 11400000, guid: 884160de09d506e4da42d360530ee341, type: 2}
-  unlockCost: 0
+  unlockCost: 100
+  axis: 3
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 3
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
   damage: 0
   healAmount: 0
-  range: 1
+  range: 3
   durationTurns: 0
   debuffPotency: 0

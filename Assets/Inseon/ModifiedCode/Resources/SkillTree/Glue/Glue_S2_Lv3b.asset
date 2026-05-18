@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Glue_S2_Lv3b
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C001
+  characterName: Glue
+  skillNumber: 2
+  skillId: Glue_2
+  skillName: Cover
+  nodeId: glue_s2_lv3b
+  displayName: Cover
+  icon: {fileID: 4164413579519221649, guid: f7f843b5db17ebd4888d3829c7270511, type: 3}
+  description: 'On cover destruction: 5 damage to enemy row 1 + 1 turn light bleed'
+  skillIndex: 1
+  level: 3
+  branchIndex: 1
+  prerequisite: {fileID: 11400000, guid: 60db5925076f43cbaea03f5c5d0cd9d4, type: 2}
+  unlockCost: 100
+  axis: 1
+  damageDelta: 5
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 0
+  damage: 5
+  healAmount: 0
+  range: 1
+  durationTurns: 0
+  debuffPotency: 0

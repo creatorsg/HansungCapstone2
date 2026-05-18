@@ -796,94 +796,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
   cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
-  battleSprite: {fileID: -4991079725121273491, guid: 09627a67dcc44d0409ae7e48e00a45aa, type: 3}
+  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
   - Name: 1
-    User: 0
     Type: 0
-    anim: Attack
+    anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: 2211368458654073353, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 2
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: 7389082159000606099, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 3
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -8338433773514870343, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 4
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 6653561137313460520, guid: eebd20aa1a159334988a8a709b461d6c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   items: []
   characterImage: {fileID: 1975854966}
   codeLabel: {fileID: 0}
@@ -1090,7 +1030,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1180,95 +1120,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C002
-  cardIcon: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
-  battleSprite: {fileID: 6764707825347140516, guid: 8fbd6b5a3fd389e4197cd4d6d6dc6ab3, type: 3}
+  cardIcon: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
+  battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
-  - Name: "\uAC15\uD654"
-    User: 0
-    Type: 4
-    anim: Attack
-    TagetNum: 1
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
-    description: "\uB098 \uAC15\uD654"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 10
-    EffectDuration: 2
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 4
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
+  - Name: 1
+    Type: 0
+    anim: 
+    TagetNum: 2
+    icon: {fileID: -2833775182555582667, guid: f8705bf1ae83c5044b3f82eada7f3da3, type: 3}
+    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
   - Name: 2
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -8836685135467796054, guid: a13954d1e700ba245b08b7d4d49daeaf, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 3
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: 3499149529287642153, guid: d9cc460e30aa15d41a5ff9295a060ff1, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 4
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: -4164578016646140414, guid: f0eab2aa59066df4bbaf88cf664fea3e, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   items: []
   characterImage: {fileID: 1636315041}
   codeLabel: {fileID: 0}
@@ -2799,10 +2679,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2024941243}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -0.9375}
+  m_SizeDelta: {x: 100, y: 98.125}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &801427239
 MonoBehaviour:
@@ -2824,7 +2704,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2007969409190066755, guid: 41832fb6c4702fd4ca4da58e6564cd54, type: 3}
+  m_Sprite: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4017,95 +3897,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C004
-  cardIcon: {fileID: 2648219815020983868, guid: aab1ca1ebcc4fce49b4ecb3a7e57e961, type: 3}
+  cardIcon: {fileID: 4923159571906479061, guid: 768a85fee8512c44fb9d5aeea238348c, type: 3}
   battleSprite: {fileID: 4923159571906479061, guid: 585475402fc5de341a89f808bca5145e, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
   - Name: 1
-    User: 0
     Type: 0
-    anim: Attack
+    anim: 
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: -7803066186156459161, guid: 7e90fe2cfa2959048a0ecfa7a506cd9a, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 2
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -6286060828788350423, guid: 6d873b900180ad543bd8fe23c33daed3, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 3
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -2746435884744161489, guid: 50f2c2d8af506d54baafc476a86b1d20, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   - Name: 4
-    User: 0
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 8234797298231545583, guid: d7291509e2574ed48bf0341cc86a2a36, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
   items: []
   characterImage: {fileID: 1866288786}
   codeLabel: {fileID: 0}
@@ -4920,7 +4740,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
+  m_Sprite: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5517,7 +5337,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2498668864523337785, guid: 6759e10bea941904e9f3d454dec537ef, type: 3}
+  m_Sprite: {fileID: 4923159571906479061, guid: 585475402fc5de341a89f808bca5145e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6125,113 +5945,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C001
-  cardIcon: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
+  cardIcon: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   battleSprite: {fileID: 6864204444119061735, guid: 62a397590e8e84a4aa20720681daaa67, type: 3}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: acd7bb4e2b76db5478a0bdbf9ba1c99c, type: 3}
   skills:
-  - Name: Skill1
-    User: 1
-    Type: 0
-    anim: Attack
-    TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
-    description: "2\uBA85 \uACF5\uACA9\uD55C\uB2E4!! \uC640!!!!!"
-    DamageRate: 1
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
-  - Name: 2
-    User: 0
-    Type: 1
-    anim: Attack
-    TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
-  - Name: 3
-    User: 0
-    Type: 2
-    anim: Attack
-    TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
-    description: "\uADF8\uB7FC \uB098\uB3C4 2\uBA85 \uACF5\uACA9\uAC04\uB2E4!!!!
-      \uC640!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 5
-    EffectValue: 10
-    EffectDuration: 2
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
-  - Name: 4
-    User: 0
-    Type: 3
-    anim: Attack
-    TagetNum: 1
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
-    description: "\uADF8\uB7FC \uB098\uB3C4\uB2E4!!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
-    HealRate: 0
-    EffectType: 0
-    EffectValue: 10
-    EffectDuration: 2
-    TierData:
-      skillName: 
-      description: 
-      goldCost: 0
-      statValues: []
-    Target: 0
-    DamageMultiplier: 0
-    HealAmount: 0
-    StatusEffects: []
-  items:
   - Name: 1
     Type: 0
-    TagetNum: 1
-    icon: {fileID: 0}
-    anim: Attack
-    description: 
-    HealRate: 10
-    Target: 0
+    anim: 
+    TagetNum: 2
+    icon: {fileID: 9204973257487272213, guid: af08e630107e3e64cb632505048a293e, type: 3}
+    description: "2\uBA85 \uACF5\uACA9\uD55C\uB2E4!! \uC640!!!!!"
   - Name: 2
     Type: 0
-    TagetNum: 1
-    icon: {fileID: 0}
-    anim: Attack
-    description: 
-    HealRate: 10
-    Target: 0
+    anim: 
+    TagetNum: 2
+    icon: {fileID: 4164413579519221649, guid: f7f843b5db17ebd4888d3829c7270511, type: 3}
+    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+  - Name: 3
+    Type: 0
+    anim: 
+    TagetNum: 2
+    icon: {fileID: 32788246762942611, guid: a5b1769e993483f4885b59a226929591, type: 3}
+    description: "\uADF8\uB7FC \uB098\uB3C4 2\uBA85 \uACF5\uACA9\uAC04\uB2E4!!!!
+      \uC640!!!!!!!!"
+  - Name: 4
+    Type: 0
+    anim: 
+    TagetNum: 2
+    icon: {fileID: -1334649905525160474, guid: e05c3205fb14a2f40a791288088f6262, type: 3}
+    description: "\uADF8\uB7FC \uB098\uB3C4\uB2E4!!!!! \uC640!!!!!!!!!"
+  items: []
   characterImage: {fileID: 801427239}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 805157006}

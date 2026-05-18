@@ -85,6 +85,24 @@ namespace Jun {
             base.OnServerDisconnect(conn);
         }
 
+        // ── 씬 전환 직전 스냅샷 ──────────────────────────────────────
+
+        /// <summary>
+        /// ServerChangeScene 직전에 호출됩니다. Home → Battle 전환 시
+        /// 스킬트리 강화 상태를 PlayerData에 스냅샷합니다.
+        /// </summary>
+        public override void OnServerChangeScene(string newSceneName)
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (currentScene == HomeScene && newSceneName != HomeScene)
+            {
+                Lsy.PlayerAccount.SnapshotAllUpgrades();
+                Debug.Log("[GameRoomManager] Home→Battle 전환: 스킬트리 스냅샷 완료");
+            }
+
+            base.OnServerChangeScene(newSceneName);
+        }
+
         // ── 씬 전환 시 카운터 초기화 & PlayerData 정리 ───────────────
 
         /// <summary>

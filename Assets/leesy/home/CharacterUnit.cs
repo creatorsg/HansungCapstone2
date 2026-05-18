@@ -34,7 +34,8 @@ namespace Lsy
         public int heroPos = -1;
 
         /// <summary>FinalHeroCode — 초상화 이미지 매핑용</summary>
-        [SyncVar] public string heroCode = "";
+        [SyncVar(hook = nameof(OnHeroCodeChanged))]
+        public string heroCode = "";
 
         public readonly SyncList<InventoryItem> myInventory = new SyncList<InventoryItem>();
 
@@ -47,6 +48,7 @@ namespace Lsy
         // ─── UI 레이어용 이벤트 ───────────────────────────────────────────
         /// <summary>로컬 권한 획득 시 — 초기화용</summary>
         public static event Action<CharacterUnit> OnLocalUnitSpawned;
+        public static CharacterUnit LocalOwnedUnit { get; private set; }
         /// <summary>heroPos가 설정된 유닛 — 초상화 UI 갱신용 (전체 클라이언트)</summary>
         public static event Action<CharacterUnit> OnAnyUnitReady;
         /// <summary>인벤토리 변경 시 — InventoryUI 갱신용</summary>
@@ -58,6 +60,12 @@ namespace Lsy
 
         private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
         private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
+
+        private void OnHeroCodeChanged(string oldVal, string newVal)
+        {
+            if (!isOwned) return;
+            RefreshUpgradeUI();
+        }
 
         private void OnHeroPosChanged(int oldVal, int newVal)
         {
@@ -119,6 +127,8 @@ namespace Lsy
         {
             base.OnStartAuthority();
 
+            LocalOwnedUnit = this;
+
             if (PlayerAccount.LocalInstance != null)
                 PlayerAccount.LocalInstance.currentSelectedCharacter = this;
 
@@ -132,11 +142,14 @@ namespace Lsy
             unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
 
             OnLocalUnitSpawned?.Invoke(this);
+            RefreshUpgradeUI();
         }
 
         public override void OnStopAuthority()
         {
             base.OnStopAuthority();
+            if (LocalOwnedUnit == this)
+                LocalOwnedUnit = null;
             myInventory.Callback -= OnInventoryChanged;
             mySkills.Callback -= OnSkillsChanged;
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
@@ -145,6 +158,7 @@ namespace Lsy
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
         {
             if (!isOwned) return;
+            OnLocalInventoryChanged?.Invoke();
             RefreshUpgradeUI();
         }
 

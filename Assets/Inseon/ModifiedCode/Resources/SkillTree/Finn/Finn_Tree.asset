@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85aeabe0e44442638f1fc1d9bd965080, type: 3}
   m_Name: Finn_Tree
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSkillTreeSO
-  characterCode: C004
+  characterCode: C002
   allNodes:
   - {fileID: 11400000, guid: 1495f563866cda4488f0ebd9f432a1fe, type: 2}
   - {fileID: 11400000, guid: 245396853664ea148a54e2725b1c86eb, type: 2}

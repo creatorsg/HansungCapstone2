@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 844021657dd5450891fd8ab74031f977, type: 3}
+  m_Name: Choke_S1_Lv2b
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTreeNodeSO
+  characterCode: C003
+  characterName: Choke
+  skillNumber: 1
+  skillId: Choke_1
+  skillName: Knife Throw
+  nodeId: choke_s1_lv2b
+  displayName: Knife Throw
+  icon: {fileID: -2833775182555582667, guid: f8705bf1ae83c5044b3f82eada7f3da3, type: 3}
+  description: Grants 1 extra action on the same turn after use
+  skillIndex: 0
+  level: 2
+  branchIndex: 1
+  prerequisite: {fileID: 11400000, guid: 4fc0233593a44f44826f5fca4eac56c6, type: 2}
+  unlockCost: 50
+  axis: 2
+  damageDelta: 0
+  dotDamageDelta: 0
+  durationDelta: 0
+  addTargetPosition: 0
+  maxTargetsDelta: 0
+  grantsExtraAction: 1
+  damage: 0
+  healAmount: 0
+  range: 1
+  durationTurns: 0
+  debuffPotency: 0
