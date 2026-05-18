@@ -154,6 +154,7 @@ namespace Jun
     {
         public int Id;
         public string Name;
+        public string Type; //직업군
         public List<SkillInfo> Skills;
         public List<ItemInfo> Items;
         public int Lvl;

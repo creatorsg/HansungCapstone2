@@ -465,6 +465,8 @@ namespace Jun
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
             // ���õ� ������ ������ ��ü
             _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
+            _name.text = unit.Info.Name;
+            _type.text = unit.Info.Type;
             _hp.text = $"{unit.Info.MaxHp} / {unit.Info.Hp}";
             _san.text = $"{unit.Info.MaxSan} / {unit.Info.San}";
             _acc.text = unit.EffectiveAcc.ToString();
@@ -480,7 +482,7 @@ namespace Jun
                 int index = i;
                 _skillBTN[i].onClick.RemoveAllListeners();
                 _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
-
+                _skillBTN[i].image.sprite = unit.Info.Skills[index].icon;
                 // 스킬 호버링 기능 추가
                 SkillHover hover = _skillBTN[i].GetComponent<SkillHover>();
                 if (hover != null)
@@ -504,9 +506,7 @@ namespace Jun
                 int index = i;
                 _itemBTN[i].onClick.RemoveAllListeners();
                 _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
-
-                // 여기서 아이템 아이콘이나 이런 거 바꾸기
-                // _skillBTN[i].image.sprite = unit.SkillSprites[i];
+               // _itemBTN[i].image.sprite = unit.Info.Items[index].icon;
 
             }
             for (int i = 0; i < _enemys[StageNum-1].Enemys.Count; i++)
@@ -525,6 +525,8 @@ namespace Jun
             var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
             _enemyPanel.SetActive(true);
             _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
+            _enemyName.text = enemy.Info.Name;
+            _enemyType.text = enemy.Info.Type;
             _enemyhp.text = $"{enemy.Info.MaxHp} / {enemy.Info.Hp}";
             _enemysan.text = $"{enemy.Info.MaxSan} / {enemy.Info.San}";
             _enemyacc.text = enemy.EffectiveAcc.ToString();
@@ -536,7 +538,7 @@ namespace Jun
             
             for (int i = 0; i < _skillBTN.Count; i++)
             {
-                int n = i;
+                _enemySkillBTN[i].image.sprite = enemy.Info.Skills[i].icon;
                 // 스킬 호버링 기능 추가
                 SkillHover hover = _enemySkillBTN[i].GetComponent<SkillHover>();
                 if (hover != null)
@@ -544,8 +546,8 @@ namespace Jun
                     // 캐릭터가 가진 스킬 개수 안에 포함된다면 정보 갱신
                     if (enemy.Info.Skills != null && index < enemy.Info.Skills.Count)
                     {
-                        string name = enemy.Info.Skills[index].Name;
-                        string desc = enemy.Info.Skills[index].description;
+                        string name = enemy.Info.Skills[i].Name;
+                        string desc = enemy.Info.Skills[i].description;
                         hover.SetSkillInfo(name, desc);
                     }
                     else
