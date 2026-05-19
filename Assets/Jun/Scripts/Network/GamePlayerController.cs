@@ -29,6 +29,14 @@ namespace Jun
 
         public bool IsMovePos = false;
 
+        public readonly SyncList<ActiveEffect> Effects = new SyncList<ActiveEffect>();
+
+        public int EffectiveAtk => CombatCalculator.GetEffectiveAtk(Info.Atk, Effects);
+        public int EffectiveDef => CombatCalculator.GetEffectiveDef(Info.Def, Effects);
+        public int EffectiveAcc => CombatCalculator.GetEffectiveAcc(Info.Acc, Effects);
+        public int EffectiveDodge => CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects);
+
+
         // ── 애니메이션 래퍼 ────────────────────────────────────────────
         // BattleLogic / EnemyController 등 서버 코드에서 호출합니다.
 
@@ -274,7 +282,27 @@ namespace Jun
             _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
             
         }
-
+        [Server]
+        public void ApplyHpChange(float delta)
+        {
+            var info = Info;
+            info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
+            Info = info; // SyncVar 재할당으로 클라이언트 동기화
+            _view.PlHPChanged(info.Hp);
+        }
+        [Server]
+        public void ApplySanChange(float delta)
+        {
+            var info = Info;
+            info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
+            Info = info;
+            _view.PlSanChanged(info.Hp);
+        }
+        [Server]
+        public void AddEffect(ActiveEffect effect)
+        {
+            Effects.Add(effect); // SyncList에 추가해 클라이언트로 동기화
+        }
         //��ų ����� ������ ��û
         //��Ʋ �Ŵ������� ���Ἲ �˻� ��û
         [Command]

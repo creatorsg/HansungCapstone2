@@ -111,7 +111,7 @@ Animator:
   m_GameObject: {fileID: 440238353247304416}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a7211483bbd794b6d85ed88576e7d85c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 165bf623b12ddbd4bbff3c547ee32a20, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -270,15 +270,18 @@ MonoBehaviour:
   Info:
     Id: 0
     Name: 
+    Type: 
     Skills: []
     Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -288,6 +291,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
   PingIndex: 0
   PingLayout: {fileID: 4195269492965768940}
   IsMovePos: 0
@@ -307,15 +311,18 @@ MonoBehaviour:
   _info:
     Id: 0
     Name: 
+    Type: 
     Skills: []
     Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -325,6 +332,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
   _inventory: []
   _selectedSkill: -1
   _selectedItem: -1
@@ -347,6 +355,7 @@ MonoBehaviour:
   ItemBtn: []
   EnemyBtn: []
   HpBar: {fileID: 571591792783375660}
+  SanBar: {fileID: 0}
   Sel: {fileID: 1295560370809983965}
 --- !u!114 &1290051679595129674
 MonoBehaviour:

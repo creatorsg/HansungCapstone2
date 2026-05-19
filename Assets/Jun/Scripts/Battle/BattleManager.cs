@@ -514,6 +514,19 @@ namespace Jun
 
             _logic.BattleAction(caster, skillIndex,itemIndex, isEnemy, targets);
         }
+        [ClientRpc]
+        public void RpcShowCombatResult(CombatResult result)
+        {
+            if (!result.isHit)
+            {
+                Debug.Log("[CLIENT] MISS");
+
+                return;
+            }
+            string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
+
+            Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
+        }
         /// <summary>
         /// 서버에서 즉시 EnemyNum을 감소시키고, 0이 되면 바로 NextStage를 호출합니다.
         /// EnemyController.CMDDead()에서 호출됩니다.

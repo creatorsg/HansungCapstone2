@@ -17,6 +17,13 @@ namespace Jun
 
         public UnitState State = UnitState.Waiting;
 
+        public readonly SyncList<ActiveEffect> Effects = new SyncList<ActiveEffect>();
+
+        public int EffectiveAtk => CombatCalculator.GetEffectiveAtk(Info.Atk, Effects);
+        public int EffectiveDef => CombatCalculator.GetEffectiveDef(Info.Def, Effects);
+        public int EffectiveAcc => CombatCalculator.GetEffectiveAcc(Info.Acc, Effects);
+        public int EffectiveDodge => CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects);
+
         private void Start()
         {
             _model.SetUp(Info);
@@ -51,6 +58,12 @@ namespace Jun
                     break;
             }
         }
+        [Server]
+        public void AddEffect(ActiveEffect effect)
+        {
+            Effects.Add(effect);
+        }
+
         [Command(requiresAuthority = false)]
         public void CMDDead()
         {
