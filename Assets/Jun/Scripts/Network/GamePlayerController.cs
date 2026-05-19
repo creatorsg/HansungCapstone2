@@ -29,6 +29,14 @@ namespace Jun
 
         public bool IsMovePos = false;
 
+        public readonly SyncList<ActiveEffect> Effects = new SyncList<ActiveEffect>();
+
+        public int EffectiveAtk => CombatCalculator.GetEffectiveAtk(Info.Atk, Effects);
+        public int EffectiveDef => CombatCalculator.GetEffectiveDef(Info.Def, Effects);
+        public int EffectiveAcc => CombatCalculator.GetEffectiveAcc(Info.Acc, Effects);
+        public int EffectiveDodge => CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects);
+
+
         // ── 애니메이션 래퍼 ────────────────────────────────────────────
         // BattleLogic / EnemyController 등 서버 코드에서 호출합니다.
 
@@ -178,11 +186,14 @@ namespace Jun
 
         public void OnClickSkillBtn(int index)
         {
+            Debug.Log($"[OnClickSkillBtn] index={index}, isOwned={isOwned}, CurrentTurnUnit={BattleManager.Instance.CurrentTurnUnit?.name ?? "NULL"}, this={name}, 같은유닛={BattleManager.Instance.CurrentTurnUnit == this}");
+
             // 내 유닛이고 현재 내 턴일 때만 동작
             if (isOwned && BattleManager.Instance.CurrentTurnUnit == this)
             {
                 _model.SelectSkill(index);
                 _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                Debug.Log($"[OnClickSkillBtn] 스킬 선택 완료: index={index}");
             }
         }
 
@@ -228,6 +239,8 @@ namespace Jun
         // �ٲ� ���(�ٸ� �Ʊ� ����)�� Ŭ������ �� ����
         public void OnClickedUnit()
         {
+            Debug.Log($"[OnClickedUnit] 클릭됨: name={name}, code={FinalHeroCode}, Skills={Info.Skills?.Count ?? -1}");
+
             var currentUnit = BattleManager.Instance.CurrentTurnUnit;
 
             if (currentUnit != null && currentUnit.IsMovePos)
@@ -236,7 +249,7 @@ namespace Jun
                 currentUnit.IsMovePos = false;
             }
             else
-            { // ���� ����
+            {
                 BattleManager.Instance.UpdateUnitUI(this);
 
                 foreach (var unit in BattleManager.Instance._players)
@@ -274,7 +287,28 @@ namespace Jun
             _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
             
         }
-
+        [Server]
+        public void ApplyHpChange(float delta)
+        {
+            var info = Info;
+            //info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
+            info.Hp = info.Hp + delta;
+            Info = info; // SyncVar 재할당으로 클라이언트 동기화
+            _view.PlHPChanged(info.Hp);
+        }
+        [Server]
+        public void ApplySanChange(float delta)
+        {
+            var info = Info;
+            info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
+            Info = info;
+            _view.PlSanChanged(info.Hp);
+        }
+        [Server]
+        public void AddEffect(ActiveEffect effect)
+        {
+            Effects.Add(effect); // SyncList에 추가해 클라이언트로 동기화
+        }
         //��ų ����� ������ ��û
         //��Ʋ �Ŵ������� ���Ἲ �˻� ��û
         [Command]

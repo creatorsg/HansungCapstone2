@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9015522472026063527}
   - component: {fileID: -4544998122109248552}
-  - component: {fileID: -5123704307428303491}
   - component: {fileID: 6147654108876281720}
   - component: {fileID: 991217398746925935}
   - component: {fileID: 3458751535187621978}
@@ -101,28 +100,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!95 &-5123704307428303491
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440238353247304416}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: a7211483bbd794b6d85ed88576e7d85c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &6147654108876281720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,15 +247,18 @@ MonoBehaviour:
   Info:
     Id: 0
     Name: 
+    Type: 
     Skills: []
     Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -288,6 +268,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
   PingIndex: 0
   PingLayout: {fileID: 4195269492965768940}
   IsMovePos: 0
@@ -307,15 +288,18 @@ MonoBehaviour:
   _info:
     Id: 0
     Name: 
+    Type: 
     Skills: []
     Items: []
     Lvl: 0
     Exp: 0
     Hp: 0
+    MaxHp: 0
+    San: 0
+    MaxSan: 0
     Atk: 0
     Def: 0
     Spd: 0
-    San: 0
     Crit: 0
     Ctm: 0
     Dodge: 0
@@ -325,6 +309,7 @@ MonoBehaviour:
     ArmId: 0
     Trk1: 0
     Trk2: 0
+    Statuses: []
   _inventory: []
   _selectedSkill: -1
   _selectedItem: -1
@@ -347,6 +332,7 @@ MonoBehaviour:
   ItemBtn: []
   EnemyBtn: []
   HpBar: {fileID: 571591792783375660}
+  SanBar: {fileID: 0}
   Sel: {fileID: 1295560370809983965}
 --- !u!114 &1290051679595129674
 MonoBehaviour:
@@ -1329,6 +1315,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6534107495669151991, guid: b34b8c5335dd17b439787668c9d9f995, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2632141056764662313}
+    - targetCorrespondingSourceObject: {fileID: 6534107495669151991, guid: b34b8c5335dd17b439787668c9d9f995, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7894866364950606979}
   m_SourcePrefab: {fileID: 100100000, guid: b34b8c5335dd17b439787668c9d9f995, type: 3}
 --- !u!4 &270328521878132745 stripped
 Transform:
@@ -1440,6 +1429,19 @@ MonoBehaviour:
     m_Extent: {x: 0, y: 0, z: 0}
   m_AlwaysUpdate: 1
   m_AutoRebind: 0
+--- !u!114 &7894866364950606979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1371486340498620522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ff6c6fbec0381419a41c6dbc1276b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Jun.AnimEventReceiver
+  playerView: {fileID: 2886364521001509317}
 --- !u!1001 &6279395007173185245
 PrefabInstance:
   m_ObjectHideFlags: 0

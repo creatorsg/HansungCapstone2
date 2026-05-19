@@ -15,10 +15,12 @@ namespace Jun
         public List<Button> ItemBtn;
         public List<Button> EnemyBtn;  //�� ��ư
         public Slider HpBar;
+        public Slider SanBar;
         public Image Sel; //�ڽ��� �����϶� ��Ÿ���� �̹���
         void Awake()
         {
-            anim = GetComponent<Animator>();
+            anim = GetComponentInChildren<Animator>();
+            Debug.Log($"anim 잡힌 오브젝트: {anim?.gameObject.name}");
 
             // HpBar Slider의 자식 Image들과 Sel Image는 클릭 이벤트를 받을 필요가 없습니다.
             // raycastTarget = true (Unity 기본값)이면 Physics2DRaycaster + EventTrigger 클릭을
@@ -26,6 +28,11 @@ namespace Jun
             if (HpBar != null)
             {
                 foreach (var img in HpBar.GetComponentsInChildren<Image>(true))
+                    img.raycastTarget = false;
+            }
+            if (SanBar != null)
+            {
+                foreach (var img in SanBar.GetComponentsInChildren<Image>(true))
                     img.raycastTarget = false;
             }
             if (Sel != null)
@@ -55,9 +62,19 @@ namespace Jun
             HpBar.value = currentHp;
 
         }
+        public void PlHPChanged(float currentHp)
+        {
+            HpBar.value = currentHp;
+        }
+        public void PlSanChanged(float currentSan)
+        {
+            SanBar.value = currentSan;
+        }
 
         public void SkillAnim(string skill)
         {
+            if (anim == null) { Debug.LogError("anim null!"); return; }
+            Debug.Log($"SkillAnim 호출: {skill}");
             anim.SetBool(skill, true);
         }
         public void EndAnim(string name)

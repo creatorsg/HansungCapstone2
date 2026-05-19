@@ -19,18 +19,19 @@ namespace Jun
         [SerializeField] private BattleLogic _logic;
         public static BattleManager Instance;
 
-        [Header("���� ���� ����Ʈ")]
+        [Header("플레이어 목록")]
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
-        [Header("���� ���� ��ġ")]
+        [Header("플레이어 스폰 위치")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("ĳ���� ���� â")]
+        [Header("캐릭터 정보 창")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
-        [Header("ĳ���� ���� UI��")]
+        [Header("플레이어 정보창 UI")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
-        [SerializeField] private List<Button> _items; public List<Button> Items => _items;
+        [SerializeField] private List<Button> _itemBTN; public List<Button> ItemsBTN => _itemBTN;
+        [SerializeField] private TextMeshProUGUI _type; public TextMeshProUGUI Type => _type;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
         [SerializeField] private TextMeshProUGUI _san; public TextMeshProUGUI San => _san;
         [SerializeField] private TextMeshProUGUI _acc; public TextMeshProUGUI Acc => _acc;
@@ -41,13 +42,23 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _dodge; public TextMeshProUGUI Dodge => _dodge;
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
-        [Header("��")]// ������ ���� ��� ��ư���� ����, �Ŀ� GameObject�� �ٲ� ����
-        [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
+        [Header("스테이지")]
+        [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum;
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
+        [Header("적 정보창 UI")]
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
         [SerializeField] private Image _enemyUI;
         [SerializeField] private TextMeshProUGUI _enemyName;
-
+        [SerializeField] private TextMeshProUGUI _enemyType; public TextMeshProUGUI EnemyType => _enemyType;
+        [SerializeField] private List<Button> _enemySkillBTN; public List<Button> EnemySkillBTN => _enemySkillBTN;
+        [SerializeField] private TextMeshProUGUI _enemyhp; public TextMeshProUGUI EnemyHp => _enemyhp;
+        [SerializeField] private TextMeshProUGUI _enemysan; public TextMeshProUGUI EnemySan => _enemysan;
+        [SerializeField] private TextMeshProUGUI _enemyacc; public TextMeshProUGUI EnemyAcc => _enemyacc;
+        [SerializeField] private TextMeshProUGUI _enemycrit; public TextMeshProUGUI EnemyCrit => _enemycrit;
+        [SerializeField] private TextMeshProUGUI _enemydmg; public TextMeshProUGUI EnemyDmg => _enemydmg;
+        [SerializeField] private TextMeshProUGUI _enemyprot; public TextMeshProUGUI EnemyProt => _enemyprot;
+        [SerializeField] private TextMeshProUGUI _enemyres; public TextMeshProUGUI EnemyRes => _enemyres;
+        [SerializeField] private TextMeshProUGUI _enemydodge; public TextMeshProUGUI EnemyDodge => _enemydodge;
         public int EnemyNum;
 
         [Header("�� ����")]
@@ -373,6 +384,8 @@ namespace Jun
         }
         public void UpdateUnitUI(GamePlayerController unit)
         {
+            Debug.Log($"[UpdateUnitUI] 호출됨: name={unit.name}, code={unit.FinalHeroCode}, Skills={unit.Info.Skills?.Count ?? -1}, Items={unit.Info.Items?.Count ?? -1}");
+
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
             // ���õ� ������ ���ʿ� �� ���������� ���� �г� Ȱ��/��Ȱ�� ó��
@@ -381,16 +394,17 @@ namespace Jun
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
             // 선택된 유닛의 이미지 및 스탯 표시
             // GetCharacterSprite(): CharacterRegistry → SpriteRenderer 순으로 조회하므로 null-safe
-            _charaterIMG.sprite = unit.GetCharacterSprite();
-            _name.text   = unit.Info.Name;
-            _hp.text     = unit.Info.Hp.ToString();
-            _san.text    = unit.Info.San.ToString();
-            _acc.text    = unit.Info.Acc.ToString();
-            _crit.text   = unit.Info.Crit.ToString();
-            _dmg.text    = unit.Info.Atk.ToString();
-            _prot.text   = unit.Info.Def.ToString();
-            _res.text    = unit.Info.Res.ToString();   // BUG FIX: 기존에 Hp가 잘못 표시됨
-            _dodge.text  = unit.Info.Dodge.ToString();
+            _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
+            _name.text = unit.Info.Name;
+            _type.text = unit.Info.Type;
+            _hp.text = $"{unit.Info.MaxHp} / {unit.Info.Hp}";
+            _san.text = $"{unit.Info.MaxSan} / {unit.Info.San}";
+            _acc.text = unit.EffectiveAcc.ToString();
+            _crit.text = unit.Info.Crit.ToString();
+            _dmg.text = unit.EffectiveAtk.ToString();
+            _prot.text = unit.EffectiveDef.ToString();
+            _res.text = unit.Info.Res.ToString();
+            _dodge.text = unit.EffectiveDodge.ToString();
 
             // 스킬 버튼 이벤트 연결 + 스킬 이름 표시
             for (int i = 0; i < _skillBTN.Count; i++)
@@ -408,24 +422,92 @@ namespace Jun
                     // 버튼 자식의 TMP 텍스트에 스킬 이름 표시
                     var label = _skillBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Skills[i].Name;
+
+                    // 스킬 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                    Sprite icon = unit.Info.Skills[i].icon;
+                    if (icon == null &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                        entry.Skills != null &&
+                        i < entry.Skills.Count)
+                    {
+                        icon = entry.Skills[i].icon;
+                    }
+
+                    var iconTransform = _skillBTN[i].transform.Find("Icon");
+                    var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
+                    if (iconImage != null)
+                    {
+                        iconImage.sprite = icon;
+                        iconImage.enabled = icon != null;
+                    }
+                    Hover hover = _skillBTN[i].GetComponent<Hover>();
+                    if (hover != null)
+                    {
+
+                        if (unit.Info.Skills != null && index < unit.Info.Skills.Count)
+                        {
+                            hover.SetInfo(unit.Info.Skills[index].Name, unit.Info.Skills[index].description);
+                        }
+                        else
+                        {
+                            hover.SetInfo("", "");
+                        }
+                    }
                 }
             }
 
             // 아이템 버튼 이벤트 연결 + 아이템 이름 표시
-            for (int i = 0; i < _items.Count; i++)
+            for (int i = 0; i < _itemBTN.Count; i++)
             {
                 int index = i;
-                _items[i].onClick.RemoveAllListeners();
+                _itemBTN[i].onClick.RemoveAllListeners();
 
                 bool hasItem = unit.Info.Items != null && i < unit.Info.Items.Count;
-                _items[i].gameObject.SetActive(hasItem);
+                //_itemBTN[i].gameObject.SetActive(hasItem);
 
                 if (hasItem)
                 {
-                    _items[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+                    _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
 
-                    var label = _items[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Items[i].Name;
+                }
+                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                Sprite icon = null;
+                if (hasItem && unit.Info.Items[i].icon !=null)
+                {
+                    Debug.Log("아이템 아이콘 가져오기");
+                    icon = unit.Info.Items[i].icon; // 가진 아이템일 때만 접근!
+                }
+
+                if (icon == null &&
+                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                    entry.Items != null &&
+                    i < entry.Items.Count)
+                {
+                    Debug.Log($"Registry item[{i}] name={entry.Items[i].Name}, icon={entry.Items[i].icon}");
+                    icon = entry.Items[i].icon;
+                }
+                var iconTransform = _itemBTN[i].transform.Find("Icon");
+                var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
+                if (iconImage != null)
+                {
+                    Debug.Log("아이템 아이콘 넣기");
+                    iconImage.sprite = icon;
+                    iconImage.enabled = icon != null;
+                }
+                Hover hover = _itemBTN[i].GetComponent<Hover>();
+                if (hover != null)
+                {
+
+                    if (unit.Info.Items != null && index < unit.Info.Items.Count)
+                    {
+                        hover.SetInfo(unit.Info.Items[index].Name, unit.Info.Items[index].description);
+                    }
+                    else
+                    {
+                        hover.SetInfo("", "");
+                    }
                 }
             }
 
@@ -513,6 +595,19 @@ namespace Jun
 
 
             _logic.BattleAction(caster, skillIndex,itemIndex, isEnemy, targets);
+        }
+        [ClientRpc]
+        public void RpcShowCombatResult(CombatResult result)
+        {
+            if (!result.isHit)
+            {
+                Debug.Log("[CLIENT] MISS");
+
+                return;
+            }
+            string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
+
+            Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
         }
         /// <summary>
         /// 서버에서 즉시 EnemyNum을 감소시키고, 0이 되면 바로 NextStage를 호출합니다.
