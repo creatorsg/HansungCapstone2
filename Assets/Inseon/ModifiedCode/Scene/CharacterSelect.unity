@@ -805,7 +805,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: 2211368458654073353, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -821,7 +821,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: 7389082159000606099, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -837,7 +837,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -8338433773514870343, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -853,7 +853,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 2211368458654073353, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -1170,7 +1170,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: -2833775182555582667, guid: 9f9205baef047fb409785231c2eedb4c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -1186,7 +1186,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -8836685135467796054, guid: 1bc2c8430f2cfd440858e425764e4851, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -1202,7 +1202,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: 3499149529287642153, guid: e354aace822e6364d8b8d043e342e276, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -1218,7 +1218,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: -4164578016646140414, guid: 872534efac2685c4dbfc9e33b67bb47c, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -3987,7 +3987,7 @@ MonoBehaviour:
     Type: 0
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: -7803066186156459161, guid: e6451a64242f038419144080e307c8a2, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -4003,7 +4003,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: -6286060828788350423, guid: bd8095df735501342a3bf3fe08df4e5a, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -4019,7 +4019,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: -2746435884744161489, guid: ea13ed3aaa1716b48a90b419b29c1da3, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -4035,7 +4035,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: 8234797298231545583, guid: 9b1b6cd36f725e642b26b97addc0780d, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -6075,7 +6075,7 @@ MonoBehaviour:
     Type: 4
     anim: Attack
     TagetNum: 2
-    icon: {fileID: 995475000524520663, guid: e796f6c92aa781c4ca85f3b55030b6c0, type: 3}
+    icon: {fileID: 9204973257487272213, guid: ac22e0e27557ce148a8e8470dc959850, type: 3}
     description: "2\uBA85 \uACF5\uACA9\uD55C\uB2E4!! \uC640!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -6091,7 +6091,7 @@ MonoBehaviour:
     Type: 0
     anim: Damaged
     TagetNum: 2
-    icon: {fileID: -5162964534100535153, guid: 75f8c7634864a8f43bced6ecab0e7e55, type: 3}
+    icon: {fileID: 4164413579519221649, guid: 173ab9ececb20a848af4ebd322bf9692, type: 3}
     description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
@@ -6107,7 +6107,7 @@ MonoBehaviour:
     Type: 0
     anim: Dodge
     TagetNum: 2
-    icon: {fileID: 5900075839952601402, guid: 7efed2a41af91cb4796d6e9578de1528, type: 3}
+    icon: {fileID: 32788246762942611, guid: 6dbbba5418c31cc4eb35ce90451bc925, type: 3}
     description: "\uADF8\uB7FC \uB098\uB3C4 2\uBA85 \uACF5\uACA9\uAC04\uB2E4!!!!
       \uC640!!!!!!!!"
     DamageRate: 0
@@ -6124,7 +6124,7 @@ MonoBehaviour:
     Type: 0
     anim: 
     TagetNum: 2
-    icon: {fileID: -88734177723451991, guid: fd5554527d5b9e849a1b5d78d66d5d71, type: 3}
+    icon: {fileID: -1334649905525160474, guid: fcde3f3f53e3c33469b4dfcfd51448cd, type: 3}
     description: "\uADF8\uB7FC \uB098\uB3C4\uB2E4!!!!! \uC640!!!!!!!!!"
     DamageRate: 0
     HealRate: 0
