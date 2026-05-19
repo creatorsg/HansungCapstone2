@@ -72,6 +72,8 @@ namespace Jun
 
         public void SkillAnim(string skill)
         {
+            if (anim == null) { Debug.LogError("anim null!"); return; }
+            Debug.Log($"SkillAnim 호출: {skill}");
             anim.SetBool(skill, true);
         }
         public void EndAnim(string name)

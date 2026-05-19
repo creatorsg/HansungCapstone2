@@ -19,18 +19,19 @@ namespace Jun
         [SerializeField] private BattleLogic _logic;
         public static BattleManager Instance;
 
-        [Header("���� ���� ����Ʈ")]
+        [Header("플레이어 목록")]
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
-        [Header("���� ���� ��ġ")]
+        [Header("플레이어 스폰 위치")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("ĳ���� ���� â")]
+        [Header("캐릭터 정보 창")]
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
-        [Header("ĳ���� ���� UI��")]
+        [Header("플레이어 정보창 UI")]
         [SerializeField] private List<Button> _skillBTN; public List<Button> SkillBTN => _skillBTN;
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
-        [SerializeField] private List<Button> _items; public List<Button> Items => _items;
+        [SerializeField] private List<Button> _itemBTN; public List<Button> ItemsBTN => _itemBTN;
+        [SerializeField] private TextMeshProUGUI _type; public TextMeshProUGUI Type => _type;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
         [SerializeField] private TextMeshProUGUI _san; public TextMeshProUGUI San => _san;
         [SerializeField] private TextMeshProUGUI _acc; public TextMeshProUGUI Acc => _acc;
@@ -41,8 +42,8 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _dodge; public TextMeshProUGUI Dodge => _dodge;
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
-        [Header("��")]// ������ ���� ��� ��ư���� ����, �Ŀ� GameObject�� �ٲ� ����
-        [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum; 
+        [Header("스테이지")]
+        [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum;
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
         [SerializeField] private Image _enemyUI;
@@ -412,19 +413,19 @@ namespace Jun
             }
 
             // 아이템 버튼 이벤트 연결 + 아이템 이름 표시
-            for (int i = 0; i < _items.Count; i++)
+            for (int i = 0; i < _itemBTN.Count; i++)
             {
                 int index = i;
-                _items[i].onClick.RemoveAllListeners();
+                _itemBTN[i].onClick.RemoveAllListeners();
 
                 bool hasItem = unit.Info.Items != null && i < unit.Info.Items.Count;
-                _items[i].gameObject.SetActive(hasItem);
+                _itemBTN[i].gameObject.SetActive(hasItem);
 
                 if (hasItem)
                 {
-                    _items[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+                    _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
 
-                    var label = _items[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Items[i].Name;
                 }
             }
