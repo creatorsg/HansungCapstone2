@@ -374,6 +374,8 @@ namespace Jun
         }
         public void UpdateUnitUI(GamePlayerController unit)
         {
+            Debug.Log($"[UpdateUnitUI] 호출됨: name={unit.name}, code={unit.FinalHeroCode}, Skills={unit.Info.Skills?.Count ?? -1}, Items={unit.Info.Items?.Count ?? -1}");
+
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
             // ���õ� ������ ���ʿ� �� ���������� ���� �г� Ȱ��/��Ȱ�� ó��
@@ -409,6 +411,24 @@ namespace Jun
                     // 버튼 자식의 TMP 텍스트에 스킬 이름 표시
                     var label = _skillBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Skills[i].Name;
+
+                    // 스킬 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                    Sprite icon = unit.Info.Skills[i].icon;
+                    if (icon == null &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                        entry.Skills != null &&
+                        i < entry.Skills.Count)
+                    {
+                        icon = entry.Skills[i].icon;
+                    }
+
+                    var iconTransform = _skillBTN[i].transform.Find("Icon");
+                    var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
+                    if (iconImage != null)
+                    {
+                        iconImage.sprite = icon;
+                        iconImage.enabled = icon != null;
+                    }
                 }
             }
 

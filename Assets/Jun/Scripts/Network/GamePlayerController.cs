@@ -186,11 +186,14 @@ namespace Jun
 
         public void OnClickSkillBtn(int index)
         {
+            Debug.Log($"[OnClickSkillBtn] index={index}, isOwned={isOwned}, CurrentTurnUnit={BattleManager.Instance.CurrentTurnUnit?.name ?? "NULL"}, this={name}, 같은유닛={BattleManager.Instance.CurrentTurnUnit == this}");
+
             // 내 유닛이고 현재 내 턴일 때만 동작
             if (isOwned && BattleManager.Instance.CurrentTurnUnit == this)
             {
                 _model.SelectSkill(index);
                 _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                Debug.Log($"[OnClickSkillBtn] 스킬 선택 완료: index={index}");
             }
         }
 
@@ -236,6 +239,8 @@ namespace Jun
         // �ٲ� ���(�ٸ� �Ʊ� ����)�� Ŭ������ �� ����
         public void OnClickedUnit()
         {
+            Debug.Log($"[OnClickedUnit] 클릭됨: name={name}, code={FinalHeroCode}, Skills={Info.Skills?.Count ?? -1}");
+
             var currentUnit = BattleManager.Instance.CurrentTurnUnit;
 
             if (currentUnit != null && currentUnit.IsMovePos)
@@ -244,7 +249,7 @@ namespace Jun
                 currentUnit.IsMovePos = false;
             }
             else
-            { // ���� ����
+            {
                 BattleManager.Instance.UpdateUnitUI(this);
 
                 foreach (var unit in BattleManager.Instance._players)
