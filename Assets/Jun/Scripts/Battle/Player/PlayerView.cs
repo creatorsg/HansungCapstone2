@@ -19,7 +19,8 @@ namespace Jun
         public Image Sel; //�ڽ��� �����϶� ��Ÿ���� �̹���
         void Awake()
         {
-            anim = GetComponent<Animator>();
+            anim = GetComponentInChildren<Animator>();
+            Debug.Log($"anim 잡힌 오브젝트: {anim?.gameObject.name}");
 
             // HpBar Slider의 자식 Image들과 Sel Image는 클릭 이벤트를 받을 필요가 없습니다.
             // raycastTarget = true (Unity 기본값)이면 Physics2DRaycaster + EventTrigger 클릭을

@@ -126,7 +126,7 @@ namespace Jun
 
                 manager.EnemyPanel.SetActive(false);
 
-                if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponent<Animator>() != null)
+                if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
                     caster.RpcPlaySkillAnim(skill.anim); // anim 있을 때만 호출
                                                          // 턴 종료는 EndAnim Animation Event가 처리
