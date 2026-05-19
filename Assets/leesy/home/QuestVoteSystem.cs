@@ -120,7 +120,38 @@ namespace Lsy
             if (!System.Enum.TryParse(_lockedDistrictName, out DistrictType selectedDistrict))
                 return;
 
+            // 호스트 혼자: 투표 없이 즉시 전투 씬 이동
+            if (IsSoloHost())
+            {
+                _lockedDistrictName = selectedDistrict.ToString();
+                _lockedSceneName = currentScene;
+                _lockedStageName = ResolveStageName(selectedDistrict);
+                _isQuestSelected = true;
+                _isVoteRunning = false;
+                _isVoteFinished = true;
+                _isVoteApproved = true;
+                _voteRoundId++;
+                _voteResultMessage = "솔로 플레이 - 바로 시작합니다.";
+                _votesByConnectionId.Clear();
+                RaiseAll();
+
+                rm.ServerChangeScene(currentScene);
+                return;
+            }
+
             ServerStartVote(selectedDistrict, currentScene);
+        }
+
+        [Server]
+        private bool IsSoloHost()
+        {
+            foreach (var conn in NetworkServer.connections.Values)
+            {
+                if (conn == null) continue;
+                if (conn.connectionId == 0) continue;
+                return false;
+            }
+            return true;
         }
 
         [Command(requiresAuthority = false)]

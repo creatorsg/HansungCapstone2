@@ -118,7 +118,7 @@ namespace Lsy
                 clientCount++;
             }
 
-            bool allReady = clientCount > 0 && _readyConnectionIds.Count == clientCount;
+            bool allReady = clientCount == 0 || _readyConnectionIds.Count == clientCount;
 
             Debug.Log($"<color=cyan>[ReadySystem][Server] 클라이언트:{clientCount}, 준비클라:{_readyConnectionIds.Count}, allReady:{allReady}</color>");
 
