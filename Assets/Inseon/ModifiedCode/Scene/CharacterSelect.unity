@@ -864,7 +864,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items: []
+  items:
+  - Name: PPPPPPPPP
+    Type: 3
+    TagetNum: 0
+    icon: {fileID: 0}
+    anim: Attack
+    description: PP
+    HealRate: 0
+    Target: 0
   characterImage: {fileID: 1975854966}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 1714344953}
@@ -1229,7 +1237,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items: []
+  items:
+  - Name: BB
+    Type: 2
+    TagetNum: 0
+    icon: {fileID: 0}
+    anim: Attack
+    description: BBBBBBBBBBBBB
+    HealRate: 0
+    Target: 0
   characterImage: {fileID: 1636315041}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 2076644810}
@@ -4046,7 +4062,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items: []
+  items:
+  - Name: stun
+    Type: 4
+    TagetNum: 0
+    icon: {fileID: 0}
+    anim: Attack
+    description: Stynnnnnnnnn
+    HealRate: 0
+    Target: 0
   characterImage: {fileID: 1866288786}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 886256907}
@@ -6135,7 +6159,23 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items: []
+  items:
+  - Name: heal
+    Type: 0
+    TagetNum: 1
+    icon: {fileID: 0}
+    anim: Attack
+    description: Heal!!!!!!!!!!!
+    HealRate: 0
+    Target: 0
+  - Name: heal
+    Type: 2
+    TagetNum: 1
+    icon: {fileID: 0}
+    anim: Attack
+    description: Heal!!!!!!!!!!!!
+    HealRate: 0
+    Target: 0
   characterImage: {fileID: 801427239}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 805157006}

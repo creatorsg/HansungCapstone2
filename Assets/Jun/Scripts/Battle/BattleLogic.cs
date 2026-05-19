@@ -1,6 +1,7 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -170,28 +171,47 @@ namespace Jun
                             break;
                         // 상태이상 회복 하는 거 해당하는 상태이상 PlayerInfo에서 지우기
                         case ItemType.BleedHeal:
+                            if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Bleed)
                                     info.Statuses.RemoveAt(i);
                             target.Info = info;
+                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                             break;
+
                         case ItemType.PoisonHeal:
+                            if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Poison)
                                     info.Statuses.RemoveAt(i);
                             target.Info = info;
+                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                             break;
+
                         case ItemType.StunHeal:
+                            if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Stun)
                                     info.Statuses.RemoveAt(i);
                             target.Info = info;
+                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                             break;
                     }
                 }
 
-                // 아이템 사용 후 턴 종료 (애니메이션 없는 경우 즉시)
-                BattleManager.Instance.NextTurn();
+                manager.EnemyPanel.SetActive(false);
+
+                if (!string.IsNullOrEmpty(item.anim) && caster.GetComponentInChildren<Animator>() != null)
+                {
+                    caster.RpcPlaySkillAnim(item.anim); // anim 있을 때만 호출
+                                                         // 턴 종료는 EndAnim Animation Event가 처리
+                }
+                else
+                {
+                    Debug.Log("유효하지 않은 애니메이션 이름입니다");
+                    caster.MyTurn(false);
+                    BattleManager.Instance.NextTurn(); // anim 없으면 즉시 턴 종료
+                }
             }
             else
             {

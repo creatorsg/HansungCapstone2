@@ -291,7 +291,8 @@ namespace Jun
         public void ApplyHpChange(float delta)
         {
             var info = Info;
-            info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
+            //info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
+            info.Hp = info.Hp + delta;
             Info = info; // SyncVar 재할당으로 클라이언트 동기화
             _view.PlHPChanged(info.Hp);
         }

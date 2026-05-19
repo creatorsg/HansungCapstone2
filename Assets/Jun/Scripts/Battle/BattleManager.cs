@@ -45,10 +45,20 @@ namespace Jun
         [Header("스테이지")]
         [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum;
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
+        [Header("적 정보창 UI")]
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
         [SerializeField] private Image _enemyUI;
         [SerializeField] private TextMeshProUGUI _enemyName;
-
+        [SerializeField] private TextMeshProUGUI _enemyType; public TextMeshProUGUI EnemyType => _enemyType;
+        [SerializeField] private List<Button> _enemySkillBTN; public List<Button> EnemySkillBTN => _enemySkillBTN;
+        [SerializeField] private TextMeshProUGUI _enemyhp; public TextMeshProUGUI EnemyHp => _enemyhp;
+        [SerializeField] private TextMeshProUGUI _enemysan; public TextMeshProUGUI EnemySan => _enemysan;
+        [SerializeField] private TextMeshProUGUI _enemyacc; public TextMeshProUGUI EnemyAcc => _enemyacc;
+        [SerializeField] private TextMeshProUGUI _enemycrit; public TextMeshProUGUI EnemyCrit => _enemycrit;
+        [SerializeField] private TextMeshProUGUI _enemydmg; public TextMeshProUGUI EnemyDmg => _enemydmg;
+        [SerializeField] private TextMeshProUGUI _enemyprot; public TextMeshProUGUI EnemyProt => _enemyprot;
+        [SerializeField] private TextMeshProUGUI _enemyres; public TextMeshProUGUI EnemyRes => _enemyres;
+        [SerializeField] private TextMeshProUGUI _enemydodge; public TextMeshProUGUI EnemyDodge => _enemydodge;
         public int EnemyNum;
 
         [Header("�� ����")]
@@ -384,16 +394,17 @@ namespace Jun
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
             // 선택된 유닛의 이미지 및 스탯 표시
             // GetCharacterSprite(): CharacterRegistry → SpriteRenderer 순으로 조회하므로 null-safe
-            _charaterIMG.sprite = unit.GetCharacterSprite();
-            _name.text   = unit.Info.Name;
-            _hp.text     = unit.Info.Hp.ToString();
-            _san.text    = unit.Info.San.ToString();
-            _acc.text    = unit.Info.Acc.ToString();
-            _crit.text   = unit.Info.Crit.ToString();
-            _dmg.text    = unit.Info.Atk.ToString();
-            _prot.text   = unit.Info.Def.ToString();
-            _res.text    = unit.Info.Res.ToString();   // BUG FIX: 기존에 Hp가 잘못 표시됨
-            _dodge.text  = unit.Info.Dodge.ToString();
+            _charaterIMG.sprite = unit.GetComponent<SpriteRenderer>().sprite;
+            _name.text = unit.Info.Name;
+            _type.text = unit.Info.Type;
+            _hp.text = $"{unit.Info.MaxHp} / {unit.Info.Hp}";
+            _san.text = $"{unit.Info.MaxSan} / {unit.Info.San}";
+            _acc.text = unit.EffectiveAcc.ToString();
+            _crit.text = unit.Info.Crit.ToString();
+            _dmg.text = unit.EffectiveAtk.ToString();
+            _prot.text = unit.EffectiveDef.ToString();
+            _res.text = unit.Info.Res.ToString();
+            _dodge.text = unit.EffectiveDodge.ToString();
 
             // 스킬 버튼 이벤트 연결 + 스킬 이름 표시
             for (int i = 0; i < _skillBTN.Count; i++)
@@ -429,6 +440,19 @@ namespace Jun
                         iconImage.sprite = icon;
                         iconImage.enabled = icon != null;
                     }
+                    Hover hover = _skillBTN[i].GetComponent<Hover>();
+                    if (hover != null)
+                    {
+
+                        if (unit.Info.Skills != null && index < unit.Info.Skills.Count)
+                        {
+                            hover.SetInfo(unit.Info.Skills[index].Name, unit.Info.Skills[index].description);
+                        }
+                        else
+                        {
+                            hover.SetInfo("", "");
+                        }
+                    }
                 }
             }
 
@@ -447,6 +471,40 @@ namespace Jun
 
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Items[i].Name;
+                }
+                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                Sprite icon = null;
+                if (hasItem && unit.Info.Items[i].icon !=null)
+                {
+                    icon = unit.Info.Items[i].icon; // 가진 아이템일 때만 접근!
+                }
+
+                if (icon == null &&
+                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                    entry.Items != null &&
+                    i < entry.Items.Count)
+                {
+                    icon = entry.Items[i].icon;
+                }
+                var iconTransform = _itemBTN[i].transform.Find("Icon");
+                var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
+                if (iconImage != null)
+                {
+                    iconImage.sprite = icon;
+                    iconImage.enabled = icon != null;
+                }
+                Hover hover = _itemBTN[i].GetComponent<Hover>();
+                if (hover != null)
+                {
+
+                    if (unit.Info.Items != null && index < unit.Info.Items.Count)
+                    {
+                        hover.SetInfo(unit.Info.Items[index].Name, unit.Info.Items[index].description);
+                    }
+                    else
+                    {
+                        hover.SetInfo("", "");
+                    }
                 }
             }
 
