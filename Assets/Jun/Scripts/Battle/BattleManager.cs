@@ -463,7 +463,7 @@ namespace Jun
                 _itemBTN[i].onClick.RemoveAllListeners();
 
                 bool hasItem = unit.Info.Items != null && i < unit.Info.Items.Count;
-                _itemBTN[i].gameObject.SetActive(hasItem);
+                //_itemBTN[i].gameObject.SetActive(hasItem);
 
                 if (hasItem)
                 {
@@ -476,6 +476,7 @@ namespace Jun
                 Sprite icon = null;
                 if (hasItem && unit.Info.Items[i].icon !=null)
                 {
+                    Debug.Log("아이템 아이콘 가져오기");
                     icon = unit.Info.Items[i].icon; // 가진 아이템일 때만 접근!
                 }
 
@@ -484,12 +485,14 @@ namespace Jun
                     entry.Items != null &&
                     i < entry.Items.Count)
                 {
+                    Debug.Log($"Registry item[{i}] name={entry.Items[i].Name}, icon={entry.Items[i].icon}");
                     icon = entry.Items[i].icon;
                 }
                 var iconTransform = _itemBTN[i].transform.Find("Icon");
                 var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
                 if (iconImage != null)
                 {
+                    Debug.Log("아이템 아이콘 넣기");
                     iconImage.sprite = icon;
                     iconImage.enabled = icon != null;
                 }

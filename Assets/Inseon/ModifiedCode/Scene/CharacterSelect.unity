@@ -6163,7 +6163,7 @@ MonoBehaviour:
   - Name: heal
     Type: 0
     TagetNum: 1
-    icon: {fileID: 0}
+    icon: {fileID: -4029819251187114856, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
     anim: Attack
     description: Heal!!!!!!!!!!!
     HealRate: 0
@@ -6171,7 +6171,7 @@ MonoBehaviour:
   - Name: heal
     Type: 2
     TagetNum: 1
-    icon: {fileID: 0}
+    icon: {fileID: 808039206, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
     anim: Attack
     description: Heal!!!!!!!!!!!!
     HealRate: 0
