@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3879898232645635303}
   - component: {fileID: 1714384609236421400}
   - component: {fileID: 9013039850813792716}
+  - component: {fileID: 4262263159429406538}
   m_Layer: 0
   m_Name: "\uB124\uD2B8\uC6CC\uD06C\uC6A9 \uD504\uB9AC\uD339"
   m_TagString: Untagged
@@ -81,3 +82,25 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &4262263159429406538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7478495703313534704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 739f71e4fd542f049809df52e7e0c516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.QuestVoteSystem
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  voteDurationSeconds: 30
+  allQuests:
+  - {fileID: 11400000, guid: 15e8ae315d6d144aebc953cbceb68b23, type: 2}
+  - {fileID: 11400000, guid: 707a2938924f549398560750841e1e1f, type: 2}
+  - {fileID: 11400000, guid: 434051ef3b72b47b9bb782d9f725297b, type: 2}
+  - {fileID: 11400000, guid: 0cf329e9712cd499bbc36754d6048488, type: 2}
+  - {fileID: 11400000, guid: 37f323a6cc672453fade7d66314db392, type: 2}

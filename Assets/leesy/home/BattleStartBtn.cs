@@ -11,10 +11,16 @@ public class BattleStartBtn : MonoBehaviour
 {
     public void GameStartBtn()
     {
+        // ReadyOrStartButton이 같은 오브젝트에서 이미 클릭을 처리하면 중복 실행 금지
+        if (GetComponent<ReadyOrStartButton>() != null)
+            return;
+
         var rm = NetworkManager.singleton as Jun.GameRoomManager;
         string targetScene = rm?.GameplayScene;
 
-        // 클라이언트: 준비 토글
+        if (QuestVoteSystem.Instance != null && !QuestVoteSystem.Instance.CanUseReadyOrStartButton)
+            return;
+
         if (NetworkClient.isConnected && !NetworkServer.active)
         {
             if (ReadySystem.Instance != null && CharacterSlotManager.TryGetLocalNetId(out uint myNetId))
@@ -22,28 +28,22 @@ public class BattleStartBtn : MonoBehaviour
                 ReadySystem.Instance.CmdToggleReady(myNetId);
                 return;
             }
-
-            Debug.LogWarning("[BattleStartBtn] 준비 시스템을 찾지 못해 준비 토글에 실패했습니다.");
             return;
         }
 
-        // 호스트: 씬 전환
         if (NetworkServer.active && NetworkManager.singleton != null)
         {
-            if (string.IsNullOrEmpty(targetScene))
-            {
-                Debug.LogWarning("[BattleStartBtn] GameplayScene이 비어있습니다. 지도에서 영지를 먼저 클릭하세요.");
+            if (ReadySystem.Instance == null || !ReadySystem.Instance.AllReady)
                 return;
-            }
+
+            if (string.IsNullOrEmpty(targetScene))
+                return;
 
             NetworkManager.singleton.ServerChangeScene(targetScene);
             return;
         }
 
-        // 오프라인 테스트 fallback
         if (!string.IsNullOrEmpty(targetScene))
             SceneManager.LoadScene(targetScene);
-        else
-            Debug.LogWarning("[BattleStartBtn] GameplayScene이 비어있습니다.");
     }
 }

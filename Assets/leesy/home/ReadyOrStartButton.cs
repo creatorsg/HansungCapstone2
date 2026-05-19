@@ -23,15 +23,13 @@ namespace Lsy
         public Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
         public Color clientReadyColor = Color.green;
 
-        // 씬 이름은 DistrictHover 클릭 시 GameRoomManager.GameplayScene에 자동 등록됩니다.
-        // 이 버튼은 별도 씬 이름 없이 GameplayScene을 그대로 사용합니다.
-
         [Header("디버그(테스트용 - 빌드 전 반드시 OFF)")]
         [Tooltip("켜면 호스트가 클라이언트 준비 여부와 상관없이 시작 버튼을 누를 수 있음")]
         [SerializeField] private bool debugForceHostInteractable = false;
 
         private Image _buttonImage;
-        private bool _isReady = false;
+        private bool _isReady;
+        private uint _cachedLocalNetId;
 
         private bool IsHost => NetworkServer.active && NetworkClient.active;
 
@@ -46,7 +44,6 @@ namespace Lsy
             {
                 _buttonImage = button.GetComponent<Image>();
                 button.transition = Selectable.Transition.None;
-                // 씬에 남아있는 영구 OnClick(GameStartBtn 등) 영향을 끊고 이 스크립트 분기만 사용한다.
                 button.onClick = new Button.ButtonClickedEvent();
             }
         }
@@ -59,8 +56,6 @@ namespace Lsy
                 return;
             }
 
-            Debug.Log($"<color=cyan>[ReadyOrStartButton] Start - IsHost:{IsHost}</color>");
-
             if (IsHost)
             {
                 buttonText.text = hostReadyText;
@@ -70,15 +65,23 @@ namespace Lsy
                 }
                 else
                 {
-                    SetButtonInteractable(false);
-                    if (ReadySystem.Instance != null)
-                        SetButtonInteractable(ReadySystem.Instance.AllReady);
+                    if (QuestVoteSystem.Instance != null && !QuestVoteSystem.Instance.CanUseReadyOrStartButton)
+                    {
+                        SetButtonInteractable(false);
+                    }
+                    else
+                    {
+                        SetButtonInteractable(false);
+                        if (ReadySystem.Instance != null)
+                            SetButtonInteractable(ReadySystem.Instance.AllReady);
+                    }
                 }
             }
             else
             {
                 SyncClientReadyVisual(false);
-                SetButtonInteractable(true);
+                bool canUseButton = QuestVoteSystem.Instance == null || QuestVoteSystem.Instance.CanUseReadyOrStartButton;
+                SetButtonInteractable(canUseButton);
             }
         }
 
@@ -86,6 +89,7 @@ namespace Lsy
         {
             ReadySystem.OnAllReadyChanged += OnAllReadyChanged;
             ReadySystem.OnPlayerReadyChanged += OnPlayerReadyChanged;
+            QuestVoteSystem.OnVotePhaseChanged += OnVotePhaseChanged;
             if (button != null)
             {
                 button.onClick.AddListener(OnClick);
@@ -96,7 +100,7 @@ namespace Lsy
         {
             ReadySystem.OnAllReadyChanged -= OnAllReadyChanged;
             ReadySystem.OnPlayerReadyChanged -= OnPlayerReadyChanged;
-            // Bug Fix: OnEnable에서 추가한 리스너를 반드시 제거해야 중복 등록 방지
+            QuestVoteSystem.OnVotePhaseChanged -= OnVotePhaseChanged;
             button?.onClick.RemoveListener(OnClick);
         }
 
@@ -116,57 +120,80 @@ namespace Lsy
                 return;
             }
 
-            if (!CharacterSlotManager.TryGetLocalNetId(out uint myNetId))
-            {
-                Debug.LogWarning("[ReadyOrStartButton] local netId를 찾지 못함");
-                return;
-            }
+            // 클릭 즉시 UI를 토글해 첫 클릭 반응 지연/누락 체감을 없앤다.
+            // 서버 동기화 이벤트가 도착하면 최종 상태로 다시 맞춰진다.
+            SyncClientReadyVisual(!_isReady);
 
-            Debug.Log($"<color=yellow>[ReadyOrStartButton] 준비 토글 - netId:{myNetId}</color>");
-            // 서버로 보낸다: 준비 토글 요청(netId 기준)
-            ReadySystem.Instance.CmdToggleReady(myNetId);
+            CacheLocalNetIdIfPossible();
+            // CmdToggleReady는 서버에서 sender.identity.netId를 권한 기준으로 사용한다.
+            // local netId 조회 타이밍 실패로 클릭이 드롭되지 않도록 파라미터 의존성을 제거한다.
+            ReadySystem.Instance.CmdToggleReady(0);
         }
 
         private void OnClickStartGame()
         {
-            Debug.Log("[ReadyOrStartButton] 게임 시작!");
+            if (QuestVoteSystem.Instance != null && !QuestVoteSystem.Instance.CanUseReadyOrStartButton)
+            {
+                Debug.LogWarning("[ReadyOrStartButton] 투표가 확정되지 않아 시작할 수 없습니다.");
+                return;
+            }
 
             var rm = NetworkManager.singleton as Jun.GameRoomManager;
-
-            // 씬 이름은 DistrictHover.OnPointerClick에서 GameplayScene에 등록됩니다.
             string targetScene = rm?.GameplayScene;
 
             if (string.IsNullOrEmpty(targetScene))
             {
-                Debug.LogWarning("[ReadyOrStartButton] GameplayScene이 비어있습니다. " +
-                                 "지도에서 영지를 먼저 클릭하세요.");
+                Debug.LogWarning("[ReadyOrStartButton] GameplayScene이 비어있습니다. 지도에서 영지를 먼저 클릭하세요.");
                 return;
             }
 
             if (NetworkManager.singleton != null)
-            {
                 NetworkManager.singleton.ServerChangeScene(targetScene);
-            }
-            else
-            {
-                Debug.LogWarning("[ReadyOrStartButton] NetworkManager.singleton이 NULL - 씬 전환 실패");
-            }
         }
 
         private void OnAllReadyChanged(bool allReady)
         {
             if (!IsHost) return;
             if (debugForceHostInteractable) return;
+            if (QuestVoteSystem.Instance != null && !QuestVoteSystem.Instance.CanUseReadyOrStartButton)
+            {
+                SetButtonInteractable(false);
+                return;
+            }
             SetButtonInteractable(allReady);
+        }
+
+        private void OnVotePhaseChanged(bool isVoteRunning, bool isVoteFinished)
+        {
+            if (button == null) return;
+            if (debugForceHostInteractable) return;
+
+            if (!isVoteFinished)
+            {
+                SetButtonInteractable(false);
+                return;
+            }
+
+            if (IsHost)
+                SetButtonInteractable(ReadySystem.Instance != null && ReadySystem.Instance.AllReady);
+            else
+                SetButtonInteractable(true);
         }
 
         private void OnPlayerReadyChanged(uint playerNetId, bool isReady)
         {
             if (IsHost) return;
-            if (!CharacterSlotManager.TryGetLocalNetId(out uint myNetId)) return;
-            if (playerNetId != myNetId) return;
+            CacheLocalNetIdIfPossible();
+            if (_cachedLocalNetId == 0 || playerNetId != _cachedLocalNetId) return;
 
             SyncClientReadyVisual(isReady);
+        }
+
+        private void CacheLocalNetIdIfPossible()
+        {
+            if (_cachedLocalNetId != 0) return;
+            if (CharacterSlotManager.TryGetLocalNetId(out uint myNetId))
+                _cachedLocalNetId = myNetId;
         }
 
         private void SyncClientReadyVisual(bool isReady)
