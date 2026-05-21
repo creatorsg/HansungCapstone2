@@ -268,6 +268,6 @@ namespace Jun
     public class BattleEnemyInfo
     {
         public string BattleStage;
-        public List<Button> Enemys;
+        public List<EnemyController> Enemys;
     }
 }

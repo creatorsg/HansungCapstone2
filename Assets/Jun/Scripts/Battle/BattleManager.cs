@@ -92,6 +92,9 @@ namespace Jun
             if (Mouse.current == null) return;
             if (!Mouse.current.leftButton.wasPressedThisFrame) return;
 
+            // UI 위에서 클릭하면 Physics2D 무시
+            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+
             // Physics2D 직접 레이캐스트 — EventSystem / Canvas에 영향받지 않습니다.
             Vector2 screenPos = Mouse.current.position.ReadValue();
             Vector2 worldPos  = Camera.main.ScreenToWorldPoint(screenPos);
@@ -274,7 +277,7 @@ namespace Jun
 
                 if (turnDataArray[i].type == "Enemy")
                 {
-                    sp = _enemys[StageNum - 1].Enemys[targetNum].image.sprite;
+                    sp = _enemys[StageNum - 1].Enemys[targetNum].GetComponent<SpriteRenderer>().sprite;
                 }
                 else
                 {
@@ -531,9 +534,41 @@ namespace Jun
         //�� ���� �̹��� ����
         public void UpdateEnemyUI(int index)
         {
-            var enemy = _enemys[StageNum-1].Enemys[index].GetComponent<EnemyController>();
+            var enemy = _enemys[StageNum - 1].Enemys[index].GetComponent<EnemyController>();
             _enemyPanel.SetActive(true);
-            _enemyUI.sprite = enemy.GetComponent<Image>().sprite;
+            _enemyUI.sprite = enemy.GetComponent<SpriteRenderer>().sprite;
+            _enemyName.text = enemy.Info.Name;
+            _enemyType.text = enemy.Info.Type;
+            _enemyhp.text = $"{enemy.Info.MaxHp} / {enemy.Info.Hp}";
+            _enemysan.text = $"{enemy.Info.MaxSan} / {enemy.Info.San}";
+            _enemyacc.text = enemy.EffectiveAcc.ToString();
+            _enemycrit.text = enemy.Info.Crit.ToString();
+            _enemydmg.text = enemy.EffectiveAtk.ToString();
+            _enemyprot.text = enemy.EffectiveDef.ToString();
+            _enemyres.text = enemy.Info.Res.ToString();
+            _enemydodge.text = enemy.EffectiveDodge.ToString();
+
+            for (int i = 0; i < _skillBTN.Count; i++)
+            {
+                _enemySkillBTN[i].image.sprite = enemy.Info.Skills[i].icon;
+
+                Hover hover = _enemySkillBTN[i].GetComponent<Hover>();
+                if (hover != null)
+                {
+
+                    if (enemy.Info.Skills != null && index < enemy.Info.Skills.Count)
+                    {
+                        string name = enemy.Info.Skills[i].Name;
+                        string desc = enemy.Info.Skills[i].description;
+                        hover.SetInfo(name, desc);
+                    }
+                    else
+                    {
+                        hover.SetInfo("", "");
+                    }
+                }
+
+            }
         }
         //���� ��ġ �̵�
         [Server]
@@ -639,6 +674,11 @@ namespace Jun
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
+            StartCoroutine(StageClearDelay()); 
+        }
+        private IEnumerator StageClearDelay()
+        {
+            yield return new WaitForSeconds(2.0f);  
             StageClear();
         }
         public void StageClear()

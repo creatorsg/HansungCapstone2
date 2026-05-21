@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.UI.CanvasScaler;
 
 namespace Jun
 {
@@ -192,8 +193,12 @@ namespace Jun
             if (isOwned && BattleManager.Instance.CurrentTurnUnit == this)
             {
                 _model.SelectSkill(index);
-                _view.SetButtonsInteractable(true, _view.EnemyBtn);
-                Debug.Log($"[OnClickSkillBtn] 스킬 선택 완료: index={index}");
+                var skillType = Info.Skills[index].Type;
+                if (skillType == SkillType.Atk || skillType == SkillType.Debuff)
+                {
+                    // 적 대상 스킬 선택 시 적 버튼 활성화
+                    _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                }
             }
         }
 
@@ -211,10 +216,10 @@ namespace Jun
         {
             if (_model.SelectedItem == -1 && _model.SelectedSkill == -1)
             {
-                Debug.Log("��UI�г� ������ "+ index);
+                Debug.Log($"[GamePlayerController] 적 UI 갱신 요청 - index:{index}");
                 BattleManager.Instance.UpdateEnemyUI(index);
             }
-            // �� �� �߰�
+            // 적 선택 핑 전송
             GameObject enemyObj = BattleManager.Instance.Enemys[BattleManager.Instance.StageNum - 1].Enemys[index].gameObject;
             foreach (var unit in BattleManager.Instance._players)
             {
@@ -247,6 +252,21 @@ namespace Jun
             {
                 currentUnit.CmdRequestChangePos(this.gameObject);
                 currentUnit.IsMovePos = false;
+            }
+            else if (currentUnit != null && currentUnit.isOwned)
+            {
+                var model = currentUnit.GetComponent<UnitModel>();
+                if (model.SelectedSkill != -1)
+                {
+                    var skillType = currentUnit.Info.Skills[model.SelectedSkill].Type;
+                    bool isAllyTarget = skillType == SkillType.Heal || skillType == SkillType.Buff;
+                    if (isAllyTarget)
+                    {
+                        model.SelectAlly(BattleManager.Instance._players.IndexOf(this));
+                        return;
+                    }
+                }
+                BattleManager.Instance.UpdateUnitUI(this);
             }
             else
             {
@@ -286,6 +306,13 @@ namespace Jun
         {
             _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
             
+        }
+        // 모든 클라이언트에 피해 표시를 갱신한다.
+        [ClientRpc]
+        public void RpcShowDamage(float damage)
+        {
+            if (_view != null && Info != null && Info.MaxHp > 0f)
+                _view.PlHPChanged(Info.Hp / Info.MaxHp);
         }
         [Server]
         public void ApplyHpChange(float delta)

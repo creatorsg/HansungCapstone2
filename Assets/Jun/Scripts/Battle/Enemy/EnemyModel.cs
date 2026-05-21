@@ -1,6 +1,7 @@
 using Jun;
 using Mirror;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyModel : NetworkBehaviour
@@ -8,7 +9,11 @@ public class EnemyModel : NetworkBehaviour
     public event Action<float> IsDamaged;
     [SerializeField] EnemyController _controller;
     [SerializeField] PlayerInfo _info; public PlayerInfo Info => _info;
-    float _maxHp;
+    private float _currentHp;
+    private float _maxHp;
+
+    private int _currentSan;
+    private int _maxSan;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -17,14 +22,24 @@ public class EnemyModel : NetworkBehaviour
     public void SetUp(PlayerInfo Info)
     {
         _info = Info;
-        _maxHp = Info.Hp;
+        if (_info != null)
+        {
+            if (_info.MaxHp <= 0f) _info.MaxHp = Info.Hp;
+            if (_info.MaxSan <= 0f) _info.MaxSan = Info.San;
+            if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
+        }
+        _currentHp = Info.Hp;
+        _maxHp = Info.MaxHp > 0f ? Info.MaxHp : Info.Hp;
+        _currentSan = Info.San;
+        _maxSan = Info.MaxSan > 0f ? Info.MaxSan : Info.San;
     }
     // Update is called once per frame
     public void Damaged(float Attack)
     {
         Debug.Log("EnemyDamaged");
-        Info.Hp -= Attack;
-        IsDamaged?.Invoke(Info.Hp/_maxHp);
+        _currentHp -= Attack;
+        _info.Hp = _currentHp;
+        IsDamaged?.Invoke(_currentHp/_maxHp);
         if (Info.Hp <= 0) _controller.CMDDead();
     }
 }

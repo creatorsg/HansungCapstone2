@@ -40,6 +40,7 @@ namespace Jun
                             if (!isHit)
                             {
                                 Debug.Log($"[MISS] {caster.Info.Name} -> Enemy {targetIdx}");
+                                enemyController.RpcPlaySkillAnim("Dodge");
                                 manager.RpcShowCombatResult(new CombatResult
                                 {
                                     isHit = false,
@@ -57,7 +58,9 @@ namespace Jun
                             float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
 
                             Debug.Log($"[ATK] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0} dmg | crit:{isCrit}");
+
                             enemyModel.Damaged(damage);
+                            enemyController.RpcPlaySkillAnim("Damaged");
 
                             manager.RpcShowCombatResult(new CombatResult
                             {
