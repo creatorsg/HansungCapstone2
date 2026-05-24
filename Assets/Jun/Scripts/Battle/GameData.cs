@@ -19,7 +19,7 @@ namespace Jun
         Enforce     // 자기강화
     }
 
-    public enum ItemType
+    public enum ConsumableType
     {
         HPHeal,
         SanHeal,
@@ -156,7 +156,7 @@ namespace Jun
         public string Name;
         public string Type; //직업군
         public List<SkillInfo> Skills;
-        public List<ItemInfo> Items;
+        public List<ConsumableInfo> Items;
         public int Lvl;
         public int Exp;
 
@@ -221,10 +221,10 @@ namespace Jun
 
     // 아이템 정보
     [System.Serializable]
-    public class ItemInfo
+    public class ConsumableInfo
     {
         public string Name;
-        public ItemType Type;
+        public ConsumableType Type;
         public int TagetNum;
         public Sprite icon;
         public string anim;

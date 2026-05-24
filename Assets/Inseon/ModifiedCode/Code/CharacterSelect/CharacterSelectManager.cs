@@ -198,7 +198,7 @@ public class CharacterSelectManager : MonoBehaviour
                 BattleUnitPrefab = card.BattleUnitPrefab,
                 CharacterSprite  = card.BattleSprite,
                 Skills           = card.Skills ?? new List<SkillInfo>(),
-                Items            = card.Items  ?? new List<ItemInfo>(),
+                Items            = card.Items  ?? new List<ConsumableInfo>(),
             });
 
             TryRegisterPrefab(card.PlayerDataPrefab);

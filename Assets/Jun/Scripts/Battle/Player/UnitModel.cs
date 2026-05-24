@@ -9,7 +9,7 @@ namespace Jun
     {
         [SerializeField] private GamePlayerController _controller;
         [SerializeField] private PlayerInfo _info;
-        [SerializeField] private List<ItemInfo> _inventory = new List<ItemInfo>();
+        [SerializeField] private List<ConsumableInfo> _inventory = new List<ConsumableInfo>();
         Animator anim;
         public PlayerInfo Info => _info; //�б�����
 

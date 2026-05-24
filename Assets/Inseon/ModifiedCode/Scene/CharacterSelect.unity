@@ -868,7 +868,7 @@ MonoBehaviour:
   - Name: PPPPPPPPP
     Type: 3
     TagetNum: 0
-    icon: {fileID: 0}
+    icon: {fileID: 7675826601332790545, guid: 01b5f94a23e840246ad504fed613977a, type: 3}
     anim: Attack
     description: PP
     HealRate: 0
@@ -1241,7 +1241,7 @@ MonoBehaviour:
   - Name: BB
     Type: 2
     TagetNum: 0
-    icon: {fileID: 0}
+    icon: {fileID: -7203164222404042752, guid: 967bf774a501415428191aeaf4a9d95f, type: 3}
     anim: Attack
     description: BBBBBBBBBBBBB
     HealRate: 0
@@ -4066,7 +4066,7 @@ MonoBehaviour:
   - Name: stun
     Type: 4
     TagetNum: 0
-    icon: {fileID: 0}
+    icon: {fileID: 4110674531604046222, guid: 09627a67dcc44d0409ae7e48e00a45aa, type: 3}
     anim: Attack
     description: Stynnnnnnnnn
     HealRate: 0

@@ -1,13 +1,25 @@
+using Jun;
 using Mirror;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace Lsy
 {
     [System.Serializable]
+    public enum ItemType
+    {
+        Equipment,
+        Consumable
+    }
+    [System.Serializable]
     public struct InventoryItem
     {
         public string itemName;
+        public ItemType Type;
+        public ConsumableInfo ConsumInfo;
         public int amount;
     }
 
@@ -108,6 +120,22 @@ namespace Lsy
             currentHp     = maxHp;
             currentSan    = maxSan;
 
+            // ── 아이템 목록 주입 ───
+            myInventory.Clear();
+            if (pd.Info.Items != null)
+            {
+                foreach (var consumInfo in pd.Info.Items)
+                {
+                    myInventory.Add(new InventoryItem
+                    {
+                        itemName = consumInfo.Name,
+                        Type = ItemType.Consumable,
+                        ConsumInfo = consumInfo,
+                        amount = 1   // 캐릭터 기본 지급 수량
+                    });
+                    Debug.Log("아이템 연동");
+                }
+            }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;

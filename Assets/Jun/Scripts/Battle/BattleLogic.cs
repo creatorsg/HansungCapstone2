@@ -151,7 +151,7 @@ namespace Jun
                     return;
                 }
 
-                ItemInfo item = caster.Info.Items[itemIndex];
+                ConsumableInfo item = caster.Info.Items[itemIndex];
                 Debug.Log($"[BattleLogic] 아이템 사용: {item.Name}");
 
                 foreach (int targetIdx in targets)
@@ -162,18 +162,18 @@ namespace Jun
                     var info = target.Info;
                     switch (item.Type)
                     {
-                        case ItemType.HPHeal:
+                        case ConsumableType.HPHeal:
                             healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, item.HealRate);
                             target.ApplyHpChange(healAmount);
                             Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} HP");
                             break;
-                        case ItemType.SanHeal:
+                        case ConsumableType.SanHeal:
                             healAmount = CombatCalculator.CalcHeal(target.Info.MaxSan, item.HealRate);
                             target.ApplySanChange(healAmount);
                             Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} San");
                             break;
                         // 상태이상 회복 하는 거 해당하는 상태이상 PlayerInfo에서 지우기
-                        case ItemType.BleedHeal:
+                        case ConsumableType.BleedHeal:
                             if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Bleed)
@@ -182,7 +182,7 @@ namespace Jun
                             Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                             break;
 
-                        case ItemType.PoisonHeal:
+                        case ConsumableType.PoisonHeal:
                             if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Poison)
@@ -191,7 +191,7 @@ namespace Jun
                             Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                             break;
 
-                        case ItemType.StunHeal:
+                        case ConsumableType.StunHeal:
                             if (info.Statuses == null || info.Statuses.Count == 0) break;
                             for (int i = info.Statuses.Count - 1; i >= 0; i--)
                                 if (info.Statuses[i].Type == StatusType.Stun)

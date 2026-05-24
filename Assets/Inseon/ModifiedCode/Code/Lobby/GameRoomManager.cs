@@ -368,7 +368,7 @@ namespace Jun {
                 {
                     Id     = pingIndex,
                     Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                    Items  = new List<ItemInfo>(entry.Items  ?? new List<ItemInfo>()),
+                    Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
                 };
             }
 
@@ -387,7 +387,7 @@ namespace Jun {
                 San   = c.stress,
                 Res   = c.effectResistance,
                 Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                Items  = new List<ItemInfo>(entry.Items  ?? new List<ItemInfo>()),
+                Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
             };
         }
 
@@ -453,6 +453,13 @@ namespace Jun {
                 Debug.Log($"[GameRoomManager] CharacterSelect Ready 완료, 큐 브로드캐스트. conn={conn}");
                 return;
             }
+
+
+
+
+
+
+
 
             // Home 씬: SetClientReady 후 PlayerAccount 프리팹으로 플레이어를 직접 교체
             // (클라이언트의 AddPlayer 요청을 기다리지 않으므로 localPlayer 블로킹 문제를 우회)

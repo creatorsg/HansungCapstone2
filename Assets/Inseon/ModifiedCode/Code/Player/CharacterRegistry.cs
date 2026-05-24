@@ -30,7 +30,7 @@ public static class CharacterRegistry
         public List<SkillInfo> Skills;
 
         /// <summary>이 캐릭터가 사용할 아이템 목록</summary>
-        public List<ItemInfo> Items;
+        public List<ConsumableInfo> Items;
     }
 
     private static readonly Dictionary<string, Entry> _map = new Dictionary<string, Entry>();
