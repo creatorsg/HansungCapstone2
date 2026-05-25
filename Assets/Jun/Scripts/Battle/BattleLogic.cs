@@ -222,6 +222,151 @@ namespace Jun
             }
 
         }
+        /// <summary>
+        /// 적이 캐스터인 전투 액션. 서버 전용.
+        /// targetsArePlayers=true → 플레이어 대상, false → 아군 적 대상
+        /// </summary>
+        [Server]
+        public void EnemyBattleAction(EnemyController caster, int skillIndex, List<int> targets)
+        {
+            var manager = BattleManager.Instance;
+
+            if (caster.Info.Skills == null || skillIndex < 0 || skillIndex >= caster.Info.Skills.Count)
+            {
+                Debug.LogError($"[BattleLogic] EnemyBattleAction: skillIndex={skillIndex} 범위 초과");
+                return;
+            }
+
+            SkillInfo skill = caster.Info.Skills[skillIndex];
+
+            switch (skill.Type)
+            {
+                case SkillType.Atk:
+                    foreach (int targetIdx in targets)
+                    {
+                        if (!TryGetPlayer(manager, targetIdx, out var player)) continue;
+
+                        int effAcc = CombatCalculator.GetEffectiveAcc(caster.Info.Acc, caster.Effects);
+                        int effDodge = CombatCalculator.GetEffectiveDodge(player.Info.Dodge, player.Effects);
+                        bool isHit = CombatCalculator.RollHit(effAcc, effDodge);
+
+                        if (!isHit)
+                        {
+                            Debug.Log($"[MISS] {caster.Info.Name} -> {player.Info.Name}");
+                            player.RpcPlayDodgeAnim();
+                            manager.RpcShowCombatResult(new CombatResult
+                            {
+                                isHit = false, isCrit = false, value = 0,
+                                targetIndex = targetIdx, isEnemy = false
+                            });
+                            continue;
+                        }
+
+                        bool isCrit = CombatCalculator.RollCrit(caster.Info.Crit);
+                        int effAtk = CombatCalculator.GetEffectiveAtk(caster.Info.Atk, caster.Effects);
+                        int effDef = CombatCalculator.GetEffectiveDef(player.Info.Def, player.Effects);
+                        float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
+
+                        Debug.Log($"[ENEMY ATK] {caster.Info.Name} -> {player.Info.Name} | {damage:F0} dmg | crit:{isCrit}");
+
+                        player.ApplyHpChange(-damage);
+
+                        if (player.Info.Hp <= 0)
+                        {
+                            player.RpcPlayDeadAnim();
+                            Debug.Log($"[ENEMY ATK] {player.Info.Name} 전투불능!");
+                        }
+                        else
+                        {
+                            player.RpcPlayDamagedAnim();
+                        }
+
+                        manager.RpcShowCombatResult(new CombatResult
+                        {
+                            isHit = true, isCrit = isCrit, value = damage,
+                            targetIndex = targetIdx, isEnemy = false
+                        });
+                    }
+                    break;
+
+                case SkillType.Debuff:
+                    foreach (int targetIdx in targets)
+                    {
+                        if (!TryGetPlayer(manager, targetIdx, out var player)) continue;
+
+                        if (CombatCalculator.RollResist(player.Info.Res))
+                        {
+                            Debug.Log($"[RESIST] {player.Info.Name} 저항 성공");
+                            continue;
+                        }
+
+                        var effect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
+                        player.AddEffect(effect);
+                        Debug.Log($"[ENEMY DEBUFF] {caster.Info.Name} -> {player.Info.Name} | {skill.EffectType}");
+                    }
+                    break;
+
+                case SkillType.Heal:
+                    foreach (int targetIdx in targets)
+                    {
+                        if (!TryGetEnemyByAliveIndex(manager, targetIdx, out var enemyModel, out var enemyCtrl)) continue;
+
+                        float healAmount = CombatCalculator.CalcHeal(enemyCtrl.Info.MaxHp, skill.HealRate);
+                        enemyModel.Heal(healAmount);
+                        Debug.Log($"[ENEMY HEAL] {caster.Info.Name} -> {enemyCtrl.Info.Name} +{healAmount:F0} HP");
+
+                        manager.RpcShowCombatResult(new CombatResult
+                        {
+                            isHit = true, isCrit = false, value = healAmount,
+                            targetIndex = targetIdx, isEnemy = true
+                        });
+                    }
+                    break;
+
+                case SkillType.Buff:
+                    foreach (int targetIdx in targets)
+                    {
+                        if (!TryGetEnemyByAliveIndex(manager, targetIdx, out _, out var enemyCtrl)) continue;
+
+                        var effect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
+                        enemyCtrl.AddEffect(effect);
+                        Debug.Log($"[ENEMY BUFF] {caster.Info.Name} -> {enemyCtrl.Info.Name} | {skill.EffectType} +{skill.EffectValue}");
+                    }
+                    break;
+
+                case SkillType.Enforce:
+                    var selfEffect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
+                    caster.AddEffect(selfEffect);
+                    Debug.Log($"[ENEMY ENFORCE] {caster.Info.Name} | {skill.EffectType} +{skill.EffectValue}");
+                    break;
+            }
+
+            // 공격 애니메이션 재생
+            if (!string.IsNullOrEmpty(skill.anim))
+            {
+                caster.RpcPlaySkillAnim(skill.anim);
+            }
+        }
+
+        /// <summary>
+        /// 현재 스테이지의 살아있는 적 목록에서 인덱스로 찾기
+        /// </summary>
+        private static bool TryGetEnemyByAliveIndex(BattleManager manager, int index, out EnemyModel enemyModel, out EnemyController enemyController)
+        {
+            enemyModel = null;
+            enemyController = null;
+
+            var aliveEnemies = manager.GetAliveEnemies();
+            if (index < 0 || index >= aliveEnemies.Count) return false;
+
+            var enemy = aliveEnemies[index];
+            if (enemy == null) return false;
+
+            enemyModel = enemy.GetComponent<EnemyModel>();
+            enemyController = enemy;
+            return enemyModel != null && enemyController.Info != null;
+        }
+
         private static bool TryGetPlayer(BattleManager manager, int index, out GamePlayerController player)
         {
             player = null;

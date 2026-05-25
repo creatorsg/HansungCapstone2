@@ -33,7 +33,6 @@ public class EnemyModel : NetworkBehaviour
         _currentSan = Info.San;
         _maxSan = Info.MaxSan > 0f ? Info.MaxSan : Info.San;
     }
-    // Update is called once per frame
     public void Damaged(float Attack)
     {
         Debug.Log("EnemyDamaged");
@@ -41,5 +40,13 @@ public class EnemyModel : NetworkBehaviour
         _info.Hp = _currentHp;
         IsDamaged?.Invoke(_currentHp/_maxHp);
         if (Info.Hp <= 0) _controller.CMDDead();
+    }
+
+    public void Heal(float amount)
+    {
+        _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
+        _info.Hp = _currentHp;
+        IsDamaged?.Invoke(_currentHp / _maxHp); // HP바 갱신 (같은 이벤트 재활용)
+        Debug.Log($"[EnemyModel] Heal +{amount:F0} -> HP={_currentHp:F0}/{_maxHp:F0}");
     }
 }

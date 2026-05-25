@@ -315,11 +315,10 @@ namespace Jun
             Order = (Order + 1) % _turnList.Count;
             if (Order == 0) _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
 
-            // �̹� ���� Ÿ�԰� ��ȣ�� ������ Ȯ��
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
 
-            Debug.Log("���� ���� ��: " + EnemyNum);
+            Debug.Log("남은 적 수: " + EnemyNum);
             if (EnemyNum == 0)
             {
                 Debug.Log("EndStage");
@@ -327,8 +326,130 @@ namespace Jun
                 return;
             }
 
+            // 죽은 유닛 턴 스킵
+            if (currentType == "Player")
+            {
+                if (currentNum < 0 || currentNum >= _players.Count ||
+                    _players[currentNum] == null || _players[currentNum].Info == null ||
+                    _players[currentNum].Info.Hp <= 0)
+                {
+                    Debug.Log($"[NextTurn] 죽은 플레이어({currentNum}) 턴 스킵");
+                    NextTurn();
+                    return;
+                }
+            }
+            else if (currentType == "Enemy")
+            {
+                var enemyList = _enemys[StageNum - 1].Enemys;
+                if (currentNum < 0 || currentNum >= enemyList.Count ||
+                    enemyList[currentNum] == null || enemyList[currentNum].Info == null ||
+                    enemyList[currentNum].Info.Hp <= 0 || !enemyList[currentNum].gameObject.activeSelf)
+                {
+                    Debug.Log($"[NextTurn] 죽은 적({currentNum}) 턴 스킵");
+                    NextTurn();
+                    return;
+                }
+            }
+
             RpcChangeTurn(currentType, currentNum);
             RpcSetHighlight(Order, true);
+
+            // 적 턴이면 서버에서 AI → 전투 → NextTurn 코루틴 시작
+            if (currentType == "Enemy")
+            {
+                StartCoroutine(ServerEnemyTurn(currentNum));
+            }
+        }
+
+        /// <summary>
+        /// 서버 전용. 적 AI 판단 → 스킬 실행 → 애니메이션 대기 → 다음 턴.
+        /// </summary>
+        [Server]
+        private IEnumerator ServerEnemyTurn(int enemyIndex)
+        {
+            yield return new WaitForSeconds(0.5f); // 턴 전환 연출 대기
+
+            // 적 가져오기
+            var enemyList = _enemys[StageNum - 1].Enemys;
+            if (enemyIndex < 0 || enemyIndex >= enemyList.Count)
+            {
+                Debug.LogError($"[ServerEnemyTurn] enemyIndex={enemyIndex} 범위 초과");
+                NextTurn();
+                yield break;
+            }
+
+            var enemyCtrl = enemyList[enemyIndex];
+            if (enemyCtrl == null || enemyCtrl.Info == null || enemyCtrl.Info.Hp <= 0)
+            {
+                Debug.Log("[ServerEnemyTurn] 죽은 적의 턴 → 스킵");
+                NextTurn();
+                yield break;
+            }
+
+            // 스턴 체크
+            if (CombatCalculator.IsStunned(enemyCtrl.Effects))
+            {
+                Debug.Log($"[ServerEnemyTurn] {enemyCtrl.Info.Name} 스턴 상태 → 스킵");
+                NextTurn();
+                yield break;
+            }
+
+            // 살아있는 플레이어 체크
+            if (GetAlivePlayers().Count == 0)
+            {
+                Debug.Log("[ServerEnemyTurn] 살아있는 플레이어 없음");
+                NextTurn();
+                yield break;
+            }
+
+            // AI 판단 (원본 리스트를 넘겨서 원본 인덱스를 반환받음)
+            var allEnemies = _enemys[StageNum - 1].Enemys;
+            var action = EnemyAI.ChooseAction(enemyCtrl, _players, allEnemies);
+            if (action == null)
+            {
+                Debug.Log($"[ServerEnemyTurn] {enemyCtrl.Info.Name} 행동 불가 → 스킵");
+                yield return new WaitForSeconds(0.5f);
+                NextTurn();
+                yield break;
+            }
+
+            var chosenAction = action.Value;
+            var skill = enemyCtrl.Info.Skills[chosenAction.skillIndex];
+            Debug.Log($"[ServerEnemyTurn] {enemyCtrl.Info.Name} → 스킬 '{skill.Name}' 사용");
+
+            // 전투 실행 (targets는 원본 _players/_enemys 인덱스)
+            _logic.EnemyBattleAction(enemyCtrl, chosenAction.skillIndex, chosenAction.targets);
+
+            // 애니메이션 대기 (코루틴 방식)
+            float animWait = string.IsNullOrEmpty(skill.anim) ? 0.5f : 1.5f;
+            yield return new WaitForSeconds(animWait);
+
+            NextTurn();
+        }
+
+        /// <summary>살아있는 플레이어 목록 반환</summary>
+        public List<GamePlayerController> GetAlivePlayers()
+        {
+            var alive = new List<GamePlayerController>();
+            foreach (var p in _players)
+            {
+                if (p != null && p.Info != null && p.Info.Hp > 0)
+                    alive.Add(p);
+            }
+            return alive;
+        }
+
+        /// <summary>살아있는 적 목록 반환</summary>
+        public List<EnemyController> GetAliveEnemies()
+        {
+            var alive = new List<EnemyController>();
+            var enemyList = _enemys[StageNum - 1].Enemys;
+            foreach (var e in enemyList)
+            {
+                if (e != null && e.Info != null && e.Info.Hp > 0 && e.gameObject.activeSelf)
+                    alive.Add(e);
+            }
+            return alive;
         }
         // �� ����
         [ClientRpc]
@@ -341,13 +462,12 @@ namespace Jun
 
             if (typeTurn == "Enemy")
             {
-                CurrentTurnUnit = null; // �� ���̴ϱ� 
+                CurrentTurnUnit = null;
                 _turnUI.text = "Enemy" + turnNum.ToString();
-                //  �г� ��Ȱ�� ó��
                 _unitPanel.interactable = false;
                 _unitPanel.blocksRaycasts = false;
                 _unitPanel.alpha = 0.5f;
-                StartCoroutine(EnemyTurn());
+                // UI만 갱신. 적 전투 로직은 서버의 ServerEnemyTurn()에서 처리.
             }
             else
             {
@@ -378,12 +498,6 @@ namespace Jun
                 _unitPanel.blocksRaycasts = isMyTurn;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
-        }
-        // �� ���ϋ� ��� �ڷ�ƾ���� �ѱ��
-        IEnumerator EnemyTurn()
-        {
-            yield return new WaitForSeconds(1.0f);
-            NextTurn();
         }
         public void UpdateUnitUI(GamePlayerController unit)
         {
