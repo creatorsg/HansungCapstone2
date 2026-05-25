@@ -39,6 +39,8 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Header("스킬 & 아이템")]
     [SerializeField] private List<SkillInfo> skills = new List<SkillInfo>();
     [SerializeField] private List<ConsumableInfo>  items  = new List<ConsumableInfo>();
+    [SerializeField] private EqpInfo weapon;
+    [SerializeField] private EqpInfo armor;
 
     [Header("UI 참조")]
     [SerializeField] private Image           characterImage;
@@ -62,6 +64,8 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public GameObject    BattleUnitPrefab => battleUnitPrefab;
     public List<SkillInfo> Skills         => skills;
     public List<ConsumableInfo>  Items          => items;
+    public EqpInfo Weapon => weapon;
+    public EqpInfo Armor => armor;
 
     // ─────────────────────────────────────────────
 

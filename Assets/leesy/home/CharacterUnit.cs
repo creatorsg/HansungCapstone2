@@ -4,14 +4,17 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using TMPro.Examples;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace Lsy
 {
     [System.Serializable]
     public enum ItemType
     {
-        Equipment,
+        Weapon,
+        Armor,
         Consumable
     }
     [System.Serializable]
@@ -20,6 +23,7 @@ namespace Lsy
         public string itemName;
         public ItemType Type;
         public ConsumableInfo ConsumInfo;
+        public EqpInfo EquipInfo;
         public int amount;
     }
 
@@ -71,6 +75,13 @@ namespace Lsy
         private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
         private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
 
+
+        // 장착 슬롯 관리 컴포넌트
+        public EquipmentSlot equipmentSlot;
+        private void Awake()
+        {
+            equipmentSlot = GetComponent<EquipmentSlot>();
+        }
         private void OnHeroPosChanged(int oldVal, int newVal)
         {
             if (newVal >= 0)
@@ -120,21 +131,59 @@ namespace Lsy
             currentHp     = maxHp;
             currentSan    = maxSan;
 
-            // ── 아이템 목록 주입 ───
+            // ── 아이템 목록 주입(같은 종류의 아이템일 경우 개수를 더하기) ───
             myInventory.Clear();
             if (pd.Info.Items != null)
             {
+                Dictionary<string, InventoryItem> tempDict = new Dictionary<string, InventoryItem>();
                 foreach (var consumInfo in pd.Info.Items)
                 {
-                    myInventory.Add(new InventoryItem
+                    if (tempDict.ContainsKey(consumInfo.Name))
                     {
-                        itemName = consumInfo.Name,
-                        Type = ItemType.Consumable,
-                        ConsumInfo = consumInfo,
-                        amount = 1   // 캐릭터 기본 지급 수량
-                    });
-                    Debug.Log("아이템 연동");
+                        var item = tempDict[consumInfo.Name];
+                        item.amount += 1;
+                        tempDict[consumInfo.Name] = item;
+                    }
+                    else
+                    {
+                        tempDict.Add(consumInfo.Name, new InventoryItem
+                        {
+                            itemName = consumInfo.Name,
+                            Type = ItemType.Consumable,
+                            ConsumInfo = consumInfo,
+                            amount = 1
+                        });
+                    }
                 }
+                foreach (var kvp in tempDict)
+                {
+                    myInventory.Add(kvp.Value);
+                }
+                Debug.Log($"[캐릭터] 아이템 연동 완료 (종류: {tempDict.Count})");
+            }
+            // ── 장비 목록 주입 ───
+            if (pd.Info.Weapon != null)
+            {
+                myInventory.Add(new InventoryItem
+                {
+                    itemName = pd.Info.Weapon.Name,
+                    Type = ItemType.Weapon,
+                    EquipInfo = pd.Info.Weapon,
+                    amount = 1
+                });
+                Debug.Log($"[캐릭터] 무기 연동 완료: {pd.Info.Weapon.Name}");
+            }
+
+            if (pd.Info.Armor != null)
+            {
+                myInventory.Add(new InventoryItem
+                {
+                    itemName = pd.Info.Armor.Name,
+                    Type = ItemType.Armor,
+                    EquipInfo = pd.Info.Armor,
+                    amount = 1
+                });
+                Debug.Log($"[캐릭터] 방어구 연동 완료: {pd.Info.Armor.Name}");
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
@@ -215,7 +264,7 @@ namespace Lsy
                 if (item.itemName == itemName) return item.amount;
             return 0;
         }
-
+        // 나중에 지울 것 아래 AddItemWithInfo로 교체 할 것
         [Server]
         public void AddItem(string itemName, int amount = 1)
         {
@@ -230,6 +279,24 @@ namespace Lsy
                 }
             }
             myInventory.Add(new InventoryItem { itemName = itemName, amount = amount });
+        }
+
+        // 기존 AddItem 대신 ConsumInfo까지 같이 넣어주는 전용 함수
+        [Server]
+        public void AddItemWithInfo(InventoryItem item)
+        {
+            for (int i = 0; i < myInventory.Count; i++)
+            {
+                if (myInventory[i].itemName == item.itemName)
+                {
+                    InventoryItem temp = myInventory[i];
+                    temp.amount += 1;
+                    myInventory[i] = temp;
+                    return;
+                }
+            }
+            // ConsumInfo가 포함된 온전한 아이템 객체를 Add
+            myInventory.Add(item);
         }
 
         [Server]
@@ -294,6 +361,124 @@ namespace Lsy
                 }
             }
             return false;
+        }
+
+        //────인벤토리에서 아이템 장착──────────
+
+        [Command]
+        public void CmdEquipConsumableToSlot(string itemName)
+        {
+            if (equipmentSlot == null) return;
+
+            // 인벤토리에서 장착하려는 아이템 찾기
+            for (int i = 0; i < myInventory.Count; i++)
+            {
+                if (myInventory[i].itemName == itemName)
+                {
+                    InventoryItem itemInInv = myInventory[i];
+                    bool success = false;
+
+                    switch (itemInInv.Type) {
+                        case ItemType.Consumable:
+                            // 장착 슬롯에 넘겨줄 아이템 데이터 (1개씩 장착)
+                            InventoryItem equipData = itemInInv;
+                            equipData.amount = 1;
+                            success = equipmentSlot.EquipConsumable(equipData);
+                            break;
+
+                        case ItemType.Weapon:
+                            string oldWeapon = equipmentSlot.equippedWeaponId;
+                            InventoryItem oldWeaponItem = equipmentSlot.equippedWeapon;
+                            if (equipmentSlot.EquipWeapon(itemInInv))  // string → InventoryItem
+                            {
+                                success = true;
+                                if (!string.IsNullOrEmpty(oldWeapon))
+                                    AddItemWithInfo(oldWeaponItem);
+                            }
+                            break;
+
+                        case ItemType.Armor:
+                            string oldArmor = equipmentSlot.equippedArmorId;
+                            InventoryItem oldArmorItem = equipmentSlot.equippedArmor;
+                            if (equipmentSlot.EquipArmor(itemInInv))  // string → InventoryItem
+                            {
+                                success = true;
+                                if (!string.IsNullOrEmpty(oldArmor))
+                                    AddItemWithInfo(oldArmorItem);
+                            }
+                            break;
+                    }
+                    if (success)
+                    {
+                        // EquipmentSlot에 장착 시도 (최대 6개 슬롯 검사 포함)
+                        // 장착 성공 시, 인벤토리에서 1개 차감
+                        itemInInv.amount -= 1;
+
+                        if (itemInInv.amount <= 0)
+                            myInventory.RemoveAt(i);
+                        else
+                            myInventory[i] = itemInInv; // SyncList 갱신
+
+                        Debug.Log($"<color=green>[장착 성공] {itemName} (인벤토리 남은 수량: {itemInInv.amount})</color>");
+
+                    }
+                    return;
+                }
+            }
+        }
+
+        [Command]
+        public void CmdUnequipConsumableFromSlot(string itemName)
+        {
+            if (equipmentSlot == null) return;
+
+            // 장착 슬롯에서 해당 아이템을 먼저 찾아서 데이터를 복사해둡니다.
+            InventoryItem? itemToReturn = null;
+            foreach (var item in equipmentSlot.equippedConsumables)
+            {
+                if (item.itemName == itemName)
+                {
+                    itemToReturn = item;
+                    
+                    break;
+                }
+            }
+
+            // 슬롯에서 실제 해제 (데이터가 삭제되기 전에 위에서 미리 복사해둠)
+            if (equipmentSlot.UnequipConsumable(itemName, 1))
+            {
+                // 해제 성공 시, 복사해둔 데이터(ConsumInfo 포함)를 인벤토리에 추가
+                if (itemToReturn.HasValue)
+                {
+                    InventoryItem returnItem = itemToReturn.Value;
+                    returnItem.amount = 1; 
+
+                    AddItemWithInfo(returnItem);
+                }
+            }
+        }
+        [Command]
+        public void CmdUnequipWeapon()
+        {
+            if (equipmentSlot == null) return;
+            InventoryItem returnItem = equipmentSlot.equippedWeapon;
+            if (equipmentSlot.UnequipWeapon())
+            {
+                returnItem.amount = 1;
+                AddItemWithInfo(returnItem);
+            }
+        }
+
+        [Command]
+        public void CmdUnequipArmor()
+        {
+            if (equipmentSlot == null) return;
+            InventoryItem returnItem = equipmentSlot.equippedArmor;
+            if (equipmentSlot.UnequipArmor())
+            {
+                returnItem.amount = 1;
+                AddItemWithInfo(returnItem);
+            }
         }
     }
 }

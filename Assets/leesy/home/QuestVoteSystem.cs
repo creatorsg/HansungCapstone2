@@ -135,6 +135,13 @@ namespace Lsy
                 _votesByConnectionId.Clear();
                 RaiseAll();
 
+                // PlayerAccount를 찾아 데이터를 동기화합니다.
+                foreach (var conn in NetworkServer.connections.Values)
+                {
+                    var account = conn.identity.GetComponent<PlayerAccount>();
+                    if (account != null) account.SyncAllHideoutDataToBattleData();
+                }
+
                 rm.ServerChangeScene(currentScene);
                 return;
             }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7289812780586260270}
   - component: {fileID: 1311854541023034449}
   - component: {fileID: 2000360521870264890}
+  - component: {fileID: 471120097176011085}
   m_Layer: 0
   m_Name: CharacterUnit
   m_TagString: Untagged
@@ -75,6 +76,7 @@ MonoBehaviour:
   heroCode: 
   selectedWeaponId: 
   purchasedNodeCount: 0
+  equipmentSlot: {fileID: 0}
 --- !u!114 &2000360521870264890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,3 +92,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &471120097176011085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7460532093154582955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8686ed8478e03245ae8ba3e1032d70b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.EquipmentSlot
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  equippedWeaponId: 
+  equippedArmorId: 

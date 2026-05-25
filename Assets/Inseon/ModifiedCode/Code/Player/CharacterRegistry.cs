@@ -31,6 +31,10 @@ public static class CharacterRegistry
 
         /// <summary>이 캐릭터가 사용할 아이템 목록</summary>
         public List<ConsumableInfo> Items;
+
+        /// <summary>이 캐릭터가 사용할 장비 목록</summary>
+        public EqpInfo Weapon;
+        public EqpInfo Armor;
     }
 
     private static readonly Dictionary<string, Entry> _map = new Dictionary<string, Entry>();

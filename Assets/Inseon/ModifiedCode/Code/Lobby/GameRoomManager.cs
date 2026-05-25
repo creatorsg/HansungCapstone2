@@ -1,6 +1,7 @@
-using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Jun {
@@ -366,9 +367,11 @@ namespace Jun {
                 Debug.LogWarning($"[GameRoomManager] BuildPlayerInfo: CharacterDatabase에서 '{heroCode}'를 찾지 못했습니다. 기본값 사용.");
                 return new PlayerInfo
                 {
-                    Id     = pingIndex,
+                    Id = pingIndex,
                     Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                    Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
+                    Items = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
+                    Weapon = entry.Weapon,
+                    Armor = entry.Armor,
                 };
             }
 
@@ -388,6 +391,8 @@ namespace Jun {
                 Res   = c.effectResistance,
                 Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
                 Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
+                Weapon = entry.Weapon,
+                Armor = entry.Armor,
             };
         }
 
@@ -586,7 +591,7 @@ namespace Jun {
                 playerData.FinalHeroIndex = roomPlayerCharaterNum[i].HeroIndex; // 레거시 UI용
                 playerData.FinalHeroPos   = pos;
                 playerData.Info           = BuildPlayerInfoFromRegistry(code, myPingIndex, entry);
-                playerData.PingIndex      = myPingIndex;
+                playerData.PingIndex = myPingIndex;
 
                 if (i == 0)
                     mainPlayer = gamePlayer;

@@ -1,5 +1,6 @@
-using UnityEngine;
+using Lsy;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Jun
@@ -175,8 +176,8 @@ namespace Jun
         public int Acc;         // 명중률 (%)
         public int Res;         // 상태이상 저항 (%)
 
-        public int WpnId;
-        public int ArmId;
+        public EqpInfo Weapon;
+        public EqpInfo Armor;
         public int Trk1;
         public int Trk2;
 
@@ -244,6 +245,23 @@ namespace Jun
     {
         public string Name;
         public int EqpId;
+
+        public Sprite icon;
+        public string anim;
+
+        [UnityEngine.TextArea(2, 4)]
+        public string description;
+
+        public float Hp;        // HP
+        public int San;         // 정신력
+        public int Atk;         // 공격력
+        public int Def;         // 방어력
+        public int Spd;         // 속도 (턴 순서)
+        public int Crit;        // 치명타 확률 (%)
+        public int Ctm;         // 치명타 배율 추가 (%)  ex) 50 → 1.5배
+        public int Dodge;       // 회피율 (%)
+        public int Acc;         // 명중률 (%)
+        public int Res;         // 상태이상 저항 (%)
     }
 
     // 턴 데이터 (속도 정렬용)

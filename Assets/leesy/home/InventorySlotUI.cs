@@ -54,8 +54,7 @@ namespace Lsy
         {
             if (data != null)
             {
-                if (itemNameText != null)
-                    itemNameText.text = data.Name;
+                if (itemNameText != null) itemNameText.text = data.Name;
                 if (itemIcon != null)
                 {
                     itemIcon.sprite = icon;
@@ -64,22 +63,42 @@ namespace Lsy
             }
             else
             {
-                if (itemNameText != null)
-                    itemNameText.text = "알 수 없음";
-                if (itemIcon != null)
-                    itemIcon.gameObject.SetActive(false);
+                if (itemNameText != null) itemNameText.text = "알 수 없음";
+                if (itemIcon != null) itemIcon.gameObject.SetActive(false);
             }
-
-            if (itemAmountText != null)
-                itemAmountText.text = $"x{amount}";
-
+            if (itemAmountText != null) itemAmountText.text = $"x{amount}";
             if (interactButton != null)
             {
                 interactButton.onClick.RemoveAllListeners();
                 if (onClickAction != null)
                     interactButton.onClick.AddListener(() => onClickAction.Invoke());
             }
+            ShowEquipOutline(false);
+        }
 
+        public void Setup(EqpInfo data, int amount, Sprite icon, Action onClickAction)
+        {
+            if (data != null)
+            {
+                if (itemNameText != null) itemNameText.text = data.Name;
+                if (itemIcon != null)
+                {
+                    itemIcon.sprite = icon;
+                    itemIcon.gameObject.SetActive(icon != null);
+                }
+            }
+            else
+            {
+                if (itemNameText != null) itemNameText.text = "알 수 없음";
+                if (itemIcon != null) itemIcon.gameObject.SetActive(false);
+            }
+            if (itemAmountText != null) itemAmountText.text = $"x{amount}";
+            if (interactButton != null)
+            {
+                interactButton.onClick.RemoveAllListeners();
+                if (onClickAction != null)
+                    interactButton.onClick.AddListener(() => onClickAction.Invoke());
+            }
             ShowEquipOutline(false);
         }
 

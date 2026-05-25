@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Jun;
 using Mirror;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Lsy
@@ -13,6 +14,13 @@ namespace Lsy
         public List<PlayerSkill> skills = new List<PlayerSkill>();
         public List<string> unlockedNodeIds = new List<string>();
         public int gold = 0;
+
+        // --- 캐릭터별 장착 상태 저장을 위한 필드 추가 ---
+        public string equippedWeaponId = "";
+        public string equippedArmorId = "";
+        public InventoryItem equippedWeapon; // 무기 객체 직접 백업
+        public InventoryItem equippedArmor;  // 방어구 객체 직접 백업
+        public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // 소비템 객체 리스트 백업
     }
 
     public class PlayerAccount : NetworkBehaviour
@@ -57,7 +65,7 @@ namespace Lsy
         // ?쒕쾭 ?꾩슜: ??connection???좏깮??PlayerData 紐⑸줉 (FinalHeroPos ???뺣젹)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
-        private Dictionary<int, CharacterSaveData> savedCharacterData = new Dictionary<int, CharacterSaveData>();
+        private Dictionary<int, CharacterSaveData> savedCharacterData = new Dictionary<int, CharacterSaveData>(); public Dictionary<int, CharacterSaveData> SavedCharacterData => savedCharacterData;
 
         // ??? 珥덇린?????????????????????????????????????????????????????
 
@@ -159,7 +167,6 @@ namespace Lsy
 
             CmdRequestSwapCharacter(profileIndex);
         }
-
         [Command]
         public void CmdRequestSwapCharacter(int targetIndex)
         {
@@ -170,67 +177,102 @@ namespace Lsy
             if (currentActiveIndex == targetIndex) return;
             if (currentSelectedCharacter == null) return;
 
-            // ?꾩옱 罹먮┃???곹깭 ???
+            // 현재 캐릭터의 상태를 서버 메모리에 백업
             if (currentActiveIndex != -1)
             {
                 CharacterSaveData backup = new CharacterSaveData();
-                foreach (var item in currentSelectedCharacter.myInventory)
-                    backup.inventory.Add(item);
+
+                foreach (var item in currentSelectedCharacter.myInventory) backup.inventory.Add(item);
                 backup.selectedWeaponId = currentSelectedCharacter.selectedWeaponId;
                 backup.purchasedNodeCount = currentSelectedCharacter.purchasedNodeCount;
-                foreach (var skill in currentSelectedCharacter.mySkills)
-                    backup.skills.Add(skill);
-                foreach (var nodeId in currentSelectedCharacter.unlockedNodeIds)
-                    backup.unlockedNodeIds.Add(nodeId);
+                foreach (var skill in currentSelectedCharacter.mySkills) backup.skills.Add(skill);
+                foreach (var nodeId in currentSelectedCharacter.unlockedNodeIds) backup.unlockedNodeIds.Add(nodeId);
                 backup.gold = currentGold;
+
+                var slot = currentSelectedCharacter.equipmentSlot;
+                if (slot != null)
+                {
+                    backup.equippedWeaponId = slot.equippedWeaponId;
+                    backup.equippedArmorId = slot.equippedArmorId;
+                    backup.equippedWeapon = slot.equippedWeapon;
+                    backup.equippedArmor = slot.equippedArmor;
+                    foreach (var item in slot.equippedConsumables) backup.equippedConsumables.Add(item);
+                }
+
                 savedCharacterData[currentActiveIndex] = backup;
             }
 
-            currentActiveIndex = targetIndex;
-
-            // ??罹먮┃???곗씠?곕줈 珥덇린??(怨⑤뱶??嫄대뱶由ъ? ?딆쓬)
-            if (hasPlayerDatas)
-            {
-                PlayerData targetPd = _myPlayerDatas[targetIndex];
-                currentSelectedCharacter.SetupFromPlayerData(targetPd);
-                Debug.Log($"<color=cyan>[?쒕쾭] {targetPd.FinalHeroCode}?쇰줈 ?ㅼ솑 ?꾨즺!</color>");
-            }
-            else
-            {
-                CharacterData targetData = myCharacterDataList[targetIndex];
-                currentSelectedCharacter.SetupFromData(targetData);
-                Debug.Log($"<color=cyan>[?쒕쾭] {targetData.charName}?쇰줈 ?ㅼ솑 ?꾨즺! (?대갚)</color>");
-            }
-
-            // ??λ맂 ?몃깽?좊━/?ㅽ궗 蹂듭썝
+            // 캐릭터 오브젝트 초기화 (새 데이터를 받기 위해 비우기)
+            // 이전 캐릭터의 데이터가 남아있지 않도록 "먼저" 비웁니다.
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
             currentSelectedCharacter.unlockedNodeIds.Clear();
-            currentSelectedCharacter.selectedWeaponId = "";
-            currentSelectedCharacter.purchasedNodeCount = 0;
 
-            if (savedCharacterData.TryGetValue(targetIndex, out CharacterSaveData saved))
+            var targetSlot = currentSelectedCharacter.equipmentSlot;
+            if (targetSlot != null)
             {
-                currentGold = saved.gold;
-
-                foreach (var item in saved.inventory)
-                    currentSelectedCharacter.myInventory.Add(item);
-                currentSelectedCharacter.selectedWeaponId = saved.selectedWeaponId;
-                currentSelectedCharacter.purchasedNodeCount = saved.purchasedNodeCount;
-                foreach (var skill in saved.skills)
-                    currentSelectedCharacter.mySkills.Add(skill);
-                foreach (var nodeId in saved.unlockedNodeIds)
-                    currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
-            }
-            else
-            {
-                if (hasPlayerDatas) currentGold = 2000;
-                else if (targetIndex >= 0 && targetIndex < myCharacterDataList.Count) currentGold = myCharacterDataList[targetIndex].gold;
+                targetSlot.equippedWeaponId = "";
+                targetSlot.equippedArmorId = "";
+                targetSlot.equippedWeapon = default;
+                targetSlot.equippedArmor = default;
+                targetSlot.equippedConsumables.Clear();
             }
 
+            // 인덱스 전환 및 데이터 로드
+            currentActiveIndex = targetIndex;
+
+            // 저장된 데이터가 있는지 먼저 확인합니다.
+            if (savedCharacterData.TryGetValue(targetIndex, out CharacterSaveData saved))
+            {
+                // 이미 플레이한 적이 있는 캐릭터: 저장된 데이터 복원
+                // 이때는 SetupFromData를 호출하지 않거나, 호출 후 저장된 데이터로 덮어씁니다.
+                if (hasPlayerDatas) currentSelectedCharacter.SetupFromPlayerData(_myPlayerDatas[targetIndex]);
+                else currentSelectedCharacter.SetupFromData(myCharacterDataList[targetIndex]);
+
+                // Setup 과정에서 들어간 기본 아이템들을 지우고 저장된 상태로 교체
+                currentSelectedCharacter.myInventory.Clear();
+                currentSelectedCharacter.mySkills.Clear();
+                currentSelectedCharacter.unlockedNodeIds.Clear();
+
+                currentGold = saved.gold;
+                foreach (var item in saved.inventory) currentSelectedCharacter.myInventory.Add(item);
+                currentSelectedCharacter.selectedWeaponId = saved.selectedWeaponId;
+                currentSelectedCharacter.purchasedNodeCount = saved.purchasedNodeCount;
+                foreach (var skill in saved.skills) currentSelectedCharacter.mySkills.Add(skill);
+                foreach (var nodeId in saved.unlockedNodeIds) currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
+
+                if (targetSlot != null)
+                {
+                    targetSlot.equippedWeaponId = saved.equippedWeaponId;
+                    targetSlot.equippedWeapon = saved.equippedWeapon;
+                    targetSlot.equippedArmorId = saved.equippedArmorId;
+                    targetSlot.equippedArmor = saved.equippedArmor;
+                    foreach (var item in saved.equippedConsumables) targetSlot.equippedConsumables.Add(item);
+                }
+            }
+            else
+            {
+                // 처음 선택하는 캐릭터: 기본 데이터(초기 아이템 등) 로드
+                if (hasPlayerDatas)
+                {
+                    PlayerData targetPd = _myPlayerDatas[targetIndex];
+                    currentSelectedCharacter.SetupFromPlayerData(targetPd);
+                    currentGold = 2000;
+                }
+                else
+                {
+                    CharacterData targetData = myCharacterDataList[targetIndex];
+                    currentSelectedCharacter.SetupFromData(targetData);
+                    currentGold = targetData.gold;
+                }
+                // SetupFromData 내부에서 인벤토리와 스킬이 채워지므로 그대로 둡니다.
+            }
+
+            //  최종 갱신 및 UI 통보
             AutoUnlockLv1Nodes(currentSelectedCharacter);
             TargetRpcRefreshUI(connectionToClient, targetIndex);
         }
+
 
         [TargetRpc]
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
@@ -403,6 +445,67 @@ namespace Lsy
                     return pd;
             }
             return null;
+        }
+
+
+        //전투씬으로 넘어갈때 인벤토리 정보 업데이트
+        [Server]
+        public void SyncAllHideoutDataToBattleData()
+        {
+            // 1. 현재 씬에 있는 모든 PlayerDataPrefab(Clone) 객체들을 찾습니다.
+            PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
+
+            // 2. 찾은 객체들 중 "내 것"만 골라서 업데이트합니다.
+            foreach (var pd in allPlayerDatas)
+            {
+                // 내 connection에 속한 PlayerData인지 확인
+                if (pd.connectionToClient != connectionToClient) continue;
+
+                // 이 pd가 내 캐릭터 리스트(_myPlayerDatas)에서 몇 번째 캐릭터인지 확인
+                int charIndex = _myPlayerDatas.IndexOf(pd);
+                if (charIndex == -1) continue;
+
+                // 3. 정보 주입 (현재 꺼내져 있는 캐릭터 vs 저장된 데이터)
+                if (charIndex == currentActiveIndex && currentSelectedCharacter != null)
+                {
+                    // [현재 활성화된 캐릭터] 실시간 EquipmentSlot에서 가져오기
+                    var slot = currentSelectedCharacter.equipmentSlot;
+                    if (slot != null && pd.Info != null)
+                    {
+                        pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
+                        pd.Info.Armor = !string.IsNullOrEmpty(slot.equippedArmorId) ? slot.equippedArmor.EquipInfo : null;
+
+                        pd.Info.Items.Clear();
+                        foreach (var item in slot.equippedConsumables)
+                        {
+                            if (item.ConsumInfo != null)
+                            {
+                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
+                            }
+                        }
+                        Debug.Log($"[Sync] 현재 캐릭터({pd.FinalHeroCode}) 실시간 정보 업데이트 완료");
+                    }
+                }
+                else if (savedCharacterData.TryGetValue(charIndex, out var saved))
+                {
+                    // [비활성화된 캐릭터] 이전에 저장해둔 savedCharacterData에서 가져오기
+                    if (pd.Info != null)
+                    {
+                        pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
+                        pd.Info.Armor = saved.equippedArmor.EquipInfo;
+
+                        pd.Info.Items.Clear();
+                        foreach (var item in saved.equippedConsumables)
+                        {
+                            if (item.ConsumInfo != null)
+                            {
+                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
+                            }
+                        }
+                        Debug.Log($"[Sync] 대기 중인 캐릭터({pd.FinalHeroCode}) 저장된 정보 업데이트 완료");
+                    }
+                }
+            }
         }
     }
 }

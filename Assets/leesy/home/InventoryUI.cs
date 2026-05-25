@@ -59,11 +59,9 @@ namespace Lsy
 
                     if (slotScript == null) continue;
 
-                    // ① ConsumableInfo가 있으면 그걸로 바로 표시 (ItemData 조회 불필요)
-                    if (item.ConsumInfo != null)
+                    if (item.ConsumInfo != null || item.EquipInfo != null)
                     {
-                        // 아이콘: ConsumInfo.icon 우선, null이면 ItemData에서 폴백
-                        Sprite icon = item.ConsumInfo.icon;
+                        Sprite icon = item.ConsumInfo != null ? item.ConsumInfo.icon : item.EquipInfo.icon;
                         if (icon == null)
                         {
                             ItemData fallback = ItemManager.Instance != null
@@ -72,12 +70,24 @@ namespace Lsy
                             icon = fallback?.itemIcon;
                         }
 
-                        slotScript.Setup(item.ConsumInfo, item.amount, icon, () =>
+                        if (item.ConsumInfo != null)
                         {
-                            CharacterShop shop = myChar.GetComponent<CharacterShop>();
-                            if (shop == null) return;
-                            shop.CmdEquipItem(item.itemName);
-                        });
+                            slotScript.Setup(item.ConsumInfo, item.amount, icon, () =>
+                            {
+                                myChar.CmdEquipConsumableToSlot(item.itemName);
+                            });
+                        }
+                        else
+                        {
+                            slotScript.Setup(item.EquipInfo, item.amount, icon, () =>
+                            {
+                                myChar.CmdEquipConsumableToSlot(item.itemName);
+                            });
+                        }
+
+                        bool isEquipped = (item.Type == ItemType.Weapon && myChar.equipmentSlot.equippedWeaponId == item.itemName)
+                                       || (item.Type == ItemType.Armor && myChar.equipmentSlot.equippedArmorId == item.itemName);
+                        slotScript.ShowEquipOutline(isEquipped);
                     }
                     // ② ConsumableInfo 없는 경우 (장비 등) — 기존 ItemData 방식
                     else
