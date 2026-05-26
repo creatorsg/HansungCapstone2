@@ -22,4 +22,10 @@ public class EnemyView : NetworkBehaviour
         if(skill == "Attack") anim.SetBool(skill, true);
         else  anim.SetTrigger(skill);
     }
+    public void StopAnim()
+    {
+        if (anim == null) return;
+        anim.SetBool("Attack", false);  // Attack Bool 리셋
+        anim.Play("Idle");              // Idle 상태로 강제 전환
+    }
 }
