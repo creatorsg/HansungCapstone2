@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f93dcd2a7112d40869388bbb11288e, type: 3}
   m_Name: NewUniqueTrait 3
   m_EditorClassIdentifier: Assembly-CSharp::UniqueTraitSO
-  itemName: Finn
-  icon: {fileID: -6007857137893288414, guid: 4d1b889d2b57ec147b1e3293e47c75ed, type: 3}
+  itemName: chalk
+  icon: {fileID: 1363830446939603720, guid: ef37907b7e16280478796e66a2f0c798, type: 3}
   description: 
   level1:
     price: 300

@@ -46,6 +46,10 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Tooltip("방어구 ItemSO를 연결하면 ItemManager가 씬을 넘어도 아이콘을 찾을 수 있습니다.")]
     [SerializeField] private ItemSO armorSO;
 
+    [Header("고유 특성")]
+    [Tooltip("이 캐릭터 고유의 강화 가능한 특성. 기본적으로 1단계 스탯이 항상 적용됩니다.")]
+    [SerializeField] private UniqueTraitSO uniqueTrait;
+
     [Header("UI 참조")]
     [SerializeField] private Image           characterImage;
     [SerializeField] private TextMeshProUGUI codeLabel;
@@ -68,6 +72,9 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public GameObject    BattleUnitPrefab => battleUnitPrefab;
     public List<SkillInfo> Skills         => skills;
     public List<ConsumableInfo>  Items    => items;
+
+    /// <summary>고유 특성 SO</summary>
+    public UniqueTraitSO UniqueTrait => uniqueTrait;
 
     /// <summary>무기 ItemSO (ItemManager 아이콘 조회용)</summary>
     public ItemSO WeaponSO => weaponSO;

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f93dcd2a7112d40869388bbb11288e, type: 3}
   m_Name: NewUniqueTrait 2
   m_EditorClassIdentifier: Assembly-CSharp::UniqueTraitSO
-  itemName: Finn
-  icon: {fileID: -6007857137893288414, guid: 4d1b889d2b57ec147b1e3293e47c75ed, type: 3}
+  itemName: Glue
+  icon: {fileID: 586861844801243170, guid: 9d20699b31dead94f86f42a4a40fd602, type: 3}
   description: 
   level1:
     price: 300

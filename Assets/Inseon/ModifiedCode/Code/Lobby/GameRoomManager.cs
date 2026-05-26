@@ -382,7 +382,7 @@ namespace Jun {
             }
 
             // 스킬/아이템은 CharacterCard에서 Inspector로 직접 설정된 값을 사용합니다.
-            return new PlayerInfo
+            var info = new PlayerInfo
             {
                 Id    = pingIndex,
                 Name  = c.characterName,
@@ -395,12 +395,62 @@ namespace Jun {
                 Crit  = c.critical,
                 San   = c.stress,
                 Res   = c.effectResistance,
-                Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                Items       = new List<InventoryItem>(),  // 시작 시 미장착 인벤은 비어있음
+                Trk1  = 1,   // 고유 특성 현재 단계 (1이 기본, 최대 3)
+                Skills      = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
+                Items       = new List<InventoryItem>(),
                 Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
                 Weapon      = entry.Weapon,
                 Armor       = entry.Armor,
             };
+
+            // ── 무기 스탯 합산 ──────────────────────────────────────────
+            ApplyEqpStats(ref info, entry.Weapon);
+
+            // ── 방어구 스탯 합산 ────────────────────────────────────────
+            ApplyEqpStats(ref info, entry.Armor);
+
+            // ── 고유 특성 스탯 합산 (Trk1 단계 기준) ───────────────────
+            ApplyTraitStats(ref info, entry.UniqueTrait, info.Trk1);
+
+            Debug.Log($"[BuildPlayerInfo] {c.characterName} — " +
+                      $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} SPD:{info.Spd} " +
+                      $"(무기:{entry.Weapon?.Name ?? "없음"} 방어구:{entry.Armor?.Name ?? "없음"} " +
+                      $"특성Lv:{info.Trk1})");
+
+            return info;
+        }
+
+        /// <summary>EqpInfo 스탯을 PlayerInfo에 누산합니다.</summary>
+        private static void ApplyEqpStats(ref PlayerInfo info, EqpInfo eqp)
+        {
+            if (eqp == null) return;
+            info.Hp    += eqp.Hp;
+            info.San   += eqp.San;
+            info.Atk   += eqp.Atk;
+            info.Def   += eqp.Def;
+            info.Spd   += eqp.Spd;
+            info.Crit  += eqp.Crit;
+            info.Ctm   += eqp.Ctm;
+            info.Dodge += eqp.Dodge;
+            info.Acc   += eqp.Acc;
+            info.Res   += eqp.Res;
+        }
+
+        /// <summary>UniqueTraitSO의 지정 단계 스탯을 PlayerInfo에 누산합니다.</summary>
+        private static void ApplyTraitStats(ref PlayerInfo info, UniqueTraitSO trait, int level)
+        {
+            if (trait == null || level < 1) return;
+            TraitLevelData d = trait.GetLevel(Mathf.Clamp(level, 1, UniqueTraitSO.MaxLevel));
+            info.Hp    += d.hp;
+            info.San   += d.san;
+            info.Atk   += d.atk;
+            info.Def   += d.def;
+            info.Spd   += d.spd;
+            info.Crit  += d.crit;
+            info.Ctm   += d.ctm;
+            info.Dodge += d.dodge;
+            info.Acc   += d.acc;
+            info.Res   += d.res;
         }
 
         // ── Mirror 씬 전환 보호 ──────────────────────────────────────

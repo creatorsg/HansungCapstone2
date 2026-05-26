@@ -875,6 +875,7 @@ MonoBehaviour:
     Target: 0
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
+  uniqueTrait: {fileID: 11400000, guid: 4b78c497815472f45a6a0903fdc83c5d, type: 2}
   characterImage: {fileID: 1975854966}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 1714344953}
@@ -1250,6 +1251,7 @@ MonoBehaviour:
     Target: 0
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
+  uniqueTrait: {fileID: 11400000, guid: 20a6d8743615575478d0c47086ca9eb5, type: 2}
   characterImage: {fileID: 1636315041}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 2076644810}
@@ -1790,6 +1792,7 @@ MonoBehaviour:
   items: []
   weaponSO: {fileID: 0}
   armorSO: {fileID: 0}
+  uniqueTrait: {fileID: 0}
   characterImage: {fileID: 0}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 0}
@@ -2319,6 +2322,7 @@ MonoBehaviour:
   items: []
   weaponSO: {fileID: 0}
   armorSO: {fileID: 0}
+  uniqueTrait: {fileID: 0}
   characterImage: {fileID: 0}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 0}
@@ -4081,6 +4085,7 @@ MonoBehaviour:
     Target: 0
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
+  uniqueTrait: {fileID: 11400000, guid: 598f3332e2d84844ea3e5e2fa87b9d3e, type: 2}
   characterImage: {fileID: 1866288786}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 886256907}
@@ -6196,6 +6201,7 @@ MonoBehaviour:
     Target: 0
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
+  uniqueTrait: {fileID: 11400000, guid: 0d9429b1963b89144a1ae8014411fb8f, type: 2}
   characterImage: {fileID: 801427239}
   codeLabel: {fileID: 0}
   lockOverlay: {fileID: 805157006}

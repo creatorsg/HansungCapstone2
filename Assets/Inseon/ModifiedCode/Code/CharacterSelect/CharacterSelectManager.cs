@@ -199,8 +199,9 @@ public class CharacterSelectManager : MonoBehaviour
                 CharacterSprite  = card.BattleSprite,
                 Skills           = card.Skills ?? new List<SkillInfo>(),
                 Items            = card.Items  ?? new List<ConsumableInfo>(),
-                Weapon = card.Weapon,
-                Armor = card.Armor,
+                Weapon      = card.Weapon,
+                Armor       = card.Armor,
+                UniqueTrait = card.UniqueTrait,
             });
 
             // 캐릭터 카드의 장비 ItemSO를 ItemManager에 미리 등록합니다.
