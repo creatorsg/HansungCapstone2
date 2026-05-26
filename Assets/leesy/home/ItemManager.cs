@@ -27,6 +27,17 @@ namespace Lsy
             }
         }
 
+        /// <summary>ItemSO 하나를 즉시 등록합니다. 이미 등록된 이름은 무시합니다.</summary>
+        public void RegisterItemSO(ItemSO so)
+        {
+            if (so == null || string.IsNullOrEmpty(so.itemName)) return;
+            if (!_soDict.ContainsKey(so.itemName))
+            {
+                _soDict[so.itemName] = so;
+                Debug.Log($"[ItemManager] 등록: {so.itemName}");
+            }
+        }
+
         /// <summary>씬 전환 등으로 새 ItemSO가 메모리에 올라왔을 때 수동으로 재갱신합니다.</summary>
         public void RefreshItemSOs()
         {
