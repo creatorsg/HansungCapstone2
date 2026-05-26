@@ -72,8 +72,7 @@ namespace Lsy
                     else
                     {
                         SetButtonInteractable(false);
-                        if (ReadySystem.Instance != null)
-                            SetButtonInteractable(ReadySystem.Instance.AllReady);
+                        SetButtonInteractable(IsSoloHost() || (ReadySystem.Instance != null && ReadySystem.Instance.AllReady));
                     }
                 }
             }
@@ -163,7 +162,7 @@ namespace Lsy
                 SetButtonInteractable(false);
                 return;
             }
-            SetButtonInteractable(allReady);
+            SetButtonInteractable(IsSoloHost() || allReady);
         }
 
         private void OnVotePhaseChanged(bool isVoteRunning, bool isVoteFinished)
@@ -178,9 +177,23 @@ namespace Lsy
             }
 
             if (IsHost)
-                SetButtonInteractable(ReadySystem.Instance != null && ReadySystem.Instance.AllReady);
+                SetButtonInteractable(IsSoloHost() || (ReadySystem.Instance != null && ReadySystem.Instance.AllReady));
             else
                 SetButtonInteractable(true);
+        }
+
+        private bool IsSoloHost()
+        {
+            if (!NetworkServer.active) return false;
+
+            foreach (var conn in NetworkServer.connections.Values)
+            {
+                if (conn == null) continue;
+                if (conn.connectionId == 0) continue;
+                return false;
+            }
+
+            return true;
         }
 
         private void OnPlayerReadyChanged(uint playerNetId, bool isReady)

@@ -1,7 +1,7 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -9,7 +9,6 @@ namespace Jun
 {
     public class BattleLogic : MonoBehaviour
     {
-        // ���߿��� ���� �����ְԲ� ���� ����
         [Server]
         public void BattleAction(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy, List<int> targets)
         {

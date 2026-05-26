@@ -96,10 +96,20 @@ namespace Lsy
             _lockedStageName = ResolveStageName(districtType);
             _isQuestSelected = true;
 
+            if (IsSoloHost())
+            {
+                _isVoteRunning = false;
+                _isVoteFinished = true;
+                _isVoteApproved = true;
+                _voteResultMessage = "솔로 플레이 - 바로 시작할 수 있습니다.";
+                _votesByConnectionId.Clear();
+                RaiseAll();
+                return;
+            }
+
             _isVoteFinished = false;
             _isVoteApproved = false;
             _voteResultMessage = "";
-
             RaiseVoteSnapshotChanged();
         }
 
