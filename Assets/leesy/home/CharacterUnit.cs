@@ -558,11 +558,12 @@ namespace Lsy
             AddEqpStats(ref info, curWeapon);
             AddEqpStats(ref info, curArmor);
 
-            // ── 3. 고유 특성 스탯 합산 (Trk1 단계 기준) ─────────────────────
-            if (CharacterRegistry.TryGet(heroCode, out var regEntry) && regEntry.UniqueTrait != null)
+            // ── 3. 고유 특성 스탯 합산 (UniqueTraitLv 기준, 0이면 미적용) ──
+            if (CharacterRegistry.TryGet(heroCode, out var regEntry) && regEntry.UniqueTrait != null
+                && info.UniqueTraitLv >= 1)
             {
                 TraitLevelData d = regEntry.UniqueTrait.GetLevel(
-                    Mathf.Clamp(info.Trk1, 1, UniqueTraitSO.MaxLevel));
+                    Mathf.Clamp(info.UniqueTraitLv, 1, UniqueTraitSO.MaxLevel));
                 info.Hp    += d.hp;
                 info.San   += d.san;
                 info.Atk   += d.atk;

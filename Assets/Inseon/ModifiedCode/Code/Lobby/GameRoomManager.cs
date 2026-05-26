@@ -395,8 +395,8 @@ namespace Jun {
                 Crit  = c.critical,
                 San   = c.stress,
                 Res   = c.effectResistance,
-                Trk1  = 1,   // 고유 특성 현재 단계 (1이 기본, 최대 3)
-                Skills      = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
+                UniqueTraitLv = 0,  // 고유 특성 미강화 상태로 시작 (0 = 스탯 기여 없음)
+                Skills        = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
                 Items       = new List<InventoryItem>(),
                 Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
                 Weapon      = entry.Weapon,
@@ -409,8 +409,8 @@ namespace Jun {
             // ── 방어구 스탯 합산 ────────────────────────────────────────
             ApplyEqpStats(ref info, entry.Armor);
 
-            // ── 고유 특성 스탯 합산 (Trk1 단계 기준) ───────────────────
-            ApplyTraitStats(ref info, entry.UniqueTrait, info.Trk1);
+            // ── 고유 특성 스탯 합산 (UniqueTraitLv 기준, 0이면 미적용) ──
+            ApplyTraitStats(ref info, entry.UniqueTrait, info.UniqueTraitLv);
 
             Debug.Log($"[BuildPlayerInfo] {c.characterName} — " +
                       $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} SPD:{info.Spd} " +

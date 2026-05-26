@@ -182,6 +182,9 @@ namespace Jun
         public int Trk1;
         public int Trk2;
 
+        /// <summary>고유 특성 강화 단계. 0 = 미강화(스탯 기여 없음), 1~3 = 강화 단계.</summary>
+        public int UniqueTraitLv;
+
         // 신 시스템: StatusProcessor 가 누적/소비하는 상태이상 리스트
         public List<ActiveStatus> Statuses;
     }
