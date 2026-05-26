@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3de7cb78eb9a523449b83c482d7fbcb0, type: 3}
-  m_Name: "\uAC80"
+  m_Name: "\uC2E0\uBC1C"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Equipment
-  itemType: 0
+  itemType: 1
   EqpItem:
-    Name: "\uAC80"
-    EqpId: 0
-    icon: {fileID: 21300000, guid: a9d7594b374375d418b61d63c8030c0e, type: 3}
+    Name: "\uC2E0\uBC1C"
+    EqpId: 3
+    icon: {fileID: 21300000, guid: dc32764b6d7615c408f2d50d6c532c9f, type: 3}
     anim: Attack
-    description: "\uAC80"
+    description: "\uC2E0\uBC1C"
     Hp: 0
     San: 0
     Atk: 0

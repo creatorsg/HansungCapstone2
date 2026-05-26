@@ -448,6 +448,17 @@ namespace Lsy
         }
 
 
+        [Server]
+        public static void SyncAllAccountsHideoutDataToBattleData()
+        {
+            PlayerAccount[] accounts = FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None);
+            foreach (var account in accounts)
+            {
+                if (account == null) continue;
+                account.SyncAllHideoutDataToBattleData();
+            }
+        }
+
         //전투씬으로 넘어갈때 인벤토리 정보 업데이트
         [Server]
         public void SyncAllHideoutDataToBattleData()
@@ -472,17 +483,22 @@ namespace Lsy
                     var slot = currentSelectedCharacter.equipmentSlot;
                     if (slot != null && pd.Info != null)
                     {
-                        pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
-                        pd.Info.Armor = !string.IsNullOrEmpty(slot.equippedArmorId) ? slot.equippedArmor.EquipInfo : null;
+                        var info = pd.Info;
+                        info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
+                        info.Armor = !string.IsNullOrEmpty(slot.equippedArmorId) ? slot.equippedArmor.EquipInfo : null;
 
-                        pd.Info.Items.Clear();
+                        if (info.Items == null)
+                            info.Items = new List<ConsumableInfo>();
+                        else
+                            info.Items.Clear();
                         foreach (var item in slot.equippedConsumables)
                         {
                             if (item.ConsumInfo != null)
                             {
-                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
+                                for (int i = 0; i < item.amount; i++) info.Items.Add(item.ConsumInfo);
                             }
                         }
+                        pd.Info = info;
                         Debug.Log($"[Sync] 현재 캐릭터({pd.FinalHeroCode}) 실시간 정보 업데이트 완료");
                     }
                 }
@@ -491,17 +507,22 @@ namespace Lsy
                     // [비활성화된 캐릭터] 이전에 저장해둔 savedCharacterData에서 가져오기
                     if (pd.Info != null)
                     {
-                        pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
-                        pd.Info.Armor = saved.equippedArmor.EquipInfo;
+                        var info = pd.Info;
+                        info.Weapon = !string.IsNullOrEmpty(saved.equippedWeaponId) ? saved.equippedWeapon.EquipInfo : null;
+                        info.Armor = !string.IsNullOrEmpty(saved.equippedArmorId) ? saved.equippedArmor.EquipInfo : null;
 
-                        pd.Info.Items.Clear();
+                        if (info.Items == null)
+                            info.Items = new List<ConsumableInfo>();
+                        else
+                            info.Items.Clear();
                         foreach (var item in saved.equippedConsumables)
                         {
                             if (item.ConsumInfo != null)
                             {
-                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
+                                for (int i = 0; i < item.amount; i++) info.Items.Add(item.ConsumInfo);
                             }
                         }
+                        pd.Info = info;
                         Debug.Log($"[Sync] 대기 중인 캐릭터({pd.FinalHeroCode}) 저장된 정보 업데이트 완료");
                     }
                 }

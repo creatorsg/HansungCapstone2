@@ -135,6 +135,7 @@ namespace Lsy
                 _votesByConnectionId.Clear();
                 RaiseAll();
 
+                PlayerAccount.SyncAllAccountsHideoutDataToBattleData();
                 rm.ServerChangeScene(currentScene);
                 return;
             }

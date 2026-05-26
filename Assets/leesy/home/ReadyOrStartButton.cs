@@ -148,7 +148,10 @@ namespace Lsy
             }
 
             if (NetworkManager.singleton != null)
+            {
+                PlayerAccount.SyncAllAccountsHideoutDataToBattleData();
                 NetworkManager.singleton.ServerChangeScene(targetScene);
+            }
         }
 
         private void OnAllReadyChanged(bool allReady)

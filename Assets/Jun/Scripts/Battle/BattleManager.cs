@@ -590,16 +590,28 @@ namespace Jun
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Items[i].Name;
                 }
-                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null일 수 있으므로 이름으로 로컬 데이터에서 다시 찾음
                 Sprite icon = null;
 
-                if (icon == null && hasItem &&
-                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
-                    entry.Items != null &&
-                    i < entry.Items.Count)
+                if (hasItem)
                 {
-                    Debug.Log($"Registry item[{i}] name={entry.Items[i].Name}, icon={entry.Items[i].icon}");
-                    icon = entry.Items[i].icon;
+                    var currentItem = unit.Info.Items[i];
+                    icon = currentItem != null ? currentItem.icon : null;
+
+                    if (icon == null &&
+                        currentItem != null &&
+                        !string.IsNullOrEmpty(currentItem.Name) &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                        entry.Items != null)
+                    {
+                        foreach (var registryItem in entry.Items)
+                        {
+                            if (registryItem == null) continue;
+                            if (registryItem.Name != currentItem.Name) continue;
+                            icon = registryItem.icon;
+                            break;
+                        }
+                    }
                 }
                 var iconTransform = _itemBTN[i].transform.Find("Icon");
                 var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
@@ -638,13 +650,21 @@ namespace Jun
                 Debug.Log($"[장비] i={i} hasEquip={hasEquip} Weapon={unit.Info.Weapon?.Name} Armor={unit.Info.Armor?.Name}");
 
                 Sprite eqpIcon = null;
-                if (hasEquip &&
-                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var eqpEntry))
+                if (hasEquip)
                 {
-                    if (i == 0 && eqpEntry.Weapon != null)
-                        eqpIcon = eqpEntry.Weapon.icon;
-                    else if (i == 1 && eqpEntry.Armor != null)
-                        eqpIcon = eqpEntry.Armor.icon;
+                    var currentEquip = i == 0 ? unit.Info.Weapon : unit.Info.Armor;
+                    eqpIcon = currentEquip.icon;
+
+                    if (eqpIcon == null &&
+                        currentEquip != null &&
+                        !string.IsNullOrEmpty(currentEquip.Name) &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var eqpEntry))
+                    {
+                        if (i == 0 && eqpEntry.Weapon != null && eqpEntry.Weapon.Name == currentEquip.Name)
+                            eqpIcon = eqpEntry.Weapon.icon;
+                        else if (i == 1 && eqpEntry.Armor != null && eqpEntry.Armor.Name == currentEquip.Name)
+                            eqpIcon = eqpEntry.Armor.icon;
+                    }
                 }
 
                 _equiIMG[i].sprite = eqpIcon;

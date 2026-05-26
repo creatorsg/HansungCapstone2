@@ -39,6 +39,7 @@ public class BattleStartBtn : MonoBehaviour
             if (string.IsNullOrEmpty(targetScene))
                 return;
 
+            PlayerAccount.SyncAllAccountsHideoutDataToBattleData();
             NetworkManager.singleton.ServerChangeScene(targetScene);
             return;
         }
