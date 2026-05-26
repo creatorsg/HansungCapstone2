@@ -145,13 +145,13 @@ namespace Jun
             else if (itemIndex != -1)
             {
                 // 아이템 범위 검사
-                if (caster.Info.Items == null || itemIndex >= caster.Info.Items.Count)
+                if (caster.Info.Expendables == null || itemIndex >= caster.Info.Expendables.Count)
                 {
-                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Items?.Count}");
+                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Expendables?.Count}");
                     return;
                 }
 
-                ConsumableInfo item = caster.Info.Items[itemIndex];
+                ConsumableInfo item = caster.Info.Expendables[itemIndex];
                 Debug.Log($"[BattleLogic] 아이템 사용: {item.Name}");
 
                 foreach (int targetIdx in targets)

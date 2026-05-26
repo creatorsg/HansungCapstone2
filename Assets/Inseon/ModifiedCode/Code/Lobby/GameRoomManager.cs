@@ -1,3 +1,4 @@
+using Lsy;
 using Mirror;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -57,6 +58,8 @@ namespace Jun {
             {
                 PlayfabCommand.RemoveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 앱 종료 - 방 제거 요청: {RoomId}");
+                // HTTP 요청이 전송될 최소 시간 확보 (비동기 요청이라 보장은 안 되지만 확률을 높임)
+                System.Threading.Thread.Sleep(300);
                 RoomId = "";
             }
             base.OnApplicationQuit();
@@ -78,7 +81,9 @@ namespace Jun {
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
-            if (!string.IsNullOrEmpty(RoomId))
+            // host 연결(conn == localConnection)이 끊기는 경우는 OnStopHost()에서 RemoveRoom으로 처리되므로
+            // 여기서는 클라이언트 연결만 LeaveRoom 처리합니다.
+            if (!string.IsNullOrEmpty(RoomId) && conn != NetworkServer.localConnection)
             {
                 PlayfabCommand.LeaveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 클라이언트 연결 종료 → PlayFab playerCount 롤백: {RoomId}");
@@ -369,9 +374,10 @@ namespace Jun {
                 {
                     Id = pingIndex,
                     Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                    Items = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
-                    Weapon = entry.Weapon,
-                    Armor = entry.Armor,
+                    Items       = new List<InventoryItem>(),
+                    Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
+                    Weapon      = entry.Weapon,
+                    Armor       = entry.Armor,
                 };
             }
 
@@ -390,9 +396,10 @@ namespace Jun {
                 San   = c.stress,
                 Res   = c.effectResistance,
                 Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
-                Weapon = entry.Weapon,
-                Armor = entry.Armor,
+                Items       = new List<InventoryItem>(),  // 시작 시 미장착 인벤은 비어있음
+                Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
+                Weapon      = entry.Weapon,
+                Armor       = entry.Armor,
             };
         }
 

@@ -84,12 +84,12 @@ namespace Jun
             _selectedSkill = -1;
             _selectedTarget.Clear();
 
-            var item = _info.Items[index];
+            var item = _info.Expendables[index];
             _targetNum = item.TagetNum;
             _selectedTargetType = item.Target;
             _isEnemy = false;
 
-            //_targetNum = _info.Items[index].TagetNum;
+            //_targetNum = _info.Expendables[index].TagetNum;
             _selectedTarget.Add(BattleManager.Instance._players.IndexOf(this.GetComponent<GamePlayerController>()));
             FireSelection();
         }

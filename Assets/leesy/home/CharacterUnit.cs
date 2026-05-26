@@ -131,59 +131,63 @@ namespace Lsy
             currentHp     = maxHp;
             currentSan    = maxSan;
 
-            // ── 아이템 목록 주입(같은 종류의 아이템일 경우 개수를 더하기) ───
+            // ── 미장착 아이템 주입 (Items = 인벤 전체) ───────────────────
             myInventory.Clear();
             if (pd.Info.Items != null)
             {
-                Dictionary<string, InventoryItem> tempDict = new Dictionary<string, InventoryItem>();
-                foreach (var consumInfo in pd.Info.Items)
-                {
-                    if (tempDict.ContainsKey(consumInfo.Name))
-                    {
-                        var item = tempDict[consumInfo.Name];
-                        item.amount += 1;
-                        tempDict[consumInfo.Name] = item;
-                    }
-                    else
-                    {
-                        tempDict.Add(consumInfo.Name, new InventoryItem
-                        {
-                            itemName = consumInfo.Name,
-                            Type = ItemType.Consumable,
-                            ConsumInfo = consumInfo,
-                            amount = 1
-                        });
-                    }
-                }
-                foreach (var kvp in tempDict)
-                {
-                    myInventory.Add(kvp.Value);
-                }
-                Debug.Log($"[캐릭터] 아이템 연동 완료 (종류: {tempDict.Count})");
-            }
-            // ── 장비 목록 주입 ───
-            if (pd.Info.Weapon != null)
-            {
-                myInventory.Add(new InventoryItem
-                {
-                    itemName = pd.Info.Weapon.Name,
-                    Type = ItemType.Weapon,
-                    EquipInfo = pd.Info.Weapon,
-                    amount = 1
-                });
-                Debug.Log($"[캐릭터] 무기 연동 완료: {pd.Info.Weapon.Name}");
+                foreach (var invItem in pd.Info.Items)
+                    myInventory.Add(invItem);
+                Debug.Log($"[캐릭터] 미장착 아이템 연동 완료: {pd.Info.Items.Count}개");
             }
 
-            if (pd.Info.Armor != null)
+            // ── 기본 장착 처리 ────────────────────────────────────────────
+            if (equipmentSlot != null)
             {
-                myInventory.Add(new InventoryItem
+                // 무기 자동 장착
+                if (pd.Info.Weapon != null && !string.IsNullOrEmpty(pd.Info.Weapon.Name))
                 {
-                    itemName = pd.Info.Armor.Name,
-                    Type = ItemType.Armor,
-                    EquipInfo = pd.Info.Armor,
-                    amount = 1
-                });
-                Debug.Log($"[캐릭터] 방어구 연동 완료: {pd.Info.Armor.Name}");
+                    var weaponItem = new InventoryItem
+                    {
+                        itemName  = pd.Info.Weapon.Name,
+                        Type      = ItemType.Weapon,
+                        EquipInfo = pd.Info.Weapon,
+                        amount    = 1
+                    };
+                    equipmentSlot.EquipWeapon(weaponItem);
+                    Debug.Log($"[캐릭터] 무기 자동 장착: {pd.Info.Weapon.Name}");
+                }
+
+                // 방어구 자동 장착
+                if (pd.Info.Armor != null && !string.IsNullOrEmpty(pd.Info.Armor.Name))
+                {
+                    var armorItem = new InventoryItem
+                    {
+                        itemName  = pd.Info.Armor.Name,
+                        Type      = ItemType.Armor,
+                        EquipInfo = pd.Info.Armor,
+                        amount    = 1
+                    };
+                    equipmentSlot.EquipArmor(armorItem);
+                    Debug.Log($"[캐릭터] 방어구 자동 장착: {pd.Info.Armor.Name}");
+                }
+
+                // 기본 소모품 자동 장착 (Expendables)
+                if (pd.Info.Expendables != null)
+                {
+                    foreach (var consumInfo in pd.Info.Expendables)
+                    {
+                        if (consumInfo == null) continue;
+                        var consumItem = new InventoryItem
+                        {
+                            itemName  = consumInfo.Name,
+                            Type      = ItemType.Consumable,
+                            ConsumInfo = consumInfo,
+                            amount    = 1
+                        };
+                        equipmentSlot.EquipConsumable(consumItem);
+                    }
+                    Debug.Log($"[캐릭터] 소모품 자동 장착: {pd.Info.Expendables.Count}개");
+                }
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
@@ -509,16 +513,18 @@ namespace Lsy
 
             var info = pd.Info;
 
-            // 소모품
-            info.Items = new List<ConsumableInfo>();
+            // 장착 소모품 → Expendables
+            info.Expendables = new List<ConsumableInfo>();
             foreach (var item in equipmentSlot.equippedConsumables)
             {
                 if (item.ConsumInfo != null)
                 {
                     for (int i = 0; i < item.amount; i++)
-                        info.Items.Add(item.ConsumInfo);
+                        info.Expendables.Add(item.ConsumInfo);
                 }
             }
+            // 미장착 인벤 → Items
+            info.Items = new List<InventoryItem>(myInventory);
 
             // 무기/방어구
             info.Weapon = equipmentSlot.equippedWeapon.EquipInfo;

@@ -580,7 +580,7 @@ namespace Jun
                 int index = i;
                 _itemBTN[i].onClick.RemoveAllListeners();
 
-                bool hasItem = unit.Info.Items != null && i < unit.Info.Items.Count;
+                bool hasItem = unit.Info.Expendables != null && i < unit.Info.Expendables.Count;
                 //_itemBTN[i].gameObject.SetActive(hasItem);
 
                 if (hasItem)
@@ -588,7 +588,7 @@ namespace Jun
                     _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
 
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                    if (label != null) label.text = unit.Info.Items[i].Name;
+                    if (label != null) label.text = unit.Info.Expendables[i].Name;
                 }
                 // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
                 Sprite icon = null;
@@ -613,9 +613,9 @@ namespace Jun
                 if (hover != null)
                 {
 
-                    if (unit.Info.Items != null && index < unit.Info.Items.Count)
+                    if (unit.Info.Expendables != null && index < unit.Info.Expendables.Count)
                     {
-                        hover.SetInfo(unit.Info.Items[index].Name, unit.Info.Items[index].description);
+                        hover.SetInfo(unit.Info.Expendables[index].Name, unit.Info.Expendables[index].description);
                     }
                     else
                     {

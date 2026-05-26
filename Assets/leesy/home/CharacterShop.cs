@@ -46,7 +46,28 @@ namespace Lsy
             }
 
             account.currentGold -= price;
-            unit.AddItem(itemName, 1);
+
+            // ItemManager에서 battleData(ConsumableInfo)를 포함한 InventoryItem 생성
+            ItemData itemData = ItemManager.Instance != null ? ItemManager.Instance.GetItemData(itemName) : null;
+            if (itemData != null && itemData.battleData != null)
+            {
+                var invItem = new InventoryItem
+                {
+                    itemName   = itemData.itemName,
+                    Type       = ItemType.Consumable,
+                    ConsumInfo = itemData.battleData,
+                    amount     = 1
+                };
+                unit.AddItemWithInfo(invItem);
+            }
+            else
+            {
+                // battleData 미연결 시 기존 방식 fallback
+                unit.AddItem(itemName, 1);
+            }
+            // Info.Items 즉시 동기화 (myInventory → PlayerData.Info.Items)
+            account.SyncInventoryToPlayerData();
+
             SendNotification(sender, $"[시스템 알림] {itemName} 구매 완료.");
         }
 

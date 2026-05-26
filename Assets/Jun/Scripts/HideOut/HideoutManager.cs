@@ -1,4 +1,5 @@
 using Jun;
+using Lsy;
 using Mirror;
 using System.Collections.Generic;
 
@@ -75,6 +76,10 @@ public class HideoutManager : NetworkBehaviour
         var rm = NetworkManager.singleton as Jun.GameRoomManager;
         if (rm != null)
             rm.GameplayScene = sceneName;
+
+        // 씬 전환 전 Home 장착/인벤토리 → PlayerData.Info 동기화
+        foreach (var account in FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None))
+            account.SyncAllHideoutDataToBattleData();
 
         NetworkManager.singleton.ServerChangeScene(sceneName);
     }

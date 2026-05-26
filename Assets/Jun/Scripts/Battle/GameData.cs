@@ -157,7 +157,8 @@ namespace Jun
         public string Name;
         public string Type; //직업군
         public List<SkillInfo> Skills;
-        public List<ConsumableInfo> Items;
+        public List<InventoryItem> Items;       // 미장착 아이템 전체 (소모품+무기+갑옷)
+        public List<ConsumableInfo> Expendables; // 장착된 소모품 (최대 6종 각 5개)
         public int Lvl;
         public int Exp;
 
