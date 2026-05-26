@@ -1,4 +1,4 @@
-using Jun;
+﻿using Jun;
 using Mirror;
 using NUnit.Framework;
 using System;
@@ -45,11 +45,11 @@ namespace Lsy
 
         [SyncVar] public string characterName;
 
-        /// <summary>FinalHeroPos — 초상화 슬롯 인덱스 (0~3). 설정되면 OnAnyUnitReady 발화.</summary>
+        /// <summary>FinalHeroPos ??珥덉긽???щ’ ?몃뜳??(0~3). ?ㅼ젙?섎㈃ OnAnyUnitReady 諛쒗솕.</summary>
         [SyncVar(hook = nameof(OnHeroPosChanged))]
         public int heroPos = -1;
 
-        /// <summary>FinalHeroCode — 초상화 이미지 매핑용</summary>
+        /// <summary>FinalHeroCode ??珥덉긽???대?吏 留ㅽ븨??/summary>
         [SyncVar] public string heroCode = "";
 
         public readonly SyncList<InventoryItem> myInventory = new SyncList<InventoryItem>();
@@ -60,23 +60,23 @@ namespace Lsy
         [SyncVar(hook = nameof(OnPurchasedNodeCountChanged))]
         public int purchasedNodeCount = 0;
 
-        // ─── UI 레이어용 이벤트 ───────────────────────────────────────────
-        /// <summary>로컬 권한 획득 시 — 초기화용</summary>
+        // ??? UI ?덉씠?댁슜 ?대깽?????????????????????????????????????????????
+        /// <summary>濡쒖뺄 沅뚰븳 ?띾뱷 ????珥덇린?붿슜</summary>
         public static event Action<CharacterUnit> OnLocalUnitSpawned;
-        /// <summary>heroPos가 설정된 유닛 — 초상화 UI 갱신용 (전체 클라이언트)</summary>
+        /// <summary>heroPos媛 ?ㅼ젙???좊떅 ??珥덉긽??UI 媛깆떊??(?꾩껜 ?대씪?댁뼵??</summary>
         public static event Action<CharacterUnit> OnAnyUnitReady;
-        /// <summary>인벤토리 변경 시 — InventoryUI 갱신용</summary>
+        /// <summary>?몃깽?좊━ 蹂寃?????InventoryUI 媛깆떊??/summary>
         public static event Action OnLocalInventoryChanged;
-        /// <summary>강화/스킬 상태 변경 시 — BaseUpgradeUI 갱신용</summary>
+        /// <summary>媛뺥솕/?ㅽ궗 ?곹깭 蹂寃?????BaseUpgradeUI 媛깆떊??/summary>
         public static event Action OnLocalUpgradeStateChanged;
-        /// <summary>HP 또는 San이 변경됐을 때 — 초상화 슬라이더 갱신용</summary>
+        /// <summary>HP ?먮뒗 San??蹂寃쎈릱??????珥덉긽???щ씪?대뜑 媛깆떊??/summary>
         public static event Action<CharacterUnit> OnAnyUnitStatsChanged;
 
         private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
         private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
 
 
-        // 장착 슬롯 관리 컴포넌트
+        // ?μ갑 ?щ’ 愿由?而댄룷?뚰듃
         public EquipmentSlot equipmentSlot;
         private void Awake()
         {
@@ -89,9 +89,9 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 클라이언트에서 이 오브젝트가 완전히 초기화된 후 호출됩니다.
-        /// 초기 스폰 시 SyncVar 훅이 발동하지 않는 Mirror 버전 대비용.
-        /// heroPos가 이미 유효하면 여기서 명시적으로 OnAnyUnitReady를 발화합니다.
+        /// ?대씪?댁뼵?몄뿉?????ㅻ툕?앺듃媛 ?꾩쟾??珥덇린?붾맂 ???몄텧?⑸땲??
+        /// 珥덇린 ?ㅽ룿 ??SyncVar ?낆씠 諛쒕룞?섏? ?딅뒗 Mirror 踰꾩쟾 ?鍮꾩슜.
+        /// heroPos媛 ?대? ?좏슚?섎㈃ ?ш린??紐낆떆?곸쑝濡?OnAnyUnitReady瑜?諛쒗솕?⑸땲??
         /// </summary>
         public override void OnStartClient()
         {
@@ -113,25 +113,25 @@ namespace Lsy
             myInfo.Hp = maxHp;
             myInfo.San = maxSan;
 
-            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (CharacterData): {characterName} (HP:{maxHp})</color>");
+            Debug.Log($"<color=green>[罹먮┃?? 珥덇린???꾨즺 (CharacterData): {characterName} (HP:{maxHp})</color>");
         }
 
         /// <summary>
-        /// CharacterSelect → PlayerData 경로로 넘어온 데이터로 초기화합니다.
-        /// 골드는 PlayerAccount에서 관리하므로 여기서 설정하지 않습니다.
+        /// CharacterSelect ??PlayerData 寃쎈줈濡??섏뼱???곗씠?곕줈 珥덇린?뷀빀?덈떎.
+        /// 怨⑤뱶??PlayerAccount?먯꽌 愿由ы븯誘濡??ш린???ㅼ젙?섏? ?딆뒿?덈떎.
         /// </summary>
         [Server]
         public void SetupFromPlayerData(PlayerData pd)
         {
             characterName = string.IsNullOrEmpty(pd.Info.Name) ? pd.FinalHeroCode : pd.Info.Name;
             heroCode      = pd.FinalHeroCode;
-            heroPos       = pd.FinalHeroPos; // hook → OnAnyUnitReady 발화
+            heroPos       = pd.FinalHeroPos; // hook ??OnAnyUnitReady 諛쒗솕
             maxHp         = pd.Info.Hp;
             maxSan        = pd.Info.San;
             currentHp     = maxHp;
             currentSan    = maxSan;
 
-            // ── 아이템 목록 주입(같은 종류의 아이템일 경우 개수를 더하기) ───
+            // ?? ?꾩씠??紐⑸줉 二쇱엯(媛숈? 醫낅쪟???꾩씠?쒖씪 寃쎌슦 媛쒖닔瑜??뷀븯湲? ???
             myInventory.Clear();
             if (pd.Info.Items != null)
             {
@@ -159,9 +159,9 @@ namespace Lsy
                 {
                     myInventory.Add(kvp.Value);
                 }
-                Debug.Log($"[캐릭터] 아이템 연동 완료 (종류: {tempDict.Count})");
+                Debug.Log($"[罹먮┃?? ?꾩씠???곕룞 ?꾨즺 (醫낅쪟: {tempDict.Count})");
             }
-            // ── 장비 목록 주입 ───
+            // ?? ?λ퉬 紐⑸줉 二쇱엯 ???
             if (pd.Info.Weapon != null)
             {
                 myInventory.Add(new InventoryItem
@@ -171,7 +171,7 @@ namespace Lsy
                     EquipInfo = pd.Info.Weapon,
                     amount = 1
                 });
-                Debug.Log($"[캐릭터] 무기 연동 완료: {pd.Info.Weapon.Name}");
+                Debug.Log($"[罹먮┃?? 臾닿린 ?곕룞 ?꾨즺: {pd.Info.Weapon.Name}");
             }
 
             if (pd.Info.Armor != null)
@@ -183,13 +183,13 @@ namespace Lsy
                     EquipInfo = pd.Info.Armor,
                     amount = 1
                 });
-                Debug.Log($"[캐릭터] 방어구 연동 완료: {pd.Info.Armor.Name}");
+                Debug.Log($"[罹먮┃?? 諛⑹뼱援??곕룞 ?꾨즺: {pd.Info.Armor.Name}");
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
 
-            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
+            Debug.Log($"<color=green>[罹먮┃?? 珥덇린???꾨즺 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
         }
 
         public override void OnStartAuthority()
@@ -264,7 +264,7 @@ namespace Lsy
                 if (item.itemName == itemName) return item.amount;
             return 0;
         }
-        // 나중에 지울 것 아래 AddItemWithInfo로 교체 할 것
+        // ?섏쨷??吏??寃??꾨옒 AddItemWithInfo濡?援먯껜 ??寃?
         [Server]
         public void AddItem(string itemName, int amount = 1)
         {
@@ -281,24 +281,34 @@ namespace Lsy
             myInventory.Add(new InventoryItem { itemName = itemName, amount = amount });
         }
 
-        // 기존 AddItem 대신 ConsumInfo까지 같이 넣어주는 전용 함수
+        // 湲곗〈 AddItem ???ConsumInfo源뚯? 媛숈씠 ?ｌ뼱二쇰뒗 ?꾩슜 ?⑥닔
         [Server]
         public void AddItemWithInfo(InventoryItem item)
         {
+            int addAmount = item.amount > 0 ? item.amount : 1;
+
             for (int i = 0; i < myInventory.Count; i++)
             {
                 if (myInventory[i].itemName == item.itemName)
                 {
                     InventoryItem temp = myInventory[i];
-                    temp.amount += 1;
+                    temp.amount += addAmount;
+                    temp.Type = item.Type;
+
+                    if (temp.ConsumInfo == null && item.ConsumInfo != null)
+                        temp.ConsumInfo = item.ConsumInfo;
+
+                    if (temp.EquipInfo == null && item.EquipInfo != null)
+                        temp.EquipInfo = item.EquipInfo;
+
                     myInventory[i] = temp;
                     return;
                 }
             }
-            // ConsumInfo가 포함된 온전한 아이템 객체를 Add
+
+            item.amount = addAmount;
             myInventory.Add(item);
         }
-
         [Server]
         public bool ApplyBartenderHeal()
         {
@@ -312,8 +322,8 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdBlacksmithUpgrade에서 처리합니다.
-        /// 이 메서드는 무기 강화 상태만 변경합니다.
+        /// 怨⑤뱶 泥댄겕/李④컧? PlayerAccount.CmdBlacksmithUpgrade?먯꽌 泥섎━?⑸땲??
+        /// ??硫붿꽌?쒕뒗 臾닿린 媛뺥솕 ?곹깭留?蹂寃쏀빀?덈떎.
         /// </summary>
         [Server]
         public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel)
@@ -330,8 +340,8 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdSkillPurchase에서 처리합니다.
-        /// 이 메서드는 스킬 추가 상태만 변경합니다.
+        /// 怨⑤뱶 泥댄겕/李④컧? PlayerAccount.CmdSkillPurchase?먯꽌 泥섎━?⑸땲??
+        /// ??硫붿꽌?쒕뒗 ?ㅽ궗 異붽? ?곹깭留?蹂寃쏀빀?덈떎.
         /// </summary>
         [Server]
         public bool ApplySkillPurchase(string skillId, int npcLevel, int requiredNpcLevel)
@@ -363,14 +373,14 @@ namespace Lsy
             return false;
         }
 
-        //────인벤토리에서 아이템 장착──────────
+        //?????몃깽?좊━?먯꽌 ?꾩씠???μ갑??????????
 
         [Command]
         public void CmdEquipConsumableToSlot(string itemName)
         {
             if (equipmentSlot == null) return;
 
-            // 인벤토리에서 장착하려는 아이템 찾기
+            // ?몃깽?좊━?먯꽌 ?μ갑?섎젮???꾩씠??李얘린
             for (int i = 0; i < myInventory.Count; i++)
             {
                 if (myInventory[i].itemName == itemName)
@@ -380,7 +390,7 @@ namespace Lsy
 
                     switch (itemInInv.Type) {
                         case ItemType.Consumable:
-                            // 장착 슬롯에 넘겨줄 아이템 데이터 (1개씩 장착)
+                            // ?μ갑 ?щ’???섍꺼以??꾩씠???곗씠??(1媛쒖뵫 ?μ갑)
                             InventoryItem equipData = itemInInv;
                             equipData.amount = 1;
                             success = equipmentSlot.EquipConsumable(equipData);
@@ -389,7 +399,7 @@ namespace Lsy
                         case ItemType.Weapon:
                             string oldWeapon = equipmentSlot.equippedWeaponId;
                             InventoryItem oldWeaponItem = equipmentSlot.equippedWeapon;
-                            if (equipmentSlot.EquipWeapon(itemInInv))  // string → InventoryItem
+                            if (equipmentSlot.EquipWeapon(itemInInv))  // string ??InventoryItem
                             {
                                 success = true;
                                 if (!string.IsNullOrEmpty(oldWeapon))
@@ -400,7 +410,7 @@ namespace Lsy
                         case ItemType.Armor:
                             string oldArmor = equipmentSlot.equippedArmorId;
                             InventoryItem oldArmorItem = equipmentSlot.equippedArmor;
-                            if (equipmentSlot.EquipArmor(itemInInv))  // string → InventoryItem
+                            if (equipmentSlot.EquipArmor(itemInInv))  // string ??InventoryItem
                             {
                                 success = true;
                                 if (!string.IsNullOrEmpty(oldArmor))
@@ -410,16 +420,16 @@ namespace Lsy
                     }
                     if (success)
                     {
-                        // EquipmentSlot에 장착 시도 (최대 6개 슬롯 검사 포함)
-                        // 장착 성공 시, 인벤토리에서 1개 차감
+                        // EquipmentSlot???μ갑 ?쒕룄 (理쒕? 6媛??щ’ 寃???ы븿)
+                        // ?μ갑 ?깃났 ?? ?몃깽?좊━?먯꽌 1媛?李④컧
                         itemInInv.amount -= 1;
 
                         if (itemInInv.amount <= 0)
                             myInventory.RemoveAt(i);
                         else
-                            myInventory[i] = itemInInv; // SyncList 갱신
+                            myInventory[i] = itemInInv; // SyncList 媛깆떊
 
-                        Debug.Log($"<color=green>[장착 성공] {itemName} (인벤토리 남은 수량: {itemInInv.amount})</color>");
+                        Debug.Log($"<color=green>[?μ갑 ?깃났] {itemName} (?몃깽?좊━ ?⑥? ?섎웾: {itemInInv.amount})</color>");
 
                     }
                     return;
@@ -432,7 +442,7 @@ namespace Lsy
         {
             if (equipmentSlot == null) return;
 
-            // 장착 슬롯에서 해당 아이템을 먼저 찾아서 데이터를 복사해둡니다.
+            // ?μ갑 ?щ’?먯꽌 ?대떦 ?꾩씠?쒖쓣 癒쇱? 李얠븘???곗씠?곕? 蹂듭궗?대몼?덈떎.
             InventoryItem? itemToReturn = null;
             foreach (var item in equipmentSlot.equippedConsumables)
             {
@@ -444,10 +454,10 @@ namespace Lsy
                 }
             }
 
-            // 슬롯에서 실제 해제 (데이터가 삭제되기 전에 위에서 미리 복사해둠)
+            // ?щ’?먯꽌 ?ㅼ젣 ?댁젣 (?곗씠?곌? ??젣?섍린 ?꾩뿉 ?꾩뿉??誘몃━ 蹂듭궗?대몺)
             if (equipmentSlot.UnequipConsumable(itemName, 1))
             {
-                // 해제 성공 시, 복사해둔 데이터(ConsumInfo 포함)를 인벤토리에 추가
+                // ?댁젣 ?깃났 ?? 蹂듭궗?대몦 ?곗씠??ConsumInfo ?ы븿)瑜??몃깽?좊━??異붽?
                 if (itemToReturn.HasValue)
                 {
                     InventoryItem returnItem = itemToReturn.Value;
@@ -490,7 +500,7 @@ namespace Lsy
                 return;
             }
             //CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
-            // heroPos로 내 PlayerData 찾기
+            // heroPos濡???PlayerData 李얘린
             PlayerData pd = null;
             foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
             {
@@ -503,13 +513,13 @@ namespace Lsy
 
             if (pd == null)
             {
-                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. heroPos:{heroPos}");
+                Debug.LogError($"[{characterName}] PlayerData瑜?李얠? 紐삵뻽?듬땲?? heroPos:{heroPos}");
                 return;
             }
 
             var info = pd.Info;
 
-            // 소모품
+            // ?뚮え??
             info.Items = new List<ConsumableInfo>();
             foreach (var item in equipmentSlot.equippedConsumables)
             {
@@ -520,12 +530,13 @@ namespace Lsy
                 }
             }
 
-            // 무기/방어구
+            // 臾닿린/諛⑹뼱援?
             info.Weapon = equipmentSlot.equippedWeapon.EquipInfo;
             info.Armor = equipmentSlot.equippedArmor.EquipInfo;
 
             pd.Info = info;
-            Debug.Log($"[CharacterUnit] {characterName} 장착 정보 PlayerData 동기화 완료");
+            Debug.Log($"[CharacterUnit] {characterName} ?μ갑 ?뺣낫 PlayerData ?숆린???꾨즺");
         }
     }
 }
+

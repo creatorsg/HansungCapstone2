@@ -7,6 +7,7 @@ namespace Lsy
     [CreateAssetMenu(fileName = "Equipment", menuName = "Scriptable Objects/Equipment")]
     public class Equipment : ScriptableObject
     {
+        public ItemType itemType = ItemType.Weapon;
         public EqpInfo EqpItem;
         public List<int> priceLevel = new List<int> { 300, 200, 100 };
     }

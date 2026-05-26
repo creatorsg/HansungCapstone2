@@ -72,6 +72,8 @@ namespace Lsy
             {
                 foreach (var item in _currentState.npcData.sellingItems)
                 {
+                    if (item == null || item.ConsumItem == null) continue;
+
                     GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotContainer);
 
                     int currentPrice = 0;
@@ -86,6 +88,27 @@ namespace Lsy
                         slotUI.Setup(item, currentPrice, () => OnBuyItemClicked(item, currentPrice));
                 }
             }
+
+            if (_currentState.npcData.sellingEquipments != null)
+            {
+                foreach (var equipment in _currentState.npcData.sellingEquipments)
+                {
+                    if (equipment == null || equipment.EqpItem == null) continue;
+
+                    GameObject slotObj = Instantiate(itemSlotPrefab, itemSlotContainer);
+
+                    int currentPrice = 0;
+                    if (equipment.priceLevel != null && equipment.priceLevel.Count > 0)
+                    {
+                        int levelIndex = Mathf.Min(_currentState.currentLevel - 1, equipment.priceLevel.Count - 1);
+                        currentPrice = equipment.priceLevel[levelIndex];
+                    }
+
+                    ItemSlotUI slotUI = slotObj.GetComponent<ItemSlotUI>();
+                    if (slotUI != null)
+                        slotUI.Setup(equipment, currentPrice, () => OnBuyEquipmentClicked(equipment, currentPrice));
+                }
+            }
         }
 
         private void OnBuyItemClicked(Consum item, int price)
@@ -93,7 +116,14 @@ namespace Lsy
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
             // 서버로 보낸다
-            shop.CmdBuyItem(item.ConsumItem.Name, price);
+            shop.CmdBuyConsumable(item.ConsumItem.Name, price);
+        }
+
+        private void OnBuyEquipmentClicked(Equipment equipment, int price)
+        {
+            CharacterShop shop = GetLocalShop();
+            if (shop == null || equipment == null || equipment.EqpItem == null) return;
+            shop.CmdBuyEquipment(equipment.EqpItem.Name, price);
         }
 
         public void OnInvestButtonClicked(int amount)

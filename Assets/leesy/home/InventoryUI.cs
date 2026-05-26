@@ -56,7 +56,7 @@ namespace Lsy
                     {
                         Equipment eqpData = ItemManager.Instance != null
                             ? ItemManager.Instance.GetEqpData(item.itemName)
-                            : allEqpDatabase.Find(x => x != null && x.EqpItem.Name == item.itemName);
+                            : allEqpDatabase.Find(x => x != null && x.EqpItem != null && x.EqpItem.Name == item.itemName);
 
                         if (eqpData != null)
                             equipInfo = eqpData.EqpItem;
@@ -67,7 +67,7 @@ namespace Lsy
                     {
                         Consum consumData = ItemManager.Instance != null
                             ? ItemManager.Instance.GetItemData(item.itemName)
-                            : allItemDatabase.Find(x => x != null && x.ConsumItem.Name == item.itemName);
+                            : allItemDatabase.Find(x => x != null && x.ConsumItem != null && x.ConsumItem.Name == item.itemName);
 
                         if (consumData != null)
                             consumInfo = consumData.ConsumItem;
@@ -107,7 +107,7 @@ namespace Lsy
                     {
                         Consum fallback = ItemManager.Instance != null
                             ? ItemManager.Instance.GetItemData(consumInfo.Name)
-                            : allItemDatabase.Find(x => x.ConsumItem.Name == consumInfo.Name);
+                            : allItemDatabase.Find(x => x != null && x.ConsumItem != null && x.ConsumItem.Name == consumInfo.Name);
                         icon = fallback?.ConsumItem.icon;
                     }
                 }
@@ -118,7 +118,7 @@ namespace Lsy
                     {
                         Equipment fallback = ItemManager.Instance != null
                             ? ItemManager.Instance.GetEqpData(equipInfo.Name)
-                            : allEqpDatabase.Find(x => x.EqpItem.Name == equipInfo.Name);
+                            : allEqpDatabase.Find(x => x != null && x.EqpItem != null && x.EqpItem.Name == equipInfo.Name);
                         icon = fallback?.EqpItem.icon;
                     }
                 }

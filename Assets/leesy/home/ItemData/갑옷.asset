@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de7cb78eb9a523449b83c482d7fbcb0, type: 3}
   m_Name: "\uAC11\uC637"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Equipment
+  itemType: 1
   EqpItem:
     Name: "\uAC11\uC637"
     EqpId: 2

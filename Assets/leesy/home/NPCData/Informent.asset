@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.NPCData
   npcName: Informent
   sellingItems: []
+  sellingEquipments: []
   upgradeTargetGold: 64000000c8000000
   maxLevel: 3

@@ -20,5 +20,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c3bc69cd2bfbf1e4a875190d898b0f2e, type: 2}
   - {fileID: 11400000, guid: 631fffc73a263ac4bb5cabdaeadab9cb, type: 2}
   - {fileID: 11400000, guid: b4e9a76ff5f44fd4e8a3a83114febfad, type: 2}
+  sellingEquipments: []
   upgradeTargetGold: 64000000c8000000
   maxLevel: 3

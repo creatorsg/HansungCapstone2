@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de7cb78eb9a523449b83c482d7fbcb0, type: 3}
   m_Name: "\uB450\uAC74"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Equipment
+  itemType: 1
   EqpItem:
     Name: "\uB450\uAC74"
     EqpId: 3

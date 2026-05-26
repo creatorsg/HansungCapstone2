@@ -1,4 +1,4 @@
-using System;
+癤퓎sing System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -7,7 +7,6 @@ namespace Lsy
 {
     public class ItemSlotUI : MonoBehaviour
     {
-
         [SerializeField] private Image _itemIcon;
         [SerializeField] private TextMeshProUGUI _itemNametxt;
         [SerializeField] private TextMeshProUGUI _itemPricetxt;
@@ -15,34 +14,36 @@ namespace Lsy
 
         public void Setup(Consum itemData, int currentPrice, Action onBuyClicked)
         {
-            // 1. 아이템 데이터 시각화
-            if (_itemIcon != null && itemData.ConsumItem.icon != null)
+            Sprite icon = itemData != null && itemData.ConsumItem != null ? itemData.ConsumItem.icon : null;
+            string itemName = itemData != null && itemData.ConsumItem != null ? itemData.ConsumItem.Name : "Unknown";
+            SetupVisual(icon, itemName, currentPrice, onBuyClicked);
+        }
+
+        public void Setup(Equipment equipmentData, int currentPrice, Action onBuyClicked)
+        {
+            Sprite icon = equipmentData != null && equipmentData.EqpItem != null ? equipmentData.EqpItem.icon : null;
+            string itemName = equipmentData != null && equipmentData.EqpItem != null ? equipmentData.EqpItem.Name : "Unknown";
+            SetupVisual(icon, itemName, currentPrice, onBuyClicked);
+        }
+
+        private void SetupVisual(Sprite icon, string itemName, int currentPrice, Action onBuyClicked)
+        {
+            if (_itemIcon != null)
             {
-                _itemIcon.sprite = itemData.ConsumItem.icon;
+                _itemIcon.sprite = icon;
+                _itemIcon.gameObject.SetActive(icon != null);
             }
 
             if (_itemNametxt != null)
-            {
-                _itemNametxt.text = itemData.ConsumItem.Name;
-            }
+                _itemNametxt.text = itemName;
 
             if (_itemPricetxt != null)
-            {
-                // 올려주신 스크린샷처럼 "50G", "1000G" 형태로 표기
                 _itemPricetxt.text = $"{currentPrice}G";
-            }
 
-            // 2. 구매 버튼 이벤트 연결
             if (_buyButton != null)
             {
-                // 프리팹을 파괴/생성하지 않고 오브젝트 풀링으로 재사용할 경우를 대비해 기존 리스너 초기화
                 _buyButton.onClick.RemoveAllListeners();
-
-                // 버튼 클릭 시 매개변수로 받아온 콜백(NPCPopupUI의 OnBuyItemClicked)을 실행
-                _buyButton.onClick.AddListener(() =>
-                {
-                    onBuyClicked?.Invoke();
-                });
+                _buyButton.onClick.AddListener(() => onBuyClicked?.Invoke());
             }
         }
     }

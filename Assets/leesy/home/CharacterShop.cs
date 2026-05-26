@@ -1,17 +1,10 @@
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
 
 namespace Lsy
 {
-    /// <summary>
-    /// NPC 상호작용 커맨드 처리.
-    /// 골드는 PlayerAccount 귀속이므로 sender의 PlayerAccount를 찾아 처리합니다.
-    /// requiresAuthority = false: 어떤 클라이언트든 호출 가능 (sender로 호출자 식별).
-    /// </summary>
     public class CharacterShop : NetworkBehaviour
     {
-        // ─── sender → PlayerAccount 헬퍼 ──────────────────────────────
-
         [Server]
         private PlayerAccount FindAccount(NetworkConnectionToClient sender)
         {
@@ -22,12 +15,28 @@ namespace Lsy
             return null;
         }
 
-        // ─── 커맨드 ────────────────────────────────────────────────────
-
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
+            BuyConsumableInternal(itemName, price, sender);
+        }
+
+        [Command(requiresAuthority = false)]
+        public void CmdBuyConsumable(string itemName, int price, NetworkConnectionToClient sender = null)
+        {
+            BuyConsumableInternal(itemName, price, sender);
+        }
+
+        [Command(requiresAuthority = false)]
+        public void CmdBuyEquipment(string equipmentName, int price, NetworkConnectionToClient sender = null)
+        {
+            BuyEquipmentInternal(equipmentName, price, sender);
+        }
+
+        [Server]
+        private void BuyConsumableInternal(string itemName, int price, NetworkConnectionToClient sender)
+        {
+            Debug.Log($"[CharacterShop][Server] BuyConsumable - {itemName}, {price}G");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -36,18 +45,74 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "Gold is not enough.");
                 return;
             }
+
             if (unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}은(는) 이미 5개를 소지하고 있습니다.");
+                SendNotification(sender, $"[{itemName}] already has 5.");
+                return;
+            }
+
+            Consum data = ItemManager.Instance != null ? ItemManager.Instance.GetItemData(itemName) : null;
+            if (data == null || data.ConsumItem == null)
+            {
+                SendNotification(sender, $"Consumable data not found: {itemName}");
                 return;
             }
 
             account.currentGold -= price;
-            unit.AddItem(itemName, 1);
-            SendNotification(sender, $"[시스템 알림] {itemName} 구매 완료.");
+            unit.AddItemWithInfo(new InventoryItem
+            {
+                itemName = data.ConsumItem.Name,
+                Type = ItemType.Consumable,
+                ConsumInfo = data.ConsumItem,
+                amount = 1
+            });
+
+            SendNotification(sender, $"Purchased [{itemName}].");
+        }
+
+        [Server]
+        private void BuyEquipmentInternal(string equipmentName, int price, NetworkConnectionToClient sender)
+        {
+            Debug.Log($"[CharacterShop][Server] BuyEquipment - {equipmentName}, {price}G");
+
+            PlayerAccount account = FindAccount(sender);
+            if (account == null) return;
+            CharacterUnit unit = account.currentSelectedCharacter;
+            if (unit == null) return;
+
+            if (account.currentGold < price)
+            {
+                SendNotification(sender, "Gold is not enough.");
+                return;
+            }
+
+            if (unit.GetItemAmount(equipmentName) >= 5)
+            {
+                SendNotification(sender, $"[{equipmentName}] already has 5.");
+                return;
+            }
+
+            Equipment data = ItemManager.Instance != null ? ItemManager.Instance.GetEqpData(equipmentName) : null;
+            if (data == null || data.EqpItem == null)
+            {
+                SendNotification(sender, $"Equipment data not found: {equipmentName}");
+                return;
+            }
+
+            account.currentGold -= price;
+            unit.AddItemWithInfo(new InventoryItem
+            {
+                itemName = data.EqpItem.Name,
+                Type = data.itemType,
+                EquipInfo = data.EqpItem,
+                amount = 1
+            });
+
+            SendNotification(sender, $"Purchased [{equipmentName}].");
         }
 
         [Command(requiresAuthority = false)]
@@ -60,9 +125,10 @@ namespace Lsy
 
             if (account.currentGold < amount)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "Gold is not enough.");
                 return;
             }
+
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
             {
                 NPCState npc = identity.GetComponent<NPCState>();
@@ -86,17 +152,18 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "Gold is not enough.");
                 return;
             }
+
             if (unit.ApplyBartenderHeal())
             {
                 account.currentGold -= price;
-                SendNotification(sender, $"{unit.characterName}의 체력/정신력이 회복되었습니다.");
+                SendNotification(sender, $"{unit.characterName} recovered HP/SAN.");
             }
             else
             {
-                SendNotification(sender, "이미 체력과 정신력이 최대입니다.");
+                SendNotification(sender, "HP/SAN is already full.");
             }
         }
 
@@ -112,7 +179,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "Gold is not enough.");
                 return;
             }
 
@@ -120,19 +187,19 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 강화 성공! weaponId:{weaponId}, node:{nodeIndex}</color>");
-                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}단계 강화 완료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] Upgrade success. weaponId:{weaponId}, node:{nodeIndex}</color>");
+                SendNotification(sender, $"[{weaponId}] upgrade level {nodeIndex + 1} complete.");
             }
             else
             {
                 if (unit.selectedWeaponId != "" && unit.selectedWeaponId != weaponId)
-                    SendNotification(sender, "이미 다른 무기를 강화 중입니다.");
+                    SendNotification(sender, "Another weapon is already selected.");
                 else if (npcLevel < nodeIndex + 1)
-                    SendNotification(sender, "NPC 레벨이 부족합니다.");
+                    SendNotification(sender, "NPC level is too low.");
                 else if (unit.purchasedNodeCount > nodeIndex)
-                    SendNotification(sender, "이미 구매한 노드입니다.");
+                    SendNotification(sender, "Already purchased node.");
                 else
-                    SendNotification(sender, "이전 단계를 먼저 구매해야 합니다.");
+                    SendNotification(sender, "Purchase previous node first.");
             }
         }
 
@@ -148,7 +215,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "Gold is not enough.");
                 return;
             }
 
@@ -156,15 +223,15 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 스킬 습득 성공! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] 스킬 습득 완료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] Skill purchase success. skillId:{skillId}</color>");
+                SendNotification(sender, $"[{skillId}] skill purchase complete.");
             }
             else
             {
                 if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC 레벨이 부족합니다.");
+                    SendNotification(sender, "NPC level is too low.");
                 else
-                    SendNotification(sender, "이미 보유한 스킬입니다.");
+                    SendNotification(sender, "Skill already owned.");
             }
         }
 
@@ -180,20 +247,19 @@ namespace Lsy
 
             if (string.IsNullOrWhiteSpace(itemName))
             {
-                SendNotification(sender, "장착할 아이템 이름이 비어 있습니다.");
+                SendNotification(sender, "Item name is empty.");
                 return;
             }
+
             if (unit.GetItemAmount(itemName) <= 0)
             {
-                SendNotification(sender, $"[{itemName}] 아이템이 인벤토리에 없습니다.");
+                SendNotification(sender, $"[{itemName}] is not in inventory.");
                 return;
             }
 
             unit.selectedWeaponId = itemName;
-            SendNotification(sender, $"[{itemName}] 장착 완료.");
+            SendNotification(sender, $"[{itemName}] equipped.");
         }
-
-        // ─── 알림 ──────────────────────────────────────────────────────
 
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)
@@ -201,13 +267,13 @@ namespace Lsy
             if (target != null)
                 RpcNotify(target, message);
             else
-                Debug.LogWarning("[CharacterShop] sender가 NULL이라 알림을 보낼 수 없습니다.");
+                Debug.LogWarning("[CharacterShop] sender is null; notification skipped.");
         }
 
         [TargetRpc]
         private void RpcNotify(NetworkConnectionToClient target, string message)
         {
-            Debug.Log($"<color=white>[CharacterShop][Client] 알림 수신: {message}</color>");
+            Debug.Log($"<color=white>[CharacterShop][Client] Notify: {message}</color>");
         }
     }
 }
