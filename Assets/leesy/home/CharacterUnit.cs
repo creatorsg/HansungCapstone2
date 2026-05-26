@@ -212,6 +212,10 @@ namespace Lsy
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
             unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
 
+            // 씬 전환 후 ItemSO가 새로 로드됐을 수 있으므로 ItemManager를 갱신합니다.
+            // 이렇게 해야 InventoryUI가 이름으로 아이콘/정보를 정확히 조회할 수 있습니다.
+            Lsy.ItemManager.Instance?.RefreshItemSOs();
+
             OnLocalUnitSpawned?.Invoke(this);
         }
 
@@ -414,17 +418,15 @@ namespace Lsy
                     }
                     if (success)
                     {
-                        // EquipmentSlot에 장착 시도 (최대 6개 슬롯 검사 포함)
-                        // 장착 성공 시, 인벤토리에서 1개 차감
                         itemInInv.amount -= 1;
 
                         if (itemInInv.amount <= 0)
                             myInventory.RemoveAt(i);
                         else
-                            myInventory[i] = itemInInv; // SyncList 갱신
+                            myInventory[i] = itemInInv;
 
                         Debug.Log($"<color=green>[장착 성공] {itemName} (인벤토리 남은 수량: {itemInInv.amount})</color>");
-
+                        ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
                     }
                     return;
                 }
@@ -448,17 +450,15 @@ namespace Lsy
                 }
             }
 
-            // 슬롯에서 실제 해제 (데이터가 삭제되기 전에 위에서 미리 복사해둠)
             if (equipmentSlot.UnequipConsumable(itemName, 1))
             {
-                // 해제 성공 시, 복사해둔 데이터(ConsumInfo 포함)를 인벤토리에 추가
                 if (itemToReturn.HasValue)
                 {
                     InventoryItem returnItem = itemToReturn.Value;
-                    returnItem.amount = 1; 
-
+                    returnItem.amount = 1;
                     AddItemWithInfo(returnItem);
                 }
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
         [Command]
@@ -470,6 +470,7 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
 
@@ -482,23 +483,36 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
 
         [Command]
         public void CmdSyncEquipmentToPlayerData()
         {
+            ServerSyncToPlayerData();
+        }
+
+        /// <summary>
+        /// 서버 전용. myInventory + equipmentSlot 상태를 PlayerData.Info에 씁니다.
+        /// 장착/해제 Cmd 내부에서 직접 호출합니다.
+        /// </summary>
+        [Server]
+        private void ServerSyncToPlayerData()
+        {
             if (equipmentSlot == null)
             {
                 Debug.LogError($"[{characterName}] equipmentSlot null");
                 return;
             }
-            //CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
-            // heroPos로 내 PlayerData 찾기
+
+            // connectionToClient + FinalHeroCode 둘 다 일치하는 PlayerData 찾기
+            // connectionToClient만 쓰면 같은 플레이어의 다른 캐릭터 PlayerData를 잘못 가져옴
             PlayerData pd = null;
             foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
             {
-                if (player.FinalHeroPos == heroPos)
+                if (player.connectionToClient == connectionToClient &&
+                    player.FinalHeroCode      == heroCode)
                 {
                     pd = player;
                     break;
@@ -507,7 +521,8 @@ namespace Lsy
 
             if (pd == null)
             {
-                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. heroPos:{heroPos}");
+                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. " +
+                               $"conn={connectionToClient}, heroCode={heroCode}");
                 return;
             }
 
@@ -518,20 +533,21 @@ namespace Lsy
             foreach (var item in equipmentSlot.equippedConsumables)
             {
                 if (item.ConsumInfo != null)
-                {
                     for (int i = 0; i < item.amount; i++)
                         info.Expendables.Add(item.ConsumInfo);
-                }
             }
+
             // 미장착 인벤 → Items
             info.Items = new List<InventoryItem>(myInventory);
 
             // 무기/방어구
             info.Weapon = equipmentSlot.equippedWeapon.EquipInfo;
-            info.Armor = equipmentSlot.equippedArmor.EquipInfo;
+            info.Armor  = equipmentSlot.equippedArmor.EquipInfo;
 
             pd.Info = info;
-            Debug.Log($"[CharacterUnit] {characterName} 장착 정보 PlayerData 동기화 완료");
+            Debug.Log($"[CharacterUnit] {characterName} → PlayerData 동기화 완료 " +
+                      $"(Items={info.Items?.Count}, Expendables={info.Expendables?.Count}, " +
+                      $"Weapon={info.Weapon?.Name}, Armor={info.Armor?.Name})");
         }
     }
 }

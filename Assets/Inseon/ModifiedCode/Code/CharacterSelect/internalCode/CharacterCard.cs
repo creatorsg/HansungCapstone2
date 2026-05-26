@@ -96,7 +96,6 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (btn != null)
         {
             btn.interactable = owned;
-            // Inspector 수동 연결 없이도 클릭이 동작하도록 코드에서 직접 등록
             btn.onClick.RemoveAllListeners();
             if (owned) btn.onClick.AddListener(OnClick);
         }

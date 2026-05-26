@@ -128,6 +128,19 @@ namespace Jun
                         break;
                 }
 
+                // ── 소모품 1개 차감 ─────────────────────────────────
+                var casterInfo = caster.Info;
+                if (casterInfo.Expendables != null && itemIndex >= 0 && itemIndex < casterInfo.Expendables.Count)
+                {
+                    string usedItemName = casterInfo.Expendables[itemIndex].Name;
+                    casterInfo.Expendables.RemoveAt(itemIndex);
+                    caster.Info = casterInfo;   // SyncVar 갱신 트리거
+                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {casterInfo.Expendables.Count}개");
+                }
+
+                // 아이템 버튼 UI 갱신 (소모 후 즉시 반영)
+                manager.RpcRefreshItemButtons(caster);
+
                 manager.EnemyPanel.SetActive(false);
 
                 if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)

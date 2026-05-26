@@ -3,21 +3,22 @@ using UnityEngine;
 
 namespace Lsy
 {
-
     public class ItemManager : MonoBehaviour
     {
         public static ItemManager Instance { get; private set; }
 
-        public List<ItemData> allItems = new List<ItemData>();
+        public List<ItemData> allItems   = new List<ItemData>();
+        public List<ItemSO>   allItemSOs = new List<ItemSO>();   // ItemSO ì—ì…‹ ëª©ë¡
 
         private Dictionary<string, ItemData> _itemDict = new Dictionary<string, ItemData>();
+        private Dictionary<string, ItemSO>   _soDict   = new Dictionary<string, ItemSO>();
 
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject); // ¾ÀÀÌ ³Ñ¾î°¡µµ ÆÄ±«µÇÁö ¾ÊÀ½
+                DontDestroyOnLoad(gameObject);
                 InitializeDictionary();
             }
             else
@@ -26,37 +27,73 @@ namespace Lsy
             }
         }
 
-        // °ÔÀÓ ½ÃÀÛ ½Ã ¸®½ºÆ®¿¡ ÀÖ´Â µ¥ÀÌÅÍ¸¦ µñ¼Å³Ê¸®¿¡ Á¤¸®
+        /// <summary>ì”¬ ì „í™˜ ë“±ìœ¼ë¡œ ìƒˆ ItemSOê°€ ë©”ëª¨ë¦¬ì— ì˜¬ë¼ì™”ì„ ë•Œ ìˆ˜ë™ìœ¼ë¡œ ì¬ê°±ì‹ í•©ë‹ˆë‹¤.</summary>
+        public void RefreshItemSOs()
+        {
+            InitializeDictionary();
+        }
+
         private void InitializeDictionary()
         {
             _itemDict.Clear();
             foreach (var item in allItems)
             {
-                if (item != null)
-                {
-
-                    if (!_itemDict.ContainsKey(item.itemName))
-                    {
-                        _itemDict.Add(item.itemName, item);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[ItemManager] ¾ÆÀÌÅÛ ÀÌ¸§ Áßº¹ '{item.itemName}'ÀÌ(°¡) ¿©·¯ °³ ÀÖ½À´Ï´Ù.");
-                    }
-                }
+                if (item != null && !_itemDict.ContainsKey(item.itemName))
+                    _itemDict.Add(item.itemName, item);
             }
+
+            _soDict.Clear();
+
+            // â‘  Inspectorì— ìˆ˜ë™ ë“±ë¡í•œ ê²ƒ ë¨¼ì €
+            foreach (var so in allItemSOs)
+            {
+                if (so != null && !_soDict.ContainsKey(so.itemName))
+                    _soDict.Add(so.itemName, so);
+            }
+
+            // â‘¡ Resources/Items/ í´ë”ì—ì„œ ìë™ ë¡œë“œ
+            var loaded = Resources.LoadAll<ItemSO>("Items");
+            foreach (var so in loaded)
+            {
+                if (so != null && !string.IsNullOrEmpty(so.itemName) && !_soDict.ContainsKey(so.itemName))
+                    _soDict.Add(so.itemName, so);
+            }
+
+            // â‘¢ í˜„ì¬ ë©”ëª¨ë¦¬ì— ì˜¬ë¼ì™€ ìˆëŠ” ëª¨ë“  ItemSO íƒìƒ‰ (ì—ë””í„°/ë¹Œë“œ ë¬´ê´€í•˜ê²Œ ë™ì‘)
+            //    ì—ë””í„°ì—ì„œëŠ” í”„ë¡œì íŠ¸ ë‚´ ëª¨ë“  ì—ì…‹ì´ ëŒ€ìƒ, ë¹Œë“œì—ì„œëŠ” ì´ë¯¸ ë¡œë“œëœ ê²ƒë§Œ ëŒ€ìƒ
+            var allInMemory = Resources.FindObjectsOfTypeAll<ItemSO>();
+            foreach (var so in allInMemory)
+            {
+                if (so != null && !string.IsNullOrEmpty(so.itemName) && !_soDict.ContainsKey(so.itemName))
+                    _soDict.Add(so.itemName, so);
+            }
+
+            Debug.Log($"[ItemManager] ItemSO ë¡œë“œ ì™„ë£Œ â€” Inspector:{allItemSOs.Count} + Resources:{loaded.Length} + InMemory:{allInMemory.Length} = {_soDict.Count}ê°œ");
         }
 
         public ItemData GetItemData(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
+            _itemDict.TryGetValue(itemName, out ItemData data);
+            return data;
+        }
 
-            if (_itemDict.TryGetValue(itemName, out ItemData data))
-            {
-                return data;
-            }
+        public ItemSO GetItemSO(string itemName)
+        {
+            if (string.IsNullOrEmpty(itemName)) return null;
+            _soDict.TryGetValue(itemName, out ItemSO so);
+            return so;
+        }
 
-            Debug.LogWarning($"[ItemManager] '{itemName}'(À»)¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù. ¸®½ºÆ®¿¡ µî·ÏµÇ¾ú´ÂÁö È®ÀÎÇÏ¼¼¿ä.");
+        /// <summary>
+        /// ì•„ì´í…œ ì´ë¦„ìœ¼ë¡œ ì•„ì´ì½˜ì„ ì¡°íšŒí•©ë‹ˆë‹¤.
+        /// ItemSO â†’ ItemData ìˆœì„œë¡œ ì°¾ìŠµë‹ˆë‹¤.
+        /// </summary>
+        public Sprite GetIcon(string itemName)
+        {
+            if (string.IsNullOrEmpty(itemName)) return null;
+            if (_soDict.TryGetValue(itemName, out ItemSO so) && so.icon != null) return so.icon;
+            if (_itemDict.TryGetValue(itemName, out ItemData data)) return data.itemIcon;
             return null;
         }
     }

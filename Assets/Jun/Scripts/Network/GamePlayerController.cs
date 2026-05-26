@@ -63,14 +63,32 @@ namespace Jun
         }
 
         // 데이터 주입
+        private PlayerData _sourcePlayerData; // 원본 PlayerData 참조 보관
+
         [Server]
         public void InjectData(PlayerData data)
         {
+            _sourcePlayerData   = data;        // 원본 유지 → 씬 전환 후에도 살아있음
             this.Info           = data.Info;
             this.PingIndex      = data.PingIndex;
             this.FinalHeroCode  = data.FinalHeroCode;
             this.FinalHeroIndex = data.FinalHeroIndex;
             this.FinalHeroPos   = data.FinalHeroPos;
+        }
+
+        /// <summary>
+        /// 배틀 종료 시 현재 Info를 원본 PlayerData에 다시 씁니다. 서버 전용.
+        /// </summary>
+        [Server]
+        public void FlushInfoToPlayerData()
+        {
+            if (_sourcePlayerData == null)
+            {
+                Debug.LogWarning($"[GamePlayerController] {FinalHeroCode} — _sourcePlayerData가 null입니다.");
+                return;
+            }
+            _sourcePlayerData.Info = this.Info;
+            Debug.Log($"[FlushInfo] {FinalHeroCode} → PlayerData.Info 동기화 완료. Items={this.Info?.Items?.Count}");
         }
         // ��ġ�� ��� ������ ���� �Լ��� �и��ؼ� ȣ��
         void OnPosIndexChanged(int oldPos, int newPos)

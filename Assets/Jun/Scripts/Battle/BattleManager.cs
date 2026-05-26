@@ -72,6 +72,13 @@ namespace Jun
 
         [SerializeField] private RootingSystem _rootingSystem;
 
+        [Header("배틀 결과창")]
+        [SerializeField] private BattleResultPanel _battleResultPanel;
+
+        // 동의 카운터 (서버 전용)
+        private int  _agreeCount;
+        private bool _resultIsVictory;
+
         [System.Serializable]
         public class PingSystem
         {
@@ -335,6 +342,15 @@ namespace Jun
                     _players[currentNum].Info.Hp <= 0)
                 {
                     Debug.Log($"[NextTurn] 죽은 플레이어({currentNum}) 턴 스킵");
+
+                    // 전원 사망 체크 → 패배 처리
+                    if (GetAlivePlayers().Count == 0)
+                    {
+                        Debug.Log("[NextTurn] 모든 플레이어 사망 → 패배");
+                        ShowBattleResult(false);
+                        return;
+                    }
+
                     NextTurn();
                     return;
                 }
@@ -398,8 +414,8 @@ namespace Jun
             // 살아있는 플레이어 체크
             if (GetAlivePlayers().Count == 0)
             {
-                Debug.Log("[ServerEnemyTurn] 살아있는 플레이어 없음");
-                NextTurn();
+                Debug.Log("[ServerEnemyTurn] 살아있는 플레이어 없음 → 패배");
+                ShowBattleResult(false);
                 yield break;
             }
 
@@ -500,6 +516,53 @@ namespace Jun
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
         }
+        /// <summary>
+        /// 아이템 1개 소모 직후 호출: 해당 플레이어의 아이템 버튼만 재렌더링합니다.
+        /// </summary>
+        [ClientRpc]
+        public void RpcRefreshItemButtons(GamePlayerController unit)
+        {
+            if (unit == null || !unit.isOwned) return;
+
+            for (int i = 0; i < _itemBTN.Count; i++)
+            {
+                int index = i;
+                _itemBTN[i].onClick.RemoveAllListeners();
+
+                bool hasItem = unit.Info.Expendables != null && i < unit.Info.Expendables.Count;
+
+                if (hasItem)
+                {
+                    _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+
+                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (label != null) label.text = unit.Info.Expendables[i].Name;
+
+                    // 아이콘: 네트워크 전송 시 Sprite=null → CharacterRegistry에서 로컬 조회
+                    Sprite icon = unit.Info.Expendables[i].icon;
+                    if (icon == null &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                        entry.Items != null && i < entry.Items.Count)
+                    {
+                        icon = entry.Items[i].icon;
+                    }
+                    var iconTf = _itemBTN[i].transform.Find("Icon");
+                    var iconImg = iconTf != null ? iconTf.GetComponent<Image>() : null;
+                    if (iconImg != null) { iconImg.sprite = icon; iconImg.enabled = icon != null; }
+                }
+                else
+                {
+                    // 소진된 슬롯: 버튼 비활성화 + 라벨 초기화
+                    _itemBTN[i].interactable = false;
+                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (label != null) label.text = "-";
+                    var iconTf = _itemBTN[i].transform.Find("Icon");
+                    var iconImg = iconTf != null ? iconTf.GetComponent<Image>() : null;
+                    if (iconImg != null) iconImg.enabled = false;
+                }
+            }
+        }
+
         public void UpdateUnitUI(GamePlayerController unit)
         {
             Debug.Log($"[UpdateUnitUI] 호출됨: name={unit.name}, code={unit.FinalHeroCode}, Skills={unit.Info.Skills?.Count ?? -1}, Items={unit.Info.Items?.Count ?? -1}");
@@ -820,8 +883,85 @@ namespace Jun
         }
         public void StageClear()
         {
-            Debug.Log("StageClaer");
-            _rootingSystem.ServerEndStage();
+            Debug.Log("StageClear → 결과창 표시 (승리)");
+            ShowBattleResult(true);
+        }
+
+        // ──────────────────────────────────────────────────────────────────
+        //  배틀 결과 처리
+        // ──────────────────────────────────────────────────────────────────
+
+        /// <summary>서버에서 결과창을 모든 클라이언트에 띄웁니다.</summary>
+        [Server]
+        private void ShowBattleResult(bool isVictory)
+        {
+            _agreeCount      = 0;
+            _resultIsVictory = isVictory;
+            // 캐릭터 수(_players)가 아닌 실제 접속 클라이언트 수로 동의 기준을 잡습니다.
+            int clientCount  = NetworkServer.connections.Count;
+            RpcShowBattleResult(isVictory, clientCount);
+        }
+
+        [ClientRpc]
+        private void RpcShowBattleResult(bool isVictory, int totalPlayers)
+        {
+            if (_battleResultPanel != null)
+                _battleResultPanel.Show(isVictory, totalPlayers);
+        }
+
+        /// <summary>
+        /// 클라이언트가 동의 버튼을 눌렀을 때 서버로 전달.
+        /// requiresAuthority=false 이므로 어느 클라이언트든 호출 가능합니다.
+        /// </summary>
+        [Command(requiresAuthority = false)]
+        public void CmdAgreeResult()
+        {
+            int clientCount = NetworkServer.connections.Count;
+            _agreeCount++;
+            Debug.Log($"[BattleResult] 동의 {_agreeCount} / {clientCount}");
+
+            // 모든 클라이언트에 카운트 갱신
+            RpcUpdateAgreeCount(_agreeCount, clientCount);
+
+            if (_agreeCount >= clientCount)
+            {
+                // 전원 동의 완료 → 도장 연출 → 2초 후 이동
+                RpcShowStamp();
+                StartCoroutine(ProceedAfterStamp());
+            }
+        }
+
+        [Server]
+        private IEnumerator ProceedAfterStamp()
+        {
+            yield return new WaitForSeconds(2.5f);   // 도장 애니메이션(약 0.5s) + 감상 시간(2s)
+            RpcHideBattleResult();
+
+            if (_resultIsVictory)
+                _rootingSystem.ServerEndStage();
+            else
+                NetworkManager.singleton.ServerChangeScene("Home");
+        }
+
+        [ClientRpc]
+        private void RpcUpdateAgreeCount(int current, int total)
+        {
+            if (_battleResultPanel != null)
+                _battleResultPanel.UpdateAgreeCount(current, total);
+        }
+
+        [ClientRpc]
+        private void RpcShowStamp()
+        {
+            if (_battleResultPanel != null)
+                _battleResultPanel.PlayStampAnimation();
+        }
+
+        [ClientRpc]
+        private void RpcHideBattleResult()
+        {
+            if (_battleResultPanel != null)
+                _battleResultPanel.Hide();
         }
     }
 }

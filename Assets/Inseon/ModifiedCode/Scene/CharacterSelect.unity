@@ -4221,13 +4221,13 @@ MonoBehaviour:
     icon: {fileID: -185188083, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
     anim: 
     description: 
-    Hp: 0
+    Hp: 20
     San: 0
-    Atk: 0
+    Atk: 30
     Def: 0
     Spd: 0
     Crit: 0
-    Ctm: 0
+    Ctm: 50
     Dodge: 0
     Acc: 0
     Res: 0
