@@ -425,6 +425,8 @@ namespace Jun
             float animWait = string.IsNullOrEmpty(skill.anim) ? 0.5f : 1.5f;
             yield return new WaitForSeconds(animWait);
 
+            enemyCtrl.RpcStopAnim();
+
             NextTurn();
         }
 

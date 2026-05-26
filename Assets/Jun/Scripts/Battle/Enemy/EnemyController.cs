@@ -98,6 +98,11 @@ namespace Jun
         {
             _view.SkillAnim(animName);
         }
+        [ClientRpc]
+        public void RpcStopAnim()
+        {
+            _view.StopAnim();
+        }
         [Command(requiresAuthority = false)]
         public void CMDDead()
         {
