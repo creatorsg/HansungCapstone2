@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66a0dfd9720f4d14a9b2b27610016c12, type: 3}
-  m_Name: "\uCCB4\uB825\uD3EC\uC158"
+  m_Name: "\uBD80\uD65C \uC2DC\uAC00"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Consum
   ConsumItem:
-    Name: "\uCCB4\uB825\uD3EC\uC158"
+    Name: "\uBD80\uD65C \uC2DC\uAC00"
     Type: 0
     TagetNum: 0
-    icon: {fileID: 21300000, guid: fae551a372a450b449a3a0e8dfdbdf84, type: 3}
+    icon: {fileID: 21300000, guid: 25dd3a93ef6a6224798da496bd5b80e0, type: 3}
     anim: Attack
-    description: "\uCCB4\uB825\uC744 5 \uD68C\uBCF5\uC2DC\uD0B4"
-    HealRate: 5
+    description: "\uC720\uB839\uC774 \uB41C \uC544\uAD70\uC744 \uCCB4\uB825\uC774
+      \uAC00\uB4DD\uCC2C \uC0C1\uD0DC\uB85C \uBD80\uD65C\uC2DC\uD0B4"
+    HealRate: 100
     Target: 2
   priceLevel: 2c010000c800000064000000

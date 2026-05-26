@@ -13,17 +13,17 @@ namespace Lsy
         [SerializeField] private TextMeshProUGUI _itemPricetxt;
         [SerializeField] private Button _buyButton;
 
-        public void Setup(ItemData itemData, int currentPrice, Action onBuyClicked)
+        public void Setup(Consum itemData, int currentPrice, Action onBuyClicked)
         {
             // 1. 아이템 데이터 시각화
-            if (_itemIcon != null && itemData.itemIcon != null)
+            if (_itemIcon != null && itemData.ConsumItem.icon != null)
             {
-                _itemIcon.sprite = itemData.itemIcon;
+                _itemIcon.sprite = itemData.ConsumItem.icon;
             }
 
             if (_itemNametxt != null)
             {
-                _itemNametxt.text = itemData.itemName;
+                _itemNametxt.text = itemData.ConsumItem.Name;
             }
 
             if (_itemPricetxt != null)

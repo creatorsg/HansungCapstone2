@@ -88,12 +88,12 @@ namespace Lsy
             }
         }
 
-        private void OnBuyItemClicked(ItemData item, int price)
+        private void OnBuyItemClicked(Consum item, int price)
         {
             CharacterShop shop = GetLocalShop();
             if (shop == null) return;
             // 서버로 보낸다
-            shop.CmdBuyItem(item.itemName, price);
+            shop.CmdBuyItem(item.ConsumItem.Name, price);
         }
 
         public void OnInvestButtonClicked(int amount)

@@ -7,7 +7,7 @@ namespace Lsy
     public class NPCData : ScriptableObject
     {
         public string npcName;
-        public List<ItemData> sellingItems;
+        public List<Consum> sellingItems;
         public List<int> upgradeTargetGold;
         public int maxLevel = 3;
     }

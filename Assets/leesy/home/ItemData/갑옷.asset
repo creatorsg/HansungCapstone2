@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3de7cb78eb9a523449b83c482d7fbcb0, type: 3}
-  m_Name: Equipment
+  m_Name: "\uAC11\uC637"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Equipment
   EqpItem:
-    Name: 
-    EqpId: 0
-    icon: {fileID: 0}
-    anim: 
-    description: 
+    Name: "\uAC11\uC637"
+    EqpId: 2
+    icon: {fileID: 21300000, guid: 4a8f95271ea0eba4ba4c0b33be42d3f3, type: 3}
+    anim: Attack
+    description: "\uAC11\uC637"
     Hp: 0
     San: 0
     Atk: 0

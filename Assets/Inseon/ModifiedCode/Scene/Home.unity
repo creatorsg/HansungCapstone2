@@ -4223,8 +4223,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.ItemManager
   allItems:
-  - {fileID: 11400000, guid: ee17fafe9be52e74c906beab4c94b4ac, type: 2}
-  - {fileID: 11400000, guid: 6d1b07a29db128d47a161a1bb92ee58a, type: 2}
+  - {fileID: 11400000, guid: 430b0da8692cc444b8a4f4d15f17d367, type: 2}
+  - {fileID: 11400000, guid: 080540a1e8e2099429d8cfba9f49a962, type: 2}
+  - {fileID: 11400000, guid: 5695af11104815642af7cfe82b2c2616, type: 2}
+  - {fileID: 11400000, guid: c3bc69cd2bfbf1e4a875190d898b0f2e, type: 2}
+  - {fileID: 11400000, guid: 631fffc73a263ac4bb5cabdaeadab9cb, type: 2}
+  - {fileID: 11400000, guid: b4e9a76ff5f44fd4e8a3a83114febfad, type: 2}
+  allEqps:
+  - {fileID: 11400000, guid: 5a766f6b4da4bce4d847cd5de82cbb5c, type: 2}
+  - {fileID: 11400000, guid: 47549fdfa9cd9f74f8f024747c9f05db, type: 2}
+  - {fileID: 11400000, guid: 9c74fb1bd08d9b24992057a90166c12e, type: 2}
+  - {fileID: 11400000, guid: ad8c446b6a7f27443a49997827e21195, type: 2}
 --- !u!4 &455744854
 Transform:
   m_ObjectHideFlags: 0
@@ -7865,9 +7874,9 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 60, y: 140}
+  m_Spacing: {x: 120, y: 140}
   m_Constraint: 1
-  m_ConstraintCount: 4
+  m_ConstraintCount: 3
 --- !u!1 &864497387
 GameObject:
   m_ObjectHideFlags: 0
@@ -13501,7 +13510,8 @@ MonoBehaviour:
   inventorySlotPrefab: {fileID: 4964110031426719921, guid: 97afccf1f09b1eb4693ed24db7296110, type: 3}
   allItemDatabase:
   - {fileID: 11400000, guid: ee17fafe9be52e74c906beab4c94b4ac, type: 2}
-  - {fileID: 11400000, guid: 6d1b07a29db128d47a161a1bb92ee58a, type: 2}
+  - {fileID: 0}
+  allEqpDatabase: []
 --- !u!114 &1292727918
 MonoBehaviour:
   m_ObjectHideFlags: 0
