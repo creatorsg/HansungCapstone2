@@ -1942,7 +1942,9 @@ MonoBehaviour:
   - {fileID: 617412851}
   - {fileID: 1239496985}
   _movePosBTN: {fileID: 1087821561}
-  _equiIMG: []
+  _equiIMG:
+  - {fileID: 2093513149}
+  - {fileID: 1673106335}
   _itemBTN:
   - {fileID: 1244797100}
   - {fileID: 52111874}

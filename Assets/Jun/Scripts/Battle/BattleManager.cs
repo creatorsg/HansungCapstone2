@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -591,13 +592,8 @@ namespace Jun
                 }
                 // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
                 Sprite icon = null;
-                if (hasItem && unit.Info.Items[i].icon !=null)
-                {
-                    Debug.Log("아이템 아이콘 가져오기");
-                    icon = unit.Info.Items[i].icon; // 가진 아이템일 때만 접근!
-                }
 
-                if (icon == null &&
+                if (icon == null && hasItem &&
                     CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
                     entry.Items != null &&
                     i < entry.Items.Count)
@@ -626,6 +622,33 @@ namespace Jun
                         hover.SetInfo("", "");
                     }
                 }
+            }
+
+            // 장비 아이콘 표시 (무기, 방어구)
+            for (int i = 0; i < _equiIMG.Count; i++)
+            {
+                if (_equiIMG[i] == null) continue;
+
+                bool hasEquip = false;
+                if (i == 0)
+                    hasEquip = unit.Info.Weapon != null && !string.IsNullOrEmpty(unit.Info.Weapon.Name);
+                else if (i == 1)
+                    hasEquip = unit.Info.Armor != null && !string.IsNullOrEmpty(unit.Info.Armor.Name);
+
+                Debug.Log($"[장비] i={i} hasEquip={hasEquip} Weapon={unit.Info.Weapon?.Name} Armor={unit.Info.Armor?.Name}");
+
+                Sprite eqpIcon = null;
+                if (hasEquip &&
+                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var eqpEntry))
+                {
+                    if (i == 0 && eqpEntry.Weapon != null)
+                        eqpIcon = eqpEntry.Weapon.icon;
+                    else if (i == 1 && eqpEntry.Armor != null)
+                        eqpIcon = eqpEntry.Armor.icon;
+                }
+
+                _equiIMG[i].sprite = eqpIcon;
+                _equiIMG[i].enabled = eqpIcon != null;
             }
 
             // 적 버튼 이벤트 연결 + PlayerView.EnemyBtn 동기화 (프리팹에서 연결 불가한 씬 오브젝트이므로 런타임 설정)

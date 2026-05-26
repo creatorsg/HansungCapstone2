@@ -15,6 +15,8 @@ namespace Lsy
         public void ClosePopup()
         {
             PopupManager.Instance.ToggleObjectPopup(_popup, false);
+
+            Debug.Log("인벤토리 닫기");
         }
 
     }

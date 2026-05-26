@@ -480,5 +480,52 @@ namespace Lsy
                 AddItemWithInfo(returnItem);
             }
         }
+
+        [Command]
+        public void CmdSyncEquipmentToPlayerData()
+        {
+            if (equipmentSlot == null)
+            {
+                Debug.LogError($"[{characterName}] equipmentSlot null");
+                return;
+            }
+            //CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
+            // heroPos로 내 PlayerData 찾기
+            PlayerData pd = null;
+            foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+            {
+                if (player.FinalHeroPos == heroPos)
+                {
+                    pd = player;
+                    break;
+                }
+            }
+
+            if (pd == null)
+            {
+                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. heroPos:{heroPos}");
+                return;
+            }
+
+            var info = pd.Info;
+
+            // 소모품
+            info.Items = new List<ConsumableInfo>();
+            foreach (var item in equipmentSlot.equippedConsumables)
+            {
+                if (item.ConsumInfo != null)
+                {
+                    for (int i = 0; i < item.amount; i++)
+                        info.Items.Add(item.ConsumInfo);
+                }
+            }
+
+            // 무기/방어구
+            info.Weapon = equipmentSlot.equippedWeapon.EquipInfo;
+            info.Armor = equipmentSlot.equippedArmor.EquipInfo;
+
+            pd.Info = info;
+            Debug.Log($"[CharacterUnit] {characterName} 장착 정보 PlayerData 동기화 완료");
+        }
     }
 }

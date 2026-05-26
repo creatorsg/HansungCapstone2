@@ -454,7 +454,7 @@ namespace Lsy
         {
             // 1. 현재 씬에 있는 모든 PlayerDataPrefab(Clone) 객체들을 찾습니다.
             PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-
+            if (allPlayerDatas != null) Debug.Log("찾기완료");
             // 2. 찾은 객체들 중 "내 것"만 골라서 업데이트합니다.
             foreach (var pd in allPlayerDatas)
             {

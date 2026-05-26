@@ -6260,7 +6260,7 @@ GameObject:
   - component: {fileID: 689050063}
   - component: {fileID: 689050066}
   - component: {fileID: 689050065}
-  - component: {fileID: 689050064}
+  - component: {fileID: 689050067}
   m_Layer: 5
   m_Name: "\uC778\uBCA4\uD1A0\uB9AC\uCC3D"
   m_TagString: Untagged
@@ -6291,19 +6291,6 @@ RectTransform:
   m_AnchoredPosition: {x: -28.2909, y: 20.7466}
   m_SizeDelta: {x: 1443.4185, y: 758.5068}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &689050064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 689050062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44a6f42144e83a942be55113c00def41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Lsy.Popup
-  _popup: {fileID: 689050062}
 --- !u!114 &689050065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6342,6 +6329,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 689050062}
   m_CullTransparentMesh: 1
+--- !u!114 &689050067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 689050062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c390db11d5cd1664eb4e04805fb96ae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.PopupInventory
+  _popup: {fileID: 689050062}
 --- !u!1 &690181200
 GameObject:
   m_ObjectHideFlags: 0
@@ -11362,25 +11362,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 689050064}
-        m_TargetAssemblyTypeName: Lsy.Popup, Assembly-CSharp
+      - m_Target: {fileID: 689050067}
+        m_TargetAssemblyTypeName: Lsy.PopupInventory, Assembly-CSharp
         m_MethodName: OpenPopup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 689050062}
-        m_TargetAssemblyTypeName: Lsy.Popup, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -11990,8 +11978,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 689050064}
-        m_TargetAssemblyTypeName: Lsy.Popup, Assembly-CSharp
+      - m_Target: {fileID: 689050067}
+        m_TargetAssemblyTypeName: Lsy.PopupInventory, Assembly-CSharp
         m_MethodName: ClosePopup
         m_Mode: 1
         m_Arguments:
