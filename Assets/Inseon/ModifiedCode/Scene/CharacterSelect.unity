@@ -795,7 +795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
-  cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
+  cardIcon: {fileID: -5016190411863081148, guid: 324ce56a31c97df4190c11c085bc704a, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 80961da7912ed7f498f5f84ec2930479, type: 3}
@@ -2036,7 +2036,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 151.6757}
+  m_SizeDelta: {x: 151.6757, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &461060862
 MonoBehaviour:
@@ -2500,7 +2500,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 151.6757}
+  m_SizeDelta: {x: 151.6757, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &634337891
 MonoBehaviour:
@@ -4463,7 +4463,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -850, y: -363}
+  m_AnchoredPosition: {x: -850, y: -317}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1477845545
@@ -4664,7 +4664,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 151.6757}
+  m_SizeDelta: {x: 151.6757, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1506547265
 MonoBehaviour:
@@ -5399,7 +5399,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 151.6757}
+  m_SizeDelta: {x: 151.6757, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1830944969
 MonoBehaviour:
@@ -6104,7 +6104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C001
-  cardIcon: {fileID: 6864204444119061735, guid: 47a9f6c3eeb3cb347821a2fc53a406f6, type: 3}
+  cardIcon: {fileID: -2592082216237500044, guid: 9331395b1e30f4d4783a5e6e334d7708, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 519eb89d86857f840a00f7fe9075fbc0, type: 3}
