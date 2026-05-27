@@ -86,6 +86,15 @@ namespace Lsy
         {
             equipmentSlot = GetComponent<EquipmentSlot>();
         }
+
+        [Server]
+        private void ResetBlacksmithUpgradeState()
+        {
+            // [수정] 같은 CharacterUnit을 재사용할 때 이전 캐릭터의 대장장이 무기 강화 상태가 넘어가지 않도록 초기화합니다.
+            selectedWeaponId = "";
+            purchasedNodeCount = 0;
+        }
+
         private void OnHeroPosChanged(int oldVal, int newVal)
         {
             if (newVal >= 0)
@@ -112,6 +121,7 @@ namespace Lsy
             maxSan = data.maxSan;
             currentHp  = maxHp;
             currentSan = maxSan;
+            ResetBlacksmithUpgradeState();
 
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp = maxHp;
@@ -134,6 +144,7 @@ namespace Lsy
             maxSan        = pd.Info.San;
             currentHp     = maxHp;
             currentSan    = maxSan;
+            ResetBlacksmithUpgradeState();
 
             // ── 미장착 아이템 주입 (Items = 인벤 전체) ───────────────────
             myInventory.Clear();

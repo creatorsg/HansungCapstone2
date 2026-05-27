@@ -207,6 +207,9 @@ namespace Lsy
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
             currentSelectedCharacter.unlockedNodeIds.Clear();
+            // [수정] 캐릭터별 대장장이 무기 강화 상태가 다른 캐릭터로 공유되지 않도록 먼저 비웁니다.
+            currentSelectedCharacter.selectedWeaponId = "";
+            currentSelectedCharacter.purchasedNodeCount = 0;
 
             var targetSlot = currentSelectedCharacter.equipmentSlot;
             if (targetSlot != null)
