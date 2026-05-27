@@ -28,11 +28,40 @@ namespace Lsy
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
+            // [수정] 소모품 구매는 공통 서버 처리로 위임해 NPCPopupUI의 병합 전/후 호출명을 모두 지원합니다.
+            BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
+        }
 
+        // [수정] NPCPopupUI가 호출하던 병합 전 커맨드명을 유지합니다.
+        [Command(requiresAuthority = false)]
+        public void CmdBuyConsumable(string itemName, int price, NetworkConnectionToClient sender = null)
+        {
+            Debug.Log($"[CharacterShop][Server] CmdBuyConsumable - {itemName}, {price}G");
+            BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
+        }
+
+        // [수정] NPCPopupUI의 장비 구매 호출을 서버 인벤토리 추가로 연결합니다.
+        [Command(requiresAuthority = false)]
+        public void CmdBuyEquipment(string itemName, int price, NetworkConnectionToClient sender = null)
+        {
+            Debug.Log($"[CharacterShop][Server] CmdBuyEquipment - {itemName}, {price}G");
+            BuyInventoryItem(itemName, price, sender, CreateEquipmentInventoryItem);
+        }
+
+        [Server]
+        private void BuyInventoryItem(string itemName, int price, NetworkConnectionToClient sender, System.Func<string, InventoryItem> createItem)
+        {
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
             CharacterUnit unit = account.currentSelectedCharacter;
             if (unit == null) return;
+
+            InventoryItem invItem = createItem != null ? createItem(itemName) : default;
+            if (string.IsNullOrEmpty(invItem.itemName))
+            {
+                SendNotification(sender, $"[{itemName}] 판매 데이터가 ItemManager에 등록되어 있지 않습니다.");
+                return;
+            }
 
             if (account.currentGold < price)
             {
@@ -47,28 +76,50 @@ namespace Lsy
 
             account.currentGold -= price;
 
-            // ItemManager에서 battleData(ConsumableInfo)를 포함한 InventoryItem 생성
-            ItemData itemData = ItemManager.Instance != null ? ItemManager.Instance.GetItemData(itemName) : null;
-            if (itemData != null && itemData.battleData != null)
-            {
-                var invItem = new InventoryItem
-                {
-                    itemName   = itemData.itemName,
-                    Type       = ItemType.Consumable,
-                    ConsumInfo = itemData.battleData,
-                    amount     = 1
-                };
-                unit.AddItemWithInfo(invItem);
-            }
-            else
-            {
-                // battleData 미연결 시 기존 방식 fallback
-                unit.AddItem(itemName, 1);
-            }
-            // Info.Items 즉시 동기화 (myInventory → PlayerData.Info.Items)
+            unit.AddItemWithInfo(invItem);
             account.SyncInventoryToPlayerData();
 
             SendNotification(sender, $"[시스템 알림] {itemName} 구매 완료.");
+        }
+
+        [Server]
+        private InventoryItem CreateConsumableInventoryItem(string itemName)
+        {
+            // [수정] 바텐더 NPC 팝업 판매 데이터는 ItemManager.AllItems(Consum)를 우선 사용합니다.
+            Consum consumData = ItemManager.Instance != null ? ItemManager.Instance.GetConsumData(itemName) : null;
+            if (consumData != null && consumData.ConsumItem != null)
+            {
+                return new InventoryItem
+                {
+                    itemName   = consumData.ConsumItem.Name,
+                    Type       = ItemType.Consumable,
+                    ConsumInfo = consumData.ConsumItem,
+                    amount     = 1
+                };
+            }
+
+            // [수정] ItemData/ItemSO fallback 제거. NPC 판매 데이터가 없으면 구매 실패 처리합니다.
+            return default;
+        }
+
+        [Server]
+        private InventoryItem CreateEquipmentInventoryItem(string itemName)
+        {
+            // [수정] 대장장이 NPC 팝업 판매 데이터는 ItemManager.AllEqps(Equipment)를 우선 사용합니다.
+            Equipment equipmentData = ItemManager.Instance != null ? ItemManager.Instance.GetEquipmentData(itemName) : null;
+            if (equipmentData != null && equipmentData.EqpItem != null)
+            {
+                return new InventoryItem
+                {
+                    itemName  = equipmentData.EqpItem.Name,
+                    Type      = equipmentData.itemType,
+                    EquipInfo = equipmentData.EqpItem,
+                    amount    = 1
+                };
+            }
+
+            // [수정] ItemSO/Resources fallback 제거. NPC 판매 데이터가 없으면 구매 실패 처리합니다.
+            return default;
         }
 
         [Command(requiresAuthority = false)]

@@ -1,12 +1,8 @@
 using Jun;
 using Mirror;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using TMPro.Examples;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 namespace Lsy
 {
@@ -25,6 +21,14 @@ namespace Lsy
         public ConsumableInfo ConsumInfo;
         public EqpInfo EquipInfo;
         public int amount;
+
+        // [수정] Jun 전투 UI가 병합 전 ItemInfo처럼 Name/icon/null 체크를 사용하므로 호환 프로퍼티와 연산자를 제공합니다.
+        public string Name => !string.IsNullOrEmpty(itemName) ? itemName : ConsumInfo?.Name ?? EquipInfo?.Name ?? "";
+        public Sprite icon => ConsumInfo != null && ConsumInfo.icon != null ? ConsumInfo.icon : EquipInfo?.icon;
+        public static bool operator ==(InventoryItem item, object other) => other == null && string.IsNullOrEmpty(item.Name);
+        public static bool operator !=(InventoryItem item, object other) => !(item == other);
+        public override bool Equals(object obj) => obj is InventoryItem other && Name == other.Name && Type == other.Type && amount == other.amount;
+        public override int GetHashCode() => HashCode.Combine(Name, Type, amount);
     }
 
     public class CharacterUnit : NetworkBehaviour
@@ -171,23 +175,8 @@ namespace Lsy
                     Debug.Log($"[캐릭터] 방어구 자동 장착: {pd.Info.Armor.Name}");
                 }
 
-                // 기본 소모품 자동 장착 (Expendables)
-                if (pd.Info.Expendables != null)
-                {
-                    foreach (var consumInfo in pd.Info.Expendables)
-                    {
-                        if (consumInfo == null) continue;
-                        var consumItem = new InventoryItem
-                        {
-                            itemName  = consumInfo.Name,
-                            Type      = ItemType.Consumable,
-                            ConsumInfo = consumInfo,
-                            amount    = 1
-                        };
-                        equipmentSlot.EquipConsumable(consumItem);
-                    }
-                    Debug.Log($"[캐릭터] 소모품 자동 장착: {pd.Info.Expendables.Count}개");
-                }
+                // [수정] Inspector 기본 소모품은 홈 장착 슬롯에 자동 장착하지 않습니다.
+                // 전투씬 소모품은 Inventory에서 장착한 equipmentSlot.equippedConsumables만 전달합니다.
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
@@ -215,10 +204,6 @@ namespace Lsy
 
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
             unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
-
-            // 씬 전환 후 ItemSO가 새로 로드됐을 수 있으므로 ItemManager를 갱신합니다.
-            // 이렇게 해야 InventoryUI가 이름으로 아이콘/정보를 정확히 조회할 수 있습니다.
-            Lsy.ItemManager.Instance?.RefreshItemSOs();
 
             OnLocalUnitSpawned?.Invoke(this);
         }

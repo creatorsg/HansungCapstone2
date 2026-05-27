@@ -540,8 +540,11 @@ namespace Jun
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Expendables[i].Name;
 
-                    // 아이콘: 네트워크 전송 시 Sprite=null → CharacterRegistry에서 로컬 조회
+                    // [수정] 아이콘: Sprite는 네트워크 전송이 안 되므로 Expendables 이름으로 ItemManager에서 로컬 조회
                     Sprite icon = unit.Info.Expendables[i].icon;
+                    if (icon == null && Lsy.ItemManager.Instance != null)
+                        icon = Lsy.ItemManager.Instance.GetIcon(unit.Info.Expendables[i].Name);
+
                     if (icon == null &&
                         CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
                         entry.Items != null && i < entry.Items.Count)
@@ -655,13 +658,21 @@ namespace Jun
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Expendables[i].Name;
                 }
-                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null일 수 있으므로 이름으로 로컬 데이터에서 다시 찾음
+                // [수정] 아이템 아이콘 표시: Items가 아니라 Expendables 기준으로 이름/아이콘을 맞춥니다.
                 Sprite icon = null;
 
                 if (hasItem)
                 {
-                    var currentItem = unit.Info.Items[i];
+                    var currentItem = unit.Info.Expendables[i];
                     icon = currentItem != null ? currentItem.icon : null;
+
+                    if (icon == null &&
+                        currentItem != null &&
+                        !string.IsNullOrEmpty(currentItem.Name) &&
+                        Lsy.ItemManager.Instance != null)
+                    {
+                        icon = Lsy.ItemManager.Instance.GetIcon(currentItem.Name);
+                    }
 
                     if (icon == null &&
                         currentItem != null &&
@@ -719,6 +730,15 @@ namespace Jun
                 {
                     var currentEquip = i == 0 ? unit.Info.Weapon : unit.Info.Armor;
                     eqpIcon = currentEquip.icon;
+
+                    // [수정] 장비 아이콘도 네트워크에서 null이 되므로 ItemManager.AllEqps에서 이름으로 복구합니다.
+                    if (eqpIcon == null &&
+                        currentEquip != null &&
+                        !string.IsNullOrEmpty(currentEquip.Name) &&
+                        Lsy.ItemManager.Instance != null)
+                    {
+                        eqpIcon = Lsy.ItemManager.Instance.GetIcon(currentEquip.Name);
+                    }
 
                     if (eqpIcon == null &&
                         currentEquip != null &&

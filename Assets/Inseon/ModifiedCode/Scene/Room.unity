@@ -497,7 +497,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -569,7 +569,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 380, y: 450}
+  m_AnchoredPosition: {x: 297, y: 457}
   m_SizeDelta: {x: 520, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &311084754
@@ -634,7 +634,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -839,7 +839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 70, y: 450}
+  m_AnchoredPosition: {x: -18, y: 457}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &780067272
@@ -1373,19 +1373,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7039856346578081424, guid: 5a614ba9f1a494a479acdb34fc6ec903, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -54.8712
+      value: -105.23
       objectReference: {fileID: 0}
     - target: {fileID: 7039856346578081424, guid: 5a614ba9f1a494a479acdb34fc6ec903, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -100.0594
+      value: -161.1637
       objectReference: {fileID: 0}
     - target: {fileID: 7039856346578081424, guid: 5a614ba9f1a494a479acdb34fc6ec903, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 29.0494
+      value: 50.756683
       objectReference: {fileID: 0}
     - target: {fileID: 7039856346578081424, guid: 5a614ba9f1a494a479acdb34fc6ec903, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -45.18811
+      value: -83.15088
       objectReference: {fileID: 0}
     - target: {fileID: 7529769015403377640, guid: 5a614ba9f1a494a479acdb34fc6ec903, type: 3}
       propertyPath: m_Color.a
@@ -1698,7 +1698,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -375, y: 450}
+  m_AnchoredPosition: {x: -121, y: 457}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1215306279
@@ -2750,8 +2750,8 @@ MonoBehaviour:
   roomName: {fileID: 298537677}
   roomID: {fileID: 311084755}
   roomTypeImage: {fileID: 1215306279}
-  privateSprite: {fileID: 4262765734395609195, guid: d404e6768cae9264a89799e6231deb8b, type: 3}
-  publicSprite: {fileID: -2015501885985997111, guid: 83b7fcc88d6a555469c0dca2a14a5143, type: 3}
+  privateSprite: {fileID: 21300000, guid: 587f6cf8173862343bdcec2c98bdb00f, type: 3}
+  publicSprite: {fileID: 21300000, guid: 9a63631c7db1037438200191259269d7, type: 3}
   playerSlots:
   - {fileID: 5317239509862633808}
   - {fileID: 1096396354}

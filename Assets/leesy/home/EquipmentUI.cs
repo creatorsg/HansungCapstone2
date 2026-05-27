@@ -110,11 +110,15 @@ namespace Lsy
 
         private Jun.EqpInfo FindEquipmentInfo(string equipmentName)
         {
-            Equipment data = ItemManager.Instance != null
+            // [수정] ItemManager.GetEqpData는 EqpInfo를 반환하므로 로컬 Equipment DB fallback과 타입을 분리합니다.
+            Jun.EqpInfo data = ItemManager.Instance != null
                 ? ItemManager.Instance.GetEqpData(equipmentName)
-                : allEqpDatabase.Find(x => x != null && x.EqpItem != null && x.EqpItem.Name == equipmentName);
+                : null;
 
-            return data != null ? data.EqpItem : null;
+            if (data != null) return data;
+
+            Equipment fallback = allEqpDatabase.Find(x => x != null && x.EqpItem != null && x.EqpItem.Name == equipmentName);
+            return fallback != null ? fallback.EqpItem : null;
         }
     }
 }

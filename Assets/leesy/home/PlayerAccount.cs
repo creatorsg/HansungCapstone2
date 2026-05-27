@@ -247,7 +247,7 @@ namespace Lsy
                     targetSlot.equippedWeapon = saved.equippedWeapon;
                     targetSlot.equippedArmorId = saved.equippedArmorId;
                     targetSlot.equippedArmor = saved.equippedArmor;
-                    // SetupFromPlayerData에서 Expendables가 이미 추가됐을 수 있으므로 반드시 먼저 비웁니다.
+                    // [수정] 저장된 홈 장착 소모품만 복원합니다.
                     targetSlot.equippedConsumables.Clear();
                     foreach (var item in saved.equippedConsumables) targetSlot.equippedConsumables.Add(item);
                 }
@@ -531,6 +531,13 @@ namespace Lsy
                     }
                 }
             }
+        }
+
+        // [수정] 병합 전 호출부(BattleStartBtn/ReadyOrStartButton/QuestVoteSystem)가 기대하는 정적 동기화 진입점을 복구합니다.
+        public static void SyncAllAccountsHideoutDataToBattleData()
+        {
+            foreach (var account in FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None))
+                account.SyncAllHideoutDataToBattleData();
         }
     }
 }
