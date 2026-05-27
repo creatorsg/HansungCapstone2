@@ -157,7 +157,8 @@ namespace Jun
         public string Name;
         public string Type; //직업군
         public List<SkillInfo> Skills;
-        public List<ConsumableInfo> Items;
+        public List<InventoryItem> Items;       // 미장착 아이템 전체 (소모품+무기+갑옷)
+        public List<ConsumableInfo> Expendables; // 장착된 소모품 (최대 6종 각 5개)
         public int Lvl;
         public int Exp;
 
@@ -180,6 +181,9 @@ namespace Jun
         public EqpInfo Armor;
         public int Trk1;
         public int Trk2;
+
+        /// <summary>고유 특성 강화 단계. 0 = 미강화(스탯 기여 없음), 1~3 = 강화 단계.</summary>
+        public int UniqueTraitLv;
 
         // 신 시스템: StatusProcessor 가 누적/소비하는 상태이상 리스트
         public List<ActiveStatus> Statuses;

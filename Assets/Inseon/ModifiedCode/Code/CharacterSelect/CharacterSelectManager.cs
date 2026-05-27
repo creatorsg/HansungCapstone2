@@ -199,9 +199,16 @@ public class CharacterSelectManager : MonoBehaviour
                 CharacterSprite  = card.BattleSprite,
                 Skills           = card.Skills ?? new List<SkillInfo>(),
                 Items            = card.Items  ?? new List<ConsumableInfo>(),
-                Weapon = card.Weapon,  
-                Armor = card.Armor,
+                Weapon      = card.Weapon,
+                Armor       = card.Armor,
+                UniqueTrait = card.UniqueTrait,
             });
+
+            // 캐릭터 카드의 장비 ItemSO를 ItemManager에 미리 등록합니다.
+            // ItemManager는 DontDestroyOnLoad이므로 씬이 바뀌어도 등록이 유지됩니다.
+            // 이렇게 해야 Home씬 인벤토리에서 장착 해제한 장비의 아이콘을 찾을 수 있습니다.
+            Lsy.ItemManager.Instance?.RegisterItemSO(card.WeaponSO);
+            Lsy.ItemManager.Instance?.RegisterItemSO(card.ArmorSO);
 
             TryRegisterPrefab(card.PlayerDataPrefab);
             TryRegisterPrefab(card.BattleUnitPrefab);

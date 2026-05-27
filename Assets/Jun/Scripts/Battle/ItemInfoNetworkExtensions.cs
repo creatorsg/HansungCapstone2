@@ -6,46 +6,96 @@ namespace Jun
 {
     public static class ItemInfoNetworkExtensions
     {
-        // ¦¡¦¡ ConsumableInfo Á÷·ÄÈ­ (±âÁ¸ ÄÚµå ÀÌ¸§¸¸ ¼öÁ¤) ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+        // â”€â”€ ConsumableInfo ì§ë ¬í™” â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public static void WriteConsumableInfo(this NetworkWriter writer, ConsumableInfo value)
         {
-            writer.WriteString(value.Name);
-            writer.WriteInt((int)value.Type);       // ConsumableType
+            writer.WriteString(value.Name ?? "");
+            writer.WriteInt((int)value.Type);
             writer.WriteFloat(value.HealRate);
             writer.WriteString(value.anim ?? "");
             writer.WriteInt(value.TagetNum);
             writer.WriteString(value.description ?? "");
             writer.WriteInt((int)value.Target);
-            // icon(Sprite)Àº ³×Æ®¿öÅ© Àü¼Û ºÒ°¡ ¡æ null·Î Ã³¸®, Å¬¶óÀÌ¾ğÆ®¿¡¼­ ·ÎÄÃ Á¶È¸
+            // icon(Sprite)ì€ ë„¤íŠ¸ì›Œí¬ ì „ì†¡ ë¶ˆê°€ â†’ í´ë¼ì´ì–¸íŠ¸ì—ì„œ ItemManagerë¡œ ë³„ë„ ì¡°íšŒ
         }
 
         public static ConsumableInfo ReadConsumableInfo(this NetworkReader reader)
         {
             return new ConsumableInfo
             {
-                Name = reader.ReadString(),
-                Type = (ConsumableType)reader.ReadInt(),
-                HealRate = reader.ReadFloat(),
-                anim = reader.ReadString(),
-                TagetNum = reader.ReadInt(),
+                Name        = reader.ReadString(),
+                Type        = (ConsumableType)reader.ReadInt(),
+                HealRate    = reader.ReadFloat(),
+                anim        = reader.ReadString(),
+                TagetNum    = reader.ReadInt(),
                 description = reader.ReadString(),
-                Target = (TargetType)reader.ReadInt(),
-                icon = null  // Å¬¶óÀÌ¾ğÆ®¿¡¼­ ItemData ScriptableObject·Î ·ÎÄÃ Á¶È¸
+                Target      = (TargetType)reader.ReadInt(),
+                icon        = null  // í´ë¼ì´ì–¸íŠ¸ì—ì„œ ItemManagerë¡œ ë³„ë„ ì¡°íšŒ
             };
         }
 
-        // ¦¡¦¡ InventoryItem Á÷·ÄÈ­ (½Å±Ô Ãß°¡) ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+        // â”€â”€ EqpInfo ì§ë ¬í™” (icon ì œì™¸ â€” SpriteëŠ” ë„¤íŠ¸ì›Œí¬ ì „ì†¡ ë¶ˆê°€) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        public static void WriteEqpInfo(this NetworkWriter writer, EqpInfo value)
+        {
+            if (value == null) { writer.WriteBool(false); return; }
+            writer.WriteBool(true);
+            writer.WriteString(value.Name ?? "");
+            writer.WriteInt(value.EqpId);
+            writer.WriteFloat(value.Hp);
+            writer.WriteInt(value.San);
+            writer.WriteInt(value.Atk);
+            writer.WriteInt(value.Def);
+            writer.WriteInt(value.Spd);
+            writer.WriteInt(value.Crit);
+            writer.WriteInt(value.Ctm);
+            writer.WriteInt(value.Dodge);
+            writer.WriteInt(value.Acc);
+            writer.WriteInt(value.Res);
+            writer.WriteString(value.anim ?? "");
+            writer.WriteString(value.description ?? "");
+        }
+
+        public static EqpInfo ReadEqpInfo(this NetworkReader reader)
+        {
+            if (!reader.ReadBool()) return null;
+            return new EqpInfo
+            {
+                Name        = reader.ReadString(),
+                EqpId       = reader.ReadInt(),
+                Hp          = reader.ReadFloat(),
+                San         = reader.ReadInt(),
+                Atk         = reader.ReadInt(),
+                Def         = reader.ReadInt(),
+                Spd         = reader.ReadInt(),
+                Crit        = reader.ReadInt(),
+                Ctm         = reader.ReadInt(),
+                Dodge       = reader.ReadInt(),
+                Acc         = reader.ReadInt(),
+                Res         = reader.ReadInt(),
+                anim        = reader.ReadString(),
+                description = reader.ReadString(),
+                icon        = null  // í´ë¼ì´ì–¸íŠ¸ì—ì„œ ItemManagerë¡œ ë³„ë„ ì¡°íšŒ
+            };
+        }
+
+        // â”€â”€ InventoryItem ì§ë ¬í™” â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         public static void WriteInventoryItem(this NetworkWriter writer, InventoryItem value)
         {
             writer.WriteString(value.itemName);
-            writer.WriteInt((int)value.Type);   // Lsy.ItemType (Equipment/Consumable)
+            writer.WriteInt((int)value.Type);
             writer.WriteInt(value.amount);
 
-            // ConsumableInfo´Â Consumable Å¸ÀÔÀÏ ¶§¸¸ Á¸Àç
-            bool hasInfo = value.ConsumInfo != null;
-            writer.WriteBool(hasInfo);
-            if (hasInfo)
+            // ConsumInfo (ì†Œëª¨í’ˆ)
+            bool hasConsumInfo = value.ConsumInfo != null;
+            writer.WriteBool(hasConsumInfo);
+            if (hasConsumInfo)
                 writer.WriteConsumableInfo(value.ConsumInfo);
+
+            // EquipInfo (ë¬´ê¸°/ë°©ì–´êµ¬) â€” ì´ì „ì— ëˆ„ë½ëë˜ ë¶€ë¶„
+            bool hasEquipInfo = value.EquipInfo != null;
+            writer.WriteBool(hasEquipInfo);
+            if (hasEquipInfo)
+                writer.WriteEqpInfo(value.EquipInfo);
         }
 
         public static InventoryItem ReadInventoryItem(this NetworkReader reader)
@@ -53,13 +103,18 @@ namespace Jun
             var item = new InventoryItem
             {
                 itemName = reader.ReadString(),
-                Type = (ItemType)reader.ReadInt(),
-                amount = reader.ReadInt()
+                Type     = (ItemType)reader.ReadInt(),
+                amount   = reader.ReadInt()
             };
 
-            bool hasInfo = reader.ReadBool();
-            if (hasInfo)
+            bool hasConsumInfo = reader.ReadBool();
+            if (hasConsumInfo)
                 item.ConsumInfo = reader.ReadConsumableInfo();
+
+            // EquipInfo ì½ê¸° â€” ì´ì „ì— ëˆ„ë½ëë˜ ë¶€ë¶„
+            bool hasEquipInfo = reader.ReadBool();
+            if (hasEquipInfo)
+                item.EquipInfo = reader.ReadEqpInfo();
 
             return item;
         }

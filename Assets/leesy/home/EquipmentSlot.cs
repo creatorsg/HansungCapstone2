@@ -6,13 +6,13 @@ namespace Lsy
 {
     public class EquipmentSlot : NetworkBehaviour
     {
-        [Header("ÀåÂø Àåºñ")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½")]
         [SyncVar] public string equippedWeaponId = "";
         [SyncVar] public string equippedArmorId = "";
         public InventoryItem equippedWeapon;
         public InventoryItem equippedArmor;
 
-        [Header("ÀåÂø ¼Ò¸ğÇ° (ÃÖ´ë 6Á¾·ù)")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¸ï¿½Ç° (ï¿½Ö´ï¿½ 6ï¿½ï¿½ï¿½ï¿½)")]
         public readonly SyncList<InventoryItem> equippedConsumables = new SyncList<InventoryItem>();
         private const int MAX_CONSUMABLE_SLOTS = 6;
 
@@ -47,7 +47,7 @@ namespace Lsy
             }
             if (equippedConsumables.Count >= MAX_CONSUMABLE_SLOTS)
             {
-                Debug.LogWarning("¼Ò¸ğÇ° ÀåÂø ½½·ÔÀÌ °¡µæ Ã¡½À´Ï´Ù. (ÃÖ´ë 6°³)");
+                Debug.LogWarning("ï¿½Ò¸ï¿½Ç° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¡ï¿½ï¿½ï¿½Ï´ï¿½. (ï¿½Ö´ï¿½ 6ï¿½ï¿½)");
                 return false;
             }
             equippedConsumables.Add(item);
@@ -80,6 +80,7 @@ namespace Lsy
         {
             if (string.IsNullOrEmpty(equippedWeaponId)) return false;
             equippedWeaponId = "";
+            equippedWeapon   = default;   // â† ì‹¤ì œ ë°ì´í„°ë„ ì´ˆê¸°í™”
             return true;
         }
 
@@ -88,6 +89,7 @@ namespace Lsy
         {
             if (string.IsNullOrEmpty(equippedArmorId)) return false;
             equippedArmorId = "";
+            equippedArmor   = default;    // â† ì‹¤ì œ ë°ì´í„°ë„ ì´ˆê¸°í™”
             return true;
         }
 

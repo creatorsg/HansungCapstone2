@@ -128,6 +128,19 @@ namespace Jun
                         break;
                 }
 
+                // ── 소모품 1개 차감 ─────────────────────────────────
+                var casterInfo = caster.Info;
+                if (casterInfo.Expendables != null && itemIndex >= 0 && itemIndex < casterInfo.Expendables.Count)
+                {
+                    string usedItemName = casterInfo.Expendables[itemIndex].Name;
+                    casterInfo.Expendables.RemoveAt(itemIndex);
+                    caster.Info = casterInfo;   // SyncVar 갱신 트리거
+                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {casterInfo.Expendables.Count}개");
+                }
+
+                // 아이템 버튼 UI 갱신 (소모 후 즉시 반영)
+                manager.RpcRefreshItemButtons(caster);
+
                 manager.EnemyPanel.SetActive(false);
 
                 if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)
@@ -145,13 +158,13 @@ namespace Jun
             else if (itemIndex != -1)
             {
                 // 아이템 범위 검사
-                if (caster.Info.Items == null || itemIndex >= caster.Info.Items.Count)
+                if (caster.Info.Expendables == null || itemIndex >= caster.Info.Expendables.Count)
                 {
-                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Items?.Count}");
+                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Expendables?.Count}");
                     return;
                 }
 
-                ConsumableInfo item = caster.Info.Items[itemIndex];
+                ConsumableInfo item = caster.Info.Expendables[itemIndex];
                 Debug.Log($"[BattleLogic] 아이템 사용: {item.Name}");
 
                 foreach (int targetIdx in targets)

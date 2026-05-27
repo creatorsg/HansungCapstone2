@@ -1,5 +1,6 @@
 using JetBrains.Annotations;
 using Jun;
+using Lsy;
 using Mirror;
 using NUnit.Framework;
 using System;
@@ -40,10 +41,13 @@ public class RootingSystem : NetworkBehaviour
     [System.Serializable]
     public struct RewardInfo
     {
-        public string name;      // ���� �̸�
-        public Sprite icon;      // ������ �̹���
-        public bool isEquipment; // ��񿩺� (true�� ����������, false�� ��ȭ)
-        public int amount;       // ��ȭ�� ��� �ݾ�
+        public bool    isEquipment; // 장비여부 (true면 아이템, false면 골드)
+        public int     amount;      // 골드일 경우 금액 (isEquipment=false 일 때 사용)
+        public ItemSO  itemSO;      // 아이템 데이터 (isEquipment=true 일 때 연결)
+        public Sprite  fallbackIcon; // itemSO가 없을 때(골드 등) 사용할 아이콘
+
+        /// <summary>표시할 아이콘. itemSO가 있으면 우선 사용, 없으면 fallbackIcon.</summary>
+        public Sprite Icon => itemSO != null ? itemSO.icon : fallbackIcon;
     }
 
     [SerializeField] private BattleManager _manager;
@@ -128,8 +132,10 @@ public class RootingSystem : NetworkBehaviour
         for (int i = 0; i < _currentRewardIndices.Count; i++)
         {
             int dataIdx = _currentRewardIndices[i];
-            _currentReward.Add(_rootDatas[dataIdx]);
-            _rootIMG[i].sprite = _rootDatas[dataIdx].icon;
+            var reward = _rootDatas[dataIdx];
+            _currentReward.Add(reward);
+            // itemSO가 있으면 그 아이콘, 없으면 fallbackIcon 사용
+            _rootIMG[i].sprite = reward.Icon;
         }
         // ��� ���ֵ��� ���ư��� ���� ��ư ���� �� ����
         foreach (var unit in _manager._players)
@@ -224,11 +230,25 @@ public class RootingSystem : NetworkBehaviour
     }
     IEnumerator ProcessAllBattlesRoutine()
     {
+        // slotWinner[i] = 슬롯 i의 최종 수령자 unitIdx (-1이면 아무도 없음)
+        int[] slotWinner = new int[4];
+        for (int i = 0; i < 4; i++) slotWinner[i] = -1;
+
         for (int i = 0; i < 4; i++)
         {
-            if (_selectRootNum[i] > 1 && _currentReward[i].isEquipment)
+            if (_selectRootNum[i] == 0) continue; // 아무도 선택 안 한 슬롯
+
+            if (_selectRootNum[i] == 1)
             {
-                // _allUnit은 서버에서 비어있으므로 서버 전용 _serverSelections 사용
+                // 단독 선택 → 바로 수령
+                foreach (var kvp in _serverSelections)
+                {
+                    if (kvp.Value == i) { slotWinner[i] = kvp.Key; break; }
+                }
+            }
+            else if (_currentReward[i].isEquipment)
+            {
+                // 복수 선택 + 장비 → RPS
                 RPS.Clear();
                 foreach (var kvp in _serverSelections)
                 {
@@ -242,23 +262,83 @@ public class RootingSystem : NetworkBehaviour
                 if (RPS.Count < 2)
                 {
                     Debug.LogWarning($"[ProcessAllBattles] 슬롯 {i}: 참가자 {RPS.Count}명, RPS 생략");
+                    if (RPS.Count == 1) slotWinner[i] = RPS[0];
                     continue;
                 }
 
                 yield return StartCoroutine(RockPaperScissors(RPS));
+
+                // RPS 종료 후 RPS 리스트에 남은 한 명이 승자
+                if (RPS.Count == 1) slotWinner[i] = RPS[0];
+            }
+            else
+            {
+                // 복수 선택 + 골드 → 모두에게 지급 (slotWinner는 사용 안 함, 아래서 별도 처리)
+                slotWinner[i] = -2; // -2 = 골드 전체 지급 표시
             }
         }
 
-        Debug.Log("��� ĭ�� ���������� �Ϸ�.");
-        // ���⼭ ���� �ܰ� �����
-        // ������ ����� �����ϱ� ������
-        // �ʿ��ϴٸ� �÷��̾���� ���ο� ������ ����
+        // ── 아이템 / 골드 지급 ───────────────────────────────────────────
+        AwardRewards(slotWinner);
+
+        Debug.Log("모든 칸 처리 완료. 씬 전환.");
         var roomManager = NetworkManager.singleton as GameRoomManager;
         string homeScene = roomManager != null && !string.IsNullOrEmpty(roomManager.HomeScene)
             ? roomManager.HomeScene
             : "Home";
 
         NetworkManager.singleton.ServerChangeScene(homeScene);
+    }
+
+    /// <summary>
+    /// 슬롯별 승자에게 보상을 지급합니다. 서버 전용.
+    /// </summary>
+    [Server]
+    private void AwardRewards(int[] slotWinner)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            RewardInfo reward = _currentReward[i];
+
+            if (slotWinner[i] == -2)
+            {
+                // 골드 전체 지급: PlayerAccount.currentGold로 처리해야 하므로 TODO
+                if (reward.amount <= 0)
+                    Debug.LogWarning($"[보상] 슬롯{i} 골드 보상인데 amount={reward.amount} 입니다. Inspector에서 amount를 설정하세요.");
+                else
+                    Debug.Log($"[보상] 슬롯{i} 골드 {reward.amount} → 골드 지급은 PlayerAccount 연동 필요 (TODO)");
+                continue;
+            }
+
+            if (slotWinner[i] < 0) continue; // 수령자 없음
+
+            // 아이템 지급
+            int winnerIdx = slotWinner[i];
+            if (winnerIdx < 0 || winnerIdx >= _manager._players.Count) continue;
+
+            var winner = _manager._players[winnerIdx];
+            if (winner == null) continue;
+
+            if (reward.isEquipment && reward.itemSO != null)
+            {
+                // ItemSO → InventoryItem 변환 후 Info.Items에 추가
+                var playerInfo = winner.Info;
+                if (playerInfo.Items == null) playerInfo.Items = new List<InventoryItem>();
+                playerInfo.Items.Add(reward.itemSO.ToInventoryItem(1));
+                winner.Info = playerInfo;
+                Debug.Log($"[보상] {winner.Info.Name} ← {reward.itemSO.itemName} 획득");
+
+                // 씬 전환 후에도 살아남는 PlayerData에 즉시 반영
+                winner.FlushInfoToPlayerData();
+            }
+            else if (!reward.isEquipment)
+            {
+                if (reward.amount <= 0)
+                    Debug.LogWarning($"[보상] 슬롯{i} 골드 보상인데 amount={reward.amount} 입니다. Inspector에서 amount를 설정하세요.");
+                else
+                    Debug.Log($"[보상] 슬롯{i} 골드 {reward.amount} → 골드 지급은 PlayerAccount 연동 필요 (TODO)");
+            }
+        }
     }
     //���������� ����
     IEnumerator RockPaperScissors(List<int> RPS)

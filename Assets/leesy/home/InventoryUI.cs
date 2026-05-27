@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Jun;
 
 namespace Lsy
 {
@@ -14,8 +15,8 @@ namespace Lsy
         // ItemManager로 조회하지 못할 경우를 대비한 폴백 목록
         // ItemManager.allItems에 아이템이 모두 등록되어 있다면 비워도 됩니다
         [Header("아이템 DB 폴백 (ItemManager 미사용 시)")]
-        public List<Consum> allItemDatabase = new List<Consum>();
-        public List<Equipment> allEqpDatabase = new List<Equipment>();
+        public List<ItemData> allItemDatabase = new List<ItemData>();
+
         private void Awake()
         {
             if (Instance == null) Instance = this;
@@ -41,110 +42,71 @@ namespace Lsy
 
             foreach (Transform child in slotContainer)
                 Destroy(child.gameObject);
+            slotContainer.DetachChildren();
 
-            for (int i = 0; i < myChar.myInventory.Count; i++)
+            foreach (InventoryItem item in myChar.myInventory)
             {
-                InventoryItem item = myChar.myInventory[i];
-                // ① 역조회 — Type으로 먼저 구분
-                Jun.ConsumableInfo consumInfo = item.ConsumInfo;
-                Jun.EqpInfo equipInfo = item.EquipInfo;
-
-                if (consumInfo == null && equipInfo == null)
-                {
-                    // item.Type으로 어느 딕셔너리를 볼지 결정
-                    if (item.Type == ItemType.Weapon || item.Type == ItemType.Armor)
-                    {
-                        Equipment eqpData = ItemManager.Instance != null
-                            ? ItemManager.Instance.GetEqpData(item.itemName)
-                            : allEqpDatabase.Find(x => x != null && x.EqpItem.Name == item.itemName);
-
-                        if (eqpData != null)
-                            equipInfo = eqpData.EqpItem;
-                        else
-                            Debug.LogWarning($"[InventoryUI] Equipment '{item.itemName}' DB에 없습니다.");
-                    }
-                    else  // Consumable
-                    {
-                        Consum consumData = ItemManager.Instance != null
-                            ? ItemManager.Instance.GetItemData(item.itemName)
-                            : allItemDatabase.Find(x => x != null && x.ConsumItem.Name == item.itemName);
-
-                        if (consumData != null)
-                            consumInfo = consumData.ConsumItem;
-                        else
-                            Debug.LogWarning($"[InventoryUI] Consum '{item.itemName}'  DB에 없습니다.");
-                    }
-                }
-
-                Debug.Log($"[InventoryUI] 아이템: {item.itemName} / amount: {item.amount} / ConsumInfo: {(consumInfo != null ? consumInfo.Name : "null")} / EquipInfo: {(equipInfo != null ? equipInfo.Name : "null")}");
-
-                // ② amount가 0 이하면 스킵
                 if (item.amount <= 0) continue;
 
-                // ③ ConsumInfo / EquipInfo 둘 다 없으면 스킵
-                if (consumInfo == null && equipInfo == null)
-                {
-                    Debug.LogWarning($"[InventoryUI] '{item.itemName}' — ConsumInfo도 없고 EquipInfo도 없습니다. 슬롯 생성 스킵.");
-                    continue;
-                }
+                // ── ItemManager에서 ItemSO를 itemName 기준으로 조회 ──────────────
+                // Mirror SyncList 직렬화 후 ConsumInfo/EquipInfo 내부의 Sprite 등이
+                // 손실될 수 있으므로, 표시용 데이터는 항상 ItemSO에서 재구성합니다.
+                // (equippedWeaponId → 이름으로 조회하는 방식과 동일한 원리)
+                ItemSO so = ItemManager.Instance != null
+                    ? ItemManager.Instance.GetItemSO(item.itemName)
+                    : null;
+
+                // 아이콘: SyncList 내 데이터 → ItemSO → ItemData 순으로 fallback
+                Sprite icon = item.ConsumInfo?.icon ?? item.EquipInfo?.icon ?? so?.icon;
+                if (icon == null && ItemManager.Instance != null)
+                    icon = ItemManager.Instance.GetIcon(item.itemName);
+
+                // ConsumInfo/EquipInfo: SyncList 내 데이터가 있으면 그대로, 없으면 ItemSO에서 재구성
+                ConsumableInfo consumInfo = item.ConsumInfo
+                    ?? (item.Type == ItemType.Consumable ? so?.ToConsumableInfo() : null);
+                EqpInfo equipInfo = item.EquipInfo
+                    ?? (item.Type != ItemType.Consumable ? so?.ToEqpInfo() : null);
+
+                Debug.Log($"[InventoryUI] '{item.itemName}' amount={item.amount} | " +
+                          $"SO={so != null} | icon={icon != null} | " +
+                          $"consumInfo={consumInfo != null} | equipInfo={equipInfo != null}");
 
                 GameObject newSlot = Instantiate(inventorySlotPrefab, slotContainer);
                 InventorySlotUI slotScript = newSlot.GetComponent<InventorySlotUI>();
+                if (slotScript == null) continue;
 
-                if (slotScript == null)
-                {
-                    Destroy(newSlot);
-                    continue;
-                }
-
-                // ④ 아이콘 결정 — ConsumInfo / EquipInfo 분리하여 각각 폴백 처리
-                Sprite icon = null;
-
-                if (consumInfo != null)
-                {
-                    icon = consumInfo.icon;
-                    if (icon == null)
-                    {
-                        Consum fallback = ItemManager.Instance != null
-                            ? ItemManager.Instance.GetItemData(consumInfo.Name)
-                            : allItemDatabase.Find(x => x.ConsumItem.Name == consumInfo.Name);
-                        icon = fallback?.ConsumItem.icon;
-                    }
-                }
-                else if (equipInfo != null)
-                {
-                    icon = equipInfo.icon;
-                    if (icon == null)
-                    {
-                        Equipment fallback = ItemManager.Instance != null
-                            ? ItemManager.Instance.GetEqpData(equipInfo.Name)
-                            : allEqpDatabase.Find(x => x.EqpItem.Name == equipInfo.Name);
-                        icon = fallback?.EqpItem.icon;
-                    }
-                }
-
-                if (icon == null)
-                    Debug.LogWarning($"[InventoryUI] '{item.itemName}' — 아이콘을 찾을 수 없습니다.");
-
-                // ⑤ 슬롯 셋업
                 if (consumInfo != null)
                 {
                     slotScript.Setup(consumInfo, item.amount, icon, () =>
-                    {
-                        myChar.CmdEquipConsumableToSlot(item.itemName);
-                    });
+                        myChar.CmdEquipConsumableToSlot(item.itemName));
+                }
+                else if (equipInfo != null)
+                {
+                    slotScript.Setup(equipInfo, item.amount, icon, () =>
+                        myChar.CmdEquipConsumableToSlot(item.itemName));
                 }
                 else
                 {
-                    slotScript.Setup(equipInfo, item.amount, icon, () =>
+                    // 최후 fallback: 레거시 ItemData 방식
+                    ItemData foundData = ItemManager.Instance != null
+                        ? ItemManager.Instance.GetItemData(item.itemName)
+                        : allItemDatabase.Find(x => x.itemName == item.itemName);
+
+                    if (foundData == null)
                     {
-                        myChar.CmdEquipConsumableToSlot(item.itemName);
+                        Debug.LogWarning($"[InventoryUI] '{item.itemName}' — ItemSO·ItemData 모두 없어 슬롯 삭제");
+                        Destroy(newSlot);
+                        continue;
+                    }
+                    slotScript.Setup(foundData, item.amount, () =>
+                    {
+                        CharacterShop shop = myChar.GetComponent<CharacterShop>();
+                        shop?.CmdEquipItem(foundData.itemName);
                     });
                 }
 
-                // ⑥ 장착 여부 아웃라인
                 bool isEquipped = (item.Type == ItemType.Weapon && myChar.equipmentSlot.equippedWeaponId == item.itemName)
-                               || (item.Type == ItemType.Armor && myChar.equipmentSlot.equippedArmorId == item.itemName);
+                               || (item.Type == ItemType.Armor  && myChar.equipmentSlot.equippedArmorId == item.itemName);
                 slotScript.ShowEquipOutline(isEquipped);
             }
         }

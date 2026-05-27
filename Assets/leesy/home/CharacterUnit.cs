@@ -131,63 +131,71 @@ namespace Lsy
             currentHp     = maxHp;
             currentSan    = maxSan;
 
-            // ── 아이템 목록 주입(같은 종류의 아이템일 경우 개수를 더하기) ───
+            // ── 미장착 아이템 주입 (Items = 인벤 전체) ───────────────────
             myInventory.Clear();
             if (pd.Info.Items != null)
             {
-                Dictionary<string, InventoryItem> tempDict = new Dictionary<string, InventoryItem>();
-                foreach (var consumInfo in pd.Info.Items)
-                {
-                    if (tempDict.ContainsKey(consumInfo.Name))
-                    {
-                        var item = tempDict[consumInfo.Name];
-                        item.amount += 1;
-                        tempDict[consumInfo.Name] = item;
-                    }
-                    else
-                    {
-                        tempDict.Add(consumInfo.Name, new InventoryItem
-                        {
-                            itemName = consumInfo.Name,
-                            Type = ItemType.Consumable,
-                            ConsumInfo = consumInfo,
-                            amount = 1
-                        });
-                    }
-                }
-                foreach (var kvp in tempDict)
-                {
-                    myInventory.Add(kvp.Value);
-                }
-                Debug.Log($"[캐릭터] 아이템 연동 완료 (종류: {tempDict.Count})");
-            }
-            // ── 장비 목록 주입 ───
-            if (pd.Info.Weapon != null)
-            {
-                myInventory.Add(new InventoryItem
-                {
-                    itemName = pd.Info.Weapon.Name,
-                    Type = ItemType.Weapon,
-                    EquipInfo = pd.Info.Weapon,
-                    amount = 1
-                });
-                Debug.Log($"[캐릭터] 무기 연동 완료: {pd.Info.Weapon.Name}");
+                foreach (var invItem in pd.Info.Items)
+                    myInventory.Add(invItem);
+                Debug.Log($"[캐릭터] 미장착 아이템 연동 완료: {pd.Info.Items.Count}개");
             }
 
-            if (pd.Info.Armor != null)
+            // ── 기본 장착 처리 ────────────────────────────────────────────
+            if (equipmentSlot != null)
             {
-                myInventory.Add(new InventoryItem
+                // 무기 자동 장착
+                if (pd.Info.Weapon != null && !string.IsNullOrEmpty(pd.Info.Weapon.Name))
                 {
-                    itemName = pd.Info.Armor.Name,
-                    Type = ItemType.Armor,
-                    EquipInfo = pd.Info.Armor,
-                    amount = 1
-                });
-                Debug.Log($"[캐릭터] 방어구 연동 완료: {pd.Info.Armor.Name}");
+                    var weaponItem = new InventoryItem
+                    {
+                        itemName  = pd.Info.Weapon.Name,
+                        Type      = ItemType.Weapon,
+                        EquipInfo = pd.Info.Weapon,
+                        amount    = 1
+                    };
+                    equipmentSlot.EquipWeapon(weaponItem);
+                    Debug.Log($"[캐릭터] 무기 자동 장착: {pd.Info.Weapon.Name}");
+                }
+
+                // 방어구 자동 장착
+                if (pd.Info.Armor != null && !string.IsNullOrEmpty(pd.Info.Armor.Name))
+                {
+                    var armorItem = new InventoryItem
+                    {
+                        itemName  = pd.Info.Armor.Name,
+                        Type      = ItemType.Armor,
+                        EquipInfo = pd.Info.Armor,
+                        amount    = 1
+                    };
+                    equipmentSlot.EquipArmor(armorItem);
+                    Debug.Log($"[캐릭터] 방어구 자동 장착: {pd.Info.Armor.Name}");
+                }
+
+                // 기본 소모품 자동 장착 (Expendables)
+                if (pd.Info.Expendables != null)
+                {
+                    foreach (var consumInfo in pd.Info.Expendables)
+                    {
+                        if (consumInfo == null) continue;
+                        var consumItem = new InventoryItem
+                        {
+                            itemName  = consumInfo.Name,
+                            Type      = ItemType.Consumable,
+                            ConsumInfo = consumInfo,
+                            amount    = 1
+                        };
+                        equipmentSlot.EquipConsumable(consumItem);
+                    }
+                    Debug.Log($"[캐릭터] 소모품 자동 장착: {pd.Info.Expendables.Count}개");
+                }
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
+
+            // ── 장비 자동 장착 완료 후 스탯 재계산 ─────────────────────────
+            // 초기 장착 상태를 기준으로 pd.Info의 Hp/Atk/Def 등을 즉시 갱신합니다.
+            ServerSyncToPlayerData();
 
             Debug.Log($"<color=green>[캐릭터] 초기화 완료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
         }
@@ -207,6 +215,10 @@ namespace Lsy
 
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
             unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
+
+            // 씬 전환 후 ItemSO가 새로 로드됐을 수 있으므로 ItemManager를 갱신합니다.
+            // 이렇게 해야 InventoryUI가 이름으로 아이콘/정보를 정확히 조회할 수 있습니다.
+            Lsy.ItemManager.Instance?.RefreshItemSOs();
 
             OnLocalUnitSpawned?.Invoke(this);
         }
@@ -410,17 +422,15 @@ namespace Lsy
                     }
                     if (success)
                     {
-                        // EquipmentSlot에 장착 시도 (최대 6개 슬롯 검사 포함)
-                        // 장착 성공 시, 인벤토리에서 1개 차감
                         itemInInv.amount -= 1;
 
                         if (itemInInv.amount <= 0)
                             myInventory.RemoveAt(i);
                         else
-                            myInventory[i] = itemInInv; // SyncList 갱신
+                            myInventory[i] = itemInInv;
 
                         Debug.Log($"<color=green>[장착 성공] {itemName} (인벤토리 남은 수량: {itemInInv.amount})</color>");
-
+                        ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
                     }
                     return;
                 }
@@ -444,17 +454,15 @@ namespace Lsy
                 }
             }
 
-            // 슬롯에서 실제 해제 (데이터가 삭제되기 전에 위에서 미리 복사해둠)
             if (equipmentSlot.UnequipConsumable(itemName, 1))
             {
-                // 해제 성공 시, 복사해둔 데이터(ConsumInfo 포함)를 인벤토리에 추가
                 if (itemToReturn.HasValue)
                 {
                     InventoryItem returnItem = itemToReturn.Value;
-                    returnItem.amount = 1; 
-
+                    returnItem.amount = 1;
                     AddItemWithInfo(returnItem);
                 }
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
         [Command]
@@ -466,6 +474,7 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
 
@@ -478,23 +487,40 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
+                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
             }
         }
 
         [Command]
         public void CmdSyncEquipmentToPlayerData()
         {
+            ServerSyncToPlayerData();
+        }
+
+        /// <summary>
+        /// 서버 전용. myInventory + equipmentSlot 상태를 PlayerData.Info에 씁니다.
+        /// 장착/해제 Cmd 내부에서 직접 호출합니다.
+        ///
+        /// ★ 스탯 재계산 흐름
+        ///   기본 스탯 (CharacterDatabase) + 현재 장착 무기 + 현재 장착 방어구 + 고유 특성
+        ///   → 최종 스탯을 Info에 기록합니다.
+        ///   이렇게 해야 Home씬에서 장비를 바꿀 때마다 배틀 진입 스탯이 정확해집니다.
+        /// </summary>
+        [Server]
+        private void ServerSyncToPlayerData()
+        {
             if (equipmentSlot == null)
             {
                 Debug.LogError($"[{characterName}] equipmentSlot null");
                 return;
             }
-            //CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
-            // heroPos로 내 PlayerData 찾기
+
+            // connectionToClient + FinalHeroCode 둘 다 일치하는 PlayerData 찾기
             PlayerData pd = null;
             foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
             {
-                if (player.FinalHeroPos == heroPos)
+                if (player.connectionToClient == connectionToClient &&
+                    player.FinalHeroCode      == heroCode)
                 {
                     pd = player;
                     break;
@@ -503,29 +529,94 @@ namespace Lsy
 
             if (pd == null)
             {
-                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. heroPos:{heroPos}");
+                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. " +
+                               $"conn={connectionToClient}, heroCode={heroCode}");
                 return;
             }
 
             var info = pd.Info;
 
-            // 소모품
-            info.Items = new List<ConsumableInfo>();
+            // ── 1. 기본 스탯 재설정 (CharacterDatabase 기준) ────────────────
+            // 장비 스탯이 누적되지 않도록 매 동기화마다 기본값으로 초기화합니다.
+            if (CharacterDatabase.Stats.TryGetValue(heroCode, out var c))
+            {
+                info.Hp    = c.hp;
+                info.Atk   = c.attack;
+                info.Def   = c.defense;
+                info.Acc   = c.accuracy;
+                info.Dodge = c.evasion;
+                info.Spd   = c.speed;
+                info.Crit  = c.critical;
+                info.San   = c.stress;
+                info.Res   = c.effectResistance;
+                // Ctm은 CharacterDatabase에 필드가 없으므로 기존 값 유지
+            }
+
+            // ── 2. 현재 장착 장비 스탯 합산 ─────────────────────────────────
+            EqpInfo curWeapon = equipmentSlot.equippedWeapon.EquipInfo;
+            EqpInfo curArmor  = equipmentSlot.equippedArmor.EquipInfo;
+            AddEqpStats(ref info, curWeapon);
+            AddEqpStats(ref info, curArmor);
+
+            // ── 3. 고유 특성 스탯 합산 (UniqueTraitLv 기준, 0이면 미적용) ──
+            if (CharacterRegistry.TryGet(heroCode, out var regEntry) && regEntry.UniqueTrait != null
+                && info.UniqueTraitLv >= 1)
+            {
+                TraitLevelData d = regEntry.UniqueTrait.GetLevel(
+                    Mathf.Clamp(info.UniqueTraitLv, 1, UniqueTraitSO.MaxLevel));
+                info.Hp    += d.hp;
+                info.San   += d.san;
+                info.Atk   += d.atk;
+                info.Def   += d.def;
+                info.Spd   += d.spd;
+                info.Crit  += d.crit;
+                info.Ctm   += d.ctm;
+                info.Dodge += d.dodge;
+                info.Acc   += d.acc;
+                info.Res   += d.res;
+            }
+
+            // ── 4. CharacterUnit의 maxHp/maxSan도 갱신 (Home씬 HP바 반영) ──
+            maxHp  = info.Hp;
+            maxSan = info.San;
+
+            // ── 5. 장착 소모품 → Expendables ────────────────────────────────
+            info.Expendables = new List<ConsumableInfo>();
             foreach (var item in equipmentSlot.equippedConsumables)
             {
                 if (item.ConsumInfo != null)
-                {
                     for (int i = 0; i < item.amount; i++)
-                        info.Items.Add(item.ConsumInfo);
-                }
+                        info.Expendables.Add(item.ConsumInfo);
             }
 
-            // 무기/방어구
-            info.Weapon = equipmentSlot.equippedWeapon.EquipInfo;
-            info.Armor = equipmentSlot.equippedArmor.EquipInfo;
+            // ── 6. 미장착 인벤 → Items ───────────────────────────────────────
+            info.Items = new List<InventoryItem>(myInventory);
+
+            // ── 7. 장착 장비 참조 ────────────────────────────────────────────
+            info.Weapon = curWeapon;
+            info.Armor  = curArmor;
 
             pd.Info = info;
-            Debug.Log($"[CharacterUnit] {characterName} 장착 정보 PlayerData 동기화 완료");
+
+            Debug.Log($"[CharacterUnit] {characterName} → PlayerData 동기화 완료 " +
+                      $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} " +
+                      $"(Weapon={info.Weapon?.Name ?? "없음"} Armor={info.Armor?.Name ?? "없음"})");
+        }
+
+        /// <summary>EqpInfo 스탯을 PlayerInfo에 더합니다. null이면 아무것도 하지 않습니다.</summary>
+        private static void AddEqpStats(ref Jun.PlayerInfo info, Jun.EqpInfo eqp)
+        {
+            if (eqp == null) return;
+            info.Hp    += eqp.Hp;
+            info.San   += eqp.San;
+            info.Atk   += eqp.Atk;
+            info.Def   += eqp.Def;
+            info.Spd   += eqp.Spd;
+            info.Crit  += eqp.Crit;
+            info.Ctm   += eqp.Ctm;
+            info.Dodge += eqp.Dodge;
+            info.Acc   += eqp.Acc;
+            info.Res   += eqp.Res;
         }
     }
 }

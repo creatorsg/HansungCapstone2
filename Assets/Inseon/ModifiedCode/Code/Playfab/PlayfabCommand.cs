@@ -169,18 +169,54 @@ public static class PlayfabCommand
         );
     }
 
-    public static void RemoveRoom(string roomId)
+    public static void RemoveRoom(string roomId, int retryCount = 2)
     {
+        if (string.IsNullOrEmpty(roomId))
+        {
+            Debug.LogWarning("[RemoveRoom] roomId가 비어있어 요청을 건너뜁니다.");
+            return;
+        }
+
         var request = new ExecuteCloudScriptRequest
         {
             FunctionName = "RemoveRoom",
-            FunctionParameter = new
-            {
-                roomId = roomId
-            }
+            FunctionParameter = new { roomId = roomId }
         };
 
-        PlayFabClientAPI.ExecuteCloudScript(request, null, null);
+        PlayFabClientAPI.ExecuteCloudScript(
+            request,
+            r =>
+            {
+                if (r.Error != null)
+                {
+                    Debug.LogError($"[RemoveRoom] CloudScript 오류: [{r.Error.Message}] {r.Error.Error}");
+                    if (retryCount > 0)
+                    {
+                        Debug.Log($"[RemoveRoom] 재시도 ({retryCount}회 남음): {roomId}");
+                        RemoveRoom(roomId, retryCount - 1);
+                    }
+                    else
+                    {
+                        Debug.LogError($"[RemoveRoom] 최종 실패 - 방이 PlayFab에 남아있을 수 있습니다: {roomId}");
+                    }
+                    return;
+                }
+                Debug.Log($"[RemoveRoom] 삭제 완료: {roomId}");
+            },
+            e =>
+            {
+                Debug.LogError($"[RemoveRoom] 네트워크 오류: {e.GenerateErrorReport()}");
+                if (retryCount > 0)
+                {
+                    Debug.Log($"[RemoveRoom] 재시도 ({retryCount}회 남음): {roomId}");
+                    RemoveRoom(roomId, retryCount - 1);
+                }
+                else
+                {
+                    Debug.LogError($"[RemoveRoom] 최종 실패 - 방이 PlayFab에 남아있을 수 있습니다: {roomId}");
+                }
+            }
+        );
     }
 
     // 연결 실패 등으로 playerCount를 롤백해야 할 때 호출

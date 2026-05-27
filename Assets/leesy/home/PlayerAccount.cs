@@ -247,6 +247,8 @@ namespace Lsy
                     targetSlot.equippedWeapon = saved.equippedWeapon;
                     targetSlot.equippedArmorId = saved.equippedArmorId;
                     targetSlot.equippedArmor = saved.equippedArmor;
+                    // SetupFromPlayerData에서 Expendables가 이미 추가됐을 수 있으므로 반드시 먼저 비웁니다.
+                    targetSlot.equippedConsumables.Clear();
                     foreach (var item in saved.equippedConsumables) targetSlot.equippedConsumables.Add(item);
                 }
             }
@@ -449,7 +451,29 @@ namespace Lsy
 
 
         //전투씬으로 넘어갈때 인벤토리 정보 업데이트
+
+        /// <summary>
+        /// 아이템 구매/획득 직후 즉시 호출: myInventory → pd.Info.Items 만 동기화합니다.
+        /// 장착 슬롯(Weapon/Armor/Expendables)은 건드리지 않습니다.
+        /// </summary>
         [Server]
+        public void SyncInventoryToPlayerData()
+        {
+            if (currentActiveIndex < 0 || currentSelectedCharacter == null) return;
+
+            foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+            {
+                if (pd.connectionToClient != connectionToClient) continue;
+                if (_myPlayerDatas.IndexOf(pd) != currentActiveIndex) continue;
+
+                if (pd.Info != null)
+                    pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
+
+                Debug.Log($"[SyncInv] {pd.FinalHeroCode} Items={pd.Info?.Items?.Count}");
+                break;
+            }
+        }
+
         public void SyncAllHideoutDataToBattleData()
         {
             // 1. 현재 씬에 있는 모든 PlayerDataPrefab(Clone) 객체들을 찾습니다.
@@ -472,17 +496,19 @@ namespace Lsy
                     var slot = currentSelectedCharacter.equipmentSlot;
                     if (slot != null && pd.Info != null)
                     {
+                        // 장착된 무기/방어구
                         pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
-                        pd.Info.Armor = !string.IsNullOrEmpty(slot.equippedArmorId) ? slot.equippedArmor.EquipInfo : null;
+                        pd.Info.Armor  = !string.IsNullOrEmpty(slot.equippedArmorId)  ? slot.equippedArmor.EquipInfo  : null;
 
-                        pd.Info.Items.Clear();
+                        // 장착된 소모품 → Expendables
+                        pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in slot.equippedConsumables)
-                        {
                             if (item.ConsumInfo != null)
-                            {
-                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
-                            }
-                        }
+                                for (int i = 0; i < item.amount; i++) pd.Info.Expendables.Add(item.ConsumInfo);
+
+                        // 미장착 인벤 → Items
+                        pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
+
                         Debug.Log($"[Sync] 현재 캐릭터({pd.FinalHeroCode}) 실시간 정보 업데이트 완료");
                     }
                 }
@@ -492,16 +518,15 @@ namespace Lsy
                     if (pd.Info != null)
                     {
                         pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
-                        pd.Info.Armor = saved.equippedArmor.EquipInfo;
+                        pd.Info.Armor  = saved.equippedArmor.EquipInfo;
 
-                        pd.Info.Items.Clear();
+                        pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in saved.equippedConsumables)
-                        {
                             if (item.ConsumInfo != null)
-                            {
-                                for (int i = 0; i < item.amount; i++) pd.Info.Items.Add(item.ConsumInfo);
-                            }
-                        }
+                                for (int i = 0; i < item.amount; i++) pd.Info.Expendables.Add(item.ConsumInfo);
+
+                        pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
+
                         Debug.Log($"[Sync] 대기 중인 캐릭터({pd.FinalHeroCode}) 저장된 정보 업데이트 완료");
                     }
                 }
