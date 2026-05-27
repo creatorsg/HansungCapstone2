@@ -6,8 +6,11 @@ namespace Lsy
     [CreateAssetMenu(fileName = "Item", menuName = "Item")]
     public class ItemData : ScriptableObject
     {
-        public string itemName; // ÀÌ ÁÙÀÌ ¾ø°Å³ª publicÀÌ ¾Æ´Ï¸é ¿¡·¯°¡ ³³´Ï´Ù.
-        public Sprite itemIcon; // ÀÌ ÁÙÀÌ ¾ø°Å³ª publicÀÌ ¾Æ´Ï¸é ¿¡·¯°¡ ³³´Ï´Ù.
+        public string itemName; // ì´ ì¤„ì´ ì—†ê±°ë‚˜ publicì´ ì•„ë‹ˆë©´ ì—ëŸ¬ê°€ ë‚©ë‹ˆë‹¤.
+        public Sprite itemIcon; // ì´ ì¤„ì´ ì—†ê±°ë‚˜ publicì´ ì•„ë‹ˆë©´ ì—ëŸ¬ê°€ ë‚©ë‹ˆë‹¤.
         public List<int> priceLevel = new List<int> { 300, 200, 100 };
+
+        [Header("ë°°í‹€ ì•„ì´í…œ ë°ì´í„° (NPC ìƒì  ì†Œëª¨í’ˆì—ë§Œ ì—°ê²°)")]
+        public Jun.ConsumableInfo battleData;
     }
 }

@@ -35,6 +35,9 @@ public static class CharacterRegistry
         /// <summary>이 캐릭터가 사용할 장비 목록</summary>
         public EqpInfo Weapon;
         public EqpInfo Armor;
+
+        /// <summary>이 캐릭터의 고유 특성 (강화 가능)</summary>
+        public UniqueTraitSO UniqueTrait;
     }
 
     private static readonly Dictionary<string, Entry> _map = new Dictionary<string, Entry>();

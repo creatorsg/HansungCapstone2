@@ -1,3 +1,4 @@
+using Lsy;
 using Mirror;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -57,6 +58,8 @@ namespace Jun {
             {
                 PlayfabCommand.RemoveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 앱 종료 - 방 제거 요청: {RoomId}");
+                // HTTP 요청이 전송될 최소 시간 확보 (비동기 요청이라 보장은 안 되지만 확률을 높임)
+                System.Threading.Thread.Sleep(300);
                 RoomId = "";
             }
             base.OnApplicationQuit();
@@ -78,7 +81,9 @@ namespace Jun {
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
-            if (!string.IsNullOrEmpty(RoomId))
+            // host 연결(conn == localConnection)이 끊기는 경우는 OnStopHost()에서 RemoveRoom으로 처리되므로
+            // 여기서는 클라이언트 연결만 LeaveRoom 처리합니다.
+            if (!string.IsNullOrEmpty(RoomId) && conn != NetworkServer.localConnection)
             {
                 PlayfabCommand.LeaveRoom(RoomId);
                 Debug.Log($"[GameRoomManager] 클라이언트 연결 종료 → PlayFab playerCount 롤백: {RoomId}");
@@ -369,14 +374,15 @@ namespace Jun {
                 {
                     Id = pingIndex,
                     Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                    Items = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
-                    Weapon = entry.Weapon,
-                    Armor = entry.Armor,
+                    Items       = new List<InventoryItem>(),
+                    Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
+                    Weapon      = entry.Weapon,
+                    Armor       = entry.Armor,
                 };
             }
 
             // 스킬/아이템은 CharacterCard에서 Inspector로 직접 설정된 값을 사용합니다.
-            return new PlayerInfo
+            var info = new PlayerInfo
             {
                 Id    = pingIndex,
                 Name  = c.characterName,
@@ -389,11 +395,62 @@ namespace Jun {
                 Crit  = c.critical,
                 San   = c.stress,
                 Res   = c.effectResistance,
-                Skills = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
-                Items  = new List<ConsumableInfo>(entry.Items  ?? new List<ConsumableInfo>()),
-                Weapon = entry.Weapon,
-                Armor = entry.Armor,
+                UniqueTraitLv = 0,  // 고유 특성 미강화 상태로 시작 (0 = 스탯 기여 없음)
+                Skills        = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
+                Items       = new List<InventoryItem>(),
+                Expendables = new List<ConsumableInfo>(entry.Items ?? new List<ConsumableInfo>()),
+                Weapon      = entry.Weapon,
+                Armor       = entry.Armor,
             };
+
+            // ── 무기 스탯 합산 ──────────────────────────────────────────
+            ApplyEqpStats(ref info, entry.Weapon);
+
+            // ── 방어구 스탯 합산 ────────────────────────────────────────
+            ApplyEqpStats(ref info, entry.Armor);
+
+            // ── 고유 특성 스탯 합산 (UniqueTraitLv 기준, 0이면 미적용) ──
+            ApplyTraitStats(ref info, entry.UniqueTrait, info.UniqueTraitLv);
+
+            Debug.Log($"[BuildPlayerInfo] {c.characterName} — " +
+                      $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} SPD:{info.Spd} " +
+                      $"(무기:{entry.Weapon?.Name ?? "없음"} 방어구:{entry.Armor?.Name ?? "없음"} " +
+                      $"특성Lv:{info.Trk1})");
+
+            return info;
+        }
+
+        /// <summary>EqpInfo 스탯을 PlayerInfo에 누산합니다.</summary>
+        private static void ApplyEqpStats(ref PlayerInfo info, EqpInfo eqp)
+        {
+            if (eqp == null) return;
+            info.Hp    += eqp.Hp;
+            info.San   += eqp.San;
+            info.Atk   += eqp.Atk;
+            info.Def   += eqp.Def;
+            info.Spd   += eqp.Spd;
+            info.Crit  += eqp.Crit;
+            info.Ctm   += eqp.Ctm;
+            info.Dodge += eqp.Dodge;
+            info.Acc   += eqp.Acc;
+            info.Res   += eqp.Res;
+        }
+
+        /// <summary>UniqueTraitSO의 지정 단계 스탯을 PlayerInfo에 누산합니다.</summary>
+        private static void ApplyTraitStats(ref PlayerInfo info, UniqueTraitSO trait, int level)
+        {
+            if (trait == null || level < 1) return;
+            TraitLevelData d = trait.GetLevel(Mathf.Clamp(level, 1, UniqueTraitSO.MaxLevel));
+            info.Hp    += d.hp;
+            info.San   += d.san;
+            info.Atk   += d.atk;
+            info.Def   += d.def;
+            info.Spd   += d.spd;
+            info.Crit  += d.crit;
+            info.Ctm   += d.ctm;
+            info.Dodge += d.dodge;
+            info.Acc   += d.acc;
+            info.Res   += d.res;
         }
 
         // ── Mirror 씬 전환 보호 ──────────────────────────────────────

@@ -1,12 +1,13 @@
-﻿using Jun;
+using Jun;
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Lsy
 {
-    public class InventorySlotUI : MonoBehaviour
+    public class InventorySlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public Image itemIcon;
         public TextMeshProUGUI itemNameText;
@@ -15,7 +16,7 @@ namespace Lsy
         public Outline itemOutline;
         public Button interactButton;
 
-        public void Setup(ItemData data, int amount, Action onClickAction)
+        public void Setup(ItemData data, int amount, Action onClickAction, InventoryItem? sourceItem = null)
         {
             if (data != null)
             {
@@ -47,6 +48,7 @@ namespace Lsy
             }
 
             ShowEquipOutline(false);
+            if (sourceItem.HasValue) SetCurrentItem(sourceItem.Value);
         }
 
         // 새로운 아이템 슬롯 그리기
@@ -74,6 +76,7 @@ namespace Lsy
                     interactButton.onClick.AddListener(() => onClickAction.Invoke());
             }
             ShowEquipOutline(false);
+            if (data != null) SetCurrentItem(new InventoryItem { itemName = data.Name, Type = ItemType.Consumable, ConsumInfo = data, amount = amount });
         }
 
         public void Setup(EqpInfo data, int amount, Sprite icon, Action onClickAction)
@@ -100,12 +103,34 @@ namespace Lsy
                     interactButton.onClick.AddListener(() => onClickAction.Invoke());
             }
             ShowEquipOutline(false);
+            if (data != null) SetCurrentItem(new InventoryItem { itemName = data.Name, Type = ItemType.Weapon, EquipInfo = data, amount = amount });
         }
 
         public void ShowEquipOutline(bool isEquipped)
         {
             if (itemOutline != null)
                 itemOutline.enabled = isEquipped;
+        }
+
+        // ─── 툴팁 호버 ──────────────────────────────────────────────
+        private InventoryItem _currentItem;
+
+        /// <summary>InventoryItem 전체를 저장해 두어 hover 시 툴팁에 전달합니다.</summary>
+        public void SetCurrentItem(InventoryItem item)
+        {
+            _currentItem = item;
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (ItemTooltipUI.Instance != null)
+                ItemTooltipUI.Instance.Show(_currentItem);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (ItemTooltipUI.Instance != null)
+                ItemTooltipUI.Instance.Hide();
         }
     }
 }

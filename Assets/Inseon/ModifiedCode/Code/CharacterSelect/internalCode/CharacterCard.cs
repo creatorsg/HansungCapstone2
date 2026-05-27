@@ -39,8 +39,16 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Header("스킬 & 아이템")]
     [SerializeField] private List<SkillInfo> skills = new List<SkillInfo>();
     [SerializeField] private List<ConsumableInfo>  items  = new List<ConsumableInfo>();
-    [SerializeField] private EqpInfo weapon;
-    [SerializeField] private EqpInfo armor;
+
+    [Header("장비 (ItemSO 기반 — 아이콘 자동 연결)")]
+    [Tooltip("무기 ItemSO를 연결하면 ItemManager가 씬을 넘어도 아이콘을 찾을 수 있습니다.")]
+    [SerializeField] private ItemSO weaponSO;
+    [Tooltip("방어구 ItemSO를 연결하면 ItemManager가 씬을 넘어도 아이콘을 찾을 수 있습니다.")]
+    [SerializeField] private ItemSO armorSO;
+
+    [Header("고유 특성")]
+    [Tooltip("이 캐릭터 고유의 강화 가능한 특성. 기본적으로 1단계 스탯이 항상 적용됩니다.")]
+    [SerializeField] private UniqueTraitSO uniqueTrait;
 
     [Header("UI 참조")]
     [SerializeField] private Image           characterImage;
@@ -63,9 +71,20 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public GameObject    PlayerDataPrefab => playerDataPrefab;
     public GameObject    BattleUnitPrefab => battleUnitPrefab;
     public List<SkillInfo> Skills         => skills;
-    public List<ConsumableInfo>  Items          => items;
-    public EqpInfo Weapon => weapon;
-    public EqpInfo Armor => armor;
+    public List<ConsumableInfo>  Items    => items;
+
+    /// <summary>고유 특성 SO</summary>
+    public UniqueTraitSO UniqueTrait => uniqueTrait;
+
+    /// <summary>무기 ItemSO (ItemManager 아이콘 조회용)</summary>
+    public ItemSO WeaponSO => weaponSO;
+    /// <summary>방어구 ItemSO (ItemManager 아이콘 조회용)</summary>
+    public ItemSO ArmorSO  => armorSO;
+
+    /// <summary>무기 EqpInfo — ItemSO가 있으면 ToEqpInfo(), 없으면 null 반환합니다.</summary>
+    public EqpInfo Weapon => weaponSO != null ? weaponSO.ToEqpInfo() : null;
+    /// <summary>방어구 EqpInfo — ItemSO가 있으면 ToEqpInfo(), 없으면 null 반환합니다.</summary>
+    public EqpInfo Armor  => armorSO  != null ? armorSO.ToEqpInfo()  : null;
 
     // ─────────────────────────────────────────────
 
@@ -96,7 +115,6 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (btn != null)
         {
             btn.interactable = owned;
-            // Inspector 수동 연결 없이도 클릭이 동작하도록 코드에서 직접 등록
             btn.onClick.RemoveAllListeners();
             if (owned) btn.onClick.AddListener(OnClick);
         }
