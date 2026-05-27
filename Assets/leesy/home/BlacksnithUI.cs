@@ -20,10 +20,20 @@ namespace Lsy
                     Debug.LogWarning("[BlacksmithUI] weaponRows에 NULL 항목이 있습니다.");
             }
         }
-
         protected override IEnumerable<BaseUpgradeRow> GetRows()
         {
-            return weaponRows;
+            // [수정] 하이어라키에서 복사한 무기 row가 weaponRows 리스트에 빠져도 갱신/클릭 리스너가 연결되도록 자식 row도 함께 사용합니다.
+            foreach (var row in weaponRows)
+            {
+                if (row != null)
+                    yield return row;
+            }
+
+            foreach (var row in GetComponentsInChildren<BlacksmithWeaponRow>(true))
+            {
+                if (row != null && !weaponRows.Contains(row))
+                    yield return row;
+            }
         }
     }
 }

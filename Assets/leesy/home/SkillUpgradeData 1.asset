@@ -1,0 +1,32 @@
+﻿%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
+  m_Name: SkillUpgradeData 1
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
+  groupName: "\uD380\uCE58"
+  nodes:
+  - skillId: 0
+    skillName: "\uD380\uCE58"
+    price: 100
+    requiredNpcLevel: 1
+  - skillId: 1
+    skillName: "\uD380\uCE58\uCE58"
+    price: 200
+    requiredNpcLevel: 1
+  - skillId: 1
+    skillName: "\uD380\uCE58\uCE58\uCE58"
+    price: 300
+    requiredNpcLevel: 2
+  - skillId: 2
+    skillName: "\uD380\uCE58\uCE58\uCE58"
+    price: 400
+    requiredNpcLevel: 3

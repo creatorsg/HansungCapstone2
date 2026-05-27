@@ -1,52 +1,91 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Lsy
 {
     public abstract class BaseUpgradeRow : MonoBehaviour
     {
-        [Header("³ëµå ¹öÆ°µé (¼ø¼­´ë·Î ¿¬°á)")]
+        [Header("ë…¸ë“œ ë²„íŠ¼ë“¤ (ìˆœì„œëŒ€ë¡œ ì—°ê²°)")]
         public List<UpgradeNode> upgradeNodes = new List<UpgradeNode>();
 
         public void RefreshNodes(int npcLevel, CharacterUnit unit)
         {
-            Debug.Log($"<color=yellow>[UpgradeRow] {gameObject.name} RefreshNodes È£Ãâ - ³ëµå ¼ö:{upgradeNodes.Count}, NPC Lv:{npcLevel}</color>");
+            Debug.Log($"<color=yellow>[UpgradeRow] {gameObject.name} RefreshNodes í˜¸ì¶œ - ë…¸ë“œ ìˆ˜:{upgradeNodes.Count}, NPC Lv:{npcLevel}</color>");
 
-            for (int i = 0; i < upgradeNodes.Count; i++)
+            List<UpgradeNode> orderedNodes = GetOrderedUpgradeNodes();
+
+            for (int i = 0; i < orderedNodes.Count; i++)
             {
-                if (upgradeNodes[i] == null)
-                {
-                    Debug.LogWarning($"[UpgradeRow] upgradeNodes[{i}]°¡ NULL - ÀÎ½ºÆåÅÍ¿¡¼­ ¿¬°áÀ» È®ÀÎÇÏ¼¼¿ä.");
-                    continue;
-                }
+                UpgradeNode node = orderedNodes[i];
 
                 bool canUpgrade = CanPurchaseNode(i, npcLevel, unit);
                 int price = GetNodePrice(i);
 
-                Debug.Log($"<color=yellow>[UpgradeRow] ³ëµå[{i}] canUpgrade:{canUpgrade}, price:{price}</color>");
+                Debug.Log($"<color=yellow>[UpgradeRow] ë…¸ë“œ[{i}] {node.gameObject.name} canUpgrade:{canUpgrade}, price:{price}</color>");
 
-                upgradeNodes[i].SetNodeState(canUpgrade, price);
+                node.SetNodeState(canUpgrade, price);
 
                 int capturedIndex = i;
-                upgradeNodes[i].nodeButton.onClick.RemoveAllListeners();
-                upgradeNodes[i].nodeButton.onClick.AddListener(() => OnNodeClicked(capturedIndex));
+                node.nodeButton.onClick.RemoveAllListeners();
+                node.nodeButton.onClick.AddListener(() => OnNodeClicked(capturedIndex));
             }
+
+            OnRefreshCompleted(npcLevel, unit);
+        }
+
+        private List<UpgradeNode> GetOrderedUpgradeNodes()
+        {
+            for (int i = 0; i < upgradeNodes.Count; i++)
+            {
+                if (upgradeNodes[i] == null)
+                    Debug.LogWarning($"[UpgradeRow] upgradeNodes[{i}]ê°€ NULL - ì¸ìŠ¤í™í„°ì—ì„œ ì—°ê²°ì„ í™•ì¸í•˜ì„¸ìš”.");
+            }
+
+            // [ìˆ˜ì •] ì¤‘ì²©ëœ UIì—ì„œëŠ” anchoredPositionì˜ ê¸°ì¤€ ë¶€ëª¨ê°€ ë‹¬ë¼ì§ˆ ìˆ˜ ìˆìœ¼ë¯€ë¡œ, ì›”ë“œ ì¤‘ì‹¬ì ì„ í˜„ì¬ row ê¸°ì¤€ ì¢Œí‘œë¡œ ë³€í™˜í•´ í™”ë©´ ê¸°ì¤€ ê°€ë¡œ ìš°ì„  ìˆœì„œë¥¼ ê³ ì •í•©ë‹ˆë‹¤.
+            List<UpgradeNode> orderedNodes = upgradeNodes
+                .Where(node => node != null)
+                .OrderByDescending(node => GetNodeSortPosition(node).y)
+                .ThenBy(node => GetNodeSortPosition(node).x)
+                .ToList();
+
+            for (int i = 0; i < orderedNodes.Count; i++)
+            {
+                Vector2 sortPosition = GetNodeSortPosition(orderedNodes[i]);
+                Debug.Log($"<color=yellow>[UpgradeRow] ì •ë ¬[{i}] {orderedNodes[i].gameObject.name} pos:{sortPosition}</color>");
+            }
+
+            return orderedNodes;
+        }
+
+        private Vector2 GetNodeSortPosition(UpgradeNode node)
+        {
+            RectTransform rect = node.GetComponent<RectTransform>();
+            if (rect == null)
+                return transform.InverseTransformPoint(node.transform.position);
+
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            Vector3 worldCenter = (corners[0] + corners[2]) * 0.5f;
+            return transform.InverseTransformPoint(worldCenter);
         }
 
         protected abstract bool CanPurchaseNode(int nodeIndex, int npcLevel, CharacterUnit unit);
         protected abstract void OnNodeClicked(int nodeIndex);
         protected virtual int GetNodePrice(int nodeIndex) => 0;
+        // [ìˆ˜ì •] ê° ê°•í™” rowê°€ ë…¸ë“œ ê°±ì‹  ì´í›„ ì¶”ê°€ UIë¥¼ ê°±ì‹ í•  ìˆ˜ ìˆë„ë¡ í™•ì¥ ì§€ì ì„ ì œê³µí•©ë‹ˆë‹¤.
+        protected virtual void OnRefreshCompleted(int npcLevel, CharacterUnit unit) { }
 
         protected CharacterShop GetLocalShop()
         {
             if (PlayerAccount.LocalInstance == null)
             {
-                Debug.LogWarning("[UpgradeRow] PlayerAccount.LocalInstance°¡ NULL");
+                Debug.LogWarning("[UpgradeRow] PlayerAccount.LocalInstanceê°€ NULL");
                 return null;
             }
             if (PlayerAccount.LocalInstance.currentSelectedCharacter == null)
             {
-                Debug.LogWarning("[UpgradeRow] currentSelectedCharacter°¡ NULL");
+                Debug.LogWarning("[UpgradeRow] currentSelectedCharacterê°€ NULL");
                 return null;
             }
 
@@ -54,7 +93,7 @@ namespace Lsy
                 .GetComponent<CharacterShop>();
 
             if (shop == null)
-                Debug.LogError("[UpgradeRow] CharacterShop ÄÄÆ÷³ÍÆ®°¡ ÇÁ¸®ÆÕ¿¡ ¾ø½À´Ï´Ù!");
+                Debug.LogError("[UpgradeRow] CharacterShop ì»´í¬ë„ŒíŠ¸ê°€ í”„ë¦¬íŒ¹ì— ì—†ìŠµë‹ˆë‹¤!");
 
             return shop;
         }
@@ -64,12 +103,12 @@ namespace Lsy
             BaseUpgradeUI parentUI = GetComponentInParent<BaseUpgradeUI>();
             if (parentUI == null)
             {
-                Debug.LogWarning($"[UpgradeRow] {gameObject.name}ÀÇ ºÎ¸ğ¿¡¼­ BaseUpgradeUI¸¦ Ã£Áö ¸øÇß½À´Ï´Ù. ÇÏÀÌ¾î¶óÅ° ±¸Á¶¸¦ È®ÀÎÇÏ¼¼¿ä.");
+                Debug.LogWarning($"[UpgradeRow] {gameObject.name}ì˜ ë¶€ëª¨ì—ì„œ BaseUpgradeUIë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤. í•˜ì´ì–´ë¼í‚¤ êµ¬ì¡°ë¥¼ í™•ì¸í•˜ì„¸ìš”.");
                 return null;
             }
             if (parentUI.NpcState == null)
             {
-                Debug.LogWarning("[UpgradeRow] BaseUpgradeUI´Â Ã£¾ÒÁö¸¸ NpcState°¡ NULL");
+                Debug.LogWarning("[UpgradeRow] BaseUpgradeUIëŠ” ì°¾ì•˜ì§€ë§Œ NpcStateê°€ NULL");
                 return null;
             }
             return parentUI.NpcState;

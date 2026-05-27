@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Lsy
 {
     /// <summary>
-    /// NPC 상호작용 커맨드 처리.
-    /// 골드는 PlayerAccount 귀속이므로 sender의 PlayerAccount를 찾아 처리합니다.
-    /// requiresAuthority = false: 어떤 클라이언트든 호출 가능 (sender로 호출자 식별).
+    /// NPC ?�호?�용 커맨??처리.
+    /// 골드??PlayerAccount 귀?�이므�?sender??PlayerAccount�?찾아 처리?�니??
+    /// requiresAuthority = false: ?�떤 ?�라?�언?�든 ?�출 가??(sender�??�출???�별).
     /// </summary>
     public class CharacterShop : NetworkBehaviour
     {
-        // ─── sender → PlayerAccount 헬퍼 ──────────────────────────────
+        // ?�?�?� sender ??PlayerAccount ?�퍼 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
         [Server]
         private PlayerAccount FindAccount(NetworkConnectionToClient sender)
@@ -22,17 +22,17 @@ namespace Lsy
             return null;
         }
 
-        // ─── 커맨드 ────────────────────────────────────────────────────
+        // ?�?�?� 커맨???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
-            // [수정] 소모품 구매는 공통 서버 처리로 위임해 NPCPopupUI의 병합 전/후 호출명을 모두 지원합니다.
+            // [?�정] ?�모??구매??공통 ?�버 처리�??�임??NPCPopupUI??병합 ?????�출명을 모두 지?�합?�다.
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [수정] NPCPopupUI가 호출하던 병합 전 커맨드명을 유지합니다.
+        // [?�정] NPCPopupUI가 ?�출?�던 병합 ??커맨?�명???��??�니??
         [Command(requiresAuthority = false)]
         public void CmdBuyConsumable(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -40,7 +40,7 @@ namespace Lsy
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [수정] NPCPopupUI의 장비 구매 호출을 서버 인벤토리 추가로 연결합니다.
+        // [?�정] NPCPopupUI???�비 구매 ?�출???�버 ?�벤?�리 추�?�??�결?�니??
         [Command(requiresAuthority = false)]
         public void CmdBuyEquipment(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -59,18 +59,18 @@ namespace Lsy
             InventoryItem invItem = createItem != null ? createItem(itemName) : default;
             if (string.IsNullOrEmpty(invItem.itemName))
             {
-                SendNotification(sender, $"[{itemName}] 판매 데이터가 ItemManager에 등록되어 있지 않습니다.");
+                SendNotification(sender, $"[{itemName}] ?�매 ?�이?��? ItemManager???�록?�어 ?��? ?�습?�다.");
                 return;
             }
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "골드가 부족합?�다.");
                 return;
             }
             if (unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}은(는) 이미 5개를 소지하고 있습니다.");
+                SendNotification(sender, $"{itemName}?�(?? ?��? 5개�? ?��??�고 ?�습?�다.");
                 return;
             }
 
@@ -79,13 +79,13 @@ namespace Lsy
             unit.AddItemWithInfo(invItem);
             account.SyncInventoryToPlayerData();
 
-            SendNotification(sender, $"[시스템 알림] {itemName} 구매 완료.");
+            SendNotification(sender, $"[?�스???�림] {itemName} 구매 ?�료.");
         }
 
         [Server]
         private InventoryItem CreateConsumableInventoryItem(string itemName)
         {
-            // [수정] 바텐더 NPC 팝업 판매 데이터는 ItemManager.AllItems(Consum)를 우선 사용합니다.
+            // [?�정] 바텐??NPC ?�업 ?�매 ?�이?�는 ItemManager.AllItems(Consum)�??�선 ?�용?�니??
             Consum consumData = ItemManager.Instance != null ? ItemManager.Instance.GetConsumData(itemName) : null;
             if (consumData != null && consumData.ConsumItem != null)
             {
@@ -98,14 +98,14 @@ namespace Lsy
                 };
             }
 
-            // [수정] ItemData/ItemSO fallback 제거. NPC 판매 데이터가 없으면 구매 실패 처리합니다.
+            // [?�정] ItemData/ItemSO fallback ?�거. NPC ?�매 ?�이?��? ?�으�?구매 ?�패 처리?�니??
             return default;
         }
 
         [Server]
         private InventoryItem CreateEquipmentInventoryItem(string itemName)
         {
-            // [수정] 대장장이 NPC 팝업 판매 데이터는 ItemManager.AllEqps(Equipment)를 우선 사용합니다.
+            // [?�정] ?�?�장??NPC ?�업 ?�매 ?�이?�는 ItemManager.AllEqps(Equipment)�??�선 ?�용?�니??
             Equipment equipmentData = ItemManager.Instance != null ? ItemManager.Instance.GetEquipmentData(itemName) : null;
             if (equipmentData != null && equipmentData.EqpItem != null)
             {
@@ -118,7 +118,7 @@ namespace Lsy
                 };
             }
 
-            // [수정] ItemSO/Resources fallback 제거. NPC 판매 데이터가 없으면 구매 실패 처리합니다.
+            // [?�정] ItemSO/Resources fallback ?�거. NPC ?�매 ?�이?��? ?�으�?구매 ?�패 처리?�니??
             return default;
         }
 
@@ -132,7 +132,7 @@ namespace Lsy
 
             if (account.currentGold < amount)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "골드가 부족합?�다.");
                 return;
             }
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
@@ -158,17 +158,17 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "골드가 부족합?�다.");
                 return;
             }
             if (unit.ApplyBartenderHeal())
             {
                 account.currentGold -= price;
-                SendNotification(sender, $"{unit.characterName}의 체력/정신력이 회복되었습니다.");
+                SendNotification(sender, $"{unit.characterName}??체력/?�신?�이 ?�복?�었?�니??");
             }
             else
             {
-                SendNotification(sender, "이미 체력과 정신력이 최대입니다.");
+                SendNotification(sender, "?��? 체력�??�신?�이 최�??�니??");
             }
         }
 
@@ -184,7 +184,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "골드가 부족합?�다.");
                 return;
             }
 
@@ -192,19 +192,19 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 강화 성공! weaponId:{weaponId}, node:{nodeIndex}</color>");
-                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}단계 강화 완료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] 강화 ?�공! weaponId:{weaponId}, node:{nodeIndex}</color>");
+                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}?�계 강화 ?�료!");
             }
             else
             {
-                if (unit.selectedWeaponId != "" && unit.selectedWeaponId != weaponId)
-                    SendNotification(sender, "이미 다른 무기를 강화 중입니다.");
-                else if (npcLevel < nodeIndex + 1)
-                    SendNotification(sender, "NPC 레벨이 부족합니다.");
-                else if (unit.purchasedNodeCount > nodeIndex)
-                    SendNotification(sender, "이미 구매한 노드입니다.");
+                int currentWeaponLevel = unit.GetBlacksmithWeaponLevel(weaponId);
+                // [����] ���⺰ ��ȭ �ܰ� �������� ���� ������ �ȳ��մϴ�.
+                if (npcLevel < nodeIndex + 1)
+                    SendNotification(sender, "NPC ������ �����մϴ�.");
+                else if (currentWeaponLevel > nodeIndex)
+                    SendNotification(sender, "�̹� ������ ����Դϴ�.");
                 else
-                    SendNotification(sender, "이전 단계를 먼저 구매해야 합니다.");
+                    SendNotification(sender, "���� �ܰ踦 ���� �����ؾ� �մϴ�.");
             }
         }
 
@@ -220,7 +220,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합니다.");
+                SendNotification(sender, "골드가 부족합?�다.");
                 return;
             }
 
@@ -228,15 +228,15 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 스킬 습득 성공! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] 스킬 습득 완료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] ?�킬 ?�득 ?�공! skillId:{skillId}</color>");
+                SendNotification(sender, $"[{skillId}] ?�킬 ?�득 ?�료!");
             }
             else
             {
                 if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC 레벨이 부족합니다.");
+                    SendNotification(sender, "NPC ?�벨??부족합?�다.");
                 else
-                    SendNotification(sender, "이미 보유한 스킬입니다.");
+                    SendNotification(sender, "?��? 보유???�킬?�니??");
             }
         }
 
@@ -252,20 +252,20 @@ namespace Lsy
 
             if (string.IsNullOrWhiteSpace(itemName))
             {
-                SendNotification(sender, "장착할 아이템 이름이 비어 있습니다.");
+                SendNotification(sender, "?�착???�이???�름??비어 ?�습?�다.");
                 return;
             }
             if (unit.GetItemAmount(itemName) <= 0)
             {
-                SendNotification(sender, $"[{itemName}] 아이템이 인벤토리에 없습니다.");
+                SendNotification(sender, $"[{itemName}] ?�이?�이 ?�벤?�리???�습?�다.");
                 return;
             }
 
             unit.selectedWeaponId = itemName;
-            SendNotification(sender, $"[{itemName}] 장착 완료.");
+            SendNotification(sender, $"[{itemName}] ?�착 ?�료.");
         }
 
-        // ─── 알림 ──────────────────────────────────────────────────────
+        // ?�?�?� ?�림 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
 
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)
@@ -273,13 +273,13 @@ namespace Lsy
             if (target != null)
                 RpcNotify(target, message);
             else
-                Debug.LogWarning("[CharacterShop] sender가 NULL이라 알림을 보낼 수 없습니다.");
+                Debug.LogWarning("[CharacterShop] sender가 NULL?�라 ?�림??보낼 ???�습?�다.");
         }
 
         [TargetRpc]
         private void RpcNotify(NetworkConnectionToClient target, string message)
         {
-            Debug.Log($"<color=white>[CharacterShop][Client] 알림 수신: {message}</color>");
+            Debug.Log($"<color=white>[CharacterShop][Client] ?�림 ?�신: {message}</color>");
         }
     }
 }

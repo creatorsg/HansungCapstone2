@@ -22,7 +22,7 @@ namespace Lsy
         public EqpInfo EquipInfo;
         public int amount;
 
-        // [수정] Jun 전투 UI가 병합 전 ItemInfo처럼 Name/icon/null 체크를 사용하므로 호환 프로퍼티와 연산자를 제공합니다.
+        // [?�정] Jun ?�투 UI가 병합 ??ItemInfo처럼 Name/icon/null 체크�??�용?��?�??�환 ?�로?�티?� ?�산?��? ?�공?�니??
         public string Name => !string.IsNullOrEmpty(itemName) ? itemName : ConsumInfo?.Name ?? EquipInfo?.Name ?? "";
         public Sprite icon => ConsumInfo != null && ConsumInfo.icon != null ? ConsumInfo.icon : EquipInfo?.icon;
         public static bool operator ==(InventoryItem item, object other) => other == null && string.IsNullOrEmpty(item.Name);
@@ -49,11 +49,11 @@ namespace Lsy
 
         [SyncVar] public string characterName;
 
-        /// <summary>FinalHeroPos — 초상화 슬롯 인덱스 (0~3). 설정되면 OnAnyUnitReady 발화.</summary>
+        /// <summary>FinalHeroPos ??초상???�롯 ?�덱??(0~3). ?�정?�면 OnAnyUnitReady 발화.</summary>
         [SyncVar(hook = nameof(OnHeroPosChanged))]
         public int heroPos = -1;
 
-        /// <summary>FinalHeroCode — 초상화 이미지 매핑용</summary>
+        /// <summary>FinalHeroCode ??초상???��?지 매핑??/summary>
         [SyncVar] public string heroCode = "";
 
         public readonly SyncList<InventoryItem> myInventory = new SyncList<InventoryItem>();
@@ -64,23 +64,26 @@ namespace Lsy
         [SyncVar(hook = nameof(OnPurchasedNodeCountChanged))]
         public int purchasedNodeCount = 0;
 
-        // ─── UI 레이어용 이벤트 ───────────────────────────────────────────
-        /// <summary>로컬 권한 획득 시 — 초기화용</summary>
+        // [����] �������� ���� ��ȭ �ܰ踦 ���⺰�� �����մϴ�. key=weaponId, value=������ ��� ��
+        public readonly SyncDictionary<string, int> blacksmithWeaponLevels = new SyncDictionary<string, int>();
+
+        // ?�?�?� UI ?�이?�용 ?�벤???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+        /// <summary>로컬 권한 ?�득 ????초기?�용</summary>
         public static event Action<CharacterUnit> OnLocalUnitSpawned;
-        /// <summary>heroPos가 설정된 유닛 — 초상화 UI 갱신용 (전체 클라이언트)</summary>
+        /// <summary>heroPos가 ?�정???�닛 ??초상??UI 갱신??(?�체 ?�라?�언??</summary>
         public static event Action<CharacterUnit> OnAnyUnitReady;
-        /// <summary>인벤토리 변경 시 — InventoryUI 갱신용</summary>
+        /// <summary>?�벤?�리 변�?????InventoryUI 갱신??/summary>
         public static event Action OnLocalInventoryChanged;
-        /// <summary>강화/스킬 상태 변경 시 — BaseUpgradeUI 갱신용</summary>
+        /// <summary>강화/?�킬 ?�태 변�?????BaseUpgradeUI 갱신??/summary>
         public static event Action OnLocalUpgradeStateChanged;
-        /// <summary>HP 또는 San이 변경됐을 때 — 초상화 슬라이더 갱신용</summary>
+        /// <summary>HP ?�는 San??변경됐??????초상???�라?�더 갱신??/summary>
         public static event Action<CharacterUnit> OnAnyUnitStatsChanged;
 
         private void OnCurrentHpChanged(float oldVal, float newVal) => OnAnyUnitStatsChanged?.Invoke(this);
         private void OnCurrentSanChanged(int oldVal, int newVal)    => OnAnyUnitStatsChanged?.Invoke(this);
 
 
-        // 장착 슬롯 관리 컴포넌트
+        // ?�착 ?�롯 관�?컴포?�트
         public EquipmentSlot equipmentSlot;
         private void Awake()
         {
@@ -90,9 +93,10 @@ namespace Lsy
         [Server]
         private void ResetBlacksmithUpgradeState()
         {
-            // [수정] 같은 CharacterUnit을 재사용할 때 이전 캐릭터의 대장장이 무기 강화 상태가 넘어가지 않도록 초기화합니다.
+            // [?�정] 같�? CharacterUnit???�사?�할 ???�전 캐릭?�의 ?�?�장??무기 강화 ?�태가 ?�어가지 ?�도�?초기?�합?�다.
             selectedWeaponId = "";
             purchasedNodeCount = 0;
+            blacksmithWeaponLevels.Clear();
         }
 
         private void OnHeroPosChanged(int oldVal, int newVal)
@@ -102,9 +106,9 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 클라이언트에서 이 오브젝트가 완전히 초기화된 후 호출됩니다.
-        /// 초기 스폰 시 SyncVar 훅이 발동하지 않는 Mirror 버전 대비용.
-        /// heroPos가 이미 유효하면 여기서 명시적으로 OnAnyUnitReady를 발화합니다.
+        /// ?�라?�언?�에?????�브?�트가 ?�전??초기?�된 ???�출?�니??
+        /// 초기 ?�폰 ??SyncVar ?�이 발동?��? ?�는 Mirror 버전 ?�비용.
+        /// heroPos가 ?��? ?�효?�면 ?�기??명시?�으�?OnAnyUnitReady�?발화?�니??
         /// </summary>
         public override void OnStartClient()
         {
@@ -127,38 +131,38 @@ namespace Lsy
             myInfo.Hp = maxHp;
             myInfo.San = maxSan;
 
-            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (CharacterData): {characterName} (HP:{maxHp})</color>");
+            Debug.Log($"<color=green>[캐릭?? 초기???�료 (CharacterData): {characterName} (HP:{maxHp})</color>");
         }
 
         /// <summary>
-        /// CharacterSelect → PlayerData 경로로 넘어온 데이터로 초기화합니다.
-        /// 골드는 PlayerAccount에서 관리하므로 여기서 설정하지 않습니다.
+        /// CharacterSelect ??PlayerData 경로�??�어???�이?�로 초기?�합?�다.
+        /// 골드??PlayerAccount?�서 관리하므�??�기???�정?��? ?�습?�다.
         /// </summary>
         [Server]
         public void SetupFromPlayerData(PlayerData pd)
         {
             characterName = string.IsNullOrEmpty(pd.Info.Name) ? pd.FinalHeroCode : pd.Info.Name;
             heroCode      = pd.FinalHeroCode;
-            heroPos       = pd.FinalHeroPos; // hook → OnAnyUnitReady 발화
+            heroPos       = pd.FinalHeroPos; // hook ??OnAnyUnitReady 발화
             maxHp         = pd.Info.Hp;
             maxSan        = pd.Info.San;
             currentHp     = maxHp;
             currentSan    = maxSan;
             ResetBlacksmithUpgradeState();
 
-            // ── 미장착 아이템 주입 (Items = 인벤 전체) ───────────────────
+            // ?�?� 미장�??�이??주입 (Items = ?�벤 ?�체) ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             myInventory.Clear();
             if (pd.Info.Items != null)
             {
                 foreach (var invItem in pd.Info.Items)
                     myInventory.Add(invItem);
-                Debug.Log($"[캐릭터] 미장착 아이템 연동 완료: {pd.Info.Items.Count}개");
+                Debug.Log($"[CharacterUnit] Inventory synced: {pd.Info.Items.Count}");
             }
 
-            // ── 기본 장착 처리 ────────────────────────────────────────────
+            // ?�?� 기본 ?�착 처리 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             if (equipmentSlot != null)
             {
-                // 무기 자동 장착
+                // 무기 ?�동 ?�착
                 if (pd.Info.Weapon != null && !string.IsNullOrEmpty(pd.Info.Weapon.Name))
                 {
                     var weaponItem = new InventoryItem
@@ -169,10 +173,10 @@ namespace Lsy
                         amount    = 1
                     };
                     equipmentSlot.EquipWeapon(weaponItem);
-                    Debug.Log($"[캐릭터] 무기 자동 장착: {pd.Info.Weapon.Name}");
+                    Debug.Log($"[캐릭?? 무기 ?�동 ?�착: {pd.Info.Weapon.Name}");
                 }
 
-                // 방어구 자동 장착
+                // 방어�??�동 ?�착
                 if (pd.Info.Armor != null && !string.IsNullOrEmpty(pd.Info.Armor.Name))
                 {
                     var armorItem = new InventoryItem
@@ -183,21 +187,21 @@ namespace Lsy
                         amount    = 1
                     };
                     equipmentSlot.EquipArmor(armorItem);
-                    Debug.Log($"[캐릭터] 방어구 자동 장착: {pd.Info.Armor.Name}");
+                    Debug.Log($"[캐릭?? 방어�??�동 ?�착: {pd.Info.Armor.Name}");
                 }
 
-                // [수정] Inspector 기본 소모품은 홈 장착 슬롯에 자동 장착하지 않습니다.
-                // 전투씬 소모품은 Inventory에서 장착한 equipmentSlot.equippedConsumables만 전달합니다.
+                // [?�정] Inspector 기본 ?�모?��? ???�착 ?�롯???�동 ?�착?��? ?�습?�다.
+                // ?�투???�모?��? Inventory?�서 ?�착??equipmentSlot.equippedConsumables�??�달?�니??
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
 
-            // ── 장비 자동 장착 완료 후 스탯 재계산 ─────────────────────────
-            // 초기 장착 상태를 기준으로 pd.Info의 Hp/Atk/Def 등을 즉시 갱신합니다.
+            // ?�?� ?�비 ?�동 ?�착 ?�료 ???�탯 ?�계???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            // 초기 ?�착 ?�태�?기�??�로 pd.Info??Hp/Atk/Def ?�을 즉시 갱신?�니??
             ServerSyncToPlayerData();
 
-            Debug.Log($"<color=green>[캐릭터] 초기화 완료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
+            Debug.Log($"<color=green>[캐릭?? 초기???�료 (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
         }
 
         public override void OnStartAuthority()
@@ -216,6 +220,9 @@ namespace Lsy
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
             unlockedNodeIds.OnChange += OnUnlockedNodeIdsChanged;
 
+            blacksmithWeaponLevels.OnChange -= OnBlacksmithWeaponLevelsChanged;
+            blacksmithWeaponLevels.OnChange += OnBlacksmithWeaponLevelsChanged;
+
             OnLocalUnitSpawned?.Invoke(this);
         }
 
@@ -225,6 +232,7 @@ namespace Lsy
             myInventory.Callback -= OnInventoryChanged;
             mySkills.Callback -= OnSkillsChanged;
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
+            blacksmithWeaponLevels.OnChange -= OnBlacksmithWeaponLevelsChanged;
         }
 
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
@@ -251,6 +259,12 @@ namespace Lsy
             RefreshUpgradeUI();
         }
 
+        private void OnBlacksmithWeaponLevelsChanged(SyncDictionary<string, int>.Operation op, string key, int value)
+        {
+            if (!isOwned) return;
+            RefreshUpgradeUI();
+        }
+
         private void RefreshUpgradeUI()
         {
             OnLocalUpgradeStateChanged?.Invoke();
@@ -272,7 +286,7 @@ namespace Lsy
                 if (item.itemName == itemName) return item.amount;
             return 0;
         }
-        // 나중에 지울 것 아래 AddItemWithInfo로 교체 할 것
+        // ?�중??지??�??�래 AddItemWithInfo�?교체 ??�?
         [Server]
         public void AddItem(string itemName, int amount = 1)
         {
@@ -289,7 +303,7 @@ namespace Lsy
             myInventory.Add(new InventoryItem { itemName = itemName, amount = amount });
         }
 
-        // 기존 AddItem 대신 ConsumInfo까지 같이 넣어주는 전용 함수
+        // 기존 AddItem ?�??ConsumInfo까�? 같이 ?�어주는 ?�용 ?�수
         [Server]
         public void AddItemWithInfo(InventoryItem item)
         {
@@ -303,7 +317,7 @@ namespace Lsy
                     return;
                 }
             }
-            // ConsumInfo가 포함된 온전한 아이템 객체를 Add
+            // ConsumInfo가 ?�함???�전???�이??객체�?Add
             myInventory.Add(item);
         }
 
@@ -320,17 +334,26 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdBlacksmithUpgrade에서 처리합니다.
-        /// 이 메서드는 무기 강화 상태만 변경합니다.
+        /// 골드 체크/차감?� PlayerAccount.CmdBlacksmithUpgrade?�서 처리?�니??
+        /// ??메서?�는 무기 강화 ?�태�?변경합?�다.
         /// </summary>
+        public int GetBlacksmithWeaponLevel(string weaponId)
+        {
+            if (string.IsNullOrEmpty(weaponId)) return 0;
+            return blacksmithWeaponLevels.TryGetValue(weaponId, out int level) ? level : 0;
+        }
+
         [Server]
         public bool ApplyBlacksmithUpgrade(string weaponId, int nodeIndex, int npcLevel)
         {
             if (npcLevel < nodeIndex + 1) return false;
-            if (selectedWeaponId != "" && selectedWeaponId != weaponId) return false;
-            if (nodeIndex > 0 && purchasedNodeCount < nodeIndex) return false;
-            if (purchasedNodeCount > nodeIndex) return false;
 
+            int currentWeaponLevel = GetBlacksmithWeaponLevel(weaponId);
+            // [����] ���⺰ ��ȭ �ܰ踦 �������� ���� �ܰ� ���� ���ο� �ߺ� ���Ÿ� �˻��մϴ�.
+            if (nodeIndex > 0 && currentWeaponLevel < nodeIndex) return false;
+            if (currentWeaponLevel > nodeIndex) return false;
+
+            blacksmithWeaponLevels[weaponId] = nodeIndex + 1;
             selectedWeaponId = weaponId;
             purchasedNodeCount = nodeIndex + 1;
 
@@ -338,8 +361,8 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 골드 체크/차감은 PlayerAccount.CmdSkillPurchase에서 처리합니다.
-        /// 이 메서드는 스킬 추가 상태만 변경합니다.
+        /// 골드 체크/차감?� PlayerAccount.CmdSkillPurchase?�서 처리?�니??
+        /// ??메서?�는 ?�킬 추�? ?�태�?변경합?�다.
         /// </summary>
         [Server]
         public bool ApplySkillPurchase(string skillId, int npcLevel, int requiredNpcLevel)
@@ -371,14 +394,14 @@ namespace Lsy
             return false;
         }
 
-        //────인벤토리에서 아이템 장착──────────
+        //?�?�?�?�?�벤?�리?�서 ?�이???�착?�?�?�?�?�?�?�?�?�?�
 
         [Command]
         public void CmdEquipConsumableToSlot(string itemName)
         {
             if (equipmentSlot == null) return;
 
-            // 인벤토리에서 장착하려는 아이템 찾기
+            // ?�벤?�리?�서 ?�착?�려???�이??찾기
             for (int i = 0; i < myInventory.Count; i++)
             {
                 if (myInventory[i].itemName == itemName)
@@ -388,7 +411,7 @@ namespace Lsy
 
                     switch (itemInInv.Type) {
                         case ItemType.Consumable:
-                            // 장착 슬롯에 넘겨줄 아이템 데이터 (1개씩 장착)
+                            // ?�착 ?�롯???�겨�??�이???�이??(1개씩 ?�착)
                             InventoryItem equipData = itemInInv;
                             equipData.amount = 1;
                             success = equipmentSlot.EquipConsumable(equipData);
@@ -397,7 +420,7 @@ namespace Lsy
                         case ItemType.Weapon:
                             string oldWeapon = equipmentSlot.equippedWeaponId;
                             InventoryItem oldWeaponItem = equipmentSlot.equippedWeapon;
-                            if (equipmentSlot.EquipWeapon(itemInInv))  // string → InventoryItem
+                            if (equipmentSlot.EquipWeapon(itemInInv))  // string ??InventoryItem
                             {
                                 success = true;
                                 if (!string.IsNullOrEmpty(oldWeapon))
@@ -408,7 +431,7 @@ namespace Lsy
                         case ItemType.Armor:
                             string oldArmor = equipmentSlot.equippedArmorId;
                             InventoryItem oldArmorItem = equipmentSlot.equippedArmor;
-                            if (equipmentSlot.EquipArmor(itemInInv))  // string → InventoryItem
+                            if (equipmentSlot.EquipArmor(itemInInv))  // string ??InventoryItem
                             {
                                 success = true;
                                 if (!string.IsNullOrEmpty(oldArmor))
@@ -425,8 +448,8 @@ namespace Lsy
                         else
                             myInventory[i] = itemInInv;
 
-                        Debug.Log($"<color=green>[장착 성공] {itemName} (인벤토리 남은 수량: {itemInInv.amount})</color>");
-                        ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
+                        Debug.Log($"<color=green>[?�착 ?�공] {itemName} (?�벤?�리 ?��? ?�량: {itemInInv.amount})</color>");
+                        ServerSyncToPlayerData();   // ??PlayerData??즉시 반영
                     }
                     return;
                 }
@@ -438,7 +461,7 @@ namespace Lsy
         {
             if (equipmentSlot == null) return;
 
-            // 장착 슬롯에서 해당 아이템을 먼저 찾아서 데이터를 복사해둡니다.
+            // ?�착 ?�롯?�서 ?�당 ?�이?�을 먼�? 찾아???�이?��? 복사?�둡?�다.
             InventoryItem? itemToReturn = null;
             foreach (var item in equipmentSlot.equippedConsumables)
             {
@@ -458,7 +481,7 @@ namespace Lsy
                     returnItem.amount = 1;
                     AddItemWithInfo(returnItem);
                 }
-                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
+                ServerSyncToPlayerData();   // ??PlayerData??즉시 반영
             }
         }
         [Command]
@@ -470,7 +493,7 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
-                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
+                ServerSyncToPlayerData();   // ??PlayerData??즉시 반영
             }
         }
 
@@ -483,7 +506,7 @@ namespace Lsy
             {
                 returnItem.amount = 1;
                 AddItemWithInfo(returnItem);
-                ServerSyncToPlayerData();   // ← PlayerData에 즉시 반영
+                ServerSyncToPlayerData();   // ??PlayerData??즉시 반영
             }
         }
 
@@ -494,13 +517,13 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 서버 전용. myInventory + equipmentSlot 상태를 PlayerData.Info에 씁니다.
-        /// 장착/해제 Cmd 내부에서 직접 호출합니다.
+        /// ?�버 ?�용. myInventory + equipmentSlot ?�태�?PlayerData.Info???�니??
+        /// ?�착/?�제 Cmd ?��??�서 직접 ?�출?�니??
         ///
-        /// ★ 스탯 재계산 흐름
-        ///   기본 스탯 (CharacterDatabase) + 현재 장착 무기 + 현재 장착 방어구 + 고유 특성
-        ///   → 최종 스탯을 Info에 기록합니다.
-        ///   이렇게 해야 Home씬에서 장비를 바꿀 때마다 배틀 진입 스탯이 정확해집니다.
+        /// ???�탯 ?�계???�름
+        ///   기본 ?�탯 (CharacterDatabase) + ?�재 ?�착 무기 + ?�재 ?�착 방어�?+ 고유 ?�성
+        ///   ??최종 ?�탯??Info??기록?�니??
+        ///   ?�렇�??�야 Home?�에???�비�?바�? ?�마??배�? 진입 ?�탯???�확?�집?�다.
         /// </summary>
         [Server]
         private void ServerSyncToPlayerData()
@@ -511,7 +534,7 @@ namespace Lsy
                 return;
             }
 
-            // connectionToClient + FinalHeroCode 둘 다 일치하는 PlayerData 찾기
+            // connectionToClient + FinalHeroCode ?????�치?�는 PlayerData 찾기
             PlayerData pd = null;
             foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
             {
@@ -525,15 +548,15 @@ namespace Lsy
 
             if (pd == null)
             {
-                Debug.LogError($"[{characterName}] PlayerData를 찾지 못했습니다. " +
+                Debug.LogError($"[{characterName}] PlayerData�?찾�? 못했?�니?? " +
                                $"conn={connectionToClient}, heroCode={heroCode}");
                 return;
             }
 
             var info = pd.Info;
 
-            // ── 1. 기본 스탯 재설정 (CharacterDatabase 기준) ────────────────
-            // 장비 스탯이 누적되지 않도록 매 동기화마다 기본값으로 초기화합니다.
+            // ?�?� 1. 기본 ?�탯 ?�설??(CharacterDatabase 기�?) ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            // ?�비 ?�탯???�적?��? ?�도�?�??�기?�마??기본값으�?초기?�합?�다.
             if (CharacterDatabase.Stats.TryGetValue(heroCode, out var c))
             {
                 info.Hp    = c.hp;
@@ -545,16 +568,16 @@ namespace Lsy
                 info.Crit  = c.critical;
                 info.San   = c.stress;
                 info.Res   = c.effectResistance;
-                // Ctm은 CharacterDatabase에 필드가 없으므로 기존 값 유지
+                // Ctm?� CharacterDatabase???�드가 ?�으므�?기존 �??��?
             }
 
-            // ── 2. 현재 장착 장비 스탯 합산 ─────────────────────────────────
+            // ?�?� 2. ?�재 ?�착 ?�비 ?�탯 ?�산 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             EqpInfo curWeapon = equipmentSlot.equippedWeapon.EquipInfo;
             EqpInfo curArmor  = equipmentSlot.equippedArmor.EquipInfo;
             AddEqpStats(ref info, curWeapon);
             AddEqpStats(ref info, curArmor);
 
-            // ── 3. 고유 특성 스탯 합산 (UniqueTraitLv 기준, 0이면 미적용) ──
+            // ?�?� 3. 고유 ?�성 ?�탯 ?�산 (UniqueTraitLv 기�?, 0?�면 미적?? ?�?�
             if (CharacterRegistry.TryGet(heroCode, out var regEntry) && regEntry.UniqueTrait != null
                 && info.UniqueTraitLv >= 1)
             {
@@ -572,11 +595,11 @@ namespace Lsy
                 info.Res   += d.res;
             }
 
-            // ── 4. CharacterUnit의 maxHp/maxSan도 갱신 (Home씬 HP바 반영) ──
+            // ?�?� 4. CharacterUnit??maxHp/maxSan??갱신 (Home??HP�?반영) ?�?�
             maxHp  = info.Hp;
             maxSan = info.San;
 
-            // ── 5. 장착 소모품 → Expendables ────────────────────────────────
+            // ?�?� 5. ?�착 ?�모????Expendables ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             info.Expendables = new List<ConsumableInfo>();
             foreach (var item in equipmentSlot.equippedConsumables)
             {
@@ -585,21 +608,21 @@ namespace Lsy
                         info.Expendables.Add(item.ConsumInfo);
             }
 
-            // ── 6. 미장착 인벤 → Items ───────────────────────────────────────
+            // ?�?� 6. 미장�??�벤 ??Items ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             info.Items = new List<InventoryItem>(myInventory);
 
-            // ── 7. 장착 장비 참조 ────────────────────────────────────────────
+            // ?�?� 7. ?�착 ?�비 참조 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
             info.Weapon = curWeapon;
             info.Armor  = curArmor;
 
             pd.Info = info;
 
-            Debug.Log($"[CharacterUnit] {characterName} → PlayerData 동기화 완료 " +
+            Debug.Log($"[CharacterUnit] {characterName} ??PlayerData ?�기???�료 " +
                       $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} " +
-                      $"(Weapon={info.Weapon?.Name ?? "없음"} Armor={info.Armor?.Name ?? "없음"})");
+                      $"(Weapon={info.Weapon?.Name ?? "?�음"} Armor={info.Armor?.Name ?? "?�음"})");
         }
 
-        /// <summary>EqpInfo 스탯을 PlayerInfo에 더합니다. null이면 아무것도 하지 않습니다.</summary>
+        /// <summary>EqpInfo ?�탯??PlayerInfo???�합?�다. null?�면 ?�무것도 ?��? ?�습?�다.</summary>
         private static void AddEqpStats(ref Jun.PlayerInfo info, Jun.EqpInfo eqp)
         {
             if (eqp == null) return;
