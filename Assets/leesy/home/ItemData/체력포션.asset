@@ -15,10 +15,14 @@ MonoBehaviour:
   ConsumItem:
     Name: "\uCCB4\uB825\uD3EC\uC158"
     Type: 0
-    TagetNum: 0
+    TagetNum: 1
     icon: {fileID: 21300000, guid: fae551a372a450b449a3a0e8dfdbdf84, type: 3}
     anim: Attack
+    amount: 0
     description: "\uCCB4\uB825\uC744 5 \uD68C\uBCF5\uC2DC\uD0B4"
     HealRate: 5
+    EffectDuration: 0
+    EffectValue: 0
+    FixedDamage: 0
     Target: 2
   priceLevel: 2c010000c800000064000000

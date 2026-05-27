@@ -26,7 +26,12 @@ namespace Jun
         SanHeal,
         BleedHeal,
         PoisonHeal,
-        StunHeal
+        StunHeal,
+        AtkBuff,
+        SpdBuff,
+        DodBuff,
+        AoE,
+        Revive,
     }
     // 유닛 행동 상태
     public enum UnitState
@@ -233,14 +238,38 @@ namespace Jun
         public int TagetNum;
         public Sprite icon;
         public string anim;
+        public int amount; // 양
 
         [UnityEngine.TextArea(2, 4)]
         public string description;
 
-        public float HealRate;          // 회복 비율
+        public float HealRate;          // 회복 양
+        public int EffectDuration;  // 버프 턴
+        public float EffectValue;   // 버프 값
+        public float FixedDamage;   // 고정 피해 
 
         // 신 시스템: 자동 타깃 라우팅 (Self / AllAllies / SingleAlly 등)
         public TargetType Target = TargetType.SingleAlly;
+
+        // 객체를 안전하게 복사하기 위한 메서드 추가
+        public ConsumableInfo Clone()
+        {
+            return new ConsumableInfo
+            {
+                Name = this.Name,
+                Type = this.Type,
+                TagetNum = this.TagetNum,
+                icon = this.icon,
+                anim = this.anim,
+                amount = this.amount, // 현재 들고 있는 양 복사
+                description = this.description,
+                HealRate = this.HealRate,
+                EffectValue = this.EffectValue,   
+                EffectDuration = this.EffectDuration, 
+                FixedDamage = this.FixedDamage,     
+                Target = this.Target
+            };
+        }
     }
 
     // 장비 정보

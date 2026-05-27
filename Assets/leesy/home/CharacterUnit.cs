@@ -603,9 +603,23 @@ namespace Lsy
             info.Expendables = new List<ConsumableInfo>();
             foreach (var item in equipmentSlot.equippedConsumables)
             {
-                if (item.ConsumInfo != null)
-                    for (int i = 0; i < item.amount; i++)
-                        info.Expendables.Add(item.ConsumInfo);
+                if (item.ConsumInfo == null || item.amount <= 0) continue;
+
+                // ÀÌ¹Ì ¸®½ºÆ®¿¡ °°Àº ÀÌ¸§ÀÇ ¼Ò¸ðÇ°ÀÌ µé¾îÀÖ´ÂÁö È®ÀÎ
+                ConsumableInfo existingItem = info.Expendables.Find(x => x.Name == item.ConsumInfo.Name);
+
+                if (existingItem != null)
+                {
+                    // ÀÌ¹Ì Á¸ÀçÇÑ´Ù¸é °³¼ö(amount)¸¸ ´õÇØÁÜ
+                    existingItem.amount += item.amount;
+                }
+                else
+                {
+                    // Á¸ÀçÇÏÁö ¾Ê´Â´Ù¸é º¹»çº»À» ¸¸µé¾î¼­ Ãß°¡ÇÏ°í, °³¼ö¸¦ ¼¼ÆÃÇÔ
+                    ConsumableInfo newItem = item.ConsumInfo.Clone();
+                    newItem.amount = item.amount; // ÀåÂø ½½·Ô¿¡ ÀÖ´ø °³¼ö·Î È®Á¤
+                    info.Expendables.Add(newItem);
+                }
             }
 
             // ?€?€ 6. ë¯¸ìž¥ì°??¸ë²¤ ??Items ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€

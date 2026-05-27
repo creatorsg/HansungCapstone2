@@ -39,7 +39,7 @@ namespace Jun
         // 
         public static float CalcHeal(float maxHp, float healRate)
         {
-            return maxHp * healRate;
+            return healRate;
         }
 
         //
@@ -101,12 +101,22 @@ namespace Jun
             return total;
         }
 
-        // 
         public static List<ActiveEffect> TickEffects(IList<ActiveEffect> effects)
         {
             var next = new List<ActiveEffect>();
             foreach (var e in effects)
-                if (e.duration > 1) next.Add(new ActiveEffect(e.type, e.value, e.duration - 1));
+                if (e.duration > 0) {
+                    next.Add(new ActiveEffect(e.type, e.value, e.duration - 1));
+                }
+            if (next.Count > 0)
+            {
+                foreach (var e in next)
+                    Debug.Log($"[TickEffects] {e.type} | value={e.value} | 남은 턴={e.duration}");
+            }
+            else
+            {
+                Debug.Log("[TickEffects] 남은 효과 없음");
+            }
             return next;
         }
     }

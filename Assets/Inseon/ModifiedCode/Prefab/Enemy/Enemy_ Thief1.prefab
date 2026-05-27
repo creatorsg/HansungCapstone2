@@ -277,6 +277,7 @@ MonoBehaviour:
     Type: 
     Skills: []
     Items: []
+    Expendables: []
     Lvl: 0
     Exp: 0
     Hp: 0
@@ -291,10 +292,41 @@ MonoBehaviour:
     Dodge: 0
     Acc: 0
     Res: 0
-    WpnId: 0
-    ArmId: 0
+    Weapon:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
+    Armor:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
     Trk1: 0
     Trk2: 0
+    UniqueTraitLv: 0
     Statuses: []
   PingLayout: {fileID: 4195269492965768940}
   State: 0
@@ -320,6 +352,7 @@ MonoBehaviour:
     Type: 
     Skills: []
     Items: []
+    Expendables: []
     Lvl: 0
     Exp: 0
     Hp: 0
@@ -334,10 +367,41 @@ MonoBehaviour:
     Dodge: 0
     Acc: 0
     Res: 0
-    WpnId: 0
-    ArmId: 0
+    Weapon:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
+    Armor:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
     Trk1: 0
     Trk2: 0
+    UniqueTraitLv: 0
     Statuses: []
 --- !u!114 &2942639277980096146
 MonoBehaviour:
@@ -981,7 +1045,7 @@ Animator:
   m_GameObject: {fileID: 1247680166216537167}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 19c88504958bffa4ca230aa0054e2f71, type: 2}
+  m_Controller: {fileID: 9100000, guid: bd0aeeb0b4b56814ea1d585b69901f6f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

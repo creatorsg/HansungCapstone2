@@ -1,6 +1,7 @@
-using UnityEngine;
-using System.Collections.Generic;
+using PlayFab.EconomyModels;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 
 namespace Jun
@@ -89,9 +90,38 @@ namespace Jun
             _selectedTargetType = item.Target;
             _isEnemy = false;
 
-            //_targetNum = _info.Expendables[index].TagetNum;
-            _selectedTarget.Add(BattleManager.Instance._players.IndexOf(this.GetComponent<GamePlayerController>()));
-            FireSelection();
+            switch (item.Target)
+            {
+                // 자기 자신 → 즉시 발동
+                case TargetType.Self:
+                    _selectedTarget.Add(
+                        BattleManager.Instance._players.IndexOf(
+                            this.GetComponent<GamePlayerController>()));
+                    FireSelection();
+                    break;
+
+                // 전체 아군 → 즉시 발동
+                case TargetType.AllAllies:
+                    for (int i = 0; i < BattleManager.Instance._players.Count; i++)
+                        _selectedTarget.Add(i);
+                    FireSelection();
+                    break;
+
+                // 전체 적 → 즉시 발동
+                case TargetType.AllEnemies:
+                    _isEnemy = true;
+                    for (int i = 0; i < BattleManager.Instance.GetAliveEnemies().Count; i++)
+                        _selectedTarget.Add(i);
+                    FireSelection();
+                    break;
+
+                case TargetType.SingleAlly:
+                    break;
+
+                case TargetType.SingleEnemy:
+                    _isEnemy = true;
+                    break;
+            }
         }
         public void SelectEnemy(int index)
         {

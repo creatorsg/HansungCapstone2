@@ -106,7 +106,7 @@ namespace Jun
         public void PlayDead()
         {
             if (anim == null) return;
-            anim.SetBool("Dead", true);
+            anim.SetTrigger("Dead");
         }
     }
 }

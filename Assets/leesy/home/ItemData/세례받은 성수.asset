@@ -14,12 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Consum
   ConsumItem:
     Name: "\uC138\uB840\uBC1B\uC740 \uC131\uC218"
-    Type: 0
+    Type: 8
     TagetNum: 0
     icon: {fileID: 21300000, guid: 9c46ebde711ca374f816e59a555ba0ab, type: 3}
     anim: Attack
+    amount: 0
     description: "\uC801 \uC804\uCCB4\uC5D0\uAC8C 2\uC758 \uACE0\uC815 \uD53C\uD574\uB97C
       \uC785\uD798"
     HealRate: 0
-    Target: 2
+    EffectDuration: 0
+    EffectValue: 0
+    FixedDamage: 2
+    Target: 1
   priceLevel: 2c010000c800000064000000

@@ -226,7 +226,14 @@ namespace Jun
             if (isOwned && BattleManager.Instance.CurrentTurnUnit == this)
             {
                 _model.SelectItem(index);
-                _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                var item = Info.Expendables[index];
+
+                switch (item.Target)
+                {
+                    case TargetType.SingleEnemy:
+                        _view.SetButtonsInteractable(true, _view.EnemyBtn);
+                        break;
+                }
             }
         }
 
@@ -279,6 +286,15 @@ namespace Jun
                     var skillType = currentUnit.Info.Skills[model.SelectedSkill].Type;
                     bool isAllyTarget = skillType == SkillType.Heal || skillType == SkillType.Buff;
                     if (isAllyTarget)
+                    {
+                        model.SelectAlly(BattleManager.Instance._players.IndexOf(this));
+                        return;
+                    }
+                }
+                else if (model.SelectedItem != -1)
+                {
+                    var itemTarget = currentUnit.Info.Expendables[model.SelectedItem].Target;
+                    if (itemTarget == TargetType.SingleAlly)
                     {
                         model.SelectAlly(BattleManager.Instance._players.IndexOf(this));
                         return;

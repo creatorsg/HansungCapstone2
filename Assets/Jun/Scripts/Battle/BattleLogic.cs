@@ -1,8 +1,11 @@
 using Jun;
 using Mirror;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
+
 //using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 
 namespace Jun
@@ -72,17 +75,6 @@ namespace Jun
                         }
                         break;
 
-                    case SkillType.Buff:
-                        foreach (int targetIdx in targets)
-                        {
-                            if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
-
-                            var effect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
-                            target.AddEffect(effect);
-                            Debug.Log($"[BUFF] {caster.Info.Name} -> {target.Info.Name} | {skill.EffectType} +{skill.EffectValue}");
-                        }
-                        break;
-
                     case SkillType.Heal:
                         foreach (int targetIdx in targets)
                         {
@@ -100,6 +92,17 @@ namespace Jun
                                 targetIndex = targetIdx,
                                 isEnemy = false
                             });
+                        }
+                        break;
+
+                    case SkillType.Buff:
+                        foreach (int targetIdx in targets)
+                        {
+                            if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
+
+                            var effect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
+                            target.AddEffect(effect);
+                            Debug.Log($"[BUFF] {caster.Info.Name} -> {target.Info.Name} | {skill.EffectType} +{skill.EffectValue}");
                         }
                         break;
 
@@ -126,18 +129,6 @@ namespace Jun
                         Debug.Log($"[ENFORCE] {caster.Info.Name} | {skill.EffectType} +{skill.EffectValue}");
                         break;
                 }
-
-                // ── 소모품 1개 차감 ─────────────────────────────────
-                var casterInfo = caster.Info;
-                if (casterInfo.Expendables != null && itemIndex >= 0 && itemIndex < casterInfo.Expendables.Count)
-                {
-                    string usedItemName = casterInfo.Expendables[itemIndex].Name;
-                    casterInfo.Expendables.RemoveAt(itemIndex);
-                    caster.Info = casterInfo;   // SyncVar 갱신 트리거
-                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {casterInfo.Expendables.Count}개");
-                }
-
-                // 아이템 버튼 UI 갱신 (소모 후 즉시 반영)
                 manager.RpcRefreshItemButtons(caster);
 
                 manager.EnemyPanel.SetActive(false);
@@ -145,7 +136,7 @@ namespace Jun
                 if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
                     caster.RpcPlaySkillAnim(skill.anim); // anim 있을 때만 호출
-                                                         // 턴 종료는 EndAnim Animation Event가 처리
+                                                        // 턴 종료는 EndAnim Animation Event가 처리
                 }
                 else
                 {
@@ -153,6 +144,7 @@ namespace Jun
                     caster.MyTurn(false);
                     BattleManager.Instance.NextTurn(); // anim 없으면 즉시 턴 종료
                 }
+
             }
             else if (itemIndex != -1)
             {
@@ -165,61 +157,125 @@ namespace Jun
 
                 ConsumableInfo item = caster.Info.Expendables[itemIndex];
                 Debug.Log($"[BattleLogic] 아이템 사용: {item.Name}");
-
-                foreach (int targetIdx in targets)
+                if (item.Type != ConsumableType.AoE)
                 {
-                    if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
-                    float healAmount = 0f;
-
-                    var info = target.Info;
-                    switch (item.Type)
+                    foreach (int targetIdx in targets)
                     {
-                        case ConsumableType.HPHeal:
-                            healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, item.HealRate);
-                            target.ApplyHpChange(healAmount);
-                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} HP");
-                            break;
-                        case ConsumableType.SanHeal:
-                            healAmount = CombatCalculator.CalcHeal(target.Info.MaxSan, item.HealRate);
-                            target.ApplySanChange(healAmount);
-                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} San");
-                            break;
-                        // 상태이상 회복 하는 거 해당하는 상태이상 PlayerInfo에서 지우기
-                        case ConsumableType.BleedHeal:
-                            if (info.Statuses == null || info.Statuses.Count == 0) break;
-                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
-                                if (info.Statuses[i].Type == StatusType.Bleed)
-                                    info.Statuses.RemoveAt(i);
-                            target.Info = info;
-                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
-                            break;
+                        if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
+                        float healAmount = 0f;
 
-                        case ConsumableType.PoisonHeal:
-                            if (info.Statuses == null || info.Statuses.Count == 0) break;
-                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
-                                if (info.Statuses[i].Type == StatusType.Poison)
-                                    info.Statuses.RemoveAt(i);
-                            target.Info = info;
-                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
-                            break;
+                        var info = target.Info;
+                        switch (item.Type)
+                        {
+                            case ConsumableType.HPHeal:
+                                healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, item.HealRate);
+                                target.ApplyHpChange(healAmount);
+                                Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} HP");
+                                break;
 
-                        case ConsumableType.StunHeal:
-                            if (info.Statuses == null || info.Statuses.Count == 0) break;
-                            for (int i = info.Statuses.Count - 1; i >= 0; i--)
-                                if (info.Statuses[i].Type == StatusType.Stun)
-                                    info.Statuses.RemoveAt(i);
-                            target.Info = info;
-                            Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
-                            break;
+                            case ConsumableType.SanHeal:
+                                healAmount = CombatCalculator.CalcHeal(target.Info.MaxSan, item.HealRate);
+                                target.ApplySanChange(healAmount);
+                                Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name} +{healAmount:F0} San");
+                                break;
+
+                            // 상태이상 회복 하는 거 해당하는 상태이상 PlayerInfo에서 지우기
+                            case ConsumableType.BleedHeal:
+                                if (info.Statuses == null || info.Statuses.Count == 0) break;
+                                for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                    if (info.Statuses[i].Type == StatusType.Bleed)
+                                        info.Statuses.RemoveAt(i);
+                                target.Info = info;
+                                Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
+                                break;
+
+                            case ConsumableType.PoisonHeal:
+                                if (info.Statuses == null || info.Statuses.Count == 0) break;
+                                for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                    if (info.Statuses[i].Type == StatusType.Poison)
+                                        info.Statuses.RemoveAt(i);
+                                target.Info = info;
+                                Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
+                                break;
+
+                            case ConsumableType.StunHeal:
+                                if (info.Statuses == null || info.Statuses.Count == 0) break;
+                                for (int i = info.Statuses.Count - 1; i >= 0; i--)
+                                    if (info.Statuses[i].Type == StatusType.Stun)
+                                        info.Statuses.RemoveAt(i);
+                                target.Info = info;
+                                Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
+                                break;
+
+                            case ConsumableType.AtkBuff:
+                                var atkEffect = new ActiveEffect(EffectType.AtkUp, item.EffectValue, item.EffectDuration);
+                                target.AddEffect(atkEffect);
+                                Debug.Log($"[ITEM] {item.Name} → {target.Info.Name} 공격력 +{item.EffectValue} ({item.EffectDuration}턴)");
+                                break;
+
+                            case ConsumableType.SpdBuff:
+                                var spdEffect = new ActiveEffect(EffectType.SpdUp, item.EffectValue, item.EffectDuration);
+                                target.AddEffect(spdEffect);
+                                Debug.Log($"[ITEM] {item.Name} → {target.Info.Name} 속도 +{item.EffectValue} ({item.EffectDuration}턴)");
+                                break;
+
+                            case ConsumableType.DodBuff:
+                                var dodEffect = new ActiveEffect(EffectType.DodgeUp, item.EffectValue, item.EffectDuration);
+                                target.AddEffect(dodEffect);
+                                Debug.Log($"[ITEM] {item.Name} → {target.Info.Name}  회피 +{item.EffectValue} ({item.EffectDuration}턴)");
+                                break;
+
+                            case ConsumableType.Revive:
+                                if (target.Info.Hp <= 0)
+                                {
+                                    var reviveInfo = target.Info;
+                                    reviveInfo.Hp = reviveInfo.MaxHp;
+                                    target.Info = reviveInfo;
+                                    target.ApplyHpChange(0);
+                                    target.RpcPlaySkillAnim("Damaged");
+                                    Debug.Log($"[ITEM] {item.Name} → {target.Info.Name} 부활! HP={reviveInfo.MaxHp}");
+                                }
+                                else
+                                {
+                                    Debug.Log($"[ITEM] {target.Info.Name}은 이미 살아있음 — 부활 아이템 낭비");
+                                }
+                                break;
+                        }
                     }
                 }
+                else if (item.Type == ConsumableType.AoE)
+                {
+                    foreach (int targetIdx in targets)
+                    {
+                        if (!TryGetEnemy(manager, targetIdx, out var enemyModel, out var enemyController)) continue;
+
+                        float damage = item.FixedDamage;
+                        Debug.Log($"[AoE] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0}");
+
+                        enemyModel.Damaged(damage);
+                        enemyController.RpcPlaySkillAnim("Damaged");
+                    }
+                }
+                // ── 소모품 1개 차감 ─────────────────────────────────
+                var casterInfo = caster.Info;
+                if (casterInfo.Expendables != null && itemIndex >= 0 && itemIndex < casterInfo.Expendables.Count)
+                {
+                    string usedItemName = casterInfo.Expendables[itemIndex].Name;
+                    casterInfo.Expendables[itemIndex].amount -= 1;
+                    if (casterInfo.Expendables[itemIndex].amount == 0) casterInfo.Expendables.RemoveAt(itemIndex);
+                    caster.Info = casterInfo;   // SyncVar 갱신 트리거
+                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {casterInfo.Expendables.Count}개");
+                }
+
+                // 아이템 버튼 UI 갱신 (소모 후 즉시 반영)
+                manager.RpcRefreshItemButtons(caster);
 
                 manager.EnemyPanel.SetActive(false);
 
                 if (!string.IsNullOrEmpty(item.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
                     caster.RpcPlaySkillAnim(item.anim); // anim 있을 때만 호출
-                                                         // 턴 종료는 EndAnim Animation Event가 처리
+                                                        // 턴 종료는 EndAnim Animation Event가 처리
                 }
                 else
                 {
@@ -231,7 +287,7 @@ namespace Jun
             else
             {
                 Debug.LogWarning("[BattleLogic] skillIndex도 itemIndex도 -1입니다. 아무 동작도 하지 않음.");
-            }
+            } 
 
         }
         /// <summary>

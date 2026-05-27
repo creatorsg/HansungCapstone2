@@ -864,15 +864,7 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items:
-  - Name: PPPPPPPPP
-    Type: 3
-    TagetNum: 0
-    icon: {fileID: 7675826601332790545, guid: 01b5f94a23e840246ad504fed613977a, type: 3}
-    anim: Attack
-    description: PP
-    HealRate: 0
-    Target: 0
+  items: []
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 4b78c497815472f45a6a0903fdc83c5d, type: 2}
@@ -1240,15 +1232,7 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items:
-  - Name: BB
-    Type: 2
-    TagetNum: 0
-    icon: {fileID: -7203164222404042752, guid: 967bf774a501415428191aeaf4a9d95f, type: 3}
-    anim: Attack
-    description: BBBBBBBBBBBBB
-    HealRate: 0
-    Target: 0
+  items: []
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 20a6d8743615575478d0c47086ca9eb5, type: 2}
@@ -4074,15 +4058,7 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items:
-  - Name: stun
-    Type: 4
-    TagetNum: 0
-    icon: {fileID: 4110674531604046222, guid: 09627a67dcc44d0409ae7e48e00a45aa, type: 3}
-    anim: Attack
-    description: Stynnnnnnnnn
-    HealRate: 0
-    Target: 0
+  items: []
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 598f3332e2d84844ea3e5e2fa87b9d3e, type: 2}
@@ -6120,7 +6096,7 @@ MonoBehaviour:
     HealRate: 0
     EffectType: 0
     EffectValue: 10
-    EffectDuration: 2
+    EffectDuration: 1
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
@@ -6174,31 +6150,7 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  items:
-  - Name: heal
-    Type: 0
-    TagetNum: 1
-    icon: {fileID: -4029819251187114856, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
-    anim: Attack
-    description: Heal!!!!!!!!!!!
-    HealRate: 0
-    Target: 0
-  - Name: heal
-    Type: 2
-    TagetNum: 1
-    icon: {fileID: 808039206, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
-    anim: Attack
-    description: Heal!!!!!!!!!!!!
-    HealRate: 0
-    Target: 0
-  - Name: heal
-    Type: 2
-    TagetNum: 1
-    icon: {fileID: 808039206, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
-    anim: Attack
-    description: Heal!!!!!!!!!!!!
-    HealRate: 0
-    Target: 0
+  items: []
   weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 0d9429b1963b89144a1ae8014411fb8f, type: 2}

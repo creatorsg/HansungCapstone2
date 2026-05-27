@@ -32,6 +32,7 @@ namespace Jun
         [SerializeField] private Button _movePosBTN; public Button MovePosBTN => _movePosBTN;
         [SerializeField] private List<Image> _equiIMG; public List<Image> EquiIMG => _equiIMG;
         [SerializeField] private List<Button> _itemBTN; public List<Button> ItemsBTN => _itemBTN;
+        [SerializeField] private List<TextMeshProUGUI> _itemsAmount; public List<TextMeshProUGUI> ItemsAmount => _itemsAmount;
         [SerializeField] private TextMeshProUGUI _type; public TextMeshProUGUI Type => _type;
         [SerializeField] private TextMeshProUGUI _hp; public TextMeshProUGUI Hp => _hp;
         [SerializeField] private TextMeshProUGUI _san; public TextMeshProUGUI San => _san;
@@ -210,6 +211,32 @@ namespace Jun
                                    $"SpawnPoints 수={SpawnPoints.Count}");
                     continue;
                 }
+                // Mirror가 SyncVar 동기화 과정에서 쪼개놓은 Expendables를 다시 1줄로 압축
+                if (data.Info?.Expendables != null && data.Info.Expendables.Count > 0)
+                {
+                    List<ConsumableInfo> compressedList = new List<ConsumableInfo>();
+
+                    foreach (var item in data.Info.Expendables)
+                    {
+                        if (item == null) continue;
+
+                        // 이미 압축 리스트에 존재하면 개수만 누적
+                        ConsumableInfo existing = compressedList.Find(x => x.Name == item.Name);
+                        if (existing != null)
+                        {
+                            existing.amount += (item.amount == 0 ? 1 : item.amount);
+                        }
+                        else
+                        {
+                            // 이미 구현된 Clone()을 호출한 뒤 개수 보정 후 바로 추가
+                            ConsumableInfo newItem = item.Clone();
+                            newItem.amount = (item.amount == 0 ? 1 : item.amount);
+                            compressedList.Add(newItem);
+                        }
+                    }
+
+                    data.Info.Expendables = compressedList;
+                }
 
                 // 1. CharacterRegistry에서 코드 기반으로 BattleUnit 프리팹 조회
                 if (!CharacterRegistry.TryGet(data.FinalHeroCode, out var entry))
@@ -319,12 +346,34 @@ namespace Jun
         {
             //���� �� ���̶���Ʈ ����
             RpcSetHighlight(Order, false);
-
+            //// 방금 턴 끝난 유닛 Effects duration 감소
+            
             Order = (Order + 1) % _turnList.Count;
             if (Order == 0) _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
 
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
+
+            if (currentType == "Player" && currentNum < _players.Count)
+            {
+                var player = _players[currentNum];
+                if (player != null)
+                {
+                    var next = CombatCalculator.TickEffects(player.Effects);
+                    player.Effects.Clear();
+                    foreach (var e in next) player.Effects.Add(e);
+                }
+            }
+            else if (currentType == "Enemy" && currentNum < _enemys[StageNum - 1].Enemys.Count)
+            {
+                var enemy = _enemys[StageNum - 1].Enemys[currentNum];
+                if (enemy != null)
+                {
+                    var next = CombatCalculator.TickEffects(enemy.Effects);
+                    enemy.Effects.Clear();
+                    foreach (var e in next) enemy.Effects.Add(e);
+                }
+            }
 
             Debug.Log("남은 적 수: " + EnemyNum);
             if (EnemyNum == 0)
@@ -537,8 +586,8 @@ namespace Jun
                 {
                     _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
 
-                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                    if (label != null) label.text = unit.Info.Expendables[i].Name;
+                    //var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    //if (label != null) label.text = unit.Info.Expendables[i].Name;
 
                     // [수정] 아이콘: Sprite는 네트워크 전송이 안 되므로 Expendables 이름으로 ItemManager에서 로컬 조회
                     Sprite icon = unit.Info.Expendables[i].icon;
@@ -557,10 +606,6 @@ namespace Jun
                 }
                 else
                 {
-                    // 소진된 슬롯: 버튼 비활성화 + 라벨 초기화
-                    _itemBTN[i].interactable = false;
-                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                    if (label != null) label.text = "-";
                     var iconTf = _itemBTN[i].transform.Find("Icon");
                     var iconImg = iconTf != null ? iconTf.GetComponent<Image>() : null;
                     if (iconImg != null) iconImg.enabled = false;
@@ -654,9 +699,18 @@ namespace Jun
                 if (hasItem)
                 {
                     _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+                    Debug.Log("아이템 버튼 연결");
 
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Expendables[i].Name;
+
+                    ItemsAmount[i].text = unit.Info.Expendables[i].amount.ToString();
+                }
+                else
+                {
+                    var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                    if (label != null) label.text = "-";
+                    ItemsAmount[i].text = ""; 
                 }
                 // [수정] 아이템 아이콘 표시: Items가 아니라 Expendables 기준으로 이름/아이콘을 맞춥니다.
                 Sprite icon = null;
@@ -688,6 +742,7 @@ namespace Jun
                             break;
                         }
                     }
+
                 }
                 var iconTransform = _itemBTN[i].transform.Find("Icon");
                 var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
