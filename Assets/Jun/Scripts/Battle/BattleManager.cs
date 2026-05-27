@@ -24,7 +24,7 @@ namespace Jun
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
         [Header("플레이어 스폰 위치")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("캐릭터 정보 창")]
+        [Header("캐릭터 정보 창")] // [수정] 깨진 Header 문자열 복구
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
         [Header("플레이어 정보창 UI")]
@@ -72,7 +72,7 @@ namespace Jun
 
         [SerializeField] private RootingSystem _rootingSystem;
 
-        [Header("배틀 결과창")]
+        [Header("배틀 결과창")] // [수정] 깨진 Header 문자열 복구
         [SerializeField] private BattleResultPanel _battleResultPanel;
 
         // 동의 카운터 (서버 전용)
