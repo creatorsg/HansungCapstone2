@@ -1,4 +1,4 @@
-ï»¿using Jun;
+using Jun;
 using Mirror;
 using System;
 using System.Collections.Generic;
@@ -11,30 +11,32 @@ namespace Lsy
         public List<InventoryItem> inventory = new List<InventoryItem>();
         public string selectedWeaponId = "";
         public int purchasedNodeCount = 0;
+        // [¼öÁ¤] ´ëÀåÀåÀÌ ¹«±â °­È­ ´Ü°è¸¦ Ä³¸¯ÅÍº°/¹«±âº°·Î ÀúÀåÇÕ´Ï´Ù.
+        public Dictionary<string, int> blacksmithWeaponLevels = new Dictionary<string, int>();
         public List<PlayerSkill> skills = new List<PlayerSkill>();
         public List<string> unlockedNodeIds = new List<string>();
         public int gold = 0;
 
-        // --- ìºë¦­í„°ë³„ ì¥ì°© ìƒíƒœ ì €ì¥ì„ ìœ„í•œ í•„ë“œ ì¶”ê°€ ---
+        // --- Ä³¸¯ÅÍº° ÀåÂø »óÅÂ ÀúÀåÀ» À§ÇÑ ÇÊµå Ãß°¡ ---
         public string equippedWeaponId = "";
         public string equippedArmorId = "";
-        public InventoryItem equippedWeapon; // ë¬´ê¸° ê°ì²´ ì§ì ‘ ë°±ì—…
-        public InventoryItem equippedArmor;  // ë°©ì–´êµ¬ ê°ì²´ ì§ì ‘ ë°±ì—…
-        public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // ì†Œë¹„í…œ ê°ì²´ ë¦¬ìŠ¤íŠ¸ ë°±ì—…
+        public InventoryItem equippedWeapon; // ¹«±â °´Ã¼ Á÷Á¢ ¹é¾÷
+        public InventoryItem equippedArmor;  // ¹æ¾î±¸ °´Ã¼ Á÷Á¢ ¹é¾÷
+        public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // ¼ÒºñÅÛ °´Ã¼ ¸®½ºÆ® ¹é¾÷
     }
 
     public class PlayerAccount : NetworkBehaviour
     {
         public static PlayerAccount LocalInstance;
 
-        /// <summary>æ¿¡ì’–ëº„ PlayerAccountåª›Â€ ä»¥Â€é®ê¾¨ë¦±??????GoldUI ??ç¥ë‡ë¦°?ë¶¿ìŠœ</summary>
+        /// <summary>ë¡œì»¬ PlayerAccountê°€ ì¤€ë¹„ë??????GoldUI ??ì´ˆê¸°?”ìš©</summary>
         public static event Action<PlayerAccount> OnLocalAccountReady;
         public static event Action OnCharacterSwitched;
 
-        /// <summary>ï§â‘¤ë±º PlayerAccount(æ¿¡ì’–ëº„+?ë¨­êº½)åª›Â€ myHeroCodesåª›Â€ ï§¢ê¾©ì™ï§???è«›ì’–ê¹® ??ç¥ë‰ê¸½???ê¾©ê»œ æ¿¡ì’•ë±¶??/summary>
+        /// <summary>ëª¨ë“  PlayerAccount(ë¡œì»¬+?ê²©)ê°€ myHeroCodesê°€ ì±„ì›Œì§???ë°œìƒ ??ì´ˆìƒ???„ì²´ ë¡œë“œ??/summary>
         public static event Action<PlayerAccount> OnAnyAccountReady;
 
-        // ?Â€?Â€?Â€ æ€¨â‘¤ë±¶ (?ëš®ì …?ëŒë¼± æ´¹Â€?? ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ ê³¨ë“œ (?Œë ˆ?´ì–´ ê·€?? ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
         [SyncVar(hook = nameof(OnCurrentGoldChanged))]
         public int currentGold;
 
@@ -46,7 +48,7 @@ namespace Lsy
             OnGoldChanged?.Invoke(newVal);
         }
 
-        // ?Â€?Â€?Â€ ï§¦ë¨®â”ƒ??æ„¿Â€ç”±??Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ ìºë¦­??ê´€ë¦??€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
         public int currentActiveIndex { get; private set; } = -1;
 
         public CharacterUnit currentSelectedCharacter;
@@ -56,26 +58,26 @@ namespace Lsy
 
         [SyncVar] public int myCharacterCount = 0;
 
-        /// <summary>?ë‹¿? è­°ê³—ì¥Œ?ì„ë’— ï§¦ë¨®â”ƒ?ê³—ì“½ heroPos ï§â‘¸ì¤‰ ??ç¥ë‰ê¸½???ëš¯ì‘€æ²…??ë¨®ë–’??/summary>
+        /// <summary>?´ê? ì¡°ì¢…?˜ëŠ” ìºë¦­?°ì˜ heroPos ëª©ë¡ ??ì´ˆìƒ???Œìœ ê¶??ë‹¨??/summary>
         public readonly SyncList<int> myHeroPositions = new SyncList<int>();
 
-        /// <summary>myHeroPositions?Â€ 1:1 ?Â€?ë¬“ë¸¯??heroCode ï§â‘¸ì¤‰ ??ç¥ë‰ê¸½???ëŒ€?ï§Â€ ?ì’–ë–†??/summary>
+        /// <summary>myHeroPositions?€ 1:1 ?€?‘í•˜??heroCode ëª©ë¡ ??ì´ˆìƒ???´ë?ì§€ ?œì‹œ??/summary>
         public readonly SyncList<string> myHeroCodes = new SyncList<string>();
 
-        // ?ì’•ì¾­ ?ê¾©ìŠœ: ??connection???ì¢ê¹®??PlayerData ï§â‘¸ì¤‰ (FinalHeroPos ???ëº£ì ¹)
+        // ?œë²„ ?„ìš©: ??connection??? íƒ??PlayerData ëª©ë¡ (FinalHeroPos ???•ë ¬)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
         private Dictionary<int, CharacterSaveData> savedCharacterData = new Dictionary<int, CharacterSaveData>(); public Dictionary<int, CharacterSaveData> SavedCharacterData => savedCharacterData;
 
-        // ?Â€?Â€?Â€ ç¥ë‡ë¦°???Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ ì´ˆê¸°???€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            // myHeroCodesåª›Â€ ?ì„ì¨·??ï§¢ê¾©ì™ï§??ëš®? ?Â€é®ê¾ªë¹ è‚„ì’•ê°š ?ê¹…ì¤‰
+            // myHeroCodesê°€ ?˜ì¤‘??ì±„ì›Œì§??Œë? ?€ë¹„í•´ ì½œë°± ?±ë¡
             myHeroCodes.Callback += OnHeroCodesChanged;
 
-            // ?ì’•ì¾­?ë¨¯ê½Œ ?ëŒ€? ?ê³—ì” ?ê³Œ? ?ë‰ì‘ï§?(???ÑŠì­Š???? ï§ë±ë–† è«›ì’•ë£
+            // ?œë²„?ì„œ ?´ë? ?°ì´?°ê? ?ˆìœ¼ë©?(???¬ì§„???? ì¦‰ì‹œ ë°œë™
             if (myHeroCodes.Count > 0)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -88,7 +90,7 @@ namespace Lsy
 
         private void OnHeroCodesChanged(SyncList<string>.Operation op, int index, string oldItem, string newItem)
         {
-            // ï§¤ì’–í¹ ?ê³—ì” ?ê³Œ? ?ê¾©ìŸ¾???ã…¼ë¼±???ì’–ì (myHeroPositionsæ€¨??Ñˆë¦° ?ì‡±íŠ‚)???ëŒ€ê¹½??è«›ì’–ê¹®
+            // ìµœì´ˆ ?°ì´?°ê? ?„ì „???¤ì–´???œì (myHeroPositionsê³??¬ê¸° ?¼ì¹˜)???´ë²¤??ë°œìƒ
             if (myHeroCodes.Count > 0 && myHeroCodes.Count == myHeroPositions.Count)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -96,7 +98,7 @@ namespace Lsy
         public override void OnStartLocalPlayer()
         {
             LocalInstance = this;
-            Debug.Log("<color=green>[æ€¨ê¾©ì ™] ?ë¬’ëƒ½ ?ê¹ƒë‚¬!</color>");
+            Debug.Log("<color=green>[ê³„ì •] ?‘ì† ?±ê³µ!</color>");
             OnLocalAccountReady?.Invoke(this);
             CmdRequestMyCharacters();
         }
@@ -106,19 +108,19 @@ namespace Lsy
         {
             if (myCharacterPrefabs == null || myCharacterPrefabs.Count == 0) return;
 
-            // ??connection???ëë¸³ ï§â‘¤ë±º PlayerDataç‘œ??ì„ì­› (FinalHeroPos ???ëº£ì ¹)
+            // ??connection???í•œ ëª¨ë“  PlayerDataë¥??˜ì§‘ (FinalHeroPos ???•ë ¬)
             _myPlayerDatas.Clear();
             var allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: ?ê¾©ê»œ PlayerData {allPlayerDatas.Length}åª›?è«›ì’“ê»„, ??connectionToClient={connectionToClient}");
+            Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: ?„ì²´ PlayerData {allPlayerDatas.Length}ê°?ë°œê²¬, ??connectionToClient={connectionToClient}");
             foreach (var pd in allPlayerDatas)
             {
-                Debug.Log($"[PlayerAccount] PlayerData å¯ƒÂ€?? code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, ?ì‡±íŠ‚={pd.connectionToClient == connectionToClient}");
+                Debug.Log($"[PlayerAccount] PlayerData ê²€?? code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, ?¼ì¹˜={pd.connectionToClient == connectionToClient}");
                 if (pd.connectionToClient == connectionToClient)
                     _myPlayerDatas.Add(pd);
             }
             _myPlayerDatas.Sort((a, b) => a.FinalHeroPos.CompareTo(b.FinalHeroPos));
             myCharacterCount = _myPlayerDatas.Count;
-            Debug.Log($"[PlayerAccount] ??PlayerData {myCharacterCount}åª›??ì„ì­› ?ê¾¨ì¦º");
+            Debug.Log($"[PlayerAccount] ??PlayerData {myCharacterCount}ê°??˜ì§‘ ?„ë£Œ");
 
             myHeroPositions.Clear();
             myHeroCodes.Clear();
@@ -132,19 +134,19 @@ namespace Lsy
             CharacterUnit activeUnit = newCharObj.GetComponent<CharacterUnit>();
             if (activeUnit == null) return;
 
-            // ??Spawn ?ê¾©ë¿‰ Setup ???ã…½ë£¿ ï§ë¶¿ë–†ï§Â€??heroPos/heroCodeåª›Â€ ?Ñ‰ì»®ç‘œë‹¿ì¾¶ ?Ñ‹ë¸¿??
+            // ??Spawn ?„ì— Setup ???¤í° ë©”ì‹œì§€??heroPos/heroCodeê°€ ?¬ë°”ë¥´ê²Œ ?¬í•¨??
             if (_myPlayerDatas.Count > 0)
             {
                 activeUnit.SetupFromPlayerData(_myPlayerDatas[0]);
                 currentGold = 2000;
                 currentActiveIndex = 0;
                 savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
-                Debug.Log($"[PlayerAccount] PlayerData æ¹²ê³•ì»² ç¥ë‡ë¦°?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
+                Debug.Log($"[PlayerAccount] PlayerData ê¸°ë°˜ ì´ˆê¸°?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
             }
             else
             {
                 if (myCharacterDataList == null || myCharacterDataList.Count == 0) return;
-                Debug.LogWarning("[PlayerAccount] PlayerData ?ë†ì“¬ ??CharacterData ?ë¨¯ë€‘?ì‡°ì¤ˆ ?ëŒ€ê°š?â‘¸ë•²??");
+                Debug.LogWarning("[PlayerAccount] PlayerData ?†ìŒ ??CharacterData ?ì…‹?¼ë¡œ ?´ë°±?©ë‹ˆ??");
                 activeUnit.SetupFromData(myCharacterDataList[0]);
                 currentGold = myCharacterDataList[0].gold;
                 savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
@@ -158,7 +160,7 @@ namespace Lsy
             TargetRpcRefreshUI(connectionToClient, currentActiveIndex);
         }
 
-        // ?Â€?Â€?Â€ ï§¦ë¨®â”ƒ???ê¾ªì†š ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ ìºë¦­???„í™˜ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
         public void SelectCharacter(int profileIndex)
         {
@@ -177,7 +179,7 @@ namespace Lsy
             if (currentActiveIndex == targetIndex) return;
             if (currentSelectedCharacter == null) return;
 
-            // í˜„ì¬ ìºë¦­í„°ì˜ ìƒíƒœë¥¼ ì„œë²„ ë©”ëª¨ë¦¬ì— ë°±ì—…
+            // ÇöÀç Ä³¸¯ÅÍÀÇ »óÅÂ¸¦ ¼­¹ö ¸Ş¸ğ¸®¿¡ ¹é¾÷
             if (currentActiveIndex != -1)
             {
                 CharacterSaveData backup = new CharacterSaveData();
@@ -185,6 +187,8 @@ namespace Lsy
                 foreach (var item in currentSelectedCharacter.myInventory) backup.inventory.Add(item);
                 backup.selectedWeaponId = currentSelectedCharacter.selectedWeaponId;
                 backup.purchasedNodeCount = currentSelectedCharacter.purchasedNodeCount;
+                foreach (var weaponLevel in currentSelectedCharacter.blacksmithWeaponLevels)
+                    backup.blacksmithWeaponLevels[weaponLevel.Key] = weaponLevel.Value;
                 foreach (var skill in currentSelectedCharacter.mySkills) backup.skills.Add(skill);
                 foreach (var nodeId in currentSelectedCharacter.unlockedNodeIds) backup.unlockedNodeIds.Add(nodeId);
                 backup.gold = currentGold;
@@ -202,11 +206,15 @@ namespace Lsy
                 savedCharacterData[currentActiveIndex] = backup;
             }
 
-            // ìºë¦­í„° ì˜¤ë¸Œì íŠ¸ ì´ˆê¸°í™” (ìƒˆ ë°ì´í„°ë¥¼ ë°›ê¸° ìœ„í•´ ë¹„ìš°ê¸°)
-            // ì´ì „ ìºë¦­í„°ì˜ ë°ì´í„°ê°€ ë‚¨ì•„ìˆì§€ ì•Šë„ë¡ "ë¨¼ì €" ë¹„ì›ë‹ˆë‹¤.
+            // Ä³¸¯ÅÍ ¿ÀºêÁ§Æ® ÃÊ±âÈ­ (»õ µ¥ÀÌÅÍ¸¦ ¹Ş±â À§ÇØ ºñ¿ì±â)
+            // ÀÌÀü Ä³¸¯ÅÍÀÇ µ¥ÀÌÅÍ°¡ ³²¾ÆÀÖÁö ¾Êµµ·Ï "¸ÕÀú" ºñ¿ó´Ï´Ù.
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
             currentSelectedCharacter.unlockedNodeIds.Clear();
+            // [¼öÁ¤] Ä³¸¯ÅÍº° ´ëÀåÀåÀÌ ¹«±â °­È­ »óÅÂ°¡ ´Ù¸¥ Ä³¸¯ÅÍ·Î °øÀ¯µÇÁö ¾Êµµ·Ï ¸ÕÀú ºñ¿ó´Ï´Ù.
+            currentSelectedCharacter.selectedWeaponId = "";
+            currentSelectedCharacter.purchasedNodeCount = 0;
+            currentSelectedCharacter.blacksmithWeaponLevels.Clear();
 
             var targetSlot = currentSelectedCharacter.equipmentSlot;
             if (targetSlot != null)
@@ -218,18 +226,18 @@ namespace Lsy
                 targetSlot.equippedConsumables.Clear();
             }
 
-            // ì¸ë±ìŠ¤ ì „í™˜ ë° ë°ì´í„° ë¡œë“œ
+            // ÀÎµ¦½º ÀüÈ¯ ¹× µ¥ÀÌÅÍ ·Îµå
             currentActiveIndex = targetIndex;
 
-            // ì €ì¥ëœ ë°ì´í„°ê°€ ìˆëŠ”ì§€ ë¨¼ì € í™•ì¸í•©ë‹ˆë‹¤.
+            // ÀúÀåµÈ µ¥ÀÌÅÍ°¡ ÀÖ´ÂÁö ¸ÕÀú È®ÀÎÇÕ´Ï´Ù.
             if (savedCharacterData.TryGetValue(targetIndex, out CharacterSaveData saved))
             {
-                // ì´ë¯¸ í”Œë ˆì´í•œ ì ì´ ìˆëŠ” ìºë¦­í„°: ì €ì¥ëœ ë°ì´í„° ë³µì›
-                // ì´ë•ŒëŠ” SetupFromDataë¥¼ í˜¸ì¶œí•˜ì§€ ì•Šê±°ë‚˜, í˜¸ì¶œ í›„ ì €ì¥ëœ ë°ì´í„°ë¡œ ë®ì–´ì”ë‹ˆë‹¤.
+                // ÀÌ¹Ì ÇÃ·¹ÀÌÇÑ ÀûÀÌ ÀÖ´Â Ä³¸¯ÅÍ: ÀúÀåµÈ µ¥ÀÌÅÍ º¹¿ø
+                // ÀÌ¶§´Â SetupFromData¸¦ È£ÃâÇÏÁö ¾Ê°Å³ª, È£Ãâ ÈÄ ÀúÀåµÈ µ¥ÀÌÅÍ·Î µ¤¾î¾¹´Ï´Ù.
                 if (hasPlayerDatas) currentSelectedCharacter.SetupFromPlayerData(_myPlayerDatas[targetIndex]);
                 else currentSelectedCharacter.SetupFromData(myCharacterDataList[targetIndex]);
 
-                // Setup ê³¼ì •ì—ì„œ ë“¤ì–´ê°„ ê¸°ë³¸ ì•„ì´í…œë“¤ì„ ì§€ìš°ê³  ì €ì¥ëœ ìƒíƒœë¡œ êµì²´
+                // Setup °úÁ¤¿¡¼­ µé¾î°£ ±âº» ¾ÆÀÌÅÛµéÀ» Áö¿ì°í ÀúÀåµÈ »óÅÂ·Î ±³Ã¼
                 currentSelectedCharacter.myInventory.Clear();
                 currentSelectedCharacter.mySkills.Clear();
                 currentSelectedCharacter.unlockedNodeIds.Clear();
@@ -238,6 +246,9 @@ namespace Lsy
                 foreach (var item in saved.inventory) currentSelectedCharacter.myInventory.Add(item);
                 currentSelectedCharacter.selectedWeaponId = saved.selectedWeaponId;
                 currentSelectedCharacter.purchasedNodeCount = saved.purchasedNodeCount;
+                currentSelectedCharacter.blacksmithWeaponLevels.Clear();
+                foreach (var weaponLevel in saved.blacksmithWeaponLevels)
+                    currentSelectedCharacter.blacksmithWeaponLevels[weaponLevel.Key] = weaponLevel.Value;
                 foreach (var skill in saved.skills) currentSelectedCharacter.mySkills.Add(skill);
                 foreach (var nodeId in saved.unlockedNodeIds) currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
 
@@ -247,14 +258,14 @@ namespace Lsy
                     targetSlot.equippedWeapon = saved.equippedWeapon;
                     targetSlot.equippedArmorId = saved.equippedArmorId;
                     targetSlot.equippedArmor = saved.equippedArmor;
-                    // SetupFromPlayerDataì—ì„œ Expendablesê°€ ì´ë¯¸ ì¶”ê°€ëì„ ìˆ˜ ìˆìœ¼ë¯€ë¡œ ë°˜ë“œì‹œ ë¨¼ì € ë¹„ì›ë‹ˆë‹¤.
+                    // [¼öÁ¤] ÀúÀåµÈ È¨ ÀåÂø ¼Ò¸ğÇ°¸¸ º¹¿øÇÕ´Ï´Ù.
                     targetSlot.equippedConsumables.Clear();
                     foreach (var item in saved.equippedConsumables) targetSlot.equippedConsumables.Add(item);
                 }
             }
             else
             {
-                // ì²˜ìŒ ì„ íƒí•˜ëŠ” ìºë¦­í„°: ê¸°ë³¸ ë°ì´í„°(ì´ˆê¸° ì•„ì´í…œ ë“±) ë¡œë“œ
+                // Ã³À½ ¼±ÅÃÇÏ´Â Ä³¸¯ÅÍ: ±âº» µ¥ÀÌÅÍ(ÃÊ±â ¾ÆÀÌÅÛ µî) ·Îµå
                 if (hasPlayerDatas)
                 {
                     PlayerData targetPd = _myPlayerDatas[targetIndex];
@@ -267,10 +278,10 @@ namespace Lsy
                     currentSelectedCharacter.SetupFromData(targetData);
                     currentGold = targetData.gold;
                 }
-                // SetupFromData ë‚´ë¶€ì—ì„œ ì¸ë²¤í† ë¦¬ì™€ ìŠ¤í‚¬ì´ ì±„ì›Œì§€ë¯€ë¡œ ê·¸ëŒ€ë¡œ ë‘¡ë‹ˆë‹¤.
+                // SetupFromData ³»ºÎ¿¡¼­ ÀÎº¥Åä¸®¿Í ½ºÅ³ÀÌ Ã¤¿öÁö¹Ç·Î ±×´ë·Î µÓ´Ï´Ù.
             }
 
-            //  ìµœì¢… ê°±ì‹  ë° UI í†µë³´
+            //  ÃÖÁ¾ °»½Å ¹× UI Åëº¸
             AutoUnlockLv1Nodes(currentSelectedCharacter);
             TargetRpcRefreshUI(connectionToClient, targetIndex);
         }
@@ -280,7 +291,7 @@ namespace Lsy
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
         {
             currentActiveIndex = newActiveIndex;
-            Debug.Log($"<color=cyan>[?ëŒ€ì”ª?ëŒë¼µ?? currentActiveIndex: {newActiveIndex}</color>");
+            Debug.Log($"<color=cyan>[?´ë¼?´ì–¸?? currentActiveIndex: {newActiveIndex}</color>");
 
             if (InventoryUI.Instance != null)
                 InventoryUI.Instance.RefreshInventory();
@@ -291,38 +302,38 @@ namespace Lsy
             OnCharacterSwitched?.Invoke();
         }
 
-        // ?Â€?Â€?Â€ NPC ?ê³¹ìƒ‡?ë¬’ìŠœ è€Œã…»ã¤??(æ€¨â‘¤ë±¶ ï§£ëŒ„ê²•/ï§¡â‘£ì»§ ?ëŒ€ë–¦) ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ NPC ?í˜¸?‘ìš© ì»¤ë§¨??(ê³¨ë“œ ì²´í¬/ì°¨ê° ?´ë‹¹) ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
         [Command]
         public void CmdPurchaseTreeNode(string nodeId)
         {
-            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode ï§ê¾©ì—¯ ??nodeId={nodeId}</color>");
+            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode ì§„ì… ??nodeId={nodeId}</color>");
 
-            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] å«„ê³•?: currentSelectedCharacter null"); return; }
-            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] å«„ê³•?: nodeId é®ê¾©ë¼±?ë‰ì“¬"); return; }
+            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] ê±°ë?: currentSelectedCharacter null"); return; }
+            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] ê±°ë?: nodeId ë¹„ì–´?ˆìŒ"); return; }
 
             string characterCode = GetCurrentCharacterCode();
             if (string.IsNullOrEmpty(characterCode))
             {
-                Debug.LogWarning("[SkillTree] å«„ê³•?: characterCode é®ê¾©ë¼±?ë‰ì“¬");
+                Debug.LogWarning("[SkillTree] ê±°ë?: characterCode ë¹„ì–´?ˆìŒ");
                 return;
             }
 
             if (!SkillTreeRegistry.TryFind(characterCode, nodeId, out SkillTreeNodeSO node))
             {
-                Debug.LogWarning($"[SkillTree] å«„ê³•?: ?ëªƒë±¶ ï§?ï§¡ì– ì“¬ ??character={characterCode}, node={nodeId}");
+                Debug.LogWarning($"[SkillTree] ê±°ë?: ?¸ë“œ ëª?ì°¾ìŒ ??character={characterCode}, node={nodeId}");
                 return;
             }
 
             if (currentSelectedCharacter.unlockedNodeIds.Contains(nodeId))
             {
-                Debug.Log($"[SkillTree] å«„ê³•?: ?ëŒ€? è¹‚ëŒì‘€ ??{nodeId}");
+                Debug.Log($"[SkillTree] ê±°ë?: ?´ë? ë³´ìœ  ??{nodeId}");
                 return;
             }
 
             if (node.prerequisite != null && !currentSelectedCharacter.unlockedNodeIds.Contains(node.prerequisite.nodeId))
             {
-                Debug.Log($"[SkillTree] å«„ê³•?: prereq èª˜ëª„ë•è­°???{nodeId} requires {node.prerequisite.nodeId}");
+                Debug.Log($"[SkillTree] ê±°ë?: prereq ë¯¸ì¶©ì¡???{nodeId} requires {node.prerequisite.nodeId}");
                 return;
             }
 
@@ -337,20 +348,20 @@ namespace Lsy
 
                 if (sameBranchChoice)
                 {
-                    Debug.Log($"[SkillTree] å«„ê³•?: éºê¾§ë¦° ?ë¬’ì˜„?ì•¹ì”ª ??{nodeId} vs ?ëŒ€? è¹‚ëŒì‘€ {unlockedNodeId}");
+                    Debug.Log($"[SkillTree] ê±°ë?: ë¶„ê¸° ?‘ì?ì¼ ??{nodeId} vs ?´ë? ë³´ìœ  {unlockedNodeId}");
                     return;
                 }
             }
 
             if (currentGold < node.unlockCost)
             {
-                Debug.Log($"[SkillTree] å«„ê³•?: æ€¨â‘¤ë±¶ éºÂ€è­°????ê¾©ìŠ‚ {node.unlockCost}, è¹‚ëŒì‘€ {currentGold}");
+                Debug.Log($"[SkillTree] ê±°ë?: ê³¨ë“œ ë¶€ì¡????„ìš” {node.unlockCost}, ë³´ìœ  {currentGold}");
                 return;
             }
 
             currentGold -= node.unlockCost;
             currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
-            Debug.Log($"<color=green>[SkillTree] æ´Ñ‰â„“ ?ê¹ƒë‚¬ ??{nodeId}, ?ë¶¿ë¸¸ {currentGold}G</color>");
+            Debug.Log($"<color=green>[SkillTree] êµ¬ë§¤ ?±ê³µ ??{nodeId}, ?”ì•¡ {currentGold}G</color>");
         }
 
         private string GetCurrentCharacterCode()
@@ -362,9 +373,9 @@ namespace Lsy
         }
 
         /// <summary>
-        /// ï§¦ë¨®â”ƒ?ê³—ì“½ Lv1 ?ëªƒë±¶ 4åª›?æ¹²ê³•ë‚¯ ?ã…½ê¶—)ç‘œ?unlockedNodeIds???ë¨®ë£ ç•°ë¶½??â‘¸ë•²??
-        /// ï§¦ë¨®â”ƒ??ç¥ë‡ë¦° ?ã…½ë£¿ ï§ê³¹ì‘, æ´¹ëªƒâ”æ€¨???ï§¦ë¨®â”ƒ?ê³•ì¤ˆ ?ã…¼ì†‘??ï§ê³¹ì‘(è«›ê¹†ë¾½ ?ë†ì“£ ?? ?ëª„í…§?ì„ê½­??
-        /// SyncHashSet.Add ??ï§ê¹…ë²‘?ì„?æ¿¡?ä»¥ë¬ë‚¬ ?ëª„í…§?ì„ë¼±???ë‰ìŸ¾?â‘¸ë•²??
+        /// ìºë¦­?°ì˜ Lv1 ?¸ë“œ 4ê°?ê¸°ë³¸ ?¤í‚¬)ë¥?unlockedNodeIds???ë™ ì¶”ê??©ë‹ˆ??
+        /// ìºë¦­??ì´ˆê¸° ?¤í° ì§í›„, ê·¸ë¦¬ê³???ìºë¦­?°ë¡œ ?¤ì™‘??ì§í›„(ë°±ì—… ?†ì„ ?? ?¸ì¶œ?˜ì„¸??
+        /// SyncHashSet.Add ??ë©±ë“±?˜ë?ë¡?ì¤‘ë³µ ?¸ì¶œ?˜ì–´???ˆì „?©ë‹ˆ??
         /// </summary>
         [Server]
         private void AutoUnlockLv1Nodes(CharacterUnit unit)
@@ -378,14 +389,14 @@ namespace Lsy
             string code = !string.IsNullOrEmpty(unit.heroCode) ? unit.heroCode : unit.characterName;
             if (string.IsNullOrEmpty(code))
             {
-                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName ï§â‘¤ëª¢ é®ê¾©ë¼±?ë‰ì“¬ ???ã…½ê¶—?ëªƒâ” ï§ã…¼ë¬¶ éºë‡?");
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName ëª¨ë‘ ë¹„ì–´?ˆìŒ ???¤í‚¬?¸ë¦¬ ë§¤ì¹­ ë¶ˆê?");
                 return;
             }
 
             CharacterSkillTreeSO tree = SkillTreeRegistry.GetTree(code);
             if (tree == null || tree.allNodes == null)
             {
-                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree ?ë†ì“¬ ??code={code}");
+                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree ?†ìŒ ??code={code}");
                 return;
             }
 
@@ -397,7 +408,7 @@ namespace Lsy
                 if (string.IsNullOrEmpty(node.nodeId)) continue;
                 if (unit.unlockedNodeIds.Add(node.nodeId)) added++;
             }
-            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 ?ëªƒë±¶ {added}åª›?ç•°ë¶½? (ç¥?unlocked={unit.unlockedNodeIds.Count})</color>");
+            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 ?¸ë“œ {added}ê°?ì¶”ê? (ì´?unlocked={unit.unlockedNodeIds.Count})</color>");
         }
 
         [Command]
@@ -432,10 +443,10 @@ namespace Lsy
             currentSelectedCharacter.ApplyInformantUpgrade(targetSkillName, npcLevel);
         }
 
-        // ?Â€?Â€?Â€ ?Ñ‹ë ?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€?Â€
+        // ?€?€?€ ?¬í¼ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
 
         /// <summary>
-        /// DontDestroyOnLoadæ¿¡??ì¢??ì„ë’— PlayerData ä»¥???connection???ëš¯ì‘€??å¯ƒê»‹ì“£ è«›ì„‘ì†š?â‘¸ë•²??
+        /// DontDestroyOnLoadë¡?? ì??˜ëŠ” PlayerData ì¤???connection???Œìœ ??ê²ƒì„ ë°˜í™˜?©ë‹ˆ??
         /// </summary>
         [Server]
         private PlayerData FindPlayerDataForConnection()
@@ -450,11 +461,11 @@ namespace Lsy
         }
 
 
-        //ì „íˆ¬ì”¬ìœ¼ë¡œ ë„˜ì–´ê°ˆë•Œ ì¸ë²¤í† ë¦¬ ì •ë³´ ì—…ë°ì´íŠ¸
+        //ÀüÅõ¾ÀÀ¸·Î ³Ñ¾î°¥¶§ ÀÎº¥Åä¸® Á¤º¸ ¾÷µ¥ÀÌÆ®
 
         /// <summary>
-        /// ì•„ì´í…œ êµ¬ë§¤/íšë“ ì§í›„ ì¦‰ì‹œ í˜¸ì¶œ: myInventory â†’ pd.Info.Items ë§Œ ë™ê¸°í™”í•©ë‹ˆë‹¤.
-        /// ì¥ì°© ìŠ¬ë¡¯(Weapon/Armor/Expendables)ì€ ê±´ë“œë¦¬ì§€ ì•ŠìŠµë‹ˆë‹¤.
+        /// ¾ÆÀÌÅÛ ±¸¸Å/È¹µæ Á÷ÈÄ Áï½Ã È£Ãâ: myInventory ¡æ pd.Info.Items ¸¸ µ¿±âÈ­ÇÕ´Ï´Ù.
+        /// ÀåÂø ½½·Ô(Weapon/Armor/Expendables)Àº °Çµå¸®Áö ¾Ê½À´Ï´Ù.
         /// </summary>
         [Server]
         public void SyncInventoryToPlayerData()
@@ -476,45 +487,45 @@ namespace Lsy
 
         public void SyncAllHideoutDataToBattleData()
         {
-            // 1. í˜„ì¬ ì”¬ì— ìˆëŠ” ëª¨ë“  PlayerDataPrefab(Clone) ê°ì²´ë“¤ì„ ì°¾ìŠµë‹ˆë‹¤.
+            // 1. ÇöÀç ¾À¿¡ ÀÖ´Â ¸ğµç PlayerDataPrefab(Clone) °´Ã¼µéÀ» Ã£½À´Ï´Ù.
             PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            if (allPlayerDatas != null) Debug.Log("ì°¾ê¸°ì™„ë£Œ");
-            // 2. ì°¾ì€ ê°ì²´ë“¤ ì¤‘ "ë‚´ ê²ƒ"ë§Œ ê³¨ë¼ì„œ ì—…ë°ì´íŠ¸í•©ë‹ˆë‹¤.
+            if (allPlayerDatas != null) Debug.Log("Ã£±â¿Ï·á");
+            // 2. Ã£Àº °´Ã¼µé Áß "³» °Í"¸¸ °ñ¶ó¼­ ¾÷µ¥ÀÌÆ®ÇÕ´Ï´Ù.
             foreach (var pd in allPlayerDatas)
             {
-                // ë‚´ connectionì— ì†í•œ PlayerDataì¸ì§€ í™•ì¸
+                // ³» connection¿¡ ¼ÓÇÑ PlayerDataÀÎÁö È®ÀÎ
                 if (pd.connectionToClient != connectionToClient) continue;
 
-                // ì´ pdê°€ ë‚´ ìºë¦­í„° ë¦¬ìŠ¤íŠ¸(_myPlayerDatas)ì—ì„œ ëª‡ ë²ˆì§¸ ìºë¦­í„°ì¸ì§€ í™•ì¸
+                // ÀÌ pd°¡ ³» Ä³¸¯ÅÍ ¸®½ºÆ®(_myPlayerDatas)¿¡¼­ ¸î ¹øÂ° Ä³¸¯ÅÍÀÎÁö È®ÀÎ
                 int charIndex = _myPlayerDatas.IndexOf(pd);
                 if (charIndex == -1) continue;
 
-                // 3. ì •ë³´ ì£¼ì… (í˜„ì¬ êº¼ë‚´ì ¸ ìˆëŠ” ìºë¦­í„° vs ì €ì¥ëœ ë°ì´í„°)
+                // 3. Á¤º¸ ÁÖÀÔ (ÇöÀç ²¨³»Á® ÀÖ´Â Ä³¸¯ÅÍ vs ÀúÀåµÈ µ¥ÀÌÅÍ)
                 if (charIndex == currentActiveIndex && currentSelectedCharacter != null)
                 {
-                    // [í˜„ì¬ í™œì„±í™”ëœ ìºë¦­í„°] ì‹¤ì‹œê°„ EquipmentSlotì—ì„œ ê°€ì ¸ì˜¤ê¸°
+                    // [ÇöÀç È°¼ºÈ­µÈ Ä³¸¯ÅÍ] ½Ç½Ã°£ EquipmentSlot¿¡¼­ °¡Á®¿À±â
                     var slot = currentSelectedCharacter.equipmentSlot;
                     if (slot != null && pd.Info != null)
                     {
-                        // ì¥ì°©ëœ ë¬´ê¸°/ë°©ì–´êµ¬
+                        // ÀåÂøµÈ ¹«±â/¹æ¾î±¸
                         pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
                         pd.Info.Armor  = !string.IsNullOrEmpty(slot.equippedArmorId)  ? slot.equippedArmor.EquipInfo  : null;
 
-                        // ì¥ì°©ëœ ì†Œëª¨í’ˆ â†’ Expendables
+                        // ÀåÂøµÈ ¼Ò¸ğÇ° ¡æ Expendables
                         pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in slot.equippedConsumables)
                             if (item.ConsumInfo != null)
                                 for (int i = 0; i < item.amount; i++) pd.Info.Expendables.Add(item.ConsumInfo);
 
-                        // ë¯¸ì¥ì°© ì¸ë²¤ â†’ Items
+                        // ¹ÌÀåÂø ÀÎº¥ ¡æ Items
                         pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
 
-                        Debug.Log($"[Sync] í˜„ì¬ ìºë¦­í„°({pd.FinalHeroCode}) ì‹¤ì‹œê°„ ì •ë³´ ì—…ë°ì´íŠ¸ ì™„ë£Œ");
+                        Debug.Log($"[Sync] ÇöÀç Ä³¸¯ÅÍ({pd.FinalHeroCode}) ½Ç½Ã°£ Á¤º¸ ¾÷µ¥ÀÌÆ® ¿Ï·á");
                     }
                 }
                 else if (savedCharacterData.TryGetValue(charIndex, out var saved))
                 {
-                    // [ë¹„í™œì„±í™”ëœ ìºë¦­í„°] ì´ì „ì— ì €ì¥í•´ë‘” savedCharacterDataì—ì„œ ê°€ì ¸ì˜¤ê¸°
+                    // [ºñÈ°¼ºÈ­µÈ Ä³¸¯ÅÍ] ÀÌÀü¿¡ ÀúÀåÇØµĞ savedCharacterData¿¡¼­ °¡Á®¿À±â
                     if (pd.Info != null)
                     {
                         pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
@@ -527,10 +538,17 @@ namespace Lsy
 
                         pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
 
-                        Debug.Log($"[Sync] ëŒ€ê¸° ì¤‘ì¸ ìºë¦­í„°({pd.FinalHeroCode}) ì €ì¥ëœ ì •ë³´ ì—…ë°ì´íŠ¸ ì™„ë£Œ");
+                        Debug.Log($"[Sync] ´ë±â ÁßÀÎ Ä³¸¯ÅÍ({pd.FinalHeroCode}) ÀúÀåµÈ Á¤º¸ ¾÷µ¥ÀÌÆ® ¿Ï·á");
                     }
                 }
             }
+        }
+
+        // [¼öÁ¤] º´ÇÕ Àü È£ÃâºÎ(BattleStartBtn/ReadyOrStartButton/QuestVoteSystem)°¡ ±â´ëÇÏ´Â Á¤Àû µ¿±âÈ­ ÁøÀÔÁ¡À» º¹±¸ÇÕ´Ï´Ù.
+        public static void SyncAllAccountsHideoutDataToBattleData()
+        {
+            foreach (var account in FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None))
+                account.SyncAllHideoutDataToBattleData();
         }
     }
 }

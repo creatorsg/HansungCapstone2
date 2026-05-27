@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using Jun;
 
 namespace Lsy
@@ -11,11 +10,6 @@ namespace Lsy
         public GameObject inventoryWindow;
         public Transform slotContainer;
         public GameObject inventorySlotPrefab;
-
-        // ItemManager로 조회하지 못할 경우를 대비한 폴백 목록
-        // ItemManager.allItems에 아이템이 모두 등록되어 있다면 비워도 됩니다
-        [Header("아이템 DB 폴백 (ItemManager 미사용 시)")]
-        public List<ItemData> allItemDatabase = new List<ItemData>();
 
         private void Awake()
         {
@@ -48,28 +42,25 @@ namespace Lsy
             {
                 if (item.amount <= 0) continue;
 
-                // ── ItemManager에서 ItemSO를 itemName 기준으로 조회 ──────────────
-                // Mirror SyncList 직렬화 후 ConsumInfo/EquipInfo 내부의 Sprite 등이
-                // 손실될 수 있으므로, 표시용 데이터는 항상 ItemSO에서 재구성합니다.
-                // (equippedWeaponId → 이름으로 조회하는 방식과 동일한 원리)
-                ItemSO so = ItemManager.Instance != null
-                    ? ItemManager.Instance.GetItemSO(item.itemName)
-                    : null;
+                // [수정] ItemSO/ItemData fallback 제거. InventoryItem과 ItemManager의 NPC 판매 데이터만 사용합니다.
+                ConsumableInfo consumInfo = item.ConsumInfo;
+                EqpInfo equipInfo = item.EquipInfo;
 
-                // 아이콘: SyncList 내 데이터 → ItemSO → ItemData 순으로 fallback
-                Sprite icon = item.ConsumInfo?.icon ?? item.EquipInfo?.icon ?? so?.icon;
+                if (consumInfo == null && item.Type == ItemType.Consumable && ItemManager.Instance != null)
+                {
+                    Consum consumData = ItemManager.Instance.GetConsumData(item.itemName);
+                    consumInfo = consumData != null ? consumData.ConsumItem : null;
+                }
+
+                if (equipInfo == null && item.Type != ItemType.Consumable && ItemManager.Instance != null)
+                    equipInfo = ItemManager.Instance.GetEqpData(item.itemName);
+
+                Sprite icon = consumInfo?.icon ?? equipInfo?.icon;
                 if (icon == null && ItemManager.Instance != null)
                     icon = ItemManager.Instance.GetIcon(item.itemName);
 
-                // ConsumInfo/EquipInfo: SyncList 내 데이터가 있으면 그대로, 없으면 ItemSO에서 재구성
-                ConsumableInfo consumInfo = item.ConsumInfo
-                    ?? (item.Type == ItemType.Consumable ? so?.ToConsumableInfo() : null);
-                EqpInfo equipInfo = item.EquipInfo
-                    ?? (item.Type != ItemType.Consumable ? so?.ToEqpInfo() : null);
-
                 Debug.Log($"[InventoryUI] '{item.itemName}' amount={item.amount} | " +
-                          $"SO={so != null} | icon={icon != null} | " +
-                          $"consumInfo={consumInfo != null} | equipInfo={equipInfo != null}");
+                          $"icon={icon != null} | consumInfo={consumInfo != null} | equipInfo={equipInfo != null}");
 
                 GameObject newSlot = Instantiate(inventorySlotPrefab, slotContainer);
                 InventorySlotUI slotScript = newSlot.GetComponent<InventorySlotUI>();
@@ -87,22 +78,9 @@ namespace Lsy
                 }
                 else
                 {
-                    // 최후 fallback: 레거시 ItemData 방식
-                    ItemData foundData = ItemManager.Instance != null
-                        ? ItemManager.Instance.GetItemData(item.itemName)
-                        : allItemDatabase.Find(x => x.itemName == item.itemName);
-
-                    if (foundData == null)
-                    {
-                        Debug.LogWarning($"[InventoryUI] '{item.itemName}' — ItemSO·ItemData 모두 없어 슬롯 삭제");
-                        Destroy(newSlot);
-                        continue;
-                    }
-                    slotScript.Setup(foundData, item.amount, () =>
-                    {
-                        CharacterShop shop = myChar.GetComponent<CharacterShop>();
-                        shop?.CmdEquipItem(foundData.itemName);
-                    });
+                    Debug.LogWarning($"[InventoryUI] '{item.itemName}' — Consum/Equipment 데이터가 없어 슬롯 삭제");
+                    Destroy(newSlot);
+                    continue;
                 }
 
                 bool isEquipped = (item.Type == ItemType.Weapon && myChar.equipmentSlot.equippedWeaponId == item.itemName)

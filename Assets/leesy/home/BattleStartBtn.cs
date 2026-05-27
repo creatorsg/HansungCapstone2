@@ -33,17 +33,32 @@ public class BattleStartBtn : MonoBehaviour
 
         if (NetworkServer.active && NetworkManager.singleton != null)
         {
-            if (ReadySystem.Instance == null || !ReadySystem.Instance.AllReady)
+            if (!IsSoloHost() && (ReadySystem.Instance == null || !ReadySystem.Instance.AllReady))
                 return;
 
             if (string.IsNullOrEmpty(targetScene))
                 return;
 
+            PlayerAccount.SyncAllAccountsHideoutDataToBattleData();
             NetworkManager.singleton.ServerChangeScene(targetScene);
             return;
         }
 
         if (!string.IsNullOrEmpty(targetScene))
             SceneManager.LoadScene(targetScene);
+    }
+
+    private bool IsSoloHost()
+    {
+        if (!NetworkServer.active) return false;
+
+        foreach (var conn in NetworkServer.connections.Values)
+        {
+            if (conn == null) continue;
+            if (conn.connectionId == 0) continue;
+            return false;
+        }
+
+        return true;
     }
 }

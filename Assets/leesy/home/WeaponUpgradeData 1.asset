@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718419bf00243ac4f8455613f86fa3a7, type: 3}
+  m_Name: WeaponUpgradeData 1
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.WeaponUpgradeData
+  weaponId: 1
+  weaponName: "\uBC29\uD328"
+  nodes:
+  - nodeName: "\uD5C8\uC811\uD55C \uBC29\uD328"
+    price: 100
+    requiredNpcLevel: 1
+  - nodeName: "\uD2BC\uD2BC\uD55C \uBC29\uD328"
+    price: 200
+    requiredNpcLevel: 2
+  - nodeName: "\uBB50\uB4E0\uC9C0 \uB9C9\uB294 \uBC29\uD328"
+    price: 300
+    requiredNpcLevel: 3

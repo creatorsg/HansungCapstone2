@@ -4769,7 +4769,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.NPCInteract
   _npcState: {fileID: 383200246841515894}
-  _npcUI: {fileID: 0}
+  _npcUI: {fileID: 320706041}
 --- !u!1 &697309082
 GameObject:
   m_ObjectHideFlags: 0

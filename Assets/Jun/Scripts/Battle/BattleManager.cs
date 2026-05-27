@@ -24,7 +24,7 @@ namespace Jun
         public readonly SyncList<GamePlayerController> _players = new SyncList<GamePlayerController>();
         [Header("플레이어 스폰 위치")]
         [SerializeField] private List<Transform> _spawnPoints; public List<Transform> SpawnPoints => _spawnPoints;
-        [Header("캐릭터 정보 창")]
+        [Header("캐릭터 정보 창")] // [수정] 깨진 Header 문자열 복구
         [SerializeField] private CanvasGroup _unitPanel;
         [SerializeField] private Image _charaterIMG; public Image CharaterIMG => _charaterIMG;
         [Header("플레이어 정보창 UI")]
@@ -72,7 +72,7 @@ namespace Jun
 
         [SerializeField] private RootingSystem _rootingSystem;
 
-        [Header("배틀 결과창")]
+        [Header("배틀 결과창")] // [수정] 깨진 Header 문자열 복구
         [SerializeField] private BattleResultPanel _battleResultPanel;
 
         // 동의 카운터 (서버 전용)
@@ -540,8 +540,11 @@ namespace Jun
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Expendables[i].Name;
 
-                    // 아이콘: 네트워크 전송 시 Sprite=null → CharacterRegistry에서 로컬 조회
+                    // [수정] 아이콘: Sprite는 네트워크 전송이 안 되므로 Expendables 이름으로 ItemManager에서 로컬 조회
                     Sprite icon = unit.Info.Expendables[i].icon;
+                    if (icon == null && Lsy.ItemManager.Instance != null)
+                        icon = Lsy.ItemManager.Instance.GetIcon(unit.Info.Expendables[i].Name);
+
                     if (icon == null &&
                         CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
                         entry.Items != null && i < entry.Items.Count)
@@ -655,16 +658,36 @@ namespace Jun
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Expendables[i].Name;
                 }
-                // 아이템 아이콘 표시: 네트워크 전송 시 icon=null이므로 CharacterRegistry에서 로컬로 가져옴
+                // [수정] 아이템 아이콘 표시: Items가 아니라 Expendables 기준으로 이름/아이콘을 맞춥니다.
                 Sprite icon = null;
 
-                if (icon == null && hasItem &&
-                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
-                    entry.Items != null &&
-                    i < entry.Items.Count)
+                if (hasItem)
                 {
-                    Debug.Log($"Registry item[{i}] name={entry.Items[i].Name}, icon={entry.Items[i].icon}");
-                    icon = entry.Items[i].icon;
+                    var currentItem = unit.Info.Expendables[i];
+                    icon = currentItem != null ? currentItem.icon : null;
+
+                    if (icon == null &&
+                        currentItem != null &&
+                        !string.IsNullOrEmpty(currentItem.Name) &&
+                        Lsy.ItemManager.Instance != null)
+                    {
+                        icon = Lsy.ItemManager.Instance.GetIcon(currentItem.Name);
+                    }
+
+                    if (icon == null &&
+                        currentItem != null &&
+                        !string.IsNullOrEmpty(currentItem.Name) &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var entry) &&
+                        entry.Items != null)
+                    {
+                        foreach (var registryItem in entry.Items)
+                        {
+                            if (registryItem == null) continue;
+                            if (registryItem.Name != currentItem.Name) continue;
+                            icon = registryItem.icon;
+                            break;
+                        }
+                    }
                 }
                 var iconTransform = _itemBTN[i].transform.Find("Icon");
                 var iconImage = iconTransform != null ? iconTransform.GetComponent<Image>() : null;
@@ -703,13 +726,30 @@ namespace Jun
                 Debug.Log($"[장비] i={i} hasEquip={hasEquip} Weapon={unit.Info.Weapon?.Name} Armor={unit.Info.Armor?.Name}");
 
                 Sprite eqpIcon = null;
-                if (hasEquip &&
-                    CharacterRegistry.TryGet(unit.FinalHeroCode, out var eqpEntry))
+                if (hasEquip)
                 {
-                    if (i == 0 && eqpEntry.Weapon != null)
-                        eqpIcon = eqpEntry.Weapon.icon;
-                    else if (i == 1 && eqpEntry.Armor != null)
-                        eqpIcon = eqpEntry.Armor.icon;
+                    var currentEquip = i == 0 ? unit.Info.Weapon : unit.Info.Armor;
+                    eqpIcon = currentEquip.icon;
+
+                    // [수정] 장비 아이콘도 네트워크에서 null이 되므로 ItemManager.AllEqps에서 이름으로 복구합니다.
+                    if (eqpIcon == null &&
+                        currentEquip != null &&
+                        !string.IsNullOrEmpty(currentEquip.Name) &&
+                        Lsy.ItemManager.Instance != null)
+                    {
+                        eqpIcon = Lsy.ItemManager.Instance.GetIcon(currentEquip.Name);
+                    }
+
+                    if (eqpIcon == null &&
+                        currentEquip != null &&
+                        !string.IsNullOrEmpty(currentEquip.Name) &&
+                        CharacterRegistry.TryGet(unit.FinalHeroCode, out var eqpEntry))
+                    {
+                        if (i == 0 && eqpEntry.Weapon != null && eqpEntry.Weapon.Name == currentEquip.Name)
+                            eqpIcon = eqpEntry.Weapon.icon;
+                        else if (i == 1 && eqpEntry.Armor != null && eqpEntry.Armor.Name == currentEquip.Name)
+                            eqpIcon = eqpEntry.Armor.icon;
+                    }
                 }
 
                 _equiIMG[i].sprite = eqpIcon;

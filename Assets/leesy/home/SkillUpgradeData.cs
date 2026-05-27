@@ -24,6 +24,7 @@ namespace Lsy
         public string skillName;
 
         public int price;
+        // [수정] NPCPopupUI에 표시되는 NPC Lv.숫자와 같은 1부터 시작하는 값입니다.
         public int requiredNpcLevel;
     }
 }

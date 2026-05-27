@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 
 namespace Lsy
@@ -7,11 +7,11 @@ namespace Lsy
     {
         public static EquipmentUI Instance;
 
-        [Header("¹Ì¸® ¸¸µé¾îµÐ ÀåÂø ½½·Ôµé")]
+        [Header("Equipment slots")]
         public InventorySlotUI weaponSlot;
         public InventorySlotUI armorSlot;
         public InventorySlotUI[] consumableSlots;
-        public List<ItemData> allItemDatabase = new List<ItemData>();
+        public List<Equipment> allEqpDatabase = new List<Equipment>();
 
         private void Awake()
         {
@@ -34,27 +34,22 @@ namespace Lsy
             if (PlayerAccount.LocalInstance == null || PlayerAccount.LocalInstance.currentSelectedCharacter == null) return;
 
             CharacterUnit myChar = PlayerAccount.LocalInstance.currentSelectedCharacter;
-
             if (myChar.equipmentSlot == null) return;
 
-            // ¼Ò¸ðÇ° ½½·Ô
             for (int i = 0; i < consumableSlots.Length; i++)
             {
                 if (i < myChar.equipmentSlot.equippedConsumables.Count)
                 {
                     InventoryItem item = myChar.equipmentSlot.equippedConsumables[i];
 
-                    // ConsumInfo null Ã¼Å©
                     if (item.ConsumInfo == null)
                     {
-                        Debug.LogWarning($"[EquipmentUI] ¼Ò¸ðÇ° ½½·Ô {i}  ConsumInfo°¡ nullÀÔ´Ï´Ù. ({item.itemName})");
+                        Debug.LogWarning($"[EquipmentUI] ConsumInfo is null. slot:{i}, item:{item.itemName}");
                         consumableSlots[i].gameObject.SetActive(false);
                         continue;
                     }
 
                     consumableSlots[i].gameObject.SetActive(true);
-
-                    // Å¬·ÎÀú Ä¸Ã³ ¹ö±× ¹æÁö: ·çÇÁ º¯¼ö ·ÎÄÃ º¹»ç
                     string capturedName = item.itemName;
                     Jun.ConsumableInfo capturedInfo = item.ConsumInfo;
 
@@ -69,55 +64,61 @@ namespace Lsy
                 }
             }
 
-            // ¹«±â ½½·Ô
+            RefreshWeaponSlot(myChar);
+            RefreshArmorSlot(myChar);
+        }
+
+        private void RefreshWeaponSlot(CharacterUnit myChar)
+        {
+            if (weaponSlot == null) return;
+
             if (string.IsNullOrEmpty(myChar.equipmentSlot.equippedWeaponId))
             {
                 weaponSlot.gameObject.SetActive(false);
+                return;
             }
+
+            weaponSlot.gameObject.SetActive(true);
+            InventoryItem item = myChar.equipmentSlot.equippedWeapon;
+            Jun.EqpInfo info = item.EquipInfo ?? FindEquipmentInfo(myChar.equipmentSlot.equippedWeaponId);
+
+            if (info != null)
+                weaponSlot.Setup(info, 1, info.icon, () => myChar.CmdUnequipWeapon());
             else
-            {
-                weaponSlot.gameObject.SetActive(true);
-                InventoryItem w = myChar.equipmentSlot.equippedWeapon;
+                Debug.LogWarning($"[EquipmentUI] Weapon data not found: {myChar.equipmentSlot.equippedWeaponId}");
+        }
 
-                if (w.EquipInfo != null)
-                {
-                    weaponSlot.Setup(w.EquipInfo, 1, w.EquipInfo.icon, () => myChar.CmdUnequipWeapon());
-                }
-                else
-                {
-                    // null °¡µå Ãß°¡
-                    ItemData fallback = allItemDatabase.Find(x => x != null && x.itemName == myChar.equipmentSlot.equippedWeaponId);
-                    if (fallback != null)
-                        weaponSlot.Setup(fallback, 1, () => myChar.CmdUnequipWeapon());
-                    else
-                        Debug.LogWarning($"[EquipmentUI] ¹«±â '{myChar.equipmentSlot.equippedWeaponId}'  EquipInfoµµ ¾ø°í ItemDataµµ ¾ø½À´Ï´Ù.");
-                }
-            }
+        private void RefreshArmorSlot(CharacterUnit myChar)
+        {
+            if (armorSlot == null) return;
 
-            // ¹æ¾î±¸ ½½·Ô 
             if (string.IsNullOrEmpty(myChar.equipmentSlot.equippedArmorId))
             {
                 armorSlot.gameObject.SetActive(false);
+                return;
             }
-            else
-            {
-                armorSlot.gameObject.SetActive(true);
-                InventoryItem a = myChar.equipmentSlot.equippedArmor;
 
-                if (a.EquipInfo != null)
-                {
-                    armorSlot.Setup(a.EquipInfo, 1, a.EquipInfo.icon, () => myChar.CmdUnequipArmor());
-                }
-                else
-                {
-                    // null °¡µå Ãß°¡
-                    ItemData fallback = allItemDatabase.Find(x => x != null && x.itemName == myChar.equipmentSlot.equippedArmorId);
-                    if (fallback != null)
-                        armorSlot.Setup(fallback, 1, () => myChar.CmdUnequipArmor());
-                    else
-                        Debug.LogWarning($"[EquipmentUI] ¹æ¾î±¸ '{myChar.equipmentSlot.equippedArmorId}'  EquipInfoµµ ¾ø°í ItemDataµµ ¾ø½À´Ï´Ù.");
-                }
-            }
+            armorSlot.gameObject.SetActive(true);
+            InventoryItem item = myChar.equipmentSlot.equippedArmor;
+            Jun.EqpInfo info = item.EquipInfo ?? FindEquipmentInfo(myChar.equipmentSlot.equippedArmorId);
+
+            if (info != null)
+                armorSlot.Setup(info, 1, info.icon, () => myChar.CmdUnequipArmor());
+            else
+                Debug.LogWarning($"[EquipmentUI] Armor data not found: {myChar.equipmentSlot.equippedArmorId}");
+        }
+
+        private Jun.EqpInfo FindEquipmentInfo(string equipmentName)
+        {
+            // [ìˆ˜ì •] ItemManager.GetEqpDataëŠ” EqpInfoë¥¼ ë°˜í™˜í•˜ë¯€ë¡œ ë¡œì»¬ Equipment DB fallbackê³¼ íƒ€ìž…ì„ ë¶„ë¦¬í•©ë‹ˆë‹¤.
+            Jun.EqpInfo data = ItemManager.Instance != null
+                ? ItemManager.Instance.GetEqpData(equipmentName)
+                : null;
+
+            if (data != null) return data;
+
+            Equipment fallback = allEqpDatabase.Find(x => x != null && x.EqpItem != null && x.EqpItem.Name == equipmentName);
+            return fallback != null ? fallback.EqpItem : null;
         }
     }
 }

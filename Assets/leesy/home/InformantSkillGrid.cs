@@ -1,4 +1,4 @@
-ï»¿using UnityEngine;
+using UnityEngine;
 
 namespace Lsy
 {
@@ -18,9 +18,12 @@ namespace Lsy
 
             SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
 
-            if (npcLevel < nodeData.requiredNpcLevel) return false;
+            // [¼öÁ¤] Á¤º¸»ó requiredNpcLevelÀº UI¿¡ Ç¥½ÃµÇ´Â NPC Lv.¿Í °°Àº 1-based °ªÀÔ´Ï´Ù.
+            int requiredNpcLevel = GetRequiredNpcLevel(nodeData);
+            if (npcLevel < requiredNpcLevel) return false;
 
-            if (unit != null && IsSkillPurchased(nodeData.skillId, unit))
+            // [¼öÁ¤] skillId¸¸ ¾²¸é ´Ù¸¥ Á¤º¸»ó ±×¸®µåÀÇ °°Àº ID ³ëµå±îÁö °°ÀÌ ±¸¸Å Ã³¸®µÇ¹Ç·Î, ±×¸®µå/³ëµå ±âÁØÀÇ °íÀ¯ ±¸¸Å Å°¸¦ »ç¿ëÇÕ´Ï´Ù.
+            if (unit != null && IsSkillPurchased(GetPurchaseKey(nodeIndex, nodeData), unit))
                 return false;
 
             return true;
@@ -38,16 +41,33 @@ namespace Lsy
 
             SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
             int skillIndex = nodeIndex;
+            string purchaseKey = GetPurchaseKey(nodeIndex, nodeData);
+            int requiredNpcLevel = GetRequiredNpcLevel(nodeData);
 
-            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: êµ¬ë§¤/ê°•í™”í•  ìŠ¤í‚¬ ì¸ë±ìŠ¤(skillIndex)
-            shop.CmdUpgradeSkillWithLevel(nodeData.skillId, skillIndex, nodeData.price, npcLevel, nodeData.requiredNpcLevel);
+            // ¼­¹ö·Î º¸³½´Ù: ±¸¸Å/°­È­ÇÒ ½ºÅ³ ÀÎµ¦½º(skillIndex)
+            shop.CmdUpgradeSkillWithLevel(purchaseKey, skillIndex, nodeData.price, npcLevel, requiredNpcLevel);
         }
 
-        private bool IsSkillPurchased(string skillId, CharacterUnit unit)
+        private int GetRequiredNpcLevel(SkillUpgradeNode nodeData)
+        {
+            // [¼öÁ¤] Àß¸ø ÀúÀåµÈ 0 ÀÌÇÏ °ªÀÌ ¸ðµç ·¹º§¿¡¼­ ¿­¸®Áö ¾Êµµ·Ï ÃÖ¼Ò NPC Lv.1·Î °íÁ¤ÇÕ´Ï´Ù.
+            return nodeData != null ? Mathf.Max(1, nodeData.requiredNpcLevel) : 1;
+        }
+
+        private string GetPurchaseKey(int nodeIndex, SkillUpgradeNode nodeData)
+        {
+            string group = skillData != null && !string.IsNullOrEmpty(skillData.groupName) ? skillData.groupName : gameObject.name;
+            string skillId = nodeData != null ? nodeData.skillId : "";
+            return $"{group}:{nodeIndex}:{skillId}";
+        }
+
+        private bool IsSkillPurchased(string purchaseKey, CharacterUnit unit)
         {
             foreach (var skill in unit.mySkills)
-                if (skill.skillName == skillId) return true;
+                if (skill.skillName == purchaseKey) return true;
             return false;
         }
     }
 }
+
+

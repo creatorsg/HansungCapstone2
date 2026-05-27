@@ -1,17 +1,19 @@
-ï»¿using UnityEngine;
+using TMPro;
+using UnityEngine;
 
 namespace Lsy
 {
     public class BlacksmithWeaponRow : BaseUpgradeRow
     {
         public WeaponUpgradeData weaponData;
+        public TextMeshProUGUI upgradeProgressText;
 
         private void Start()
         {
             if (weaponData == null)
-                Debug.LogWarning($"[BlacksmithWeaponRow] {gameObject.name}ì˜ weaponDataê°€ NULL - ScriptableObjectë¥¼ ì—°ê²°í•˜ì„¸ìš”.");
+                Debug.LogWarning($"[BlacksmithWeaponRow] {gameObject.name}ÀÇ weaponData°¡ NULL - ScriptableObject¸¦ ¿¬°áÇÏ¼¼¿ä.");
             else
-                Debug.Log($"<color=green>[BlacksmithWeaponRow] {gameObject.name} ì´ˆê¸°í™” ì™„ë£Œ. ë¬´ê¸°:{weaponData.weaponId}, ë…¸ë“œ ìˆ˜:{weaponData.nodes.Count}</color>");
+                Debug.Log($"<color=green>[BlacksmithWeaponRow] {gameObject.name} ÃÊ±âÈ­ ¿Ï·á. ¹«±â:{weaponData.weaponId}, ³ëµå ¼ö:{weaponData.nodes.Count}</color>");
         }
 
         protected override int GetNodePrice(int nodeIndex)
@@ -28,27 +30,22 @@ namespace Lsy
 
             if (npcLevel < nodeData.requiredNpcLevel)
             {
-                Debug.Log($"[BlacksmithWeaponRow] ë…¸ë“œ[{nodeIndex}] ì ê¹€ - NPCë ˆë²¨ ë¶€ì¡± (í˜„ì¬:{npcLevel}, í•„ìš”:{nodeData.requiredNpcLevel})");
+                Debug.Log($"[BlacksmithWeaponRow] ³ëµå[{nodeIndex}] Àá±è - NPC·¹º§ ºÎÁ· (ÇöÀç:{npcLevel}, ÇÊ¿ä:{nodeData.requiredNpcLevel})");
                 return false;
             }
-
             if (unit != null)
             {
-                if (unit.selectedWeaponId != "" && unit.selectedWeaponId != weaponData.weaponId)
+                int currentWeaponLevel = unit.GetBlacksmithWeaponLevel(weaponData.weaponId);
+                // [¼öÁ¤] ´Ù¸¥ ¹«±âÀÇ °­È­ »óÅÂ°¡ ÀÌ ¹«±â row¸¦ Àá±×Áö ¾Êµµ·Ï ¹«±âº° ´Ü°è¸¸ °Ë»çÇÕ´Ï´Ù.
+                if (nodeIndex > 0 && currentWeaponLevel < nodeIndex)
                 {
-                    Debug.Log($"[BlacksmithWeaponRow] ë…¸ë“œ[{nodeIndex}] ì ê¹€ - ë‹¤ë¥¸ ë¬´ê¸° ì„ íƒ ì¤‘ ({unit.selectedWeaponId})");
+                    Debug.Log($"[BlacksmithWeaponRow] ³ëµå[{nodeIndex}] Àá±è - ÀÌÀü ³ëµå ¹Ì±¸¸Å (±¸¸Å¼ö:{currentWeaponLevel})");
                     return false;
                 }
 
-                if (nodeIndex > 0 && unit.purchasedNodeCount < nodeIndex)
+                if (currentWeaponLevel > nodeIndex)
                 {
-                    Debug.Log($"[BlacksmithWeaponRow] ë…¸ë“œ[{nodeIndex}] ì ê¹€ - ì´ì „ ë…¸ë“œ ë¯¸êµ¬ë§¤ (êµ¬ë§¤ìˆ˜:{unit.purchasedNodeCount})");
-                    return false;
-                }
-
-                if (unit.purchasedNodeCount > nodeIndex)
-                {
-                    Debug.Log($"[BlacksmithWeaponRow] ë…¸ë“œ[{nodeIndex}] ì´ë¯¸ êµ¬ë§¤ë¨");
+                    Debug.Log($"[BlacksmithWeaponRow] ³ëµå[{nodeIndex}] ÀÌ¹Ì ±¸¸ÅµÊ");
                     return false;
                 }
             }
@@ -56,13 +53,25 @@ namespace Lsy
             return true;
         }
 
+        protected override void OnRefreshCompleted(int npcLevel, CharacterUnit unit)
+        {
+            if (upgradeProgressText == null) return;
+
+            int currentLevel = 0;
+            // [¼öÁ¤] ¹«±â °­È­ Ç¥½Ã´Â NPC ·¹º§ÀÌ ¾Æ´Ï¶ó ÇöÀç Ä³¸¯ÅÍ°¡ ÇØ´ç ¹«±â¿¡ ±¸¸ÅÇÑ ³ëµå ¼ö¸¦ º¸¿©Áİ´Ï´Ù.
+            if (unit != null && weaponData != null)
+                currentLevel = unit.GetBlacksmithWeaponLevel(weaponData.weaponId);
+
+            upgradeProgressText.text = $"Lv.{currentLevel}";
+        }
+
         protected override void OnNodeClicked(int nodeIndex)
         {
-            Debug.Log($"<color=orange>[BlacksmithWeaponRow] ë…¸ë“œ[{nodeIndex}] í´ë¦­ë¨</color>");
+            Debug.Log($"<color=orange>[BlacksmithWeaponRow] ³ëµå[{nodeIndex}] Å¬¸¯µÊ</color>");
 
             if (weaponData == null || nodeIndex >= weaponData.nodes.Count)
             {
-                Debug.LogWarning("[BlacksmithWeaponRow] weaponDataê°€ ì—†ê±°ë‚˜ ë…¸ë“œ ì¸ë±ìŠ¤ ì´ˆê³¼");
+                Debug.LogWarning("[BlacksmithWeaponRow] weaponData°¡ ¾ø°Å³ª ³ëµå ÀÎµ¦½º ÃÊ°ú");
                 return;
             }
 
@@ -72,7 +81,7 @@ namespace Lsy
             NPCState npcState = GetNpcState();
             if (npcState == null)
             {
-                Debug.LogWarning("[BlacksmithWeaponRow] NPCStateë¥¼ ì°¾ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.");
+                Debug.LogWarning("[BlacksmithWeaponRow] NPCState¸¦ Ã£Áö ¸øÇß½À´Ï´Ù.");
                 return;
             }
 
@@ -80,9 +89,9 @@ namespace Lsy
             int price = weaponData.nodes[nodeIndex].price;
             int weaponIndex = transform.GetSiblingIndex();
 
-            Debug.Log($"<color=orange>[BlacksmithWeaponRow] CmdUpgradeWeapon í˜¸ì¶œ - weaponId:{weaponData.weaponId}, weaponIndex:{weaponIndex}, nodeIndex:{nodeIndex}, npcLevel:{npcLevel}, price:{price}</color>");
+            Debug.Log($"<color=orange>[BlacksmithWeaponRow] CmdUpgradeWeapon È£Ãâ - weaponId:{weaponData.weaponId}, weaponIndex:{weaponIndex}, nodeIndex:{nodeIndex}, npcLevel:{npcLevel}, price:{price}</color>");
 
-            // ì„œë²„ë¡œ ë³´ë‚¸ë‹¤: ê°•í™”ëœ ë¬´ê¸° ì¸ë±ìŠ¤(weaponIndex)ì™€ ë…¸ë“œ ì¸ë±ìŠ¤(nodeIndex)
+            // ¼­¹ö·Î º¸³½´Ù: °­È­µÈ ¹«±â ÀÎµ¦½º(weaponIndex)¿Í ³ëµå ÀÎµ¦½º(nodeIndex)
             shop.CmdUpgradeWeapon(weaponData.weaponId, weaponIndex, nodeIndex, npcLevel, price);
         }
     }

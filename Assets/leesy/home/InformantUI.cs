@@ -12,10 +12,20 @@ namespace Lsy
     {
         [Header("스킬 그리드 목록")]
         public List<InformantSkillGrid> skillGrids = new List<InformantSkillGrid>();
-
         protected override IEnumerable<BaseUpgradeRow> GetRows()
         {
-            return skillGrids;
+            // [수정] 하이어라키에서 복사한 정보상 grid가 skillGrids 리스트에 빠져도 NPC 레벨/구매 상태 갱신과 클릭 리스너가 연결되도록 자식 grid도 함께 사용합니다.
+            foreach (var grid in skillGrids)
+            {
+                if (grid != null)
+                    yield return grid;
+            }
+
+            foreach (var grid in GetComponentsInChildren<InformantSkillGrid>(true))
+            {
+                if (grid != null && !skillGrids.Contains(grid))
+                    yield return grid;
+            }
         }
     }
 }

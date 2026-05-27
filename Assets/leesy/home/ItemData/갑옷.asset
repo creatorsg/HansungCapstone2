@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3de7cb78eb9a523449b83c482d7fbcb0, type: 3}
   m_Name: "\uAC11\uC637"
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.Equipment
+  itemType: 1
   EqpItem:
     Name: "\uAC11\uC637"
     EqpId: 2
-    icon: {fileID: 21300000, guid: 4a8f95271ea0eba4ba4c0b33be42d3f3, type: 3}
+    icon: {fileID: 21300000, guid: 40f2d97515d2434418f9dcdd11d438a2, type: 3}
     anim: Attack
     description: "\uAC11\uC637"
     Hp: 0

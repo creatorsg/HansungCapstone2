@@ -7,11 +7,12 @@ namespace Lsy
     {
         public static ItemManager Instance { get; private set; }
 
-        public List<ItemData> allItems   = new List<ItemData>();
-        public List<ItemSO>   allItemSOs = new List<ItemSO>();   // ItemSO 에셋 목록
+        // [수정] NPC 팝업 판매 데이터 원본입니다. 바텐더는 AllItems, 대장장이는 AllEqps를 사용합니다.
+        public List<Consum> AllItems = new List<Consum>();
+        public List<Equipment> AllEqps = new List<Equipment>();
 
-        private Dictionary<string, ItemData> _itemDict = new Dictionary<string, ItemData>();
-        private Dictionary<string, ItemSO>   _soDict   = new Dictionary<string, ItemSO>();
+        private Dictionary<string, Consum>    _consumDict = new Dictionary<string, Consum>();
+        private Dictionary<string, Equipment> _eqpDict    = new Dictionary<string, Equipment>();
 
         private void Awake()
         {
@@ -27,84 +28,69 @@ namespace Lsy
             }
         }
 
-        /// <summary>ItemSO 하나를 즉시 등록합니다. 이미 등록된 이름은 무시합니다.</summary>
+        /// <summary>Inseon 코드 호환용. ItemManager는 더 이상 ItemSO를 관리하지 않습니다.</summary>
         public void RegisterItemSO(ItemSO so)
         {
-            if (so == null || string.IsNullOrEmpty(so.itemName)) return;
-            if (!_soDict.ContainsKey(so.itemName))
-            {
-                _soDict[so.itemName] = so;
-                Debug.Log($"[ItemManager] 등록: {so.itemName}");
-            }
-        }
-
-        /// <summary>씬 전환 등으로 새 ItemSO가 메모리에 올라왔을 때 수동으로 재갱신합니다.</summary>
-        public void RefreshItemSOs()
-        {
-            InitializeDictionary();
+            // [수정] CharacterSelectManager가 아직 호출하므로 메서드는 남기되, ItemSO 등록은 하지 않습니다.
         }
 
         private void InitializeDictionary()
         {
-            _itemDict.Clear();
-            foreach (var item in allItems)
+            _consumDict.Clear();
+            foreach (var consum in AllItems)
             {
-                if (item != null && !_itemDict.ContainsKey(item.itemName))
-                    _itemDict.Add(item.itemName, item);
+                string key = consum != null && consum.ConsumItem != null ? consum.ConsumItem.Name : "";
+                if (!string.IsNullOrEmpty(key) && !_consumDict.ContainsKey(key))
+                    _consumDict.Add(key, consum);
             }
 
-            _soDict.Clear();
-
-            // ① Inspector에 수동 등록한 것 먼저
-            foreach (var so in allItemSOs)
+            _eqpDict.Clear();
+            foreach (var eqp in AllEqps)
             {
-                if (so != null && !_soDict.ContainsKey(so.itemName))
-                    _soDict.Add(so.itemName, so);
+                string key = eqp != null && eqp.EqpItem != null ? eqp.EqpItem.Name : "";
+                if (!string.IsNullOrEmpty(key) && !_eqpDict.ContainsKey(key))
+                    _eqpDict.Add(key, eqp);
             }
 
-            // ② Resources/Items/ 폴더에서 자동 로드
-            var loaded = Resources.LoadAll<ItemSO>("Items");
-            foreach (var so in loaded)
-            {
-                if (so != null && !string.IsNullOrEmpty(so.itemName) && !_soDict.ContainsKey(so.itemName))
-                    _soDict.Add(so.itemName, so);
-            }
-
-            // ③ 현재 메모리에 올라와 있는 모든 ItemSO 탐색 (에디터/빌드 무관하게 동작)
-            //    에디터에서는 프로젝트 내 모든 에셋이 대상, 빌드에서는 이미 로드된 것만 대상
-            var allInMemory = Resources.FindObjectsOfTypeAll<ItemSO>();
-            foreach (var so in allInMemory)
-            {
-                if (so != null && !string.IsNullOrEmpty(so.itemName) && !_soDict.ContainsKey(so.itemName))
-                    _soDict.Add(so.itemName, so);
-            }
-
-            Debug.Log($"[ItemManager] ItemSO 로드 완료 — Inspector:{allItemSOs.Count} + Resources:{loaded.Length} + InMemory:{allInMemory.Length} = {_soDict.Count}개");
+            Debug.Log($"[ItemManager] 로드 완료 — Consum:{_consumDict.Count}, Eqp:{_eqpDict.Count}");
         }
 
-        public ItemData GetItemData(string itemName)
+        // [수정] 바텐더 NPC 팝업 판매용 소모품 데이터를 이름으로 조회합니다.
+        public Consum GetConsumData(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
-            _itemDict.TryGetValue(itemName, out ItemData data);
+            _consumDict.TryGetValue(itemName, out Consum data);
             return data;
         }
 
-        public ItemSO GetItemSO(string itemName)
+        // [수정] 대장장이 NPC 팝업 판매용 장비 데이터를 이름으로 조회합니다.
+        public Equipment GetEquipmentData(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
-            _soDict.TryGetValue(itemName, out ItemSO so);
-            return so;
+            _eqpDict.TryGetValue(itemName, out Equipment data);
+            return data;
+        }
+
+        // [수정] EquipmentUI와 NPC 구매 로직이 장비 전투 데이터를 이름으로 조회할 수 있게 병합 후 누락된 API를 복구합니다.
+        public Jun.EqpInfo GetEqpData(string itemName)
+        {
+            Equipment equipmentData = GetEquipmentData(itemName);
+            if (equipmentData != null)
+                return equipmentData.EqpItem;
+
+            return null;
         }
 
         /// <summary>
-        /// 아이템 이름으로 아이콘을 조회합니다.
-        /// ItemSO → ItemData 순서로 찾습니다.
+        /// 아이템 이름으로 NPC 판매 데이터의 아이콘을 조회합니다.
         /// </summary>
         public Sprite GetIcon(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
-            if (_soDict.TryGetValue(itemName, out ItemSO so) && so.icon != null) return so.icon;
-            if (_itemDict.TryGetValue(itemName, out ItemData data)) return data.itemIcon;
+            if (_consumDict.TryGetValue(itemName, out Consum consum) && consum.ConsumItem != null)
+                return consum.ConsumItem.icon;
+            if (_eqpDict.TryGetValue(itemName, out Equipment equipment) && equipment.EqpItem != null)
+                return equipment.EqpItem.icon;
             return null;
         }
     }

@@ -52,6 +52,8 @@ namespace Lsy
         {
             // 캐릭터 강화/스킬 상태가 바뀌면 자동으로 행 갱신
             CharacterUnit.OnLocalUpgradeStateChanged += RefreshAllRows;
+            // [수정] 캐릭터를 바꿨을 때 열린 대장장이 UI가 새 캐릭터의 구매 상태로 다시 그려지도록 갱신합니다.
+            PlayerAccount.OnCharacterSwitched += RefreshAllRows;
         }
 
         private void OnDisable()
@@ -60,6 +62,7 @@ namespace Lsy
                 NpcState.OnStateChanged -= OnNpcStateChanged;
 
             CharacterUnit.OnLocalUpgradeStateChanged -= RefreshAllRows;
+            PlayerAccount.OnCharacterSwitched -= RefreshAllRows;
         }
 
         protected abstract IEnumerable<BaseUpgradeRow> GetRows();
