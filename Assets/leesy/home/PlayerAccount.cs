@@ -137,10 +137,15 @@ namespace Lsy
             // ??Spawn ?„ì— Setup ???¤í° ë©”ì‹œì§€??heroPos/heroCodeê°€ ?¬ë°”ë¥´ê²Œ ?¬í•¨??
             if (_myPlayerDatas.Count > 0)
             {
+                int goldBeforeSetup = _myPlayerDatas[0].Info.Gold;
                 activeUnit.SetupFromPlayerData(_myPlayerDatas[0]);
-                currentGold = 2000;
+                currentGold = goldBeforeSetup;
                 currentActiveIndex = 0;
-                savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
+                //savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
+                var initSave = new CharacterSaveData { gold = currentGold };
+                foreach (var item in activeUnit.myInventory)
+                    initSave.inventory.Add(item); 
+                savedCharacterData[0] = initSave;
                 Debug.Log($"[PlayerAccount] PlayerData ê¸°ë°˜ ì´ˆê¸°?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
             }
             else
@@ -269,8 +274,9 @@ namespace Lsy
                 if (hasPlayerDatas)
                 {
                     PlayerData targetPd = _myPlayerDatas[targetIndex];
+                    int goldBeforeSetup = targetPd.Info.Gold;  
                     currentSelectedCharacter.SetupFromPlayerData(targetPd);
-                    currentGold = 2000;
+                    currentGold = goldBeforeSetup;
                 }
                 else
                 {
@@ -360,6 +366,7 @@ namespace Lsy
             }
 
             currentGold -= node.unlockCost;
+
             currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
             Debug.Log($"<color=green>[SkillTree] êµ¬ë§¤ ?±ê³µ ??{nodeId}, ?”ì•¡ {currentGold}G</color>");
         }
@@ -478,8 +485,10 @@ namespace Lsy
                 if (_myPlayerDatas.IndexOf(pd) != currentActiveIndex) continue;
 
                 if (pd.Info != null)
+                {
                     pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
-
+                    pd.Info.Gold = currentGold;
+                }
                 Debug.Log($"[SyncInv] {pd.FinalHeroCode} Items={pd.Info?.Items?.Count}");
                 break;
             }
@@ -519,6 +528,7 @@ namespace Lsy
 
                         // ¹ÌÀåÂø ÀÎº¥ ¡æ Items
                         pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
+                        pd.Info.Gold = currentGold;
 
                         Debug.Log($"[Sync] ÇöÀç Ä³¸¯ÅÍ({pd.FinalHeroCode}) ½Ç½Ã°£ Á¤º¸ ¾÷µ¥ÀÌÆ® ¿Ï·á");
                     }
@@ -550,6 +560,8 @@ namespace Lsy
             foreach (var account in FindObjectsByType<PlayerAccount>(FindObjectsSortMode.None))
                 account.SyncAllHideoutDataToBattleData();
         }
+
+     
     }
 }
 

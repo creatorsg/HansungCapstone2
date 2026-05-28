@@ -40,6 +40,7 @@ public static class CharacterDatabase
                 c.effectResistance = GetInt(d, "effectResistance");
                 c.stunResistance   = GetInt(d, "stunResistance");
                 c.level            = GetInt(d, "level");
+                
             }
 
             Stats[item.ItemId] = c;

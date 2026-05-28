@@ -68,7 +68,7 @@ namespace Jun
         public void Show(bool isVictory, int totalPlayers)
         {
             _hasAgreed = false;
-
+            Debug.Log($"Show Result [totalPlayers]");
             if (agreeButton != null) agreeButton.interactable = true;
             if (checkImage  != null) checkImage.gameObject.SetActive(false);
             if (stampImage  != null) stampImage.gameObject.SetActive(false);
@@ -84,7 +84,7 @@ namespace Jun
             if (resultSubText != null)
             {
                 resultSubText.text = isVictory
-                    ? "전투에서 승리했습니다!\n보상을 선택하세요."
+                    ? "전투에서 승리했습니다!\n아래 빈칸을 눌러주세요."
                     : "전투에서 패배했습니다.\n홈으로 돌아갑니다.";
             }
 

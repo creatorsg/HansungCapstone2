@@ -23,6 +23,7 @@ public struct Character
     public int accuracy;
     public int evasion;
     public int speed;
+    public int gold;
 }
 
 public struct CharacterEquipment

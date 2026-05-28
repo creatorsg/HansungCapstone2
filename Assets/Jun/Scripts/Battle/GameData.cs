@@ -166,6 +166,7 @@ namespace Jun
         public List<ConsumableInfo> Expendables; // 장착된 소모품 (최대 6종 각 5개)
         public int Lvl;
         public int Exp;
+        public int Gold;
 
         public float Hp;        // 현재 HP
         public float MaxHp;     // 최대 HP (SetUp 시 초기화)

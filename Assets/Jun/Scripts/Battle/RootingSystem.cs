@@ -217,7 +217,7 @@ public class RootingSystem : NetworkBehaviour
         var id = Instantiate(_idPrefab, _selectTF[itemIdx]);
         _allUnit[unitIdx].unitText = id;
         _allUnit[unitIdx].unitText.GetComponentInChildren<TextMeshProUGUI>().text
-            = _allUnit[unitIdx].unit.Info.Id.ToString();
+            = _allUnit[unitIdx].unit.Info.Name.ToString();
 
         RootBTNActivate(false);
     }
@@ -302,12 +302,27 @@ public class RootingSystem : NetworkBehaviour
 
             if (slotWinner[i] == -2)
             {
-                // 골드 전체 지급: PlayerAccount.currentGold로 처리해야 하므로 TODO
-                if (reward.amount <= 0)
-                    Debug.LogWarning($"[보상] 슬롯{i} 골드 보상인데 amount={reward.amount} 입니다. Inspector에서 amount를 설정하세요.");
-                else
-                    Debug.Log($"[보상] 슬롯{i} 골드 {reward.amount} → 골드 지급은 PlayerAccount 연동 필요 (TODO)");
-                continue;
+                if (!reward.isEquipment && reward.amount > 0)
+                {
+                    foreach (var kvp in _serverSelections)
+                    {
+                        if (kvp.Value == i) 
+                        {
+                            int unitIdx = kvp.Key;
+                            var jointWinner = _manager._players[unitIdx];
+                            if (jointWinner == null) continue;
+
+                            // 선택된 캐릭터에게 공동 보상
+                            var playerInfo = jointWinner.Info;
+                            playerInfo.Gold += reward.amount;
+                            jointWinner.Info = playerInfo;
+
+                            jointWinner.FlushInfoToPlayerData();
+                            Debug.Log($"[보상 - 중복골드] {jointWinner.Info.Name} ← {reward.amount}G 획득 (공동 수령)");
+                        }
+                    }
+                }
+                continue; // 중복 골드 처리 완료
             }
 
             if (slotWinner[i] < 0) continue; // 수령자 없음
@@ -333,8 +348,14 @@ public class RootingSystem : NetworkBehaviour
             }
             else if (!reward.isEquipment)
             {
-                if (reward.amount <= 0)
+                if (reward.amount >= 0)
+                {
+                    var playerInfo = winner.Info;
+                    playerInfo.Gold += reward.amount;
+                    winner.Info = playerInfo;
+                    winner.FlushInfoToPlayerData();
                     Debug.LogWarning($"[보상] 슬롯{i} 골드 보상인데 amount={reward.amount} 입니다. Inspector에서 amount를 설정하세요.");
+                }
                 else
                     Debug.Log($"[보상] 슬롯{i} 골드 {reward.amount} → 골드 지급은 PlayerAccount 연동 필요 (TODO)");
             }

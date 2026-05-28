@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Finn'basicwea
   m_EditorClassIdentifier: Assembly-CSharp::ItemSO
   itemName: Finn'basicwea
-  icon: {fileID: 4692335755837613724, guid: 98be162a4c865e64ebe442c1c472c36d, type: 3}
+  icon: {fileID: 8139145097261388309, guid: 98be162a4c865e64ebe442c1c472c36d, type: 3}
   description: 
   price: 0
   category: 0

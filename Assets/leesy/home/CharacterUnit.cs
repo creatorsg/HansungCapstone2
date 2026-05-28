@@ -554,7 +554,7 @@ namespace Lsy
             }
 
             var info = pd.Info;
-
+            int savedGold = info.Gold; // ¸ÕÀú º¸Á¸
             // ?€?€ 1. ê¸°ë³¸ ?¤íƒ¯ ?¬ì„¤??(CharacterDatabase ê¸°ì?) ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
             // ?¥ë¹„ ?¤íƒ¯???„ì ?˜ì? ?Šë„ë¡?ë§??™ê¸°?”ë§ˆ??ê¸°ë³¸ê°’ìœ¼ë¡?ì´ˆê¸°?”í•©?ˆë‹¤.
             if (CharacterDatabase.Stats.TryGetValue(heroCode, out var c))
@@ -568,9 +568,10 @@ namespace Lsy
                 info.Crit  = c.critical;
                 info.San   = c.stress;
                 info.Res   = c.effectResistance;
+                //info.Gold  = c.gold;
                 // Ctm?€ CharacterDatabase???„ë“œê°€ ?†ìœ¼ë¯€ë¡?ê¸°ì¡´ ê°?? ì?
             }
-
+            info.Gold = savedGold;
             // ?€?€ 2. ?„ì¬ ?¥ì°© ?¥ë¹„ ?¤íƒ¯ ?©ì‚° ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
             EqpInfo curWeapon = equipmentSlot.equippedWeapon.EquipInfo;
             EqpInfo curArmor  = equipmentSlot.equippedArmor.EquipInfo;

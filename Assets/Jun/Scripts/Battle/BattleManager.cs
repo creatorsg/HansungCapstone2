@@ -224,13 +224,12 @@ namespace Jun
                         ConsumableInfo existing = compressedList.Find(x => x.Name == item.Name);
                         if (existing != null)
                         {
-                            existing.amount += (item.amount == 0 ? 1 : item.amount);
+                            existing.amount += item.amount;
                         }
                         else
                         {
                             // 이미 구현된 Clone()을 호출한 뒤 개수 보정 후 바로 추가
                             ConsumableInfo newItem = item.Clone();
-                            newItem.amount = (item.amount == 0 ? 1 : item.amount);
                             compressedList.Add(newItem);
                         }
                     }
@@ -296,7 +295,9 @@ namespace Jun
             Order = -1; // Ȯ���ϰ� �ʱ�ȭ
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
-            NextTurn();
+            // 잠시 확인을 위해
+            StageClear();
+            //NextTurn();
         }
         [ClientRpc]
         private void RpcTurnListUpdate(TurnData[] turnDataArray)

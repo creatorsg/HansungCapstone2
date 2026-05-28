@@ -16,6 +16,10 @@ namespace Jun
             writer.WriteInt(value.TagetNum);
             writer.WriteString(value.description ?? "");
             writer.WriteInt((int)value.Target);
+            writer.WriteInt(value.amount);           
+            writer.WriteInt(value.EffectDuration);  
+            writer.WriteFloat(value.EffectValue);    
+            writer.WriteFloat(value.FixedDamage);    
             // icon(Sprite)은 네트워크 전송 불가 → 클라이언트에서 ItemManager로 별도 조회
         }
 
@@ -30,6 +34,10 @@ namespace Jun
                 TagetNum    = reader.ReadInt(),
                 description = reader.ReadString(),
                 Target      = (TargetType)reader.ReadInt(),
+                amount = reader.ReadInt(),       
+                EffectDuration = reader.ReadInt(),       
+                EffectValue = reader.ReadFloat(),      
+                FixedDamage = reader.ReadFloat(),     
                 icon        = null  // 클라이언트에서 ItemManager로 별도 조회
             };
         }
