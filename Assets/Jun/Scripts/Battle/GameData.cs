@@ -101,6 +101,9 @@ namespace Jun
         Stunned,    // 행동 불가 (턴 스킵)
         Bleeding,   // 매 턴 HP 감소 (value = 피해량)
         Burning,    // 매 턴 HP 감소 + 방어력 무시
+
+        DodgeDown,  // 회피 감소 (신규: enum 맨 끝에 추가 → 기존 Stunned/Bleeding/Burning 직렬화 int 값 보존)
+        CritUp,     // 치명타 확률 증가 (4단계: 인스펙터 데이터가 이미 있어 enum 끝에 추가 → 기존 값 보존)
     }
 
     // 상태이상 인스턴스 (Mirror SyncList 호환 struct)

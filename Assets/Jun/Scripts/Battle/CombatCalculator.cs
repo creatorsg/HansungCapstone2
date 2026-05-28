@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Jun
 {
     /// <summary>
-    /// ¹èÆ² ·ÎÁ÷ °è»ê ºÎºÐ ´ã´ç
+    /// ï¿½ï¿½Æ² ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ï¿½
     /// </summary>
     public static class CombatCalculator
     {
@@ -80,8 +80,19 @@ namespace Jun
         {
             float mod = 0f;
             foreach (var e in effects)
+            {
                 if (e.type == EffectType.DodgeUp) mod += e.value;
+                if (e.type == EffectType.DodgeDown) mod -= e.value;
+            }
             return baseDodge + (int)mod;
+        }
+
+        public static int GetEffectiveCrit(int baseCrit, IList<ActiveEffect> effects)
+        {
+            float mod = 0f;
+            foreach (var e in effects)
+                if (e.type == EffectType.CritUp) mod += e.value;
+            return baseCrit + (int)mod;
         }
 
         //
@@ -111,11 +122,11 @@ namespace Jun
             if (next.Count > 0)
             {
                 foreach (var e in next)
-                    Debug.Log($"[TickEffects] {e.type} | value={e.value} | ³²Àº ÅÏ={e.duration}");
+                    Debug.Log($"[TickEffects] {e.type} | value={e.value} | ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½={e.duration}");
             }
             else
             {
-                Debug.Log("[TickEffects] ³²Àº È¿°ú ¾øÀ½");
+                Debug.Log("[TickEffects] ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
             }
             return next;
         }

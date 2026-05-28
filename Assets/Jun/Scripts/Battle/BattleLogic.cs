@@ -28,6 +28,17 @@ namespace Jun
 
                 SkillInfo skill = caster.Info.Skills[skillIndex];
 
+                // 3단계: skill.Target 기준으로 실제 대상을 서버에서 재해석한다.
+                // (UnitModel은 건드리지 않음. Self/AllAllies/AllEnemies는 클릭 대상을 무시)
+                int casterIdx = manager._players.IndexOf(caster);
+                targets = skill.Target switch
+                {
+                    TargetType.Self       => new List<int> { casterIdx },
+                    TargetType.AllAllies  => GetAliveAllyIndices(manager),
+                    TargetType.AllEnemies => GetAliveEnemyIndices(manager),
+                    _                     => targets,   // SingleEnemy / SingleAlly: 클릭 대상 그대로
+                };
+
                 switch (skill.Type)
                 {
                     case SkillType.Atk:
@@ -54,7 +65,7 @@ namespace Jun
                                 continue;
                             }
 
-                            bool isCrit = CombatCalculator.RollCrit(caster.Info.Crit);
+                            bool isCrit = CombatCalculator.RollCrit(CombatCalculator.GetEffectiveCrit(caster.Info.Crit, caster.Effects));
                             int effAtk = CombatCalculator.GetEffectiveAtk(caster.Info.Atk, caster.Effects);
                             int effDef = CombatCalculator.GetEffectiveDef(enemyController.Info.Def, enemyController.Effects);
                             float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
@@ -63,6 +74,11 @@ namespace Jun
 
                             enemyModel.Damaged(damage);
                             enemyController.RpcPlaySkillAnim("Damaged");
+
+                            // 데미지 + 상태이상 동시 적용 (1단계 인프라가 DoT/스턴 자동 처리)
+                            if (isHit && skill.EffectDuration > 0)
+                                enemyController.AddEffect(
+                                    new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
 
                             manager.RpcShowCombatResult(new CombatResult
                             {
@@ -330,7 +346,7 @@ namespace Jun
                             continue;
                         }
 
-                        bool isCrit = CombatCalculator.RollCrit(caster.Info.Crit);
+                        bool isCrit = CombatCalculator.RollCrit(CombatCalculator.GetEffectiveCrit(caster.Info.Crit, caster.Effects));
                         int effAtk = CombatCalculator.GetEffectiveAtk(caster.Info.Atk, caster.Effects);
                         int effDef = CombatCalculator.GetEffectiveDef(player.Info.Def, player.Effects);
                         float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
@@ -338,6 +354,11 @@ namespace Jun
                         Debug.Log($"[ENEMY ATK] {caster.Info.Name} -> {player.Info.Name} | {damage:F0} dmg | crit:{isCrit}");
 
                         player.ApplyHpChange(-damage);
+
+                        // 데미지 + 상태이상 동시 적용 (대상 = 플레이어)
+                        if (isHit && skill.EffectDuration > 0)
+                            player.AddEffect(
+                                new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
 
                         if (player.Info.Hp <= 0)
                         {
@@ -433,6 +454,35 @@ namespace Jun
             enemyModel = enemy.GetComponent<EnemyModel>();
             enemyController = enemy;
             return enemyModel != null && enemyController.Info != null;
+        }
+
+        // 3단계: 자동 타겟 재해석용 — 살아있는 아군/적의 인덱스 목록 반환
+        private static List<int> GetAliveAllyIndices(BattleManager manager)
+        {
+            var result = new List<int>();
+            if (manager?._players == null) return result;
+            for (int i = 0; i < manager._players.Count; i++)
+            {
+                var p = manager._players[i];
+                if (p != null && p.Info != null && p.Info.Hp > 0) result.Add(i);
+            }
+            return result;
+        }
+
+        private static List<int> GetAliveEnemyIndices(BattleManager manager)
+        {
+            var result = new List<int>();
+            if (manager?.Enemys == null) return result;
+            int stageIndex = manager.StageNum - 1;
+            if (stageIndex < 0 || stageIndex >= manager.Enemys.Count) return result;
+            var list = manager.Enemys[stageIndex].Enemys;
+            if (list == null) return result;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var e = list[i];
+                if (e != null && e.Info != null && e.Info.Hp > 0 && e.gameObject.activeSelf) result.Add(i);
+            }
+            return result;
         }
 
         private static bool TryGetPlayer(BattleManager manager, int index, out GamePlayerController player)

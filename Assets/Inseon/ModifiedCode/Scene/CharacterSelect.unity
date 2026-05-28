@@ -816,19 +816,19 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 2
+  - Name: \uD589\uC9C4\uACE1
     User: 0
-    Type: 0
-    anim: 
-    TagetNum: 2
+    Type: 3
+    anim: Attack
+    TagetNum: 1
     icon: {fileID: 7389082159000606099, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: \uC544\uAD70 \uC804\uCCB4 \uC18D\uB3C4 \uC99D\uAC00
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
-    Target: 0
+    EffectType: 2
+    EffectValue: 5
+    EffectDuration: 1
+    Target: 3
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
@@ -4026,19 +4026,19 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 3
+  - Name: \uD3ED\uBC1C \uC2E4\uD5D8
     User: 0
     Type: 0
-    anim: 
-    TagetNum: 2
+    anim: Attack
+    TagetNum: 1
     icon: {fileID: -2746435884744161489, guid: ea13ed3aaa1716b48a90b419b29c1da3, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
+    description: \uC801 \uC804\uCCB4 \uAD11\uC5ED \uB370\uBBF8\uC9C0
+    DamageRate: 1
     HealRate: 0
     EffectType: 0
     EffectValue: 0
     EffectDuration: 0
-    Target: 0
+    Target: 1
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
@@ -6134,18 +6134,18 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 4
+  - Name: \uC5BC\uAD74 \uBC15\uCE58\uAE30
     User: 0
     Type: 0
-    anim: 
-    TagetNum: 2
+    anim: Attack
+    TagetNum: 1
     icon: {fileID: -1334649905525160474, guid: fcde3f3f53e3c33469b4dfcfd51448cd, type: 3}
-    description: "\uADF8\uB7FC \uB098\uB3C4\uB2E4!!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
+    description: \uB370\uBBF8\uC9C0 + 2\uD134 \uC2A4\uD134
+    DamageRate: 1
     HealRate: 0
-    EffectType: 0
+    EffectType: 9
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 2
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0

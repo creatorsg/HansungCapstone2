@@ -295,9 +295,17 @@ namespace Jun
             Order = -1; // Ȯ���ϰ� �ʱ�ȭ
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
-            // 잠시 확인을 위해
-            StageClear();
-            //NextTurn();
+
+            // 4단계: 프로토타입 SyncVar 플래그 초기화 (blockNext / knifeStacks)
+            foreach (var p in _players)
+            {
+                if (p == null) continue;
+                p.blockNext = false;
+                p.knifeStacks = 0;
+                Debug.Log($"[Init] {p.Info?.Name} blockNext={p.blockNext} knifeStacks={p.knifeStacks}");
+            }
+
+            NextTurn();
         }
         [ClientRpc]
         private void RpcTurnListUpdate(TurnData[] turnDataArray)
@@ -355,25 +363,45 @@ namespace Jun
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
 
-            if (currentType == "Player" && currentNum < _players.Count)
+            // ── 턴 시작 공통 처리: DoT 차감 → 스턴 캡처 → 효과 틱(duration 감소) ──
+            // DoT 데미지와 스턴 판정은 반드시 duration 감소 "전" 상태를 기준으로 한다.
+            bool wasStunned = false;
+            if (currentType == "Player" && currentNum >= 0 && currentNum < _players.Count
+                && _players[currentNum] != null)
             {
                 var player = _players[currentNum];
-                if (player != null)
+                if (player.Info != null && player.Info.Hp > 0)
                 {
-                    var next = CombatCalculator.TickEffects(player.Effects);
-                    player.Effects.Clear();
-                    foreach (var e in next) player.Effects.Add(e);
+                    float dot = CombatCalculator.CalcDotDamage(player.Effects);
+                    if (dot > 0f)
+                    {
+                        player.ApplyHpChange(-dot);
+                        Debug.Log($"[DoT] {player.Info.Name} -{dot:F0} HP (남은 {player.Info.Hp:F0})");
+                    }
+                    wasStunned = CombatCalculator.IsStunned(player.Effects);
                 }
+                var next = CombatCalculator.TickEffects(player.Effects);
+                player.Effects.Clear();
+                foreach (var e in next) player.Effects.Add(e);
             }
-            else if (currentType == "Enemy" && currentNum < _enemys[StageNum - 1].Enemys.Count)
+            else if (currentType == "Enemy" && currentNum >= 0
+                && currentNum < _enemys[StageNum - 1].Enemys.Count
+                && _enemys[StageNum - 1].Enemys[currentNum] != null)
             {
                 var enemy = _enemys[StageNum - 1].Enemys[currentNum];
-                if (enemy != null)
+                if (enemy.Info != null && enemy.Info.Hp > 0)
                 {
-                    var next = CombatCalculator.TickEffects(enemy.Effects);
-                    enemy.Effects.Clear();
-                    foreach (var e in next) enemy.Effects.Add(e);
+                    float dot = CombatCalculator.CalcDotDamage(enemy.Effects);
+                    if (dot > 0f)
+                    {
+                        enemy.GetComponent<EnemyModel>().Damaged(dot);
+                        Debug.Log($"[DoT] {enemy.Info.Name} -{dot:F0} HP (남은 {enemy.Info.Hp:F0})");
+                    }
+                    wasStunned = CombatCalculator.IsStunned(enemy.Effects);
                 }
+                var next = CombatCalculator.TickEffects(enemy.Effects);
+                enemy.Effects.Clear();
+                foreach (var e in next) enemy.Effects.Add(e);
             }
 
             Debug.Log("남은 적 수: " + EnemyNum);
@@ -384,7 +412,7 @@ namespace Jun
                 return;
             }
 
-            // 죽은 유닛 턴 스킵
+            // 죽은 유닛 턴 스킵 (DoT로 사망했을 수 있음)
             if (currentType == "Player")
             {
                 if (currentNum < 0 || currentNum >= _players.Count ||
@@ -416,6 +444,15 @@ namespace Jun
                     NextTurn();
                     return;
                 }
+            }
+
+            // ── 스턴 턴 스킵 (플레이어·적 공통) ──
+            // duration 감소 전에 캡처한 wasStunned 기준 → 1턴 스턴도 정확히 1턴 스킵.
+            if (wasStunned)
+            {
+                Debug.Log($"[NextTurn] {currentType} {currentNum} 스턴 → 턴 스킵");
+                NextTurn();
+                return;
             }
 
             RpcChangeTurn(currentType, currentNum);
@@ -453,13 +490,7 @@ namespace Jun
                 yield break;
             }
 
-            // 스턴 체크
-            if (CombatCalculator.IsStunned(enemyCtrl.Effects))
-            {
-                Debug.Log($"[ServerEnemyTurn] {enemyCtrl.Info.Name} 스턴 상태 → 스킵");
-                NextTurn();
-                yield break;
-            }
+            // (스턴 턴 스킵은 NextTurn 공통 처리로 이동됨 — 여기 도달했다면 스턴 아님)
 
             // 살아있는 플레이어 체크
             if (GetAlivePlayers().Count == 0)

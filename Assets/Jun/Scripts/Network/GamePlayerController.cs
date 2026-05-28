@@ -25,6 +25,10 @@ namespace Jun
         [SyncVar] public PlayerInfo Info;
         [SyncVar] public int PingIndex;
 
+        // 4단계: 프로토타입 특수 처리용 SyncVar (실제 사용은 7단계 switch case)
+        [SyncVar] public bool blockNext = false;   // Glue #2 엄호: 다음 피격 1회 무효
+        [SyncVar] public int knifeStacks = 0;       // Choke #4 무기회수: 누적 스택 (공격 데미지 +10%/스택)
+
         [Header("�� �ý���")]
         public Transform PingLayout; // �� ������ ����
 
@@ -345,8 +349,8 @@ namespace Jun
         [ClientRpc]
         public void RpcShowDamage(float damage)
         {
-            if (_view != null && Info != null && Info.MaxHp > 0f)
-                _view.PlHPChanged(Info.Hp / Info.MaxHp);
+            if (_view != null && Info != null)
+                _view.PlHPChanged(Info.Hp);
         }
         [Server]
         public void ApplyHpChange(float delta)
@@ -363,7 +367,7 @@ namespace Jun
             var info = Info;
             info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
             Info = info;
-            _view.PlSanChanged(info.Hp);
+            _view.PlSanChanged(info.San);
         }
         [Server]
         public void AddEffect(ActiveEffect effect)
@@ -394,6 +398,40 @@ namespace Jun
             _model.Reset();
             BattleManager.Instance.NextTurn();
         }
+
+        // ===== [DEBUG] 1단계 검증용 임시 코드 — 검증 완료 후 이 region 전체 삭제 =====
+        // F1: 자신에게 출혈(DoT) 5/턴 × 3턴   → 매 자기 턴 시작 시 HP -5
+        // F2: 자신에게 스턴 2턴               → 자기 다음 2턴 스킵
+        // F3: 자신에게 회피감소 20 × 3턴      → 로그로 유효 회피 감소 확인
+        // F4: 첫 번째 생존 적에게 스턴 2턴    → 적 다음 2턴 스킵
+        // F5: 자신에게 크리증가 40 × 3턴      → 로그로 유효 크리 증가 확인 (4단계)
+        void Update()
+        {
+            if (!isOwned) return;
+            if (Input.GetKeyDown(KeyCode.F1)) CmdDebugApplyToSelf((int)EffectType.Bleeding, 5f, 3);
+            if (Input.GetKeyDown(KeyCode.F2)) CmdDebugApplyToSelf((int)EffectType.Stunned, 0f, 2);
+            if (Input.GetKeyDown(KeyCode.F3)) CmdDebugApplyToSelf((int)EffectType.DodgeDown, 20f, 3);
+            if (Input.GetKeyDown(KeyCode.F4)) CmdDebugStunFirstEnemy();
+            if (Input.GetKeyDown(KeyCode.F5)) CmdDebugApplyToSelf((int)EffectType.CritUp, 40f, 3);
+        }
+
+        [Command]
+        void CmdDebugApplyToSelf(int effectType, float value, int duration)
+        {
+            var type = (EffectType)effectType;
+            AddEffect(new ActiveEffect(type, value, duration));
+            Debug.Log($"[DEBUG] {Info?.Name} ← {type} v={value} d={duration} | 유효회피={CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects)} 유효크리={CombatCalculator.GetEffectiveCrit(Info.Crit, Effects)}");
+        }
+
+        [Command]
+        void CmdDebugStunFirstEnemy()
+        {
+            var enemies = BattleManager.Instance.GetAliveEnemies();
+            if (enemies.Count == 0) { Debug.Log("[DEBUG] 살아있는 적이 없습니다."); return; }
+            enemies[0].AddEffect(new ActiveEffect(EffectType.Stunned, 0f, 2));
+            Debug.Log($"[DEBUG] 적 '{enemies[0].Info.Name}' ← Stunned 2턴");
+        }
+        // ===== [DEBUG] 끝 =====
     }
 }
 

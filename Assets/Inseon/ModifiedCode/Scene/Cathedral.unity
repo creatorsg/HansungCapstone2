@@ -4957,6 +4957,18 @@ PrefabInstance:
       propertyPath: m_FlipX
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: fcaed02df338fb044baf82c8801a3aec, type: 3}
+      propertyPath: _info.Hp
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: fcaed02df338fb044baf82c8801a3aec, type: 3}
+      propertyPath: _info.Atk
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: fcaed02df338fb044baf82c8801a3aec, type: 3}
+      propertyPath: _info.MaxHp
+      value: 1500
+      objectReference: {fileID: 0}
     - target: {fileID: 5183334565856487694, guid: fcaed02df338fb044baf82c8801a3aec, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -8359,6 +8371,18 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: Info.Skills.Array.data[3].description
       value: zzz
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: _info.Hp
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: _info.Atk
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3898943690783000445, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: _info.MaxHp
+      value: 1500
       objectReference: {fileID: 0}
     - target: {fileID: 6147654108876281720, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: sceneId
