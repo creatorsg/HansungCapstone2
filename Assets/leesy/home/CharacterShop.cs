@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Lsy
 {
     /// <summary>
-    /// NPC ?í˜¸?‘ìš© ì»¤ë§¨??ì²˜ë¦¬.
-    /// ê³¨ë“œ??PlayerAccount ê·€?ì´ë¯€ë¡?sender??PlayerAccountë¥?ì°¾ì•„ ì²˜ë¦¬?©ë‹ˆ??
-    /// requiresAuthority = false: ?´ë–¤ ?´ë¼?´ì–¸?¸ë“  ?¸ì¶œ ê°€??(senderë¡??¸ì¶œ???ë³„).
+    /// NPC ?ï¿½í˜¸?ï¿½ìš© ì»¤ë§¨??ì²˜ë¦¬.
+    /// ê³¨ë“œ??PlayerAccount ê·€?ï¿½ì´ë¯€ï¿½?sender??PlayerAccountï¿½?ì°¾ì•„ ì²˜ë¦¬?ï¿½ë‹ˆ??
+    /// requiresAuthority = false: ?ï¿½ë–¤ ?ï¿½ë¼?ï¿½ì–¸?ï¿½ë“  ?ï¿½ì¶œ ê°€??(senderï¿½??ï¿½ì¶œ???ï¿½ë³„).
     /// </summary>
     public class CharacterShop : NetworkBehaviour
     {
-        // ?€?€?€ sender ??PlayerAccount ?¬í¼ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+        // ?ï¿½?ï¿½?ï¿½ sender ??PlayerAccount ?ï¿½í¼ ?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 
         [Server]
         private PlayerAccount FindAccount(NetworkConnectionToClient sender)
@@ -22,17 +22,17 @@ namespace Lsy
             return null;
         }
 
-        // ?€?€?€ ì»¤ë§¨???€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+        // ?ï¿½?ï¿½?ï¿½ ì»¤ë§¨???ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
-            // [?˜ì •] ?Œëª¨??êµ¬ë§¤??ê³µí†µ ?œë²„ ì²˜ë¦¬ë¡??„ì„??NPCPopupUI??ë³‘í•© ?????¸ì¶œëª…ì„ ëª¨ë‘ ì§€?í•©?ˆë‹¤.
+            // [?ï¿½ì •] ?ï¿½ëª¨??êµ¬ë§¤??ê³µí†µ ?ï¿½ë²„ ì²˜ë¦¬ï¿½??ï¿½ì„??NPCPopupUI??ë³‘í•© ?????ï¿½ì¶œëª…ì„ ëª¨ë‘ ì§€?ï¿½í•©?ï¿½ë‹¤.
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [?˜ì •] NPCPopupUIê°€ ?¸ì¶œ?˜ë˜ ë³‘í•© ??ì»¤ë§¨?œëª…??? ì??©ë‹ˆ??
+        // [?ï¿½ì •] NPCPopupUIê°€ ?ï¿½ì¶œ?ï¿½ë˜ ë³‘í•© ??ì»¤ë§¨?ï¿½ëª…???ï¿½ï¿½??ï¿½ë‹ˆ??
         [Command(requiresAuthority = false)]
         public void CmdBuyConsumable(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -40,7 +40,7 @@ namespace Lsy
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [?˜ì •] NPCPopupUI???¥ë¹„ êµ¬ë§¤ ?¸ì¶œ???œë²„ ?¸ë²¤? ë¦¬ ì¶”ê?ë¡??°ê²°?©ë‹ˆ??
+        // [?ï¿½ì •] NPCPopupUI???ï¿½ë¹„ êµ¬ë§¤ ?ï¿½ì¶œ???ï¿½ë²„ ?ï¿½ë²¤?ï¿½ë¦¬ ì¶”ï¿½?ï¿½??ï¿½ê²°?ï¿½ë‹ˆ??
         [Command(requiresAuthority = false)]
         public void CmdBuyEquipment(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -59,18 +59,18 @@ namespace Lsy
             InventoryItem invItem = createItem != null ? createItem(itemName) : default;
             if (string.IsNullOrEmpty(invItem.itemName))
             {
-                SendNotification(sender, $"[{itemName}] ?ë§¤ ?°ì´?°ê? ItemManager???±ë¡?˜ì–´ ?ˆì? ?ŠìŠµ?ˆë‹¤.");
+                SendNotification(sender, $"[{itemName}] ?ï¿½ë§¤ ?ï¿½ì´?ï¿½ï¿½? ItemManager???ï¿½ë¡?ï¿½ì–´ ?ï¿½ï¿½? ?ï¿½ìŠµ?ï¿½ë‹¤.");
                 return;
             }
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ˆë‹¤.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 return;
             }
             if (unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}?€(?? ?´ë? 5ê°œë? ?Œì??˜ê³  ?ˆìŠµ?ˆë‹¤.");
+                SendNotification(sender, $"{itemName}?ï¿½(?? ?ï¿½ï¿½? 5ê°œï¿½? ?ï¿½ï¿½??ï¿½ê³  ?ï¿½ìŠµ?ï¿½ë‹¤.");
                 return;
             }
 
@@ -79,13 +79,13 @@ namespace Lsy
             unit.AddItemWithInfo(invItem);
             account.SyncInventoryToPlayerData();
 
-            SendNotification(sender, $"[?œìŠ¤???Œë¦¼] {itemName} êµ¬ë§¤ ?„ë£Œ.");
+            SendNotification(sender, $"[?ï¿½ìŠ¤???ï¿½ë¦¼] {itemName} êµ¬ë§¤ ?ï¿½ë£Œ.");
         }
 
         [Server]
         private InventoryItem CreateConsumableInventoryItem(string itemName)
         {
-            // [?˜ì •] ë°”í…??NPC ?ì—… ?ë§¤ ?°ì´?°ëŠ” ItemManager.AllItems(Consum)ë¥??°ì„  ?¬ìš©?©ë‹ˆ??
+            // [?ï¿½ì •] ë°”í…??NPC ?ï¿½ì—… ?ï¿½ë§¤ ?ï¿½ì´?ï¿½ëŠ” ItemManager.AllItems(Consum)ï¿½??ï¿½ì„  ?ï¿½ìš©?ï¿½ë‹ˆ??
             Consum consumData = ItemManager.Instance != null ? ItemManager.Instance.GetConsumData(itemName) : null;
             if (consumData != null && consumData.ConsumItem != null)
             {
@@ -98,14 +98,14 @@ namespace Lsy
                 };
             }
 
-            // [?˜ì •] ItemData/ItemSO fallback ?œê±°. NPC ?ë§¤ ?°ì´?°ê? ?†ìœ¼ë©?êµ¬ë§¤ ?¤íŒ¨ ì²˜ë¦¬?©ë‹ˆ??
+            // [?ï¿½ì •] ItemData/ItemSO fallback ?ï¿½ê±°. NPC ?ï¿½ë§¤ ?ï¿½ì´?ï¿½ï¿½? ?ï¿½ìœ¼ï¿½?êµ¬ë§¤ ?ï¿½íŒ¨ ì²˜ë¦¬?ï¿½ë‹ˆ??
             return default;
         }
 
         [Server]
         private InventoryItem CreateEquipmentInventoryItem(string itemName)
         {
-            // [?˜ì •] ?€?¥ì¥??NPC ?ì—… ?ë§¤ ?°ì´?°ëŠ” ItemManager.AllEqps(Equipment)ë¥??°ì„  ?¬ìš©?©ë‹ˆ??
+            // [?ï¿½ì •] ?ï¿½?ï¿½ì¥??NPC ?ï¿½ì—… ?ï¿½ë§¤ ?ï¿½ì´?ï¿½ëŠ” ItemManager.AllEqps(Equipment)ï¿½??ï¿½ì„  ?ï¿½ìš©?ï¿½ë‹ˆ??
             Equipment equipmentData = ItemManager.Instance != null ? ItemManager.Instance.GetEquipmentData(itemName) : null;
             if (equipmentData != null && equipmentData.EqpItem != null)
             {
@@ -118,7 +118,7 @@ namespace Lsy
                 };
             }
 
-            // [?˜ì •] ItemSO/Resources fallback ?œê±°. NPC ?ë§¤ ?°ì´?°ê? ?†ìœ¼ë©?êµ¬ë§¤ ?¤íŒ¨ ì²˜ë¦¬?©ë‹ˆ??
+            // [?ï¿½ì •] ItemSO/Resources fallback ?ï¿½ê±°. NPC ?ï¿½ë§¤ ?ï¿½ì´?ï¿½ï¿½? ?ï¿½ìœ¼ï¿½?êµ¬ë§¤ ?ï¿½íŒ¨ ì²˜ë¦¬?ï¿½ë‹ˆ??
             return default;
         }
 
@@ -132,7 +132,7 @@ namespace Lsy
 
             if (account.currentGold < amount)
             {
-                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ˆë‹¤.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 return;
             }
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
@@ -158,17 +158,17 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ˆë‹¤.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 return;
             }
             if (unit.ApplyBartenderHeal())
             {
                 account.currentGold -= price;
-                SendNotification(sender, $"{unit.characterName}??ì²´ë ¥/?•ì‹ ?¥ì´ ?Œë³µ?˜ì—ˆ?µë‹ˆ??");
+                SendNotification(sender, $"{unit.characterName}??ì²´ë ¥/?ï¿½ì‹ ?ï¿½ì´ ?ï¿½ë³µ?ï¿½ì—ˆ?ï¿½ë‹ˆ??");
             }
             else
             {
-                SendNotification(sender, "?´ë? ì²´ë ¥ê³??•ì‹ ?¥ì´ ìµœë??…ë‹ˆ??");
+                SendNotification(sender, "?ï¿½ï¿½? ì²´ë ¥ï¿½??ï¿½ì‹ ?ï¿½ì´ ìµœï¿½??ï¿½ë‹ˆ??");
             }
         }
 
@@ -184,7 +184,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ˆë‹¤.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 return;
             }
 
@@ -192,26 +192,39 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] ê°•í™” ?±ê³µ! weaponId:{weaponId}, node:{nodeIndex}</color>");
-                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}?¨ê³„ ê°•í™” ?„ë£Œ!");
+                Debug.Log($"<color=green>[CharacterShop][Server] ê°•í™” ?ï¿½ê³µ! weaponId:{weaponId}, node:{nodeIndex}</color>");
+                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}?ï¿½ê³„ ê°•í™” ?ï¿½ë£Œ!");
             }
             else
             {
                 int currentWeaponLevel = unit.GetBlacksmithWeaponLevel(weaponId);
-                // [¼öÁ¤] ¹«±âº° °­È­ ´Ü°è ±âÁØÀ¸·Î ½ÇÆĞ »çÀ¯¸¦ ¾È³»ÇÕ´Ï´Ù.
+                // [ï¿½ï¿½ï¿½ï¿½] ï¿½ï¿½ï¿½âº° ï¿½ï¿½È­ ï¿½Ü°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È³ï¿½ï¿½Õ´Ï´ï¿½.
                 if (npcLevel < nodeIndex + 1)
-                    SendNotification(sender, "NPC ·¹º§ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "NPC ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
                 else if (currentWeaponLevel > nodeIndex)
-                    SendNotification(sender, "ÀÌ¹Ì ±¸¸ÅÇÑ ³ëµåÀÔ´Ï´Ù.");
+                    SendNotification(sender, "ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.");
                 else
-                    SendNotification(sender, "ÀÌÀü ´Ü°è¸¦ ¸ÕÀú ±¸¸ÅÇØ¾ß ÇÕ´Ï´Ù.");
+                    SendNotification(sender, "ï¿½ï¿½ï¿½ï¿½ ï¿½Ü°è¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ ï¿½Õ´Ï´ï¿½.");
             }
         }
 
         [Command(requiresAuthority = false)]
-        public void CmdUpgradeSkillWithLevel(string skillId, int skillIndex, int price, int npcLevel, int requiredNpcLevel, NetworkConnectionToClient sender = null)
+        public void CmdUpgradeSkillWithLevel(int skillIndex, int targetLevel, int npcLevel, NetworkConnectionToClient sender = null)
         {
-            Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - skillId:{skillId}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
+            // [ì •ë³´ìƒ ì¼ì›í™”] price/requiredNpcLevel/skillIdëŠ” ì„œë²„ê°€ SkillUpgradeRegistryì—ì„œ ì§ì ‘ ì¡°íšŒí•œë‹¤(í´ë¼ ì‹ ë¢° X).
+            // ì•„ë˜ ê¸°ì¡´ ì½”ë“œê°€ price/requiredNpcLevel/skillId ì§€ì—­ë³€ìˆ˜ë¥¼ ì‚¬ìš©í•˜ë¯€ë¡œ ì—¬ê¸°ì„œ ë¯¸ë¦¬ ì±„ìš´ë‹¤.
+            string skillId = "";
+            int price = int.MaxValue;          // ë…¸ë“œ ë¯¸ë°œê²¬ ì‹œ ê³¨ë“œ ì²´í¬ì—ì„œ ìì—° reject
+            int requiredNpcLevel = int.MaxValue;
+            var __acc = FindAccount(sender);
+            if (__acc != null && __acc.currentSelectedCharacter != null &&
+                SkillUpgradeRegistry.TryGet(__acc.currentSelectedCharacter.heroCode, skillIndex, targetLevel, out var __node))
+            {
+                skillId          = __node.skillName;
+                price            = __node.price;
+                requiredNpcLevel = __node.requiredNpcLevel;
+            }
+            Debug.Log($"[CharacterShop][Server] CmdUpgradeSkillWithLevel - idx:{skillIndex}, targetLv:{targetLevel}, price:{price}, npcLv:{npcLevel}, required:{requiredNpcLevel}");
 
             PlayerAccount account = FindAccount(sender);
             if (account == null) return;
@@ -220,23 +233,25 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ˆë‹¤.");
+                SendNotification(sender, "ê³¨ë“œê°€ ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 return;
             }
 
-            bool success = unit.ApplySkillPurchase(skillId, npcLevel, requiredNpcLevel);
+            // npcLevel ê²Œì´íŠ¸ëŠ” ApplySkillUpgradeê°€ ì•„ë‹ˆë¼ ì—¬ê¸°ì„œ í•œ ë²ˆ ë” ëª…ì‹œ ê²€ì‚¬(ì„ í–‰ ë ˆë²¨ì€ ApplySkillUpgradeê°€ ê²€ì¦)
+            if (npcLevel < requiredNpcLevel) { SendNotification(sender, "NPC Lv ë¶€ì¡±"); return; }
+            bool success = unit.ApplySkillUpgrade(skillIndex, targetLevel, skillId);
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] ?¤í‚¬ ?µë“ ?±ê³µ! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] ?¤í‚¬ ?µë“ ?„ë£Œ!");
+                Debug.Log($"<color=green>[CharacterShop][Server] ?ï¿½í‚¬ ?ï¿½ë“ ?ï¿½ê³µ! skillId:{skillId}</color>");
+                SendNotification(sender, $"[{skillId}] ?ï¿½í‚¬ ?ï¿½ë“ ?ï¿½ë£Œ!");
             }
             else
             {
                 if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC ?ˆë²¨??ë¶€ì¡±í•©?ˆë‹¤.");
+                    SendNotification(sender, "NPC ?ï¿½ë²¨??ë¶€ì¡±í•©?ï¿½ë‹¤.");
                 else
-                    SendNotification(sender, "?´ë? ë³´ìœ ???¤í‚¬?…ë‹ˆ??");
+                    SendNotification(sender, "?ï¿½ï¿½? ë³´ìœ ???ï¿½í‚¬?ï¿½ë‹ˆ??");
             }
         }
 
@@ -252,20 +267,20 @@ namespace Lsy
 
             if (string.IsNullOrWhiteSpace(itemName))
             {
-                SendNotification(sender, "?¥ì°©???„ì´???´ë¦„??ë¹„ì–´ ?ˆìŠµ?ˆë‹¤.");
+                SendNotification(sender, "?ï¿½ì°©???ï¿½ì´???ï¿½ë¦„??ë¹„ì–´ ?ï¿½ìŠµ?ï¿½ë‹¤.");
                 return;
             }
             if (unit.GetItemAmount(itemName) <= 0)
             {
-                SendNotification(sender, $"[{itemName}] ?„ì´?œì´ ?¸ë²¤? ë¦¬???†ìŠµ?ˆë‹¤.");
+                SendNotification(sender, $"[{itemName}] ?ï¿½ì´?ï¿½ì´ ?ï¿½ë²¤?ï¿½ë¦¬???ï¿½ìŠµ?ï¿½ë‹¤.");
                 return;
             }
 
             unit.selectedWeaponId = itemName;
-            SendNotification(sender, $"[{itemName}] ?¥ì°© ?„ë£Œ.");
+            SendNotification(sender, $"[{itemName}] ?ï¿½ì°© ?ï¿½ë£Œ.");
         }
 
-        // ?€?€?€ ?Œë¦¼ ?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
+        // ?ï¿½?ï¿½?ï¿½ ?ï¿½ë¦¼ ?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½?ï¿½
 
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)
@@ -273,13 +288,13 @@ namespace Lsy
             if (target != null)
                 RpcNotify(target, message);
             else
-                Debug.LogWarning("[CharacterShop] senderê°€ NULL?´ë¼ ?Œë¦¼??ë³´ë‚¼ ???†ìŠµ?ˆë‹¤.");
+                Debug.LogWarning("[CharacterShop] senderê°€ NULL?ï¿½ë¼ ?ï¿½ë¦¼??ë³´ë‚¼ ???ï¿½ìŠµ?ï¿½ë‹¤.");
         }
 
         [TargetRpc]
         private void RpcNotify(NetworkConnectionToClient target, string message)
         {
-            Debug.Log($"<color=white>[CharacterShop][Client] ?Œë¦¼ ?˜ì‹ : {message}</color>");
+            Debug.Log($"<color=white>[CharacterShop][Client] ?ï¿½ë¦¼ ?ï¿½ì‹ : {message}</color>");
         }
     }
 }

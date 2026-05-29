@@ -1,73 +1,131 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Lsy
 {
+    /// <summary>
+    /// ì •ë³´ìƒ ìŠ¤í‚¬ ê°•í™” ê·¸ë¦¬ë“œ. ì´ ê·¸ë¦¬ë“œ í•˜ë‚˜ê°€ í•œ ìŠ¤í‚¬(skillIndex)ì˜ Lv1~Lv4 ë…¸ë“œë¥¼ ë‹´ë‹¹í•œë‹¤.
+    /// nodeIndex 0~3ì€ ê°ê° targetLevel 1~4ë¡œ í•´ì„í•œë‹¤. Lv1ì€ baseë¼ Registryì— ì—†ì–´ êµ¬ë§¤ ë¶ˆê°€ë¡œ í‘œì‹œëœë‹¤.
+    /// </summary>
     public class InformantSkillGrid : BaseUpgradeRow
     {
-        public SkillUpgradeData skillData;
+        [Tooltip("ì´ ê·¸ë¦¬ë“œê°€ ë‹´ë‹¹í•˜ëŠ” ìŠ¤í‚¬ ë²ˆí˜¸ (0~3). CharacterCard.skills / Info.Skills ìˆœì„œì™€ 1:1")]
+        public int skillIndex;
+
+        private int TargetLevelOf(int nodeIndex) => nodeIndex + 1;
+
+        private CharacterUnit ActiveUnit =>
+            PlayerAccount.LocalInstance != null
+                ? PlayerAccount.LocalInstance.currentSelectedCharacter
+                : null;
 
         protected override int GetNodePrice(int nodeIndex)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return 0;
-            return skillData.nodes[nodeIndex].price;
+            CharacterUnit unit = ActiveUnit;
+            if (unit == null) return 0;
+
+            if (SkillUpgradeRegistry.TryGet(unit.heroCode, skillIndex, TargetLevelOf(nodeIndex), out var node))
+                return node.price;
+
+            return 0;
         }
 
         protected override bool CanPurchaseNode(int nodeIndex, int npcLevel, CharacterUnit unit)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return false;
+            if (unit == null) return false;
 
-            SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
-
-            // [¼öÁ¤] Á¤º¸»ó requiredNpcLevelÀº UI¿¡ Ç¥½ÃµÇ´Â NPC Lv.¿Í °°Àº 1-based °ªÀÔ´Ï´Ù.
-            int requiredNpcLevel = GetRequiredNpcLevel(nodeData);
-            if (npcLevel < requiredNpcLevel) return false;
-
-            // [¼öÁ¤] skillId¸¸ ¾²¸é ´Ù¸¥ Á¤º¸»ó ±×¸®µåÀÇ °°Àº ID ³ëµå±îÁö °°ÀÌ ±¸¸Å Ã³¸®µÇ¹Ç·Î, ±×¸®µå/³ëµå ±âÁØÀÇ °íÀ¯ ±¸¸Å Å°¸¦ »ç¿ëÇÕ´Ï´Ù.
-            if (unit != null && IsSkillPurchased(GetPurchaseKey(nodeIndex, nodeData), unit))
+            int targetLevel = TargetLevelOf(nodeIndex);
+            if (!SkillUpgradeRegistry.TryGet(unit.heroCode, skillIndex, targetLevel, out var node))
                 return false;
 
-            return true;
+            if (npcLevel < Mathf.Max(1, node.requiredNpcLevel)) return false;
+
+            return GetCurrentLevel(skillIndex, unit) == targetLevel - 1;
         }
 
         protected override void OnNodeClicked(int nodeIndex)
         {
-            if (skillData == null || nodeIndex >= skillData.nodes.Count) return;
+            // [êµ¬ë§¤ ë¶„ë¦¬] ë…¸ë“œë¥¼ ëˆŒëŸ¬ë„ êµ¬ë§¤í•˜ì§€ ì•Šê³ , í•´ë‹¹ ë ˆë²¨ ë…¸ë“œì˜ SO ì„¤ëª…ë§Œ í‘œì‹œí•œë‹¤.
+            // ì‹¤ì œ ê°•í™”ëŠ” InformantUIì˜ "ê°•í™”" ë²„íŠ¼ â†’ TryPurchase ë¡œ ìˆ˜í–‰í•œë‹¤.
+            CharacterUnit unit = ActiveUnit;
+            if (unit == null) return;
 
-            CharacterShop shop = GetLocalShop();
-            if (shop == null) return;
+            int targetLevel = TargetLevelOf(nodeIndex);
+            if (!SkillUpgradeRegistry.TryGet(unit.heroCode, skillIndex, targetLevel, out _))
+                return; // Lv1 ë“± SO ë…¸ë“œê°€ ì—†ëŠ” ë ˆë²¨ì€ ë³´ì—¬ì¤„ ë‚´ìš© ì—†ìŒ
+
+            InformantUI ui = GetComponentInParent<InformantUI>();
+            if (ui != null)
+                ui.SelectNode(this, nodeIndex);
+        }
+
+        /// <summary>ì´ ê·¸ë¦¬ë“œê°€ ë‹´ë‹¹í•˜ëŠ” ìŠ¤í‚¬ ë²ˆí˜¸.</summary>
+        public int SkillIndex => skillIndex;
+
+        /// <summary>ë…¸ë“œ ì¸ë±ìŠ¤(0~3) â†’ ëª©í‘œ ë ˆë²¨(1~4).</summary>
+        public int TargetLevelOfNode(int nodeIndex) => TargetLevelOf(nodeIndex);
+
+        /// <summary>InformantUI ê°•í™” ë²„íŠ¼ì´ í˜„ì¬ ì„ íƒ ë…¸ë“œì˜ êµ¬ë§¤ ê°€ëŠ¥ ì—¬ë¶€ë¥¼ ë¬»ëŠ” ìš©ë„.</summary>
+        public bool CanPurchase(int nodeIndex)
+        {
+            CharacterUnit unit = ActiveUnit;
+            if (unit == null) return false;
 
             NPCState npcState = GetNpcState();
             int npcLevel = npcState != null ? npcState.currentLevel : 1;
-
-            SkillUpgradeNode nodeData = skillData.nodes[nodeIndex];
-            int skillIndex = nodeIndex;
-            string purchaseKey = GetPurchaseKey(nodeIndex, nodeData);
-            int requiredNpcLevel = GetRequiredNpcLevel(nodeData);
-
-            // ¼­¹ö·Î º¸³½´Ù: ±¸¸Å/°­È­ÇÒ ½ºÅ³ ÀÎµ¦½º(skillIndex)
-            shop.CmdUpgradeSkillWithLevel(purchaseKey, skillIndex, nodeData.price, npcLevel, requiredNpcLevel);
+            return CanPurchaseNode(nodeIndex, npcLevel, unit);
         }
 
-        private int GetRequiredNpcLevel(SkillUpgradeNode nodeData)
+        /// <summary>InformantUI ê°•í™” ë²„íŠ¼ì´ ì‹¤ì œ êµ¬ë§¤ë¥¼ ìš”ì²­í•˜ëŠ” ìš©ë„. êµ¬ë§¤ ê°€ëŠ¥í•  ë•Œë§Œ ì„œë²„ë¡œ ì „ì†¡.</summary>
+        public bool TryPurchase(int nodeIndex)
         {
-            // [¼öÁ¤] Àß¸ø ÀúÀåµÈ 0 ÀÌÇÏ °ªÀÌ ¸ğµç ·¹º§¿¡¼­ ¿­¸®Áö ¾Êµµ·Ï ÃÖ¼Ò NPC Lv.1·Î °íÁ¤ÇÕ´Ï´Ù.
-            return nodeData != null ? Mathf.Max(1, nodeData.requiredNpcLevel) : 1;
+            CharacterUnit unit = ActiveUnit;
+            if (unit == null) return false;
+
+            NPCState npcState = GetNpcState();
+            int npcLevel = npcState != null ? npcState.currentLevel : 1;
+            if (!CanPurchaseNode(nodeIndex, npcLevel, unit)) return false;
+
+            CharacterShop shop = GetLocalShop();
+            if (shop == null) return false;
+
+            shop.CmdUpgradeSkillWithLevel(skillIndex, TargetLevelOf(nodeIndex), npcLevel);
+            return true;
         }
 
-        private string GetPurchaseKey(int nodeIndex, SkillUpgradeNode nodeData)
+        protected override void OnRefreshCompleted(int npcLevel, CharacterUnit unit)
         {
-            string group = skillData != null && !string.IsNullOrEmpty(skillData.groupName) ? skillData.groupName : gameObject.name;
-            string skillId = nodeData != null ? nodeData.skillId : "";
-            return $"{group}:{nodeIndex}:{skillId}";
+            Sprite icon = ResolveSkillIcon(unit);
+            foreach (var node in upgradeNodes)
+            {
+                if (node == null) continue;
+                node.SetIcon(icon);
+
+                // [êµ¬ë§¤ ë¶„ë¦¬] ì ê¸´ ë ˆë²¨ë„ ì„¤ëª…ì„ ë³´ë ¤ë©´ í´ë¦­ì€ ê°€ëŠ¥í•´ì•¼ í•œë‹¤.
+                // êµ¬ë§¤ ê°€ëŠ¥ ì—¬ë¶€ëŠ” ìƒ‰(ì ê¹€=íšŒìƒ‰)ìœ¼ë¡œë§Œ êµ¬ë¶„í•˜ê³ , ë²„íŠ¼ ìì²´ëŠ” í•­ìƒ ëˆ„ë¥¼ ìˆ˜ ìˆê²Œ ë‘”ë‹¤.
+                if (node.nodeButton != null)
+                    node.nodeButton.interactable = true;
+            }
         }
 
-        private bool IsSkillPurchased(string purchaseKey, CharacterUnit unit)
+        private Sprite ResolveSkillIcon(CharacterUnit unit)
         {
+            if (unit == null || string.IsNullOrEmpty(unit.heroCode)) return null;
+            if (!CharacterRegistry.TryGet(unit.heroCode, out var entry)) return null;
+            if (entry.Skills == null) return null;
+            if (skillIndex < 0 || skillIndex >= entry.Skills.Count) return null;
+
+            return entry.Skills[skillIndex]?.icon;
+        }
+
+        private int GetCurrentLevel(int skillIndex, CharacterUnit unit)
+        {
+            if (unit == null) return 1;
+
             foreach (var skill in unit.mySkills)
-                if (skill.skillName == purchaseKey) return true;
-            return false;
+                if (skill.skillIndex == skillIndex)
+                    return skill.currentLevel;
+
+            return 1;
         }
     }
 }
-
-

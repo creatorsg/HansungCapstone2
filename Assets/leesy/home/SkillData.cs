@@ -9,14 +9,17 @@ namespace Lsy
         public int baseAttack;
         public int baseDefense;
         public Sprite skillSprite;
-        public int maxLevel = 3; // ½ºÅ³ ÃÖ´ë ·¹º§ Á¦ÇÑ
+        public int maxLevel = 3; // ï¿½ï¿½Å³ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
-    // ¹Ì·¯(Mirror) ³×Æ®¿öÅ©¿¡¼­ ¾ÈÀüÇÏ°Ô µ¿±âÈ­ÇÏ±â À§ÇÑ ±¸Á¶Ã¼
+    // ï¿½Ì·ï¿½(Mirror) ï¿½ï¿½Æ®ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½È­ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼
     [System.Serializable]
     public struct PlayerSkill
     {
-        public string skillName; // ¾î¶² ½ºÅ³ÀÎÁö ½Äº°
-        public int currentLevel; // ÀÌ ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç ½ºÅ³ ·¹º§
+        // [ì •ë³´ìƒ ì¼ì›í™”] ê°•í™” ì‹ë³„ì˜ ì •ì‹ í‚¤ = skillIndex(0~3, Info.Skills ìˆœì„œì™€ 1:1).
+        // ë§¤ì¹­/ì¡°íšŒëŠ” skillIndexë¡œë§Œ í•œë‹¤. skillNameì€ ë””ë²„ê·¸/ë ˆê±°ì‹œ í‘œì‹œìš©.
+        public int skillIndex;   // ì´ ìºë¦­í„°ì˜ ëª‡ ë²ˆì§¸ ìŠ¤í‚¬ì¸ì§€ (ë¸Œë¦¿ì§€ê°€ Info.Skills[skillIndex]ì— ë§¤í•‘)
+        public string skillName; // ï¿½î¶² ï¿½ï¿½Å³ï¿½ï¿½ï¿½ï¿½ ï¿½Äºï¿½
+        public int currentLevel; // ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å³ ï¿½ï¿½ï¿½ï¿½
     }
 }

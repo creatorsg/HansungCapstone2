@@ -1402,10 +1402,10 @@ RectTransform:
   - {fileID: 1765504618}
   m_Father: {fileID: 542453266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 175, y: -80}
-  m_SizeDelta: {x: 350, y: 160}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &166284524
 MonoBehaviour:
@@ -1462,7 +1462,7 @@ MonoBehaviour:
   - {fileID: 1017056682}
   - {fileID: 630802362}
   - {fileID: 1765504622}
-  skillData: {fileID: 11400000, guid: 3a40cf649eee17a4caabe3905e4a98e4, type: 2}
+  skillIndex: 0
 --- !u!1 &170328050
 GameObject:
   m_ObjectHideFlags: 0
@@ -2884,7 +2884,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &320706035
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2904,6 +2904,8 @@ RectTransform:
   - {fileID: 542453266}
   - {fileID: 1659069593}
   - {fileID: 1496561861}
+  - {fileID: 1528445971}
+  - {fileID: 1070883255}
   m_Father: {fileID: 1292727913}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2979,6 +2981,9 @@ MonoBehaviour:
   - {fileID: 1416287071}
   - {fileID: 540113816}
   - {fileID: 1796345527}
+  skillNameText: {fileID: 1528445972}
+  skillDescText: {fileID: 1070883256}
+  purchaseButton: {fileID: 1496561862}
 --- !u!114 &320706041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3050,6 +3055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 341268343}
   priceText: {fileID: 1066493661}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &341268343
@@ -3168,9 +3174,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1010258537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -75}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &353445717
@@ -3729,6 +3735,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 435766178}
   priceText: {fileID: 755360476}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &435766178
@@ -3950,6 +3957,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 444956297}
   priceText: {fileID: 687546797}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
 --- !u!1 &455744852
@@ -4268,9 +4276,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1010258537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -255}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &473806693
@@ -5458,10 +5466,10 @@ RectTransform:
   - {fileID: 1325220363}
   m_Father: {fileID: 542453266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 175, y: -260}
-  m_SizeDelta: {x: 350, y: 160}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &540113816
 MonoBehaviour:
@@ -5480,7 +5488,7 @@ MonoBehaviour:
   - {fileID: 1447328938}
   - {fileID: 795076389}
   - {fileID: 1325220364}
-  skillData: {fileID: 0}
+  skillIndex: 2
 --- !u!114 &540113817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6119,6 +6127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 630802361}
   priceText: {fileID: 1065401019}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &632657539
@@ -6220,6 +6229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 632657541}
   priceText: {fileID: 1879353198}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
 --- !u!114 &632657543
@@ -6359,6 +6369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 634828006}
   priceText: {fileID: 752758388}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
 --- !u!114 &634828008
@@ -6453,6 +6464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 649023386}
   priceText: {fileID: 1549036811}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &649023386
@@ -8134,6 +8146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 795076390}
   priceText: {fileID: 1417624769}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &795076390
@@ -8430,6 +8443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 852540737}
   priceText: {fileID: 505968197}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11320752, g: 0.11320752, b: 0.11320752, a: 1}
 --- !u!1 &857814286
@@ -10033,6 +10047,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 976580926}
   priceText: {fileID: 1723488654}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &976580926
@@ -10579,6 +10594,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1008619943}
   priceText: {fileID: 245687842}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1010258536
@@ -10874,6 +10890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1017056681}
   priceText: {fileID: 1406422151}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1017783050
@@ -11957,6 +11974,143 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068716177}
   m_CullTransparentMesh: 1
+--- !u!1 &1070883254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1070883255}
+  - component: {fileID: 1070883257}
+  - component: {fileID: 1070883256}
+  m_Layer: 5
+  m_Name: "\uC2A4\uD0AC\uC124\uBA85"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1070883255
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070883254}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3.476182, y: 2.665745, z: 0.7166559}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 320706035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 321, y: -225}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1070883256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070883254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 2d6b0b81d04aff646ae3e18fb0874a32, type: 2}
+  m_sharedMaterial: {fileID: -8856961598348457050, guid: 2d6b0b81d04aff646ae3e18fb0874a32, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 18
+  m_fontSizeBase: 18
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1070883257
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070883254}
+  m_CullTransparentMesh: 1
 --- !u!1 &1093869777
 GameObject:
   m_ObjectHideFlags: 0
@@ -12608,6 +12762,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1127845762}
   priceText: {fileID: 65810125}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
 --- !u!1 &1130868510
@@ -13039,6 +13194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1164665543}
   priceText: {fileID: 1113599101}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1164665543
@@ -13996,6 +14152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1232377624}
   priceText: {fileID: 1461170803}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1232377624
@@ -14696,6 +14853,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1259963068}
   priceText: {fileID: 2079533085}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1259963068
@@ -15490,6 +15648,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1325220365}
   priceText: {fileID: 1607490660}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1325220365
@@ -16270,6 +16429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1394971492}
   priceText: {fileID: 2112329568}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1394971492
@@ -16843,10 +17003,10 @@ RectTransform:
   - {fileID: 1164665541}
   m_Father: {fileID: 542453266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 545, y: -80}
-  m_SizeDelta: {x: 350, y: 160}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1416287071
 MonoBehaviour:
@@ -16865,7 +17025,7 @@ MonoBehaviour:
   - {fileID: 1232377623}
   - {fileID: 341268342}
   - {fileID: 1164665542}
-  skillData: {fileID: 11400000, guid: 3123f5a6b76e164439d64eae042b082b, type: 2}
+  skillIndex: 1
 --- !u!114 &1416287072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17246,6 +17406,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1441539212}
   priceText: {fileID: 669354130}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1441539212
@@ -17521,6 +17682,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1447328939}
   priceText: {fileID: 1921879523}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!114 &1447328939
@@ -18297,6 +18459,143 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1509963920}
   m_CullTransparentMesh: 1
+--- !u!1 &1528445970
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1528445971}
+  - component: {fileID: 1528445973}
+  - component: {fileID: 1528445972}
+  m_Layer: 5
+  m_Name: "\uC2A4\uD0AC\uC774\uB984"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1528445971
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528445970}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 3.593884, y: 2.4283, z: 2.4283}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 320706035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 326, y: -63}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1528445972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528445970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: New Text
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 2d6b0b81d04aff646ae3e18fb0874a32, type: 2}
+  m_sharedMaterial: {fileID: -8856961598348457050, guid: 2d6b0b81d04aff646ae3e18fb0874a32, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 20
+  m_fontSizeBase: 20
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 2.907585, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1528445973
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528445970}
+  m_CullTransparentMesh: 1
 --- !u!1 &1536436123
 GameObject:
   m_ObjectHideFlags: 0
@@ -18631,9 +18930,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1010258537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -435}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1601187453
@@ -20798,6 +21097,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 1765504621}
   priceText: {fileID: 568487269}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
 --- !u!1 &1771305482
@@ -21064,10 +21364,10 @@ RectTransform:
   - {fileID: 1441539210}
   m_Father: {fileID: 542453266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 545, y: -260}
-  m_SizeDelta: {x: 350, y: 160}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1796345527
 MonoBehaviour:
@@ -21086,7 +21386,7 @@ MonoBehaviour:
   - {fileID: 435766177}
   - {fileID: 649023385}
   - {fileID: 1441539211}
-  skillData: {fileID: 0}
+  skillIndex: 3
 --- !u!114 &1796345528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21642,9 +21942,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1010258537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 75, y: -615}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1846075635
@@ -21697,7 +21997,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a17fe66a53c6b1408d27d95fd4e5b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.CharacterSwitchButton
-  characterIndex: 4
+  characterIndex: 3
   button: {fileID: 1846075638}
   takenColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   activeOutlineColor: {r: 1, g: 1, b: 0, a: 1}
@@ -22919,6 +23219,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.UpgradeNode
   nodeButton: {fileID: 2033506817}
   priceText: {fileID: 1221700259}
+  iconImage: {fileID: 0}
   unlockedColor: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
   lockedColor: {r: 0.11372549, g: 0.11372549, b: 0.11372549, a: 1}
 --- !u!114 &2033506819

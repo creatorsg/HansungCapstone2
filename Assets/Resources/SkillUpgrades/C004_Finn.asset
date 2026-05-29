@@ -1,0 +1,185 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
+  m_Name: C004_Finn
+  m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
+  groupName: "\uD540 \uC2A4\uD0AC \uAC15\uD654"
+  characterCode: C004
+  nodes:
+  - skillId: 0_2
+    skillName: "\uB3C5\uC131 \uAC15\uD654"
+    skillIndex: 0
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 3
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 0_3
+    skillName: "\uB9F9\uB3C5 \uBC30\uD569"
+    skillIndex: 0
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 4
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 0_4
+    skillName: "\uAD34\uC800 \uC2DC\uC57D"
+    skillIndex: 0
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 5
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 1_2
+    skillName: "\uC9C0\uC18D \uC8FC\uC785"
+    skillIndex: 1
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 2
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 1_3
+    skillName: "\uACFC\uB2E4 \uC8FC\uC785"
+    skillIndex: 1
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 3
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 1_4
+    skillName: "\uAD11\uD3ED \uC8FC\uC785"
+    skillIndex: 1
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 4
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 2_2
+    skillName: "\uAC15\uB825 \uD3ED\uBC1C"
+    skillIndex: 2
+    targetLevel: 2
+    DamageRate: 1
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 2_3
+    skillName: "\uC5F0\uC1C4 \uD3ED\uBC1C"
+    skillIndex: 2
+    targetLevel: 3
+    DamageRate: 1.2
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 2_4
+    skillName: "\uB300\uD3ED\uBC1C"
+    skillIndex: 2
+    targetLevel: 4
+    DamageRate: 1.4
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 3_2
+    skillName: "\uC548\uC815 \uC2DC\uC57D"
+    skillIndex: 3
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 3
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 3_3
+    skillName: "\uAC01\uC131 \uC2DC\uC57D"
+    skillIndex: 3
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 4
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 3_4
+    skillName: "\uCD08\uC6D4 \uC2DC\uC57D"
+    skillIndex: 3
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 5
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3

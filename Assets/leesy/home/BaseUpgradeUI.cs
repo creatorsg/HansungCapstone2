@@ -30,7 +30,7 @@ namespace Lsy
             RefreshAllRows();
         }
 
-        public void RefreshAllRows()
+        public virtual void RefreshAllRows()
         {
             if (NpcState == null)
             {

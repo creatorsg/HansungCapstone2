@@ -1,4 +1,4 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,39 +8,68 @@ namespace Lsy
     {
         public Button nodeButton;
 
-        [Header("°¡°İ ÅØ½ºÆ® (¼±ÅÃ»çÇ× - ¾øÀ¸¸é ¹«½ÃµÊ)")]
+        [Header("ê°€ê²© í…ìŠ¤íŠ¸ (ì„ íƒì‚¬í•­ - ì—†ìœ¼ë©´ ë¬´ì‹œë¨)")]
         public TextMeshProUGUI priceText;
 
-        [Header("ÇØ±İµÆÀ» ¶§ »ö»ó")]
+        [Header("ì•„ì´ì½˜ ì´ë¯¸ì§€ (ì„ íƒì‚¬í•­ - ë¹„ì›Œë‘ë©´ ìì‹ Image ìë™ íƒìƒ‰)")]
+        public Image iconImage;
+
+        [Header("í•´ê¸ˆëì„ ë•Œ ìƒ‰ìƒ")]
         public Color unlockedColor = Color.white;
 
-        [Header("Àá°åÀ» ¶§ »ö»ó (¾îµÓ°Ô)")]
+        [Header("ì ê²¼ì„ ë•Œ ìƒ‰ìƒ (ì–´ë‘¡ê²Œ)")]
         public Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
 
-        // ¹öÆ° ¹è°æ ÀÌ¹ÌÁö (ÀÚµ¿À¸·Î Ã£À½)
         private Image _buttonImage;
 
         private void Awake()
         {
-            // ¹öÆ° ÀÚÃ¼ÀÇ Image ÄÄÆ÷³ÍÆ®¸¦ °¡Á®¿È
-            _buttonImage = nodeButton.GetComponent<Image>();
+            if (nodeButton == null)
+                nodeButton = GetComponent<Button>();
 
-            // [Áß¿ä] ¹öÆ° TransitionÀ» NoneÀ¸·Î ¼³Á¤
-            // Color Tint ¸ğµå¸é interactable=false ½Ã ÀÚµ¿À¸·Î ¹İÅõ¸íÇØÁö¹Ç·Î
-            // Á÷Á¢ »ö»óÀ» Á¦¾îÇÏ±â À§ÇØ NoneÀ¸·Î º¯°æ
-            nodeButton.transition = Selectable.Transition.None;
+            if (nodeButton != null)
+            {
+                _buttonImage = nodeButton.GetComponent<Image>();
+                nodeButton.transition = Selectable.Transition.None;
+            }
+
+            if (iconImage == null)
+            {
+                foreach (var image in GetComponentsInChildren<Image>(true))
+                {
+                    if (image != _buttonImage)
+                    {
+                        iconImage = image;
+                        break;
+                    }
+                }
+            }
+
+            // ë³„ë„ ì•„ì´ì½˜ìš© ìì‹ Imageê°€ ì—†ìœ¼ë©´ ë²„íŠ¼ ìì²´ ì´ë¯¸ì§€ë¥¼ ì•„ì´ì½˜ ìŠ¬ë¡¯ìœ¼ë¡œ ì‚¬ìš©
+            // (ìŠ¤í‚¬ ë…¸ë“œ = ìŠ¤í‚¬ ì•„ì´ì½˜ ë²„íŠ¼. ì ê¸°ë©´ SetNodeStateì˜ lockedColorë¡œ íšŒìƒ‰ ì²˜ë¦¬ë¨)
+            if (iconImage == null)
+                iconImage = _buttonImage;
         }
 
         public void SetNodeState(bool canUpgrade, int price = 0)
         {
-            nodeButton.interactable = canUpgrade;
+            if (nodeButton != null)
+                nodeButton.interactable = canUpgrade;
 
-            // Á÷Á¢ »ö»ó Á¦¾î
             if (_buttonImage != null)
                 _buttonImage.color = canUpgrade ? unlockedColor : lockedColor;
 
             if (priceText != null)
                 priceText.text = price > 0 ? $"{price}G" : "";
+        }
+
+        public void SetIcon(Sprite icon)
+        {
+            // iconì´ nullì´ë©´ ê¸°ì¡´ í‘œì‹œ ìœ ì§€(ë²„íŠ¼ ì´ë¯¸ì§€ í´ë°± ì‹œ ë²„íŠ¼ì´ ì‚¬ë¼ì§€ëŠ” ì‚¬ê³  ë°©ì§€)
+            if (iconImage == null || icon == null) return;
+
+            iconImage.sprite = icon;
+            iconImage.enabled = true;
         }
     }
 }
