@@ -800,29 +800,31 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 80961da7912ed7f498f5f84ec2930479, type: 3}
   skills:
-  - Name: 1
+  - Name: "\uAD6C\uC2AC\uB9AC\uB294 \uC120\uC728"
     User: 0
     Type: 2
     anim: Attack
     TagetNum: 2
     icon: {fileID: 2211368458654073353, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
-    description: "\uB514\uBC84\uD504 \uACF5\uACA9 10 \uB2E4\uC6B4"
+    description: "\uC801 1\uBA85\uC744 1\uD134\uAC04 \uB9E4\uD639\uC2DC\uCF1C \uD589\uB3D9\uC744
+      \uB9C9\uB294\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 5
-    EffectValue: 10
-    EffectDuration: 3
+    EffectType: 9
+    EffectValue: 0
+    EffectDuration: 1
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: \uD589\uC9C4\uACE1
+  - Name: "\uD589\uC9C4\uACE1"
     User: 0
     Type: 3
     anim: Attack
     TagetNum: 1
     icon: {fileID: 7389082159000606099, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
-    description: \uC544\uAD70 \uC804\uCCB4 \uC18D\uB3C4 \uC99D\uAC00
+    description: "\uC544\uAD70 \uC804\uCCB4\uC758 \uC18D\uB3C4\uB97C 1\uD134\uAC04
+      \uC62C\uB9B0\uB2E4."
     DamageRate: 0
     HealRate: 0
     EffectType: 2
@@ -832,34 +834,37 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 3
+  - Name: "\uBD88\uD611\uD654\uC74C"
     User: 0
-    Type: 0
+    Type: 2
     anim: Attack
     TagetNum: 2
     icon: {fileID: -8338433773514870343, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uC801 \uC804\uCCB4\uC758 \uBA85\uC911\uACFC \uD68C\uD53C\uB97C
+      2\uD134\uAC04 \uAE4E\uB294\uB2E4. \uC544\uAD70\uC758 SAN\uC744 \uC18C\uD3ED
+      \uC18C\uBAA8\uD55C\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
+    EffectType: 8
+    EffectValue: 20
+    EffectDuration: 2
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 4
+  - Name: "\uD53C\uB9AC\uBD80\uB294 \uC0AC\uB098\uC774"
     User: 0
-    Type: 0
+    Type: 2
     anim: 
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: 2211368458654073353, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uC801 1\uBA85\uC744 2\uD134\uAC04 \uC870\uC885\uD574 \uD589\uB3D9\uC744
+      \uB9C9\uB294\uB2E4. \uBCF8\uC778\uC758 SAN\uC744 \uD06C\uAC8C \uC18C\uBAA8\uD55C\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
+    EffectType: 9
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 2
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
@@ -1168,14 +1173,15 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: b8bcd3a3c3526dc4ba400d752b178efe, type: 3}
   skills:
-  - Name: 1
+  - Name: "\uB098\uC774\uD504 \uD22C\uCC99 "
     User: 0
-    Type: 1
+    Type: 0
     anim: Attack
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: -2833775182555582667, guid: 9f9205baef047fb409785231c2eedb4c, type: 3}
-    description: "10 \uD790"
-    DamageRate: 0
+    description: "\uC801 1\uBA85\uC5D0\uAC8C \uB098\uC774\uD504\uB97C \uB358\uC838
+      \uB370\uBBF8\uC9C0\uC640 2\uD134 \uCD9C\uD608\uC744 \uC900\uB2E4."
+    DamageRate: 1.3
     HealRate: 10
     EffectType: 0
     EffectValue: 0
@@ -1184,14 +1190,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 2
+  - Name: "\uAE09\uC18C \uB178\uB9AC\uAE30 "
     User: 0
     Type: 0
     anim: Attack
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: -8836685135467796054, guid: 1bc2c8430f2cfd440858e425764e4851, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
+    description: "\uCE58\uBA85\uD0C0\uB97C \uB178\uB824 \uC801 1\uBA85\uC744 \uCC0C\uB974\uACE0,
+      \uB300\uC0C1\uC758 \uD68C\uD53C\uB97C 2\uD134\uAC04 \uAE4E\uB294\uB2E4."
+    DamageRate: 1.1
     HealRate: 0
     EffectType: 0
     EffectValue: 0
@@ -1200,14 +1207,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 3
+  - Name: "\uC5F0\uC18D \uD22C\uCC99 "
     User: 0
     Type: 0
     anim: Attack
     TagetNum: 2
     icon: {fileID: 3499149529287642153, guid: e354aace822e6364d8b8d043e342e276, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
-    DamageRate: 0
+    description: "\uC801 \uCD5C\uB300 2\uBA85\uC5D0\uAC8C \uB098\uC774\uD504\uB97C
+      \uB358\uC838 \uB370\uBBF8\uC9C0\uC640 \uCD9C\uD608\uC744 \uC900\uB2E4."
+    DamageRate: 0.8
     HealRate: 0
     EffectType: 0
     EffectValue: 0
@@ -1216,13 +1224,14 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 4
+  - Name: "\uBB34\uAE30 \uD68C\uC218 "
     User: 0
-    Type: 0
+    Type: 3
     anim: Attack
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: -4164578016646140414, guid: 872534efac2685c4dbfc9e33b67bb47c, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uB098\uC774\uD504\uB97C \uD68C\uC218\uD574 \uB2E4\uC74C \uACF5\uACA9\uC758
+      \uB370\uBBF8\uC9C0\uB97C \uAC15\uD654\uD55C\uB2E4(\uC2A4\uD0DD)."
     DamageRate: 0
     HealRate: 0
     EffectType: 0
@@ -3994,46 +4003,50 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 93828e55126f8134abaea6e091ec4e0b, type: 3}
   skills:
-  - Name: 1
+  - Name: "\uC2E4\uD5D8 \uD22C\uCC99"
     User: 0
     Type: 3
     anim: Attack
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: -7803066186156459161, guid: e6451a64242f038419144080e307c8a2, type: 3}
-    description: "\uBC84\uD504 \uACF5\uACA9 \uC5C5 10 "
+    description: "\uC801 1\uBA85\uC5D0\uAC8C \uC57D\uBCD1\uC744 \uB358\uC838 \uB370\uBBF8\uC9C0\uC640
+      2\uD134 \uCD9C\uD608\uC744 \uC900\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
-    EffectValue: 10
+    EffectType: 10
+    EffectValue: 3
     EffectDuration: 2
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 2
+  - Name: "\uBC84\uD504\uC81C \uC8FC\uC785"
     User: 0
-    Type: 0
+    Type: 3
     anim: 
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: -6286060828788350423, guid: bd8095df735501342a3bf3fe08df4e5a, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uC544\uAD70 1\uBA85\uC758 \uACF5\uACA9\uB825\uC744 1\uD134\uAC04
+      \uC62C\uB9B0\uB2E4. \uBD80\uC791\uC6A9\uC73C\uB85C \uB300\uC0C1\uC758 SAN\uC774
+      \uAC10\uC18C\uD55C\uB2E4."
     DamageRate: 0
     HealRate: 0
     EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
+    EffectValue: 30
+    EffectDuration: 1
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: \uD3ED\uBC1C \uC2E4\uD5D8
+  - Name: "\uD3ED\uBC1C \uC2E4\uD5D8"
     User: 0
     Type: 0
     anim: Attack
-    TagetNum: 1
+    TagetNum: 2
     icon: {fileID: -2746435884744161489, guid: ea13ed3aaa1716b48a90b419b29c1da3, type: 3}
-    description: \uC801 \uC804\uCCB4 \uAD11\uC5ED \uB370\uBBF8\uC9C0
-    DamageRate: 1
+    description: "\uC804\uBC29 \uC801 \uC804\uCCB4\uC5D0 \uD3ED\uBC1C \uB370\uBBF8\uC9C0\uC640
+      \uB109\uBC31\uC744 \uC900\uB2E4."
+    DamageRate: 0.8
     HealRate: 0
     EffectType: 0
     EffectValue: 0
@@ -4042,18 +4055,19 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 4
+  - Name: "\uC790\uAC00 \uC2E4\uD5D8"
     User: 0
-    Type: 0
+    Type: 4
     anim: 
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: 8234797298231545583, guid: 9b1b6cd36f725e642b26b97addc0780d, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "HP\uB97C \uB300\uAC00\uB85C 2\uD134\uAC04 \uC18D\uB3C4\uC640 \uCE58\uBA85\uD0C0\uB97C
+      \uB04C\uC5B4\uC62C\uB9B0\uB2E4. SAN\uC744 \uD06C\uAC8C \uC18C\uBAA8\uD55C\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
-    EffectValue: 0
-    EffectDuration: 0
+    EffectType: 3
+    EffectValue: 10
+    EffectDuration: 2
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
@@ -6085,29 +6099,31 @@ MonoBehaviour:
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 519eb89d86857f840a00f7fe9075fbc0, type: 3}
   skills:
-  - Name: 1
+  - Name: "\uC721\uD0C4 \uBC29\uC5B4"
     User: 0
-    Type: 4
+    Type: 3
     anim: Attack
     TagetNum: 1
     icon: {fileID: 9204973257487272213, guid: ac22e0e27557ce148a8e8470dc959850, type: 3}
-    description: "\uB098 \uAC15\uD654\n"
+    description: "\uC544\uAD70 1\uBA85\uC758 \uBC29\uC5B4\uB825\uC744 1\uD134\uAC04
+      \uD06C\uAC8C \uC62C\uB824 \uB300\uC2E0 \uB9C9\uC544\uC900\uB2E4."
     DamageRate: 0
     HealRate: 0
-    EffectType: 0
-    EffectValue: 10
+    EffectType: 1
+    EffectValue: 40
     EffectDuration: 1
     Target: 0
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 2
+  - Name: "\uC5C4\uD638 "
     User: 0
-    Type: 0
+    Type: 4
     anim: Damaged
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: 4164413579519221649, guid: 173ab9ececb20a848af4ebd322bf9692, type: 3}
-    description: "\uB098\uB3C4 2\uBA85 \uACF5\uACA9\uD55C\uB2E4!!!! \uC640!!!!!!!!!"
+    description: "\uBCF8\uC778\uACFC \uC544\uAD70\uC744 \uB2E4\uC74C \uC801 \uACF5\uACA9
+      1\uD68C\uB85C\uBD80\uD130 \uBCF4\uD638\uD55C\uB2E4."
     DamageRate: 0
     HealRate: 0
     EffectType: 0
@@ -6117,15 +6133,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: 3
+  - Name: "\uCC38\uD638 \uB3CC\uACA9"
     User: 0
     Type: 0
     anim: Dodge
-    TagetNum: 2
+    TagetNum: 1
     icon: {fileID: 32788246762942611, guid: 6dbbba5418c31cc4eb35ce90451bc925, type: 3}
-    description: "\uADF8\uB7FC \uB098\uB3C4 2\uBA85 \uACF5\uACA9\uAC04\uB2E4!!!!
-      \uC640!!!!!!!!"
-    DamageRate: 0
+    description: "\uC801 1\uBA85\uC744 \uACF5\uACA9\uD558\uBA70 \uC804\uC5F4\uB85C
+      \uB3CC\uACA9\uD55C\uB2E4."
+    DamageRate: 0.9
     HealRate: 0
     EffectType: 0
     EffectValue: 0
@@ -6134,14 +6150,15 @@ MonoBehaviour:
     DamageMultiplier: 0
     HealAmount: 0
     StatusEffects: []
-  - Name: \uC5BC\uAD74 \uBC15\uCE58\uAE30
+  - Name: "\uC5BC\uAD74 \uBC15\uCE58\uAE30 "
     User: 0
     Type: 0
     anim: Attack
     TagetNum: 1
     icon: {fileID: -1334649905525160474, guid: fcde3f3f53e3c33469b4dfcfd51448cd, type: 3}
-    description: \uB370\uBBF8\uC9C0 + 2\uD134 \uC2A4\uD134
-    DamageRate: 1
+    description: "\uC801 1\uBA85\uC744 \uB4E4\uC774\uBC1B\uC544 \uB370\uBBF8\uC9C0\uB97C
+      \uC8FC\uACE0 2\uD134\uAC04 \uAE30\uC808\uC2DC\uD0A8\uB2E4."
+    DamageRate: 0.9
     HealRate: 0
     EffectType: 9
     EffectValue: 0

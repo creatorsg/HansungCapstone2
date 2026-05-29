@@ -39,6 +39,22 @@ namespace Jun
                     _                     => targets,   // SingleEnemy / SingleAlly: 클릭 대상 그대로
                 };
 
+                // ── [A] 특수 스킬: skill.Name 기준 분기. 매칭 없으면 default = 기존 표준 흐름(switch skill.Type) ──
+                bool runStandard = true;
+                switch (skill.Name)
+                {
+                    // ── 글루 ──
+                    case "엄호":
+                        // [C]글루 엄호: 본인 + 아군 전체 blockNext (다음 피격 1회 무효, [B]1에서 소비)
+                        caster.blockNext = true;
+                        foreach (int allyIdx in GetAliveAllyIndices(manager))
+                            if (TryGetPlayer(manager, allyIdx, out var ally)) ally.blockNext = true;
+                        Debug.Log($"[SPECIAL/엄호] {caster.Info.Name} + 아군 전체 blockNext = true");
+                        runStandard = false;
+                        break;
+                }
+
+                if (runStandard)
                 switch (skill.Type)
                 {
                     case SkillType.Atk:
@@ -70,6 +86,10 @@ namespace Jun
                             int effDef = CombatCalculator.GetEffectiveDef(enemyController.Info.Def, enemyController.Effects);
                             float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
 
+                            // [B]2 무기회수 스택 소비: knifeStacks 있으면 ×(1+0.1*stacks) — 초크 전용(그 외엔 항상 0)
+                            if (caster.knifeStacks > 0)
+                                damage *= 1f + 0.1f * caster.knifeStacks;
+
                             Debug.Log($"[ATK] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0} dmg | crit:{isCrit}");
 
                             enemyModel.Damaged(damage);
@@ -89,6 +109,8 @@ namespace Jun
                                 isEnemy = true
                             });
                         }
+                        // [B]2 무기회수 스택은 이번 공격에서 1회 소비 후 리셋
+                        if (caster.knifeStacks > 0) caster.knifeStacks = 0;
                         break;
 
                     case SkillType.Heal:
@@ -352,6 +374,20 @@ namespace Jun
                         float damage = CombatCalculator.CalcDamage(effAtk, effDef, skill.DamageRate, isCrit, caster.Info.Ctm);
 
                         Debug.Log($"[ENEMY ATK] {caster.Info.Name} -> {player.Info.Name} | {damage:F0} dmg | crit:{isCrit}");
+
+                        // [B]1 blockNext 소비: 글루 엄호로 이번 피격 1회 무효 (데미지 적용 안 함)
+                        if (player.blockNext)
+                        {
+                            player.blockNext = false;
+                            Debug.Log($"[BLOCK] {player.Info.Name} 엄호로 피격 1회 무효");
+                            player.RpcPlayDodgeAnim();
+                            manager.RpcShowCombatResult(new CombatResult
+                            {
+                                isHit = false, isCrit = false, value = 0,
+                                targetIndex = targetIdx, isEnemy = false
+                            });
+                            continue;
+                        }
 
                         player.ApplyHpChange(-damage);
 
