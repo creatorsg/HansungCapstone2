@@ -56,12 +56,32 @@ namespace Jun
             _selectedTargetType = skill.Target;
             _isEnemy = (skill.Type == SkillType.Atk || skill.Type == SkillType.Debuff);
 
-            //// 자동 타깃(Self / AllEnemies / AllAllies)은 클릭 없이 즉시 발동
-            //if (IsAutoTarget(_selectedTargetType))
-            //{
-            //    FireSelection();
-            //    return;
-            //}
+            // 자동 타깃(Self / AllAllies / AllEnemies)은 클릭 없이 타겟 채워서 즉시 발동
+            switch (_selectedTargetType)
+            {
+                // 시전자 본인 → 즉시 발동
+                case TargetType.Self:
+                    _selectedTarget.Add(
+                        BattleManager.Instance._players.IndexOf(
+                            this.GetComponent<GamePlayerController>()));
+                    FireSelection();
+                    return;
+
+                // 전체 아군 → 즉시 발동
+                case TargetType.AllAllies:
+                    for (int i = 0; i < BattleManager.Instance._players.Count; i++)
+                        _selectedTarget.Add(i);
+                    FireSelection();
+                    return;
+
+                // 전체 적 → 즉시 발동 (아이템엔 없는 스킬 전용 케이스)
+                case TargetType.AllEnemies:
+                    _isEnemy = true;
+                    for (int i = 0; i < BattleManager.Instance.GetAliveEnemies().Count; i++)
+                        _selectedTarget.Add(i);
+                    FireSelection();
+                    return;
+            }
 
             // 레거시 호환: Enforce 는 자기 자신 대상으로 즉시 발동
             if (skill.Type == SkillType.Enforce)
@@ -139,13 +159,6 @@ namespace Jun
             _selectedTarget.Clear();
             _targetNum = 0;
         }
-        private static bool IsAutoTarget(TargetType t)
-        {
-            return t == TargetType.AllEnemies
-                || t == TargetType.AllAllies
-                || t == TargetType.Self;
-        }
-
         public float PlDamaged(float Attack)
         {
             _currentHp -= Attack;

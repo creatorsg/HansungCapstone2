@@ -10,6 +10,12 @@ public static class SkillInfoNetworkExtensions
         writer.WriteString(value.anim ?? "");
         writer.WriteInt(value.TagetNum);
         writer.WriteString(value.description ?? "");
+        writer.WriteInt((int)value.Target);
+        writer.WriteFloat(value.DamageRate);
+        writer.WriteFloat(value.HealRate);
+        writer.WriteInt((int)value.EffectType);
+        writer.WriteFloat(value.EffectValue);
+        writer.WriteInt(value.EffectDuration);
     }
 
     public static SkillInfo ReadSkillInfo(this NetworkReader reader)
@@ -21,7 +27,13 @@ public static class SkillInfoNetworkExtensions
             anim        = reader.ReadString(),
             TagetNum    = reader.ReadInt(),
             description = reader.ReadString(),
-            icon        = null  
+            Target         = (TargetType)reader.ReadInt(),
+            DamageRate     = reader.ReadFloat(),
+            HealRate       = reader.ReadFloat(),
+            EffectType     = (EffectType)reader.ReadInt(),
+            EffectValue    = reader.ReadFloat(),
+            EffectDuration = reader.ReadInt(),
+            icon        = null
         };
     }
 }
