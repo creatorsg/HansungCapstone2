@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 
 namespace Jun
@@ -17,6 +18,9 @@ namespace Jun
         public Slider HpBar;
         public Slider SanBar;
         public Image Sel; //�ڽ��� �����϶� ��Ÿ���� �̹���
+        // 애니메이션처리 코루틴
+        private Coroutine _hpCoroutine;
+        private Coroutine _pulseCoroutine;
         void Awake()
         {
             anim = GetComponentInChildren<Animator>();
@@ -48,6 +52,21 @@ namespace Jun
         public void SetSel(bool IsMyTurn)
         {
             Sel.gameObject.SetActive(IsMyTurn);
+            if (_pulseCoroutine != null) StopCoroutine(_pulseCoroutine);
+            if (IsMyTurn)
+                _pulseCoroutine = StartCoroutine(PulseSel());
+        }
+        private IEnumerator PulseSel()
+        {
+            RectTransform rt = Sel.rectTransform;
+            while (true)
+            {
+                float t = (Mathf.Sin(Time.time * 3f) + 1f) / 2f;
+                float scaleX = Mathf.Lerp(0.009f, 0.011f, t);
+                float scaleY = 0.01f; 
+                rt.localScale = new Vector3(scaleX, scaleY, 1f);
+                yield return null;
+            }
         }
         public void SetButtonsInteractable(bool state, List<Button> Btn) // 버튼 활성화 설정
         {
@@ -59,12 +78,14 @@ namespace Jun
         }
         public void PlDamaged(float currentHp)
         {
-            HpBar.value = currentHp;
+            if (_hpCoroutine != null) StopCoroutine(_hpCoroutine);
+            _hpCoroutine = StartCoroutine(SmoothHpBar(currentHp));
 
         }
         public void PlHPChanged(float currentHp)
         {
-            HpBar.value = currentHp;
+            if (_hpCoroutine != null) StopCoroutine(_hpCoroutine);
+            _hpCoroutine = StartCoroutine(SmoothHpBar(currentHp));
         }
         public void PlSanChanged(float currentSan)
         {
@@ -82,7 +103,19 @@ namespace Jun
             anim.SetBool(name, false);
             EndMyTurn?.Invoke();
         }
-
+        private IEnumerator SmoothHpBar(float target)
+        {
+            float start = HpBar.value;
+            float elapsed = 0f;
+            float duration = 0.3f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                HpBar.value = Mathf.Lerp(start, target, elapsed / duration);
+                yield return null;
+            }
+            HpBar.value = target;
+        }
         // ── 피격 / 회피 / 사망 애니메이션 ───────────────────────────
         // 기존 attack(Bool)과 달리 Trigger를 사용합니다.
         // Trigger는 SetTrigger 한 번만 호출하면 자동 소모되므로
