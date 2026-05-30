@@ -1,0 +1,29 @@
+L424:                 {
+L425:                     InventoryItem itemInInv = myInventory[i];
+L426:                     bool success = false;
+L427: 
+L428:                     switch (itemInInv.Type) {
+L429:                         case ItemType.Consumable:
+L430:                             // ?.. ?..???...??..???..??(1.. ?..)
+L431:                             InventoryItem equipData = itemInInv;
+L432:                             equipData.amount = 1;
+L433:                             success = equipmentSlot.EquipConsumable(equipData);
+L434:                             break;
+L435: 
+L436:                         case ItemType.Weapon:
+L437:                             string oldWeapon = equipmentSlot.equippedWeaponId;
+L438:                             InventoryItem oldWeaponItem = equipmentSlot.equippedWeapon;
+L439:                             if (equipmentSlot.EquipWeapon(itemInInv))  // string ??InventoryItem
+L440:                             {
+L441:                                 success = true;
+L442:                                 if (!string.IsNullOrEmpty(oldWeapon))
+L443:                                     AddItemWithInfo(oldWeaponItem);
+L444:                             }
+L445:                             break;
+L446: 
+L447:                         case ItemType.Armor:
+L448:                             string oldArmor = equipmentSlot.equippedArmorId;
+L449:                             InventoryItem oldArmorItem = equipmentSlot.equippedArmor;
+L450:                             if (equipmentSlot.EquipArmor(itemInInv))  // string ??InventoryItem
+L451:                             {
+L452:                                 success = true;

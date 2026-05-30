@@ -1,4 +1,4 @@
-using Jun;
+﻿using Jun;
 using Mirror;
 using System;
 using System.Collections.Generic;
@@ -174,7 +174,7 @@ namespace Lsy
                 foreach (var item in activeUnit.myInventory)
                     initSave.inventory.Add(item);
 
-                // �Ҹ�ǰ ���Ե� �ʱ� ���忡 ����
+                // �Ҹ�ǰ ���Ե� �ʱ� ���忡 ����
                 var initSlot = activeUnit.equipmentSlot;
                 if (initSlot != null)
                 {
@@ -535,7 +535,7 @@ namespace Lsy
         {
             // 1. ���� ���� �ִ� ��� PlayerDataPrefab(Clone) ��ü���� ã���ϴ�.
             PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            if (allPlayerDatas != null) Debug.Log("ã��Ϸ�");
+            if (allPlayerDatas != null) Debug.Log("[SyncAllHideout] found PlayerDatas");
             // 2. ã�� ��ü�� �� "�� ��"�� ��� ������Ʈ�մϴ�.
             foreach (var pd in allPlayerDatas)
             {
@@ -619,7 +619,7 @@ namespace Lsy
         {
             if (!CharacterRegistry.TryGet(heroCode, out var entry) || entry.Skills == null)
             {
-                Debug.LogWarning($"[SkillBridge] CharacterRegistry에서 '{heroCode}' base 스킬을 못 찾음 → 강화 미적용");
+                Debug.LogWarning($"[SkillBridge] CharacterRegistry has no base skills for {heroCode} -> upgrade skipped");
                 return null;
             }
 

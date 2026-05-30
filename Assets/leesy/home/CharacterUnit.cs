@@ -394,6 +394,37 @@ namespace Lsy
         }
 
         [Server]
+        public bool ApplySkillUpgrade(int skillIndex, int targetLevel, string skillId)
+        {
+            if (skillIndex < 0) return false;
+            if (targetLevel < 2) return false;
+
+            for (int i = 0; i < mySkills.Count; i++)
+            {
+                if (mySkills[i].skillIndex != skillIndex) continue;
+
+                PlayerSkill temp = mySkills[i];
+                int currentLevel = Mathf.Max(1, temp.currentLevel);
+                if (currentLevel != targetLevel - 1) return false;
+
+                temp.skillIndex = skillIndex;
+                temp.skillName = skillId;
+                temp.currentLevel = targetLevel;
+                mySkills[i] = temp;
+                return true;
+            }
+
+            if (targetLevel != 2) return false;
+
+            mySkills.Add(new PlayerSkill
+            {
+                skillIndex = skillIndex,
+                skillName = skillId,
+                currentLevel = targetLevel
+            });
+            return true;
+        }
+        [Server]
         public bool ApplyInformantUpgrade(string targetSkillName, int npcLevel)
         {
             for (int i = 0; i < mySkills.Count; i++)
