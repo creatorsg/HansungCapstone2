@@ -331,11 +331,13 @@ namespace Jun
                     }
                     else
                     {
- Debug.LogWarning($" {targetNum} ÷̾ Խ.");
+                        Debug.LogWarning($" {targetNum} ÷̾ Խ.");
                     }
                 }
-
-                turnUI.sprite = sp;
+                Transform iconTransform = turnUI.transform.Find("Icon");
+                Image iconImage = iconTransform.GetComponent<Image>();
+                iconImage.sprite = sp;
+                //turnUI.sprite = sp;
                 _turnUIList.Add(turnUI);
             }
         }

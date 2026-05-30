@@ -91,7 +91,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: -6472645048089567491, guid: e0d193134a91580489dd489561211530, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
@@ -188,9 +188,9 @@ BoxCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
-    border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
+    border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 15.9, y: 19.57}
     newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -277,8 +277,10 @@ MonoBehaviour:
     Type: 
     Skills: []
     Items: []
+    Expendables: []
     Lvl: 0
     Exp: 0
+    Gold: 0
     Hp: 0
     MaxHp: 0
     San: 0
@@ -291,10 +293,41 @@ MonoBehaviour:
     Dodge: 0
     Acc: 0
     Res: 0
-    WpnId: 0
-    ArmId: 0
+    Weapon:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
+    Armor:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
     Trk1: 0
     Trk2: 0
+    UniqueTraitLv: 0
     Statuses: []
   PingLayout: {fileID: 4195269492965768940}
   State: 0
@@ -320,8 +353,10 @@ MonoBehaviour:
     Type: 
     Skills: []
     Items: []
+    Expendables: []
     Lvl: 0
     Exp: 0
+    Gold: 0
     Hp: 0
     MaxHp: 0
     San: 0
@@ -334,10 +369,41 @@ MonoBehaviour:
     Dodge: 0
     Acc: 0
     Res: 0
-    WpnId: 0
-    ArmId: 0
+    Weapon:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
+    Armor:
+      Name: 
+      EqpId: 0
+      icon: {fileID: 0}
+      anim: 
+      description: 
+      Hp: 0
+      San: 0
+      Atk: 0
+      Def: 0
+      Spd: 0
+      Crit: 0
+      Ctm: 0
+      Dodge: 0
+      Acc: 0
+      Res: 0
     Trk1: 0
     Trk2: 0
+    UniqueTraitLv: 0
     Statuses: []
 --- !u!114 &2942639277980096146
 MonoBehaviour:
