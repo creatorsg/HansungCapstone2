@@ -2542,9 +2542,6 @@ MonoBehaviour:
     Enemys:
     - {fileID: 609799772}
     - {fileID: 901764674}
-  - BattleStage: 2
-    Enemys:
-    - {fileID: 0}
   _enemyPanel: {fileID: 1019946488}
   _enemyUI: {fileID: 1054010155}
   _enemyName: {fileID: 1508430027}

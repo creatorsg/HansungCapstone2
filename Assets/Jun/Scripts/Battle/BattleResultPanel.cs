@@ -68,7 +68,7 @@ namespace Jun
         public void Show(bool isVictory, int totalPlayers)
         {
             _hasAgreed = false;
-            Debug.Log($"Show Result [totalPlayers]");
+            Debug.Log($"Show Result Step1[totalPlayers]");
             if (agreeButton != null) agreeButton.interactable = true;
             if (checkImage  != null) checkImage.gameObject.SetActive(false);
             if (stampImage  != null) stampImage.gameObject.SetActive(false);
@@ -89,6 +89,7 @@ namespace Jun
             }
 
             gameObject.SetActive(true);
+            Debug.Log($"[Show] position={transform.position} | sizeDelta={GetComponent<RectTransform>().sizeDelta} | activeInHierarchy={gameObject.activeInHierarchy}");
         }
 
         /// <summary>동의 카운트 UI를 갱신합니다.</summary>

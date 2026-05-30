@@ -126,7 +126,16 @@ namespace Jun
         public override void OnStartServer()
         {
             base.OnStartServer();
-
+            //1라운드 적 제외 비활성화
+            for (int i = 0; i < _enemys.Count; i++)
+            {
+                bool isFirstStage = (i == 0);
+                foreach (var enemy in _enemys[i].Enemys)
+                {
+                    if (enemy != null)
+                        enemy.gameObject.SetActive(isFirstStage);
+                }
+            }
             // ������ ���� ������ ������ �ʱ�ȭ 
             _players.Clear();
             _turnList.Clear();
@@ -965,6 +974,24 @@ namespace Jun
         {
             go.SetActive(false);
         }
+        [ClientRpc]
+        private void RpcActivateStageEnemies(int stageIndex)
+        {
+            foreach (var enemy in _enemys[stageIndex].Enemys)
+            {
+                if (enemy != null)
+                    enemy.gameObject.SetActive(true);
+            }
+        }
+
+        [ClientRpc]
+        private void RpcClearTurnUI()
+        {
+            foreach (var ui in _turnUIList)
+                if (ui != null) Destroy(ui.gameObject);
+            _turnUIList.Clear();
+        }
+
         public void NextStage()
         {
             Debug.Log("NextStage");
@@ -972,12 +999,45 @@ namespace Jun
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
-            StartCoroutine(StageClearDelay()); 
+            StartCoroutine(NextStageRoutine()); 
         }
-        private IEnumerator StageClearDelay()
+        [Server]
+        private IEnumerator NextStageRoutine()
         {
-            yield return new WaitForSeconds(2.0f);  
-            StageClear();
+            yield return new WaitForSeconds(2.0f);
+
+            if (_stageNum < _enemys.Count)
+            {
+                _stageNum++;
+
+                // 기존 적 턴 항목 제거, 플레이어 항목만 유지
+                _turnList.RemoveAll(t => t.type == "Enemy");
+
+                // 새 스테이지 적 추가
+                EnemyNum = _enemys[_stageNum - 1].Enemys.Count;
+                for (int i = 0; i < _enemys[_stageNum - 1].Enemys.Count; i++)
+                {
+                    var ec = _enemys[_stageNum - 1].Enemys[i].GetComponent<EnemyController>();
+                    _turnList.Add(new TurnData("Enemy", ec.Info.Spd, i));
+                }
+
+                // 클라이언트에 적 활성화 + 턴 UI 갱신
+                RpcActivateStageEnemies(_stageNum - 1);
+                RpcClearTurnUI();
+
+                yield return new WaitForSeconds(0.5f);
+
+                Order = -1;
+                _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+                RpcTurnListUpdate(_turnList.ToArray());
+
+                yield return new WaitForSeconds(0.5f);
+                NextTurn();
+            }
+            else
+            {
+                StageClear();  // 마지막 스테이지 클리어 → 승리
+            }
         }
         public void StageClear()
         {
@@ -1003,6 +1063,7 @@ namespace Jun
         [ClientRpc]
         private void RpcShowBattleResult(bool isVictory, int totalPlayers)
         {
+            Debug.Log($"[RpcShowBattleResult] 호출됨 isVictory={isVictory} | panel={_battleResultPanel != null}");
             if (_battleResultPanel != null)
                 _battleResultPanel.Show(isVictory, totalPlayers);
         }
