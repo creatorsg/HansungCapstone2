@@ -6,13 +6,13 @@ using UnityEngine.UI;
 namespace Lsy
 {
     /// <summary>
-    /// ������ �˾� UI.
-    /// �ν����Ϳ��� skillGrids�� InformantSkillGrid�� ���.
-    /// ����ó�� 2x2 �׸���� InformantSkillGrid �ϳ��� ��� 4���� �����ϸ� ��.
+ /// ˾ UI.
+ /// νͿ skillGrids InformantSkillGrid .
+ /// ó 2x2 ׸ InformantSkillGrid ϳ 4 ϸ .
     /// </summary>
     public class InformantUI : BaseUpgradeUI
     {
-        [Header("��ų �׸��� ���")]
+        [Header("ų ׸ ")]
         public List<InformantSkillGrid> skillGrids = new List<InformantSkillGrid>();
 
         [Header("스킬 정보 표시 (선택 - 비워두면 무시됨)")]
@@ -96,7 +96,6 @@ namespace Lsy
 
         protected override IEnumerable<BaseUpgradeRow> GetRows()
         {
-            // [����] ���̾��Ű���� ������ ������ grid�� skillGrids ����Ʈ�� ������ NPC ����/���� ���� ���Ű� Ŭ�� �����ʰ� ����ǵ��� �ڽ� grid�� �Բ� ����մϴ�.
             foreach (var grid in skillGrids)
             {
                 if (grid != null)

@@ -4,7 +4,6 @@ using UnityEngine;
 namespace Jun
 {
     /// <summary>
-    /// ��Ʋ ���� ��� �κ� ���
     /// </summary>
     public static class CombatCalculator
     {

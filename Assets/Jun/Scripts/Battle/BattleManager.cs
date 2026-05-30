@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-// ��Ʋ�� ���������� ��ϴ� ����
 namespace Jun
 {
     public class BattleManager : NetworkBehaviour
@@ -63,9 +62,9 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _enemydodge; public TextMeshProUGUI EnemyDodge => _enemydodge;
         public int EnemyNum;
 
-        [Header("�� ����")]
-        [SerializeField] private Transform _turnPanel;  //�� �����ִ� ���
-        [SerializeField] private Image _turnUi;  // ���� �������� �̹���
+        [Header(" ")]
+        [SerializeField] private Transform _turnPanel;  // ִ 
+        [SerializeField] private Image _turnUi;  //   ̹
         [SerializeField] private List<Image> _turnUIList; 
         [SerializeField] private TextMeshProUGUI _turnUI;  
         public List<TurnData> _turnList = new List<TurnData>();
@@ -88,7 +87,7 @@ namespace Jun
            
         }
 
-        [Header("�� �ý���")]
+        [Header(" ý")]
         [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
 
 
@@ -117,11 +116,12 @@ namespace Jun
         private void Awake()
         {
             Instance = this;
-            //  �г� ��Ȱ�� ó��
+            //  패널 비활성화 처리
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha =  0.5f;
             EnemyNum = _enemys[StageNum - 1].Enemys.Count;
+
         }
         public override void OnStartServer()
         {
@@ -136,12 +136,11 @@ namespace Jun
                         enemy.gameObject.SetActive(isFirstStage);
                 }
             }
-            // ������ ���� ������ ������ �ʱ�ȭ 
             _players.Clear();
             _turnList.Clear();
             Order = -1;
 
-            // ���������� �� �� ������ �߰�.
+            //߰.
             for (int i = 0; i < _enemys[StageNum - 1].Enemys.Count; i++)
             {
                 _turnList.Add(new TurnData("Enemy", _enemys[StageNum - 1].Enemys[i].GetComponent<EnemyController>().Info.Spd, i));
@@ -152,7 +151,7 @@ namespace Jun
         private IEnumerator SetupBattleFlow()
         {
             var roomManager = NetworkManager.singleton as GameRoomManager;
-            Debug.Log($"[SetupBattleFlow] 시작. HeroNum={roomManager?.HeroNum}");
+            Debug.Log($"[SetupBattleFlow] 시작. HeroNum={roomManager.HeroNum}");
 
             // ── CharacterRegistry 상태 확인 ──────────────────────────────
             Debug.Log($"[SetupBattleFlow] CharacterRegistry 등록 수: {CharacterRegistry.All.Count}");
@@ -301,7 +300,6 @@ namespace Jun
         [Server]
         private void StartFirstTurn()
         {
-            Order = -1; // Ȯ���ϰ� �ʱ�ȭ
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
             // 잠시 확인을 위해
@@ -326,14 +324,14 @@ namespace Jun
                 }
                 else
                 {
-                    // �÷��̾�� ������ �� �ð��� �ɸ� �� ������ ��� �ڵ� ���
+            //÷̾ ð ɸ ڵ 
                     if (targetNum < _players.Count)
                     {
                         sp = _players[targetNum].GetCharacterSprite();
                     }
                     else
                     {
-                        Debug.LogWarning($"���� {targetNum}�� �÷��̾ �� ���Խ��ϴ�.");
+ Debug.LogWarning($" {targetNum} ÷̾ Խ.");
                     }
                 }
 
@@ -346,15 +344,15 @@ namespace Jun
         {
             if (index < 0 || index >= _turnUIList.Count) return;
 
-            Debug.Log($"�� UI ������Ʈ - �ε���: {index}, ����: {isTurn}");
+ Debug.Log($" UI Ʈ - ε: {index}, : {isTurn}");
             GameObject go = _turnUIList[index].transform.Find("HighLight").gameObject;
             go.SetActive(isTurn);
         }
-        // ���� ������ ����
+            //
         [Server]
         public void NextTurn()
         {
-            //���� �� ���̶���Ʈ ����
+            //̶Ʈ 
             RpcSetHighlight(Order, false);
             //// 방금 턴 끝난 유닛 Effects duration 감소
             
@@ -529,7 +527,7 @@ namespace Jun
             }
             return alive;
         }
-        // �� ����
+            //
         [ClientRpc]
         public void RpcChangeTurn(string typeTurn, int turnNum)
         {
@@ -625,11 +623,11 @@ namespace Jun
 
         public void UpdateUnitUI(GamePlayerController unit)
         {
-            Debug.Log($"[UpdateUnitUI] 호출됨: name={unit.name}, code={unit.FinalHeroCode}, Skills={unit.Info.Skills?.Count ?? -1}, Items={unit.Info.Items?.Count ?? -1}");
+            Debug.Log($"[UpdateUnitUI] 호출됨: name={unit.name}, code={unit.FinalHeroCode}, Skills={unit.Info.Skills.Count  -1}, Items={unit.Info.Items.Count  -1}");
 
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
-            // ���õ� ������ ���ʿ� �� ���������� ���� �г� Ȱ��/��Ȱ�� ó��
+            //õ ʿ г Ȱ/Ȱ ó
             _unitPanel.interactable = isUnitTurn;
             _unitPanel.blocksRaycasts = isUnitTurn;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
@@ -788,7 +786,7 @@ namespace Jun
                 else if (i == 1)
                     hasEquip = unit.Info.Armor != null && !string.IsNullOrEmpty(unit.Info.Armor.Name);
 
-                Debug.Log($"[장비] i={i} hasEquip={hasEquip} Weapon={unit.Info.Weapon?.Name} Armor={unit.Info.Armor?.Name}");
+                Debug.Log($"[장비] i={i} hasEquip={hasEquip} Weapon={unit.Info.Weapon.Name} Armor={unit.Info.Armor.Name}");
 
                 Sprite eqpIcon = null;
                 if (hasEquip)
@@ -838,7 +836,7 @@ namespace Jun
             _movePosBTN.onClick.RemoveAllListeners();
             _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
         }
-        //�� ���� �̹��� ����
+            //̹ 
         public void UpdateEnemyUI(int index)
         {
             var enemy = _enemys[StageNum - 1].Enemys[index].GetComponent<EnemyController>();
@@ -877,7 +875,7 @@ namespace Jun
 
             }
         }
-        //���� ��ġ �̵�
+            //ġ ̵
         [Server]
         public void ChangeUnitPos(GamePlayerController unit1, GamePlayerController unit2)
         {
@@ -906,16 +904,16 @@ namespace Jun
             if (_pingList[pingIndex] != null) {
                 _pingList[pingIndex].SetActive(false);
             }
-            // �ڽ� �� Ȯ��
-            Debug.Log($"pingIndex: {pingIndex} / PingLayout �ڽ� ��: {pingLayout.childCount}");
+            //ڽ Ȯ
+ Debug.Log($"pingIndex: {pingIndex} / PingLayout ڽ : {pingLayout.childCount}");
 
             if (pingIndex >= pingLayout.childCount)
             {
-                Debug.LogWarning("PingLayout �ڽ��� ������!");
+ Debug.LogWarning("PingLayout ڽ !");
                 return;
             }
 
-            // �ش� �ε��� �ڽ� ������Ʈ �ѱ�
+            //ش ε ڽ Ʈ ѱ
             GameObject ping = pingLayout.GetChild(pingIndex).gameObject;
             ping.SetActive(true);
             _pingList[pingIndex] = ping;
@@ -929,10 +927,10 @@ namespace Jun
             ping.SetActive(false);
         }
 
-        //���Ἲ �˻�
+ //Ἲ ˻
         public void VerifyClientRequest(GamePlayerController caster, int skillIndex, int itemIndex, bool isEnemy,List<int> targets)
         {
-            // ��Ģ Ȯ�� ��(���� �������ص�)
+            //Ģ Ȯ ( ص)
 
 
 
@@ -995,7 +993,7 @@ namespace Jun
         public void NextStage()
         {
             Debug.Log("NextStage");
-            //  �г� ��Ȱ�� ó��
+            //г Ȱ ó
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
@@ -1055,7 +1053,6 @@ namespace Jun
         {
             _agreeCount      = 0;
             _resultIsVictory = isVictory;
-            // 캐릭터 수(_players)가 아닌 실제 접속 클라이언트 수로 동의 기준을 잡습니다.
             int clientCount  = NetworkServer.connections.Count;
             RpcShowBattleResult(isVictory, clientCount);
         }
@@ -1064,8 +1061,15 @@ namespace Jun
         private void RpcShowBattleResult(bool isVictory, int totalPlayers)
         {
             Debug.Log($"[RpcShowBattleResult] 호출됨 isVictory={isVictory} | panel={_battleResultPanel != null}");
-            if (_battleResultPanel != null)
-                _battleResultPanel.Show(isVictory, totalPlayers);
+
+            if (_battleResultPanel == null)
+            {
+                Debug.LogError("[BattleManager] _battleResultPanel이 null입니다! " +
+                               "Battle씬 Inspector에서 BattleResultPanel을 BattleManager의 슬롯에 연결했는지 확인하세요.");
+                return;
+            }
+
+            _battleResultPanel.Show(isVictory, totalPlayers);
         }
 
         /// <summary>

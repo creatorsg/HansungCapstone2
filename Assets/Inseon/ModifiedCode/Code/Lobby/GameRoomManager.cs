@@ -415,7 +415,7 @@ namespace Jun {
             Debug.Log($"[BuildPlayerInfo] {c.characterName} — " +
                       $"HP:{info.Hp} ATK:{info.Atk} DEF:{info.Def} SPD:{info.Spd} " +
                       $"(무기:{entry.Weapon?.Name ?? "없음"} 방어구:{entry.Armor?.Name ?? "없음"} " +
-                      $"특성Lv:{info.Trk1})");
+                      $"특성Lv:{info.UniqueTraitLv})");
 
             return info;
         }

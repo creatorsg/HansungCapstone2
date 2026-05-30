@@ -22,7 +22,7 @@ namespace Jun
                 // 스킬 범위 검사
                 if (caster.Info.Skills == null || skillIndex >= caster.Info.Skills.Count)
                 {
-                    Debug.LogError($"[BattleLogic] skillIndex={skillIndex} 범위 초과. Skills.Count={caster.Info.Skills?.Count}");
+                    Debug.LogError($"[BattleLogic] skillIndex={skillIndex} 범위 초과. Skills.Count={caster.Info.Skills.Count}");
                     return;
                 }
 
@@ -189,7 +189,7 @@ namespace Jun
                 // 아이템 범위 검사
                 if (caster.Info.Expendables == null || itemIndex >= caster.Info.Expendables.Count)
                 {
-                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Expendables?.Count}");
+                    Debug.LogError($"[BattleLogic] itemIndex={itemIndex} 범위 초과. Items.Count={caster.Info.Expendables.Count}");
                     return;
                 }
 

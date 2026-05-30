@@ -34,14 +34,14 @@ public class EnemyView : NetworkBehaviour
     public void SkillAnim(string skill)
     {
         if (anim == null) { Debug.LogError("anim null!"); return; }
-        Debug.Log($"SkillAnim È£Ãâ: {skill}");
+        Debug.Log($"SkillAnim í˜¸ì¶œ: {skill}");
         if(skill == "Attack") anim.SetBool(skill, true);
-        else  anim.SetTrigger(skill);
+        else anim.SetTrigger(skill);
     }
     public void StopAnim()
     {
         if (anim == null) return;
-        anim.SetBool("Attack", false);  // Attack Bool ¸®¼Â
-        anim.Play("Idle");              // Idle »óÅÂ·Î °­Á¦ ÀüÈ¯
+        anim.SetBool("Attack", false);  // Attack Bool ë¦¬ì…‹
+        anim.Play("Idle");              // Idle ìƒíƒœë¡œ ê°•ì œ ì „í™˜
     }
 }

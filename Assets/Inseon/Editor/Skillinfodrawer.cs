@@ -11,10 +11,10 @@ public class SkillInfoDrawer : PropertyDrawer
     private const float PAD = 3f;
     private const float INDENT = 10f;
 
-    // OnGUI¿¡¼­ ½ÇÁ¦·Î »ç¿ëÇÑ ³ôÀÌ¸¦ Ä³½Ì ¡æ GetPropertyHeight°¡ Á¤È®ÇÏ°Ô ¹İÈ¯
+    // OnGUIì—ì„œ ì‹¤ì œë¡œ ì‚¬ìš©í•œ ë†’ì´ë¥¼ ìºì‹± â†’ GetPropertyHeightê°€ ì •í™•í•˜ê²Œ ë°˜í™˜
     private static readonly Dictionary<string, float> _heightCache = new Dictionary<string, float>();
 
-    // ¦¡¦¡ Å¸ÀÔº° »ö»ó ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // â”€â”€ íƒ€ì…ë³„ ìƒ‰ìƒ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private static Color GetTypeColor(SkillType type) => type switch
     {
         SkillType.Atk => new Color(0.85f, 0.25f, 0.25f),
@@ -37,25 +37,25 @@ public class SkillInfoDrawer : PropertyDrawer
 
     private static string CacheKey(SerializedProperty p) => p.propertyPath;
 
-    // ¦¡¦¡ ³ôÀÌ °è»ê ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // â”€â”€ ë†’ì´ ê³„ì‚° â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
         if (!property.isExpanded) return LINE + PAD;
 
-        // Ä³½ÃµÈ ½ÇÁ¦ ³ôÀÌ ¹İÈ¯, ¾øÀ¸¸é ±âº»°ª
+        // ìºì‹œëœ ì‹¤ì œ ë†’ì´ ë°˜í™˜, ì—†ìœ¼ë©´ ê¸°ë³¸ê°’
         if (_heightCache.TryGetValue(CacheKey(property), out float cached))
             return cached;
 
-        // Ä³½Ã ¾øÀ» ¶§ fallback °è»ê (Ã³À½ ·»´õ Àü)
+        // ìºì‹œ ì—†ì„ ë•Œ fallback ê³„ì‚° (ì²˜ìŒ ë Œë” ì „)
         var skillType = (SkillType)property.FindPropertyRelative("Type").enumValueIndex;
-        float h = (LINE + PAD * 3)           // Çì´õ
-                + (LINE + 4)                 // ¼½¼Ç ·¹ÀÌºí 1
-                + (LINE + PAD) * 6           // °øÅë 6°³
-                + PAD                        // ¿©¹é
-                + LINE                       // ¼³¸í ·¹ÀÌºí
+        float h = (LINE + PAD * 3)           // í—¤ë”
+                + (LINE + 4)                 // ì„¹ì…˜ ë ˆì´ë¸” 1
+                + (LINE + PAD) * 6           // ê³µí†µ 6ê°œ
+                + PAD                        // ì—¬ë°±
+                + LINE                       // ì„¤ëª… ë ˆì´ë¸”
                 + (LINE * 3 + PAD * 3)       // TextArea
-                + (LINE + 4)                 // ¼½¼Ç ·¹ÀÌºí 2
-                + PAD * 2;                   // ÇÏ´Ü ¿©¹é
+                + (LINE + 4)                 // ì„¹ì…˜ ë ˆì´ë¸” 2
+                + PAD * 2;                   // í•˜ë‹¨ ì—¬ë°±
 
         h += skillType switch
         {
@@ -68,7 +68,7 @@ public class SkillInfoDrawer : PropertyDrawer
         return h;
     }
 
-    // ¦¡¦¡ ±×¸®±â ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // â”€â”€ ê·¸ë¦¬ê¸° â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
         EditorGUI.BeginProperty(position, label, property);
@@ -78,15 +78,15 @@ public class SkillInfoDrawer : PropertyDrawer
         var skillType = (SkillType)typeProp.enumValueIndex;
         var typeColor = GetTypeColor(skillType);
 
-        // ¦¡¦¡ ÀüÃ¼ ¹è°æ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+        // â”€â”€ ì „ì²´ ë°°ê²½ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         var bgRect = new Rect(position.x, position.y + 1, position.width, position.height - 2);
         EditorGUI.DrawRect(bgRect, new Color(0.13f, 0.13f, 0.13f, 0.25f));
 
-        // ¦¡¦¡ Çì´õ ¹Ù ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+        // â”€â”€ í—¤ë” ë°” â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         var headerRect = new Rect(position.x, position.y + 1, position.width, LINE + 2);
         EditorGUI.DrawRect(headerRect, new Color(typeColor.r * 0.5f, typeColor.g * 0.5f, typeColor.b * 0.5f, 1f));
 
-        // Å¸ÀÔ ¹îÁö
+        // íƒ€ì… ë±ƒì§€
         var badgeRect = new Rect(position.x + 2, position.y + 3, 58, LINE - 2);
         EditorGUI.DrawRect(badgeRect, typeColor);
         EditorGUI.LabelField(badgeRect, GetTypeLabel(skillType), new GUIStyle(EditorStyles.boldLabel)
@@ -96,8 +96,8 @@ public class SkillInfoDrawer : PropertyDrawer
             normal = { textColor = Color.white }
         });
 
-        // ½ºÅ³ ÀÌ¸§
-        string skillName = string.IsNullOrEmpty(nameProp.stringValue) ? "(ÀÌ¸§ ¾øÀ½)" : nameProp.stringValue;
+        // ìŠ¤í‚¬ ì´ë¦„
+        string skillName = string.IsNullOrEmpty(nameProp.stringValue) ? "(ì´ë¦„ ì—†ìŒ)" : nameProp.stringValue;
         EditorGUI.LabelField(
             new Rect(position.x + 66, position.y + 2, position.width - 80, LINE),
             skillName,
@@ -107,7 +107,7 @@ public class SkillInfoDrawer : PropertyDrawer
                 normal = { textColor = Color.white }
             });
 
-        // Foldout (Çì´õ ÀüÃ¼ Å¬¸¯ ¿µ¿ª)
+        // Foldout (í—¤ë” ì „ì²´ í´ë¦­ ì˜ì—­)
         property.isExpanded = EditorGUI.Foldout(
             new Rect(position.x, position.y + 1, position.width, LINE + 2),
             property.isExpanded, GUIContent.none, true);
@@ -118,23 +118,23 @@ public class SkillInfoDrawer : PropertyDrawer
             return;
         }
 
-        // ¦¡¦¡ º»¹® ¿µ¿ª ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+        // â”€â”€ ë³¸ë¬¸ ì˜ì—­ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         float y = position.y + LINE + PAD * 3;
         float x = position.x + INDENT;
         float w = position.width - INDENT * 2;
 
-        // ¼½¼Ç: ±âº» Á¤º¸
-        DrawSectionLabel(ref y, x, w, "±âº» Á¤º¸", new Color(0.75f, 0.75f, 0.75f));
-        DrawProp(ref y, x, w, property, "Name", "ÀÌ¸§", 0);
-        DrawProp(ref y, x, w, property, "User", "»ç¿ëÀÚ", 1);
-        DrawProp(ref y, x, w, property, "Type", "½ºÅ³ Å¸ÀÔ", 0);
-        DrawProp(ref y, x, w, property, "anim", "¾Ö´Ï¸ŞÀÌ¼Ç", 1);
-        DrawProp(ref y, x, w, property, "TagetNum", "´ë»ó ¼ö", 0);
-        DrawProp(ref y, x, w, property, "icon", "¾ÆÀÌÄÜ", 1);
+        // ì„¹ì…˜: ê¸°ë³¸ ì •ë³´
+        DrawSectionLabel(ref y, x, w, "ê¸°ë³¸ ì •ë³´", new Color(0.75f, 0.75f, 0.75f));
+        DrawProp(ref y, x, w, property, "Name", "ì´ë¦„", 0);
+        DrawProp(ref y, x, w, property, "User", "ì‚¬ìš©ì", 1);
+        DrawProp(ref y, x, w, property, "Type", "ìŠ¤í‚¬ íƒ€ì…", 0);
+        DrawProp(ref y, x, w, property, "anim", "ì• ë‹ˆë©”ì´ì…˜", 1);
+        DrawProp(ref y, x, w, property, "TagetNum", "ëŒ€ìƒ ìˆ˜", 0);
+        DrawProp(ref y, x, w, property, "icon", "ì•„ì´ì½˜", 1);
 
-        // ¼³¸í ÇÊµå
+        // ì„¤ëª… í•„ë“œ
         y += PAD;
-        EditorGUI.LabelField(new Rect(x, y, w, LINE), "¼³¸í", EditorStyles.miniBoldLabel);
+        EditorGUI.LabelField(new Rect(x, y, w, LINE), "ì„¤ëª…", EditorStyles.miniBoldLabel);
         y += LINE;
         var descProp = property.FindPropertyRelative("description");
         var descRect = new Rect(x, y, w, LINE * 3);
@@ -142,43 +142,43 @@ public class SkillInfoDrawer : PropertyDrawer
         descProp.stringValue = EditorGUI.TextArea(descRect, descProp.stringValue);
         y += LINE * 3 + PAD * 3;
 
-        // ¼½¼Ç: Å¸ÀÔº° ½ºÅÈ
-        DrawSectionLabel(ref y, x, w, GetTypeLabel(skillType) + " ¼³Á¤", typeColor);
+        // ì„¹ì…˜: íƒ€ì…ë³„ ìŠ¤íƒ¯
+        DrawSectionLabel(ref y, x, w, GetTypeLabel(skillType) + " ì„¤ì •", typeColor);
 
         switch (skillType)
         {
             case SkillType.Atk:
-                DrawProp(ref y, x, w, property, "DamageRate", "°ø°İ·Â ¹èÀ²", 0);
+                DrawProp(ref y, x, w, property, "DamageRate", "ê³µê²©ë ¥ ë°°ìœ¨", 0);
                 break;
 
             case SkillType.Heal:
-                DrawProp(ref y, x, w, property, "HealRate", "È¸º¹ ºñÀ² (MaxHP %)", 0);
+                DrawProp(ref y, x, w, property, "HealRate", "íšŒë³µ ë¹„ìœ¨ (MaxHP %)", 0);
                 break;
 
             case SkillType.Buff:
             case SkillType.Debuff:
             case SkillType.Enforce:
-                DrawProp(ref y, x, w, property, "EffectType", "È¿°ú Á¾·ù", 0);
-                DrawProp(ref y, x, w, property, "EffectValue", "È¿°ú ¼öÄ¡", 1);
-                DrawProp(ref y, x, w, property, "EffectDuration", "Áö¼Ó ÅÏ", 0);
+                DrawProp(ref y, x, w, property, "EffectType", "íš¨ê³¼ ì¢…ë¥˜", 0);
+                DrawProp(ref y, x, w, property, "EffectValue", "íš¨ê³¼ ìˆ˜ì¹˜", 1);
+                DrawProp(ref y, x, w, property, "EffectDuration", "ì§€ì† í„´", 0);
                 break;
         }
 
-        // ½ÇÁ¦ »ç¿ëµÈ ³ôÀÌ Ä³½Ì (´ÙÀ½ GetPropertyHeight¿¡¼­ »ç¿ë)
+        // ì‹¤ì œ ì‚¬ìš©ëœ ë†’ì´ ìºì‹± (ë‹¤ìŒ GetPropertyHeightì—ì„œ ì‚¬ìš©)
         float usedHeight = y - position.y + PAD * 2;
         _heightCache[CacheKey(property)] = usedHeight;
 
         EditorGUI.EndProperty();
     }
 
-    // ¦¡¦¡ ÇïÆÛ: ÇÊµå ÇÑ ÁÙ ±×¸®±â ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // â”€â”€ í—¬í¼: í•„ë“œ í•œ ì¤„ ê·¸ë¦¬ê¸° â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void DrawProp(ref float y, float x, float w,
                           SerializedProperty parent, string propName, string label, int shade)
     {
         var prop = parent.FindPropertyRelative(propName);
         if (prop == null) return;
 
-        // ÁÙ ¹è°æ (È¦Â¦ ±³Â÷)
+        // ì¤„ ë°°ê²½ (í™€ì§ êµì°¨)
         if (shade == 1)
         {
             var rowBg = new Rect(x - INDENT * 0.5f, y, w + INDENT, LINE);
@@ -189,14 +189,14 @@ public class SkillInfoDrawer : PropertyDrawer
         y += LINE + PAD;
     }
 
-    // ¦¡¦¡ ÇïÆÛ: ¼½¼Ç ±¸ºĞ¼± + ·¹ÀÌºí ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+    // â”€â”€ í—¬í¼: ì„¹ì…˜ êµ¬ë¶„ì„  + ë ˆì´ë¸” â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void DrawSectionLabel(ref float y, float x, float w, string title, Color color)
     {
-        // °¡·Î¼±
+        // ê°€ë¡œì„ 
         EditorGUI.DrawRect(new Rect(x, y, w, 1f), color * 0.7f);
         y += 4f;
 
-        // ·¹ÀÌºí
+        // ë ˆì´ë¸”
         EditorGUI.LabelField(
             new Rect(x, y, w, LINE),
             title,

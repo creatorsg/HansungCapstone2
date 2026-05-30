@@ -4,13 +4,13 @@ using UnityEngine;
 namespace Lsy
 {
     /// <summary>
-    /// NPC ?�호?�용 커맨??처리.
-    /// 골드??PlayerAccount 귀?�이므�?sender??PlayerAccount�?찾아 처리?�니??
-    /// requiresAuthority = false: ?�떤 ?�라?�언?�든 ?�출 가??(sender�??�출???�별).
+    /// NPC 상호작용용 커맨드 처리.
+    /// 골드는 PlayerAccount가 관리하므로 sender의 PlayerAccount를 찾아 처리합니다.
+    /// requiresAuthority = false: 어떤 클라이언트든 호출 가능 (sender로 호출자 식별).
     /// </summary>
     public class CharacterShop : NetworkBehaviour
     {
-        // ?�?�?� sender ??PlayerAccount ?�퍼 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+        // sender → PlayerAccount 헬퍼
 
         [Server]
         private PlayerAccount FindAccount(NetworkConnectionToClient sender)
@@ -22,17 +22,17 @@ namespace Lsy
             return null;
         }
 
-        // ?�?�?� 커맨???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+        // 커맨드 ────────────────────────────────────────────────────────────
 
         [Command(requiresAuthority = false)]
         public void CmdBuyItem(string itemName, int price, NetworkConnectionToClient sender = null)
         {
             Debug.Log($"[CharacterShop][Server] CmdBuyItem - {itemName}, {price}G");
-            // [?�정] ?�모??구매??공통 ?�버 처리�??�임??NPCPopupUI??병합 ?????�출명을 모두 지?�합?�다.
+            // 소모품 구매 공통 서버 처리 — NPCPopupUI 병합 후 호출명을 모두 지원합니다.
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [?�정] NPCPopupUI가 ?�출?�던 병합 ??커맨?�명???��??�니??
+        // NPCPopupUI가 호출하던 병합 전 커맨드명 호환용
         [Command(requiresAuthority = false)]
         public void CmdBuyConsumable(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -40,7 +40,7 @@ namespace Lsy
             BuyInventoryItem(itemName, price, sender, CreateConsumableInventoryItem);
         }
 
-        // [?�정] NPCPopupUI???�비 구매 ?�출???�버 ?�벤?�리 추�?�??�결?�니??
+        // NPCPopupUI의 장비 구매 호출 — 서버 인벤토리 추가 처리
         [Command(requiresAuthority = false)]
         public void CmdBuyEquipment(string itemName, int price, NetworkConnectionToClient sender = null)
         {
@@ -59,18 +59,18 @@ namespace Lsy
             InventoryItem invItem = createItem != null ? createItem(itemName) : default;
             if (string.IsNullOrEmpty(invItem.itemName))
             {
-                SendNotification(sender, $"[{itemName}] ?�매 ?�이?��? ItemManager???�록?�어 ?��? ?�습?�다.");
+                SendNotification(sender, $"[{itemName}] 구매 실패: ItemManager에 등록되지 않은 아이템입니다.");
                 return;
             }
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합?�다.");
+                SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
             if (unit.GetItemAmount(itemName) >= 5)
             {
-                SendNotification(sender, $"{itemName}?�(?? ?��? 5개�? ?��??�고 ?�습?�다.");
+                SendNotification(sender, $"{itemName}은(는) 이미 5개를 보유하고 있습니다.");
                 return;
             }
 
@@ -79,13 +79,13 @@ namespace Lsy
             unit.AddItemWithInfo(invItem);
             account.SyncInventoryToPlayerData();
 
-            SendNotification(sender, $"[?�스???�림] {itemName} 구매 ?�료.");
+            SendNotification(sender, $"[알림] {itemName} 구매 완료.");
         }
 
         [Server]
         private InventoryItem CreateConsumableInventoryItem(string itemName)
         {
-            // [?�정] 바텐??NPC ?�업 ?�매 ?�이?�는 ItemManager.AllItems(Consum)�??�선 ?�용?�니??
+            //[정] 바텐NPC 업 매 이는 ItemManager.AllItems(Consum)선 용니
             Consum consumData = ItemManager.Instance != null ? ItemManager.Instance.GetConsumData(itemName) : null;
             if (consumData != null && consumData.ConsumItem != null)
             {
@@ -98,14 +98,14 @@ namespace Lsy
                 };
             }
 
-            // [?�정] ItemData/ItemSO fallback ?�거. NPC ?�매 ?�이?��? ?�으�?구매 ?�패 처리?�니??
+            //[정] ItemData/ItemSO fallback 거. NPC 매 이 으구매 패 처리니
             return default;
         }
 
         [Server]
         private InventoryItem CreateEquipmentInventoryItem(string itemName)
         {
-            // [?�정] ?�?�장??NPC ?�업 ?�매 ?�이?�는 ItemManager.AllEqps(Equipment)�??�선 ?�용?�니??
+            //[정] 장NPC 업 매 이는 ItemManager.AllEqps(Equipment)선 용니
             Equipment equipmentData = ItemManager.Instance != null ? ItemManager.Instance.GetEquipmentData(itemName) : null;
             if (equipmentData != null && equipmentData.EqpItem != null)
             {
@@ -118,7 +118,7 @@ namespace Lsy
                 };
             }
 
-            // [?�정] ItemSO/Resources fallback ?�거. NPC ?�매 ?�이?��? ?�으�?구매 ?�패 처리?�니??
+            //[정] ItemSO/Resources fallback 거. NPC 매 이 으구매 패 처리니
             return default;
         }
 
@@ -132,7 +132,7 @@ namespace Lsy
 
             if (account.currentGold < amount)
             {
-                SendNotification(sender, "골드가 부족합?�다.");
+                SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
             if (NetworkServer.spawned.TryGetValue(npcNetId, out NetworkIdentity identity))
@@ -158,17 +158,17 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합?�다.");
+                SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
             if (unit.ApplyBartenderHeal())
             {
                 account.currentGold -= price;
-                SendNotification(sender, $"{unit.characterName}??체력/?�신?�이 ?�복?�었?�니??");
+                SendNotification(sender, $"{unit.characterName}의 체력/정신력이 회복되었습니다.");
             }
             else
             {
-                SendNotification(sender, "?��? 체력�??�신?�이 최�??�니??");
+                SendNotification(sender, "이미 체력과 정신력이 최대입니다.");
             }
         }
 
@@ -184,7 +184,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합?�다.");
+                SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
 
@@ -192,19 +192,19 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] 강화 ?�공! weaponId:{weaponId}, node:{nodeIndex}</color>");
-                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}?�계 강화 ?�료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] 강화 성공! weaponId:{weaponId}, node:{nodeIndex}</color>");
+                SendNotification(sender, $"[{weaponId}] {nodeIndex + 1}단계 강화 완료!");
             }
             else
             {
                 int currentWeaponLevel = unit.GetBlacksmithWeaponLevel(weaponId);
-                // [����] ���⺰ ��ȭ �ܰ� �������� ���� ������ �ȳ��մϴ�.
+                // 강화 실패 사유별 안내
                 if (npcLevel < nodeIndex + 1)
-                    SendNotification(sender, "NPC ������ �����մϴ�.");
+                    SendNotification(sender, "NPC 레벨이 부족합니다.");
                 else if (currentWeaponLevel > nodeIndex)
-                    SendNotification(sender, "�̹� ������ ����Դϴ�.");
+                    SendNotification(sender, "이미 강화된 단계입니다.");
                 else
-                    SendNotification(sender, "���� �ܰ踦 ���� �����ؾ� �մϴ�.");
+                    SendNotification(sender, "이전 단계를 먼저 강화해야 합니다.");
             }
         }
 
@@ -233,7 +233,7 @@ namespace Lsy
 
             if (account.currentGold < price)
             {
-                SendNotification(sender, "골드가 부족합?�다.");
+                SendNotification(sender, "골드가 부족합니다.");
                 return;
             }
 
@@ -243,15 +243,77 @@ namespace Lsy
             if (success)
             {
                 account.currentGold -= price;
-                Debug.Log($"<color=green>[CharacterShop][Server] ?�킬 ?�득 ?�공! skillId:{skillId}</color>");
-                SendNotification(sender, $"[{skillId}] ?�킬 ?�득 ?�료!");
+                Debug.Log($"<color=green>[CharacterShop][Server] 스킬 습득 성공! skillId:{skillId}</color>");
+                SendNotification(sender, $"[{skillId}] 스킬 습득 완료!");
             }
             else
             {
                 if (npcLevel < requiredNpcLevel)
-                    SendNotification(sender, "NPC ?�벨??부족합?�다.");
+                    SendNotification(sender, "NPC 레벨이 부족합니다.");
                 else
-                    SendNotification(sender, "?��? 보유???�킬?�니??");
+                    SendNotification(sender, "이미 보유한 스킬입니다.");
+            }
+        }
+
+        /// <summary>
+        /// 고유 특성을 targetLevel로 강화합니다.
+        /// 가격 검증은 서버에서 UniqueTraitSO를 직접 조회합니다.
+        /// </summary>
+        [Command(requiresAuthority = false)]
+        public void CmdUpgradeUniqueTrait(int targetLevel, string heroCode, NetworkConnectionToClient sender = null)
+        {
+            Debug.Log($"[CharacterShop][Server] CmdUpgradeUniqueTrait - targetLevel:{targetLevel}, heroCode:{heroCode}");
+
+            PlayerAccount account = FindAccount(sender);
+            if (account == null) return;
+
+            // currentSelectedCharacter는 클라이언트 기준이라 서버에서 신뢰할 수 없음.
+            // heroCode + connectionToClient로 정확한 CharacterUnit을 찾습니다.
+            CharacterUnit unit = null;
+            foreach (var u in FindObjectsByType<CharacterUnit>(FindObjectsSortMode.None))
+            {
+                if (u.connectionToClient == sender && u.heroCode == heroCode)
+                {
+                    unit = u;
+                    break;
+                }
+            }
+            if (unit == null)
+            {
+                Debug.LogWarning($"[CharacterShop] heroCode={heroCode}인 CharacterUnit을 찾지 못했습니다.");
+                return;
+            }
+
+            // 서버에서 직접 UniqueTraitSO 조회하여 가격 검증 (클라이언트 가격 신뢰 X)
+            if (!CharacterRegistry.TryGet(unit.heroCode, out var entry) || entry.UniqueTrait == null)
+            {
+                SendNotification(sender, "고유 특성 데이터를 찾을 수 없습니다.");
+                return;
+            }
+
+            if (targetLevel < 1 || targetLevel > UniqueTraitSO.MaxLevel)
+            {
+                SendNotification(sender, "잘못된 강화 단계입니다.");
+                return;
+            }
+
+            int price = entry.UniqueTrait.GetLevel(targetLevel).price;
+
+            if (account.currentGold < price)
+            {
+                SendNotification(sender, $"골드가 부족합니다. (필요: {price}G)");
+                return;
+            }
+
+            bool success = unit.ApplyUniqueTraitUpgrade(targetLevel);
+            if (success)
+            {
+                account.currentGold -= price;
+                SendNotification(sender, $"고유 특성 {targetLevel}단계 강화 완료! (-{price}G)");
+            }
+            else
+            {
+                SendNotification(sender, "강화 조건이 맞지 않습니다.");
             }
         }
 
@@ -267,20 +329,20 @@ namespace Lsy
 
             if (string.IsNullOrWhiteSpace(itemName))
             {
-                SendNotification(sender, "?�착???�이???�름??비어 ?�습?�다.");
+                SendNotification(sender, "착이름비어 습다.");
                 return;
             }
             if (unit.GetItemAmount(itemName) <= 0)
             {
-                SendNotification(sender, $"[{itemName}] ?�이?�이 ?�벤?�리???�습?�다.");
+                SendNotification(sender, $"[{itemName}] 이이 벤리습다.");
                 return;
             }
 
             unit.selectedWeaponId = itemName;
-            SendNotification(sender, $"[{itemName}] ?�착 ?�료.");
+            SendNotification(sender, $"[{itemName}] 착 료.");
         }
 
-        // ?�?�?� ?�림 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //림 ?
 
         [Server]
         private void SendNotification(NetworkConnectionToClient target, string message)

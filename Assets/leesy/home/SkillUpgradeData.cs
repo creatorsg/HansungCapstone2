@@ -5,10 +5,10 @@ using Jun; // EffectType / TargetType (Jun.SkillInfo와 동일 enum)
 namespace Lsy
 {
     
-    //   nodes[0]: skillId="tracking",  skillName="������",  price=1000, requiredNpcLevel=1
-    //   nodes[1]: skillId="disguise",  skillName="�����",  price=2000, requiredNpcLevel=1
-    //   nodes[2]: skillId="sabotage",  skillName="���ذ���", price=3000, requiredNpcLevel=2
-    //   nodes[3]: skillId="ambush",    skillName="�ź�",    price=4000, requiredNpcLevel=2
+ // nodes[0]: skillId="tracking", skillName="", price=1000, requiredNpcLevel=1
+ // nodes[1]: skillId="disguise", skillName="", price=2000, requiredNpcLevel=1
+ // nodes[2]: skillId="sabotage", skillName="ذ", price=3000, requiredNpcLevel=2
+ // nodes[3]: skillId="ambush", skillName="ź", price=4000, requiredNpcLevel=2
 
     [CreateAssetMenu(fileName = "SkillUpgradeData", menuName = "Upgrade/SkillUpgradeData")]
     public class SkillUpgradeData : ScriptableObject
@@ -50,7 +50,6 @@ namespace Lsy
         public EffectType EffectType;
 
         public int price;
-        // [����] NPCPopupUI�� ǥ�õǴ� NPC Lv.���ڿ� ���� 1���� �����ϴ� ���Դϴ�.
         public int requiredNpcLevel;
     }
 }

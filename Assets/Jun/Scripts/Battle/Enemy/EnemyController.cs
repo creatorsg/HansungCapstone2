@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-// ��Ƽ���� ��������� ���� �� ��Ʈ�ѷ�
+// Ƽ Ʈѷ
 namespace Jun
 {
     public class EnemyController : NetworkBehaviour
@@ -14,8 +14,8 @@ namespace Jun
         public PlayerInfo Info;
         //[SerializeField] private EnemyView _view;
 
-        [Header("�� �ý���")]
-        public Transform PingLayout; // �� ������ ����
+        [Header(" ý")]
+        public Transform PingLayout; //   
 
         public UnitState State = UnitState.Waiting;
 
@@ -76,14 +76,14 @@ namespace Jun
             switch (State)
             {
                 case UnitState.Waiting:
-                    break;// ��� �ൿ ����
+                    break;//  ൿ 
                 case UnitState.Incapacitated:
 
-                    //���߿� �ൿ�Ҵ� �ϼ� �����ؼ� �Ұ�
+ //߿ ൿҴ ϼ ؼ Ұ
                     break;
 
                 case UnitState.Acting:
-                    // �ൿ ����
+            //ൿ 
 
                     break;
             }

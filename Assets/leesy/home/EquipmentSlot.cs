@@ -6,13 +6,13 @@ namespace Lsy
 {
     public class EquipmentSlot : NetworkBehaviour
     {
-        [Header("���� ���")]
+        [Header(" ")]
         [SyncVar] public string equippedWeaponId = "";
         [SyncVar] public string equippedArmorId = "";
         public InventoryItem equippedWeapon;
         public InventoryItem equippedArmor;
 
-        [Header("���� �Ҹ�ǰ (�ִ� 6����)")]
+        [Header(" Ҹǰ (ִ 6)")]
         public readonly SyncList<InventoryItem> equippedConsumables = new SyncList<InventoryItem>();
         private const int MAX_CONSUMABLE_SLOTS = 6;
 
@@ -47,7 +47,7 @@ namespace Lsy
             }
             if (equippedConsumables.Count >= MAX_CONSUMABLE_SLOTS)
             {
-                Debug.LogWarning("�Ҹ�ǰ ���� ������ ���� á���ϴ�. (�ִ� 6��)");
+ Debug.LogWarning("Ҹǰ á. (ִ 6)");
                 return false;
             }
             equippedConsumables.Add(item);
