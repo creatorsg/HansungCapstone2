@@ -150,3 +150,48 @@ MonoBehaviour:
     EffectType: 0
     price: 3000
     requiredNpcLevel: 3
+  - skillId: 1_2
+    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv2 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 1
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 5
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 1_3
+    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv3 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 1
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 5
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 1_4
+    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv4 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 1
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 5
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3

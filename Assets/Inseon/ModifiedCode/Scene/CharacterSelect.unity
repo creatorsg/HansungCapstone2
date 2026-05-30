@@ -870,7 +870,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   items: []
-  weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
+  weaponSO: {fileID: 11400000, guid: 317366cbd66c9d64f95acab53061af48, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 4b78c497815472f45a6a0903fdc83c5d, type: 2}
   characterImage: {fileID: 1975854966}
@@ -1242,7 +1242,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   items: []
-  weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
+  weaponSO: {fileID: 11400000, guid: 9e3a4142e13f4854d8cac8acf78c7bc9, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 20a6d8743615575478d0c47086ca9eb5, type: 2}
   characterImage: {fileID: 1636315041}
@@ -4073,7 +4073,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   items: []
-  weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
+  weaponSO: {fileID: 11400000, guid: a07ded84ef1621c4db6f6555e92694bd, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 598f3332e2d84844ea3e5e2fa87b9d3e, type: 2}
   characterImage: {fileID: 1866288786}
@@ -6168,7 +6168,7 @@ MonoBehaviour:
     HealAmount: 0
     StatusEffects: []
   items: []
-  weaponSO: {fileID: 11400000, guid: 977a8ad7c97540d48989969fcbaa468d, type: 2}
+  weaponSO: {fileID: 11400000, guid: 9d795266a157f544bad4259c156578ce, type: 2}
   armorSO: {fileID: 11400000, guid: 5a628bc7ea1c6a1479ea18eeeaf2a35f, type: 2}
   uniqueTrait: {fileID: 11400000, guid: 0d9429b1963b89144a1ae8014411fb8f, type: 2}
   characterImage: {fileID: 801427239}

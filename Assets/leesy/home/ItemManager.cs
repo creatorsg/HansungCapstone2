@@ -7,12 +7,12 @@ namespace Lsy
     {
         public static ItemManager Instance { get; private set; }
 
-        // [수정] NPC 팝업 판매 데이터 원본입니다. 바텐더는 AllItems, 대장장이는 AllEqps를 사용합니다.
         public List<Consum> AllItems = new List<Consum>();
         public List<Equipment> AllEqps = new List<Equipment>();
 
-        private Dictionary<string, Consum>    _consumDict = new Dictionary<string, Consum>();
-        private Dictionary<string, Equipment> _eqpDict    = new Dictionary<string, Equipment>();
+        private readonly Dictionary<string, Consum> _consumDict = new Dictionary<string, Consum>();
+        private readonly Dictionary<string, Equipment> _eqpDict = new Dictionary<string, Equipment>();
+        private readonly List<ScriptableObject> _runtimeRegisteredItems = new List<ScriptableObject>();
 
         private void Awake()
         {
@@ -28,10 +28,45 @@ namespace Lsy
             }
         }
 
-        /// <summary>Inseon 코드 호환용. ItemManager는 더 이상 ItemSO를 관리하지 않습니다.</summary>
         public void RegisterItemSO(ItemSO so)
         {
-            // [수정] CharacterSelectManager가 아직 호출하므로 메서드는 남기되, ItemSO 등록은 하지 않습니다.
+            if (so == null || string.IsNullOrWhiteSpace(so.itemName)) return;
+
+            switch (so.category)
+            {
+                case ItemCategory.Weapon:
+                case ItemCategory.Armor:
+                    RegisterEquipmentSO(so);
+                    break;
+
+                case ItemCategory.Consumable:
+                    RegisterConsumableSO(so);
+                    break;
+            }
+
+            Debug.Log($"[ItemManager] ItemSO registered: {so.itemName} ({so.category})");
+        }
+
+        private void RegisterEquipmentSO(ItemSO so)
+        {
+            RegisterEqpInfo(so.ToEqpInfo(), so.category == ItemCategory.Weapon ? ItemType.Weapon : ItemType.Armor, so.price);
+        }
+
+        private void RegisterConsumableSO(ItemSO so)
+        {
+            Consum consum = ScriptableObject.CreateInstance<Consum>();
+            consum.name = so.itemName;
+            consum.ConsumItem = so.ToConsumableInfo();
+            consum.priceLevel = BuildPriceLevels(so.price);
+
+            _consumDict[so.itemName] = consum;
+            _runtimeRegisteredItems.Add(consum);
+        }
+
+        private static List<int> BuildPriceLevels(int price)
+        {
+            int safePrice = Mathf.Max(0, price);
+            return new List<int> { safePrice, safePrice, safePrice };
         }
 
         private void InitializeDictionary()
@@ -52,10 +87,34 @@ namespace Lsy
                     _eqpDict.Add(key, eqp);
             }
 
-            Debug.Log($"[ItemManager] 로드 완료 — Consum:{_consumDict.Count}, Eqp:{_eqpDict.Count}");
+            RegisterCharacterEquipment();
+
+            Debug.Log($"[ItemManager] Loaded - Consum:{_consumDict.Count}, Eqp:{_eqpDict.Count}");
         }
 
-        // [수정] 바텐더 NPC 팝업 판매용 소모품 데이터를 이름으로 조회합니다.
+        private void RegisterCharacterEquipment()
+        {
+            foreach (var entry in CharacterRegistry.All.Values)
+            {
+                RegisterEqpInfo(entry.Weapon, ItemType.Weapon, 0);
+                RegisterEqpInfo(entry.Armor, ItemType.Armor, 0);
+            }
+        }
+
+        private void RegisterEqpInfo(Jun.EqpInfo info, ItemType itemType, int price)
+        {
+            if (info == null || string.IsNullOrWhiteSpace(info.Name)) return;
+
+            Equipment equipment = ScriptableObject.CreateInstance<Equipment>();
+            equipment.name = info.Name;
+            equipment.itemType = itemType;
+            equipment.EqpItem = info;
+            equipment.priceLevel = BuildPriceLevels(price);
+
+            _eqpDict[info.Name] = equipment;
+            _runtimeRegisteredItems.Add(equipment);
+        }
+
         public Consum GetConsumData(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
@@ -63,7 +122,6 @@ namespace Lsy
             return data;
         }
 
-        // [수정] 대장장이 NPC 팝업 판매용 장비 데이터를 이름으로 조회합니다.
         public Equipment GetEquipmentData(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
@@ -71,19 +129,12 @@ namespace Lsy
             return data;
         }
 
-        // [수정] EquipmentUI와 NPC 구매 로직이 장비 전투 데이터를 이름으로 조회할 수 있게 병합 후 누락된 API를 복구합니다.
         public Jun.EqpInfo GetEqpData(string itemName)
         {
             Equipment equipmentData = GetEquipmentData(itemName);
-            if (equipmentData != null)
-                return equipmentData.EqpItem;
-
-            return null;
+            return equipmentData != null ? equipmentData.EqpItem : null;
         }
 
-        /// <summary>
-        /// 아이템 이름으로 NPC 판매 데이터의 아이콘을 조회합니다.
-        /// </summary>
         public Sprite GetIcon(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;

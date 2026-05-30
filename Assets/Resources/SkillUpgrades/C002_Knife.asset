@@ -17,6 +17,7 @@ MonoBehaviour:
   nodes:
   - skillId: 0_2
     skillName: "\uC608\uB9AC\uD55C \uD22C\uCC99"
+    skillDescription: 
     skillIndex: 0
     targetLevel: 2
     DamageRate: 1.5
@@ -31,6 +32,7 @@ MonoBehaviour:
     requiredNpcLevel: 1
   - skillId: 0_3
     skillName: "\uAD00\uD1B5 \uD22C\uCC99"
+    skillDescription: 
     skillIndex: 0
     targetLevel: 3
     DamageRate: 1.7
@@ -45,6 +47,7 @@ MonoBehaviour:
     requiredNpcLevel: 2
   - skillId: 0_4
     skillName: "\uCC98\uD615 \uD22C\uCC99"
+    skillDescription: 
     skillIndex: 0
     targetLevel: 4
     DamageRate: 1.9
@@ -59,6 +62,7 @@ MonoBehaviour:
     requiredNpcLevel: 3
   - skillId: 1_2
     skillName: "\uC815\uBC00 \uAE09\uC18C"
+    skillDescription: 
     skillIndex: 1
     targetLevel: 2
     DamageRate: 1.3
@@ -73,6 +77,7 @@ MonoBehaviour:
     requiredNpcLevel: 1
   - skillId: 1_3
     skillName: "\uCE58\uBA85 \uAE09\uC18C"
+    skillDescription: 
     skillIndex: 1
     targetLevel: 3
     DamageRate: 1.5
@@ -87,6 +92,7 @@ MonoBehaviour:
     requiredNpcLevel: 2
   - skillId: 1_4
     skillName: "\uC808\uBA85 \uAE09\uC18C"
+    skillDescription: 
     skillIndex: 1
     targetLevel: 4
     DamageRate: 1.7
@@ -101,6 +107,7 @@ MonoBehaviour:
     requiredNpcLevel: 3
   - skillId: 2_2
     skillName: "\uCF8C\uC18D \uC5F0\uC0AC"
+    skillDescription: 
     skillIndex: 2
     targetLevel: 2
     DamageRate: 1
@@ -115,6 +122,7 @@ MonoBehaviour:
     requiredNpcLevel: 1
   - skillId: 2_3
     skillName: "\uB09C\uBB34 \uC5F0\uC0AC"
+    skillDescription: 
     skillIndex: 2
     targetLevel: 3
     DamageRate: 1.2
@@ -129,9 +137,55 @@ MonoBehaviour:
     requiredNpcLevel: 2
   - skillId: 2_4
     skillName: "\uD3ED\uD48D \uC5F0\uC0AC"
+    skillDescription: 
     skillIndex: 2
     targetLevel: 4
     DamageRate: 1.4
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 3_2
+    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv2 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 3
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 3_3
+    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv3 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 3
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 0
+    EffectDuration: 0
+    useTargetOverride: 0
+    Target: 0
+    useEffectOverride: 0
+    EffectType: 0
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 3_4
+    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv4 (\uC774\uB984\uC218\uC815)"
+    skillDescription:
+    skillIndex: 3
+    targetLevel: 4
+    DamageRate: 0
     HealRate: 0
     EffectValue: 0
     EffectDuration: 0

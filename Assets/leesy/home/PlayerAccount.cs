@@ -3,6 +3,9 @@ using Mirror;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEngine.InputSystem;
+#endif
 
 namespace Lsy
 {
@@ -47,6 +50,31 @@ namespace Lsy
             if (!isOwned) return;
             OnGoldChanged?.Invoke(newVal);
         }
+
+        // ───────── [임시 치트: 테스트용 골드 지급] 배포 전 삭제 ─────────
+        // 에디터에서만 동작. G키 = 골드 +10000, Shift+G = +100000
+#if UNITY_EDITOR
+        private void Update()
+        {
+            if (!isOwned) return;
+            var kb = Keyboard.current;
+            if (kb == null) return;
+
+            if (kb.gKey.wasPressedThisFrame)
+            {
+                int amount = (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed) ? 100000 : 10000;
+                CmdCheatAddGold(amount);
+            }
+        }
+#endif
+
+        [Command]
+        public void CmdCheatAddGold(int amount)
+        {
+            currentGold += amount;
+            Debug.Log($"<color=magenta>[CHEAT] 골드 +{amount} → 현재 {currentGold}G</color>");
+        }
+        // ───────── [임시 치트 끝] ─────────
 
         // ?�?�?� 캐릭??관�??�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
         public int currentActiveIndex { get; private set; } = -1;

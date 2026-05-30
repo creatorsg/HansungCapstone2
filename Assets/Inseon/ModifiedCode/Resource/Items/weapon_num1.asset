@@ -22,13 +22,13 @@ MonoBehaviour:
   targetScope: 0
   targetCount: 1
   animName: 
-  hp: 50
-  san: 0
-  atk: 25
-  def: 0
+  hp: 20
+  san: 5
+  atk: 15
+  def: 10
   spd: 0
-  crit: 30
-  ctm: 10
+  crit: 0
+  ctm: 0
   dodge: 0
-  acc: -20
-  res: 0
+  acc: 5
+  res: 10
