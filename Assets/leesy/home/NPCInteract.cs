@@ -5,29 +5,29 @@ namespace Lsy {
     public class NPCInteract : MonoBehaviour
     {
         [SerializeField] private NPCState _npcState;
-        [SerializeField] private NPCPopupUI _npcUI; // UI µ¥ÀÌÅÍ¸¦ ±×·ÁÁÖ´Â ½ºÅ©¸³Æ® ÂüÁ¶
+        [SerializeField] private NPCPopupUI _npcUI; // UI ë°ì´í„°ë¥¼ ê·¸ë ¤ì£¼ëŠ” ìŠ¤í¬ë¦½íŠ¸ ì°¸ì¡°
 
-        // Äİ¶óÀÌ´õ Å¬¸¯ È¤Àº »óÈ£ÀÛ¿ë Å°(F) ÀÔ·Â ½Ã È£Ãâ
+        // ì½œë¼ì´ë” í´ë¦­ í˜¹ì€ ìƒí˜¸ì‘ìš© í‚¤(F) ì…ë ¥ ì‹œ í˜¸ì¶œ
         public void ClickNPC()
         {
             if (_npcState == null)
             {
-                Debug.LogError("¼­¹ö µ¥ÀÌÅÍ°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+                Debug.LogError("ì„œë²„ ë°ì´í„°ê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
                 return;
             }
             if (_npcUI == null)
                 _npcUI = FindPopupUIForState(_npcState);
             if (_npcUI == null)
             {
-                Debug.LogError("[NPCInteract] NPCPopupUI°¡ ¿¬°áµÇÁö ¾Ê¾Ò½À´Ï´Ù!");
+                Debug.LogError("[NPCInteract] NPCPopupUIê°€ ì—°ê²°ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤!");
                 return;
             }
-            // 1. UI¿¡ ÇöÀç Å¬¸¯ÇÑ NPCÀÇ »óÅÂ(µ¥ÀÌÅÍ)¸¦ ÁÖÀÔ
+            // 1. UIì— í˜„ì¬ í´ë¦­í•œ NPCì˜ ìƒíƒœ(ë°ì´í„°)ë¥¼ ì£¼ì…
             _npcUI.InitializeUI(_npcState);
         }
         private NPCPopupUI FindPopupUIForState(NPCState state)
         {
-            // [¼öÁ¤] ¾À¿¡¼­ NPCInteract._npcUI ¿¬°áÀÌ ºüÁ®µµ NPC Á¾·ù¿¡ ¸Â´Â ÆË¾÷À» Ã£¾Æ InitializeUI°¡ ½ÇÇàµÇµµ·Ï º¸Á¤ÇÕ´Ï´Ù.
+            // [ìˆ˜ì •] ì”¬ì—ì„œ NPCInteract._npcUI ì—°ê²°ì´ ë¹ ì ¸ë„ NPC ì¢…ë¥˜ì— ë§ëŠ” íŒì—…ì„ ì°¾ì•„ InitializeUIê°€ ì‹¤í–‰ë˜ë„ë¡ ë³´ì •í•©ë‹ˆë‹¤.
             if (state == null || state.npcData == null) return null;
 
             NPCPopupUI[] popups = FindObjectsByType<NPCPopupUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);

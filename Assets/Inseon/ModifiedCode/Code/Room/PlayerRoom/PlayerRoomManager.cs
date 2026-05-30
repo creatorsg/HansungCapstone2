@@ -25,8 +25,8 @@ public class PlayerRoomManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI roomName;
     [SerializeField] private TextMeshProUGUI roomID;
     [SerializeField] private Image           roomTypeImage;
-    [SerializeField] private Sprite          privateSprite;
     [SerializeField] private Sprite          publicSprite;
+    [SerializeField] private Sprite          privateSprite;
 
     [Header("플레이어 슬롯 (최대 4)")]
     [SerializeField] private List<PlayerSlot> playerSlots;

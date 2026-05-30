@@ -29,8 +29,8 @@ namespace Jun
         [SyncVar] public bool blockNext = false;   // Glue #2 엄호: 다음 피격 1회 무효
         [SyncVar] public int knifeStacks = 0;       // Choke #4 무기회수: 누적 스택 (공격 데미지 +10%/스택)
 
-        [Header("�� �ý���")]
-        public Transform PingLayout; // �� ������ ����
+        [Header(" ý")]
+        public Transform PingLayout; //   
 
         public bool IsMovePos = false;
 
@@ -99,17 +99,17 @@ namespace Jun
         {
             if (oldPos == -1)
             {
-                // ó�� ������ ��
+            //ó 
                 transform.position = BattleManager.Instance.SpawnPoints[newPos].position;
             }
             else
             {
-                // �� ���߿� �ڸ��� �ٲ���� �� (�ε巴�� �̵�)
+            //߿ ڸ ٲ (ε巴 ̵)
                 StopAllCoroutines();
                 StartCoroutine(MoveRoutine(BattleManager.Instance.SpawnPoints[newPos].position));
             }
         }
-        //�ε巴�� �����̰� ���ִ� �Լ�
+ //ε巴 ̰ ִ Լ
         System.Collections.IEnumerator MoveRoutine(Vector3 targetPos)
         {
             while (Vector3.Distance(transform.position, targetPos) > 0.01f)
@@ -241,7 +241,7 @@ namespace Jun
             }
         }
 
-        public void OnClickEnemyBtn(int index) //����ư
+        public void OnClickEnemyBtn(int index) //ư
         {
             if (_model.SelectedItem == -1 && _model.SelectedSkill == -1)
             {
@@ -268,12 +268,12 @@ namespace Jun
         {
             if (!isOwned) return;
             IsMovePos = true;
-            Debug.Log("�ڸ��̵�" + IsMovePos);
+ Debug.Log("ڸ̵" + IsMovePos);
         }
-        // �ٲ� ���(�ٸ� �Ʊ� ����)�� Ŭ������ �� ����
+            //ٲ (ٸ Ʊ ) Ŭ 
         public void OnClickedUnit()
         {
-            Debug.Log($"[OnClickedUnit] 클릭됨: name={name}, code={FinalHeroCode}, Skills={Info.Skills?.Count ?? -1}");
+            Debug.Log($"[OnClickedUnit] 클릭됨: name={name}, code={FinalHeroCode}, Skills={Info.Skills.Count  -1}");
 
             var currentUnit = BattleManager.Instance.CurrentTurnUnit;
 
@@ -328,7 +328,7 @@ namespace Jun
             BattleManager.Instance.RpcShowPing(PingIndex, target);
         }
 
-        // ������ �ڸ� ��ü ��û
+            //ڸ ü û
         [Command]
         public void CmdRequestChangePos(GameObject targetUnitObj)
         {
@@ -339,7 +339,7 @@ namespace Jun
             }
         }
 
-        // ���� ����
+            //
         public void PlDamaged(float Attack)
         {
             _view.PlDamaged(_model.PlDamaged(Attack)/Info.Hp);
@@ -374,8 +374,7 @@ namespace Jun
         {
             Effects.Add(effect); // SyncList에 추가해 클라이언트로 동기화
         }
-        //��ų ����� ������ ��û
-        //��Ʋ �Ŵ������� ���Ἲ �˻� ��û
+ //ų û
         [Command]
         public void CMDSelectionComplete(int skillIndex, int itemIndex, bool isEnemy, List<int> tagets)
         {
@@ -383,15 +382,15 @@ namespace Jun
         }
 
 
-        // �ִϸ��̼� ����
+            //ִϸ̼ 
         [ClientRpc]
         public void RpcPlaySkillAnim(string animName)
         {
-            //���� ��ų�� ���� ���ص� �ɵ�
+            //ų ص ɵ
             _view.SkillAnim(animName);
         }
 
-        // ���� ������ -> �� �ѱ��
+            //-> ѱ
         [Command]
         public void EndMyTurn()
         {
@@ -420,7 +419,7 @@ namespace Jun
         {
             var type = (EffectType)effectType;
             AddEffect(new ActiveEffect(type, value, duration));
-            Debug.Log($"[DEBUG] {Info?.Name} ← {type} v={value} d={duration} | 유효회피={CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects)} 유효크리={CombatCalculator.GetEffectiveCrit(Info.Crit, Effects)}");
+            Debug.Log($"[DEBUG] {Info.Name} ← {type} v={value} d={duration} | 유효회피={CombatCalculator.GetEffectiveDodge(Info.Dodge, Effects)} 유효크리={CombatCalculator.GetEffectiveCrit(Info.Crit, Effects)}");
         }
 
         [Command]

@@ -5,12 +5,11 @@ namespace Lsy
 {
     public class BtnShape : MonoBehaviour
     {
-        //ÀÌ¹ÌÁö¿¡ ¸ÂÃç¼­ ¹öÆ° ¸ğ¾ç ¹Ù²Ù±â
+        //ï¿½Ì¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ç¼­ ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ ï¿½Ù²Ù±ï¿½
         public float AlphaThreshold = 0.1f;
 
         void Start()
         {
-            this.GetComponent<Image>().alphaHitTestMinimumThreshold = AlphaThreshold; // ÀÌ¹ÌÁö¿¡¼­ ÁöÁ¤µÈ Åõ¸íµµº¸´Ù ³ôÀº ºÎºĞ¸¸ È°¼ºÈ­
         }
     }
 }

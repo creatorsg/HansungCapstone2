@@ -38,6 +38,9 @@ namespace Lsy
             public CanvasGroup canvasGroup;
             public Slider      hpSlider;
             public Slider      sanSlider;
+            public Image blacksmithImage;
+            public Image informantImage;
+            public Image bartenderImage;
         }
 
         [Header("초상화 슬롯 (heroPos 0~3 순서로 배치)")]
@@ -260,12 +263,21 @@ namespace Lsy
                                && account.currentActiveIndex < account.myHeroPositions.Count
                                && account.myHeroPositions[account.currentActiveIndex] == pos;
 
+                Sprite apply = null;
                 if (isSelected && _selectedPortraitDict.TryGetValue(code, out Sprite selSprite))
-                    slot.portraitImage.sprite = selSprite;
+                    apply = selSprite;
                 else if (_portraitDict.TryGetValue(code, out Sprite sprite))
-                    slot.portraitImage.sprite = sprite;
+                    apply = sprite;
                 else
                     Debug.LogWarning($"[PortraitUI] heroCode '{code}'에 해당하는 스프라이트 없음");
+
+                if (apply != null)
+                {
+                    slot.portraitImage.sprite = apply;
+                    if (slot.blacksmithImage != null) slot.blacksmithImage.sprite = apply;
+                    if (slot.informantImage  != null) slot.informantImage.sprite  = apply;
+                    if (slot.bartenderImage  != null) slot.bartenderImage.sprite  = apply;
+                }
             }
         }
 
@@ -281,6 +293,9 @@ namespace Lsy
             if (_portraitDict.TryGetValue(heroCode, out Sprite sprite))
             {
                 slot.portraitImage.sprite = sprite;
+                if (slot.blacksmithImage != null) slot.blacksmithImage.sprite = sprite;
+                if (slot.informantImage  != null) slot.informantImage.sprite  = sprite;
+                if (slot.bartenderImage  != null) slot.bartenderImage.sprite  = sprite;
                 Debug.Log($"[PortraitUI] 슬롯{pos}에 타인 캐릭터 초상화 적용: {heroCode}");
             }
             else

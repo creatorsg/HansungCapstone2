@@ -14,32 +14,31 @@ namespace Lsy
         public List<InventoryItem> inventory = new List<InventoryItem>();
         public string selectedWeaponId = "";
         public int purchasedNodeCount = 0;
-        // [����] �������� ���� ��ȭ �ܰ踦 ĳ���ͺ�/���⺰�� �����մϴ�.
         public Dictionary<string, int> blacksmithWeaponLevels = new Dictionary<string, int>();
         public List<PlayerSkill> skills = new List<PlayerSkill>();
         public List<string> unlockedNodeIds = new List<string>();
         public int gold = 0;
 
-        // --- ĳ���ͺ� ���� ���� ������ ���� �ʵ� �߰� ---
+            //--- ĳͺ ʵ ߰ ---
         public string equippedWeaponId = "";
         public string equippedArmorId = "";
-        public InventoryItem equippedWeapon; // ���� ��ü ���� ���
-        public InventoryItem equippedArmor;  // �� ��ü ���� ���
-        public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // �Һ��� ��ü ����Ʈ ���
+        public InventoryItem equippedWeapon; //  ü  
+        public InventoryItem equippedArmor;  //  ü  
+        public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // Һ ü Ʈ 
     }
 
     public class PlayerAccount : NetworkBehaviour
     {
         public static PlayerAccount LocalInstance;
 
-        /// <summary>로컬 PlayerAccount가 준비됐??????GoldUI ??초기?�용</summary>
+ /// <summary>로컬 PlayerAccount가 준비됐GoldUI 초기용</summary>
         public static event Action<PlayerAccount> OnLocalAccountReady;
         public static event Action OnCharacterSwitched;
 
-        /// <summary>모든 PlayerAccount(로컬+?�격)가 myHeroCodes가 채워�???발생 ??초상???�체 로드??/summary>
+ /// <summary>모든 PlayerAccount(로컬+격)가 myHeroCodes가 채워발생 초상체 로드/summary>
         public static event Action<PlayerAccount> OnAnyAccountReady;
 
-        // ?�?�?� 골드 (?�레?�어 귀?? ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //골드 (레어 귀 ?
         [SyncVar(hook = nameof(OnCurrentGoldChanged))]
         public int currentGold;
 
@@ -76,7 +75,7 @@ namespace Lsy
         }
         // ───────── [임시 치트 끝] ─────────
 
-        // ?�?�?� 캐릭??관�??�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //캐릭관
         public int currentActiveIndex { get; private set; } = -1;
 
         public CharacterUnit currentSelectedCharacter;
@@ -86,26 +85,26 @@ namespace Lsy
 
         [SyncVar] public int myCharacterCount = 0;
 
-        /// <summary>?��? 조종?�는 캐릭?�의 heroPos 목록 ??초상???�유�??�단??/summary>
+ /// <summary> 조종는 캐릭의 heroPos 목록 초상유단/summary>
         public readonly SyncList<int> myHeroPositions = new SyncList<int>();
 
-        /// <summary>myHeroPositions?� 1:1 ?�?�하??heroCode 목록 ??초상???��?지 ?�시??/summary>
+ /// <summary>myHeroPositions 1:1 하heroCode 목록 초상지 시/summary>
         public readonly SyncList<string> myHeroCodes = new SyncList<string>();
 
-        // ?�버 ?�용: ??connection???�택??PlayerData 목록 (FinalHeroPos ???�렬)
+            //버 용: ?connection택PlayerData 목록 (FinalHeroPos 렬)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
         private Dictionary<int, CharacterSaveData> savedCharacterData = new Dictionary<int, CharacterSaveData>(); public Dictionary<int, CharacterSaveData> SavedCharacterData => savedCharacterData;
 
-        // ?�?�?� 초기???�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //초기
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            // myHeroCodes가 ?�중??채워�??��? ?�비해 콜백 ?�록
+            //myHeroCodes가 중채워 비해 콜백 록
             myHeroCodes.Callback += OnHeroCodesChanged;
 
-            // ?�버?�서 ?��? ?�이?��? ?�으�?(???�진???? 즉시 발동
+            //버서 이 으(진 즉시 발동
             if (myHeroCodes.Count > 0)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -118,7 +117,7 @@ namespace Lsy
 
         private void OnHeroCodesChanged(SyncList<string>.Operation op, int index, string oldItem, string newItem)
         {
-            // 최초 ?�이?��? ?�전???�어???�점(myHeroPositions�??�기 ?�치)???�벤??발생
+            //최초 이 전어점(myHeroPositions기 치)벤발생
             if (myHeroCodes.Count > 0 && myHeroCodes.Count == myHeroPositions.Count)
                 OnAnyAccountReady?.Invoke(this);
         }
@@ -126,7 +125,7 @@ namespace Lsy
         public override void OnStartLocalPlayer()
         {
             LocalInstance = this;
-            Debug.Log("<color=green>[계정] ?�속 ?�공!</color>");
+ Debug.Log("<color=green>[계정] 속 공!</color>");
             OnLocalAccountReady?.Invoke(this);
             CmdRequestMyCharacters();
         }
@@ -136,19 +135,19 @@ namespace Lsy
         {
             if (myCharacterPrefabs == null || myCharacterPrefabs.Count == 0) return;
 
-            // ??connection???�한 모든 PlayerData�??�집 (FinalHeroPos ???�렬)
+            //?connection한 모든 PlayerData집 (FinalHeroPos 렬)
             _myPlayerDatas.Clear();
             var allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: ?�체 PlayerData {allPlayerDatas.Length}�?발견, ??connectionToClient={connectionToClient}");
+ Debug.Log($"[PlayerAccount] CmdRequestMyCharacters: 체 PlayerData {allPlayerDatas.Length}발견, connectionToClient={connectionToClient}");
             foreach (var pd in allPlayerDatas)
             {
-                Debug.Log($"[PlayerAccount] PlayerData 검?? code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, ?�치={pd.connectionToClient == connectionToClient}");
+ Debug.Log($"[PlayerAccount] PlayerData 검 code={pd.FinalHeroCode}, pd.connectionToClient={pd.connectionToClient}, 치={pd.connectionToClient == connectionToClient}");
                 if (pd.connectionToClient == connectionToClient)
                     _myPlayerDatas.Add(pd);
             }
             _myPlayerDatas.Sort((a, b) => a.FinalHeroPos.CompareTo(b.FinalHeroPos));
             myCharacterCount = _myPlayerDatas.Count;
-            Debug.Log($"[PlayerAccount] ??PlayerData {myCharacterCount}�??�집 ?�료");
+ Debug.Log($"[PlayerAccount] PlayerData {myCharacterCount}집 료");
 
             myHeroPositions.Clear();
             myHeroCodes.Clear();
@@ -162,7 +161,7 @@ namespace Lsy
             CharacterUnit activeUnit = newCharObj.GetComponent<CharacterUnit>();
             if (activeUnit == null) return;
 
-            // ??Spawn ?�에 Setup ???�폰 메시지??heroPos/heroCode가 ?�바르게 ?�함??
+            //?Spawn 에 Setup 폰 메시지heroPos/heroCode가 바르게 함
             if (_myPlayerDatas.Count > 0)
             {
                 int goldBeforeSetup = _myPlayerDatas[0].Info.Gold;
@@ -174,7 +173,7 @@ namespace Lsy
                 foreach (var item in activeUnit.myInventory)
                     initSave.inventory.Add(item);
 
-                // �Ҹ�ǰ ���Ե� �ʱ� ���忡 ����
+            //Ҹǰ Ե ʱ 忡 
                 var initSlot = activeUnit.equipmentSlot;
                 if (initSlot != null)
                 {
@@ -183,12 +182,12 @@ namespace Lsy
                 }
 
                 savedCharacterData[0] = initSave;
-                Debug.Log($"[PlayerAccount] PlayerData 기반 초기?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
+                Debug.Log($"[PlayerAccount] PlayerData 기반 초기 code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
             }
             else
             {
                 if (myCharacterDataList == null || myCharacterDataList.Count == 0) return;
-                Debug.LogWarning("[PlayerAccount] PlayerData ?�음 ??CharacterData ?�셋?�로 ?�백?�니??");
+ Debug.LogWarning("[PlayerAccount] PlayerData 음 CharacterData 셋로 백니");
                 activeUnit.SetupFromData(myCharacterDataList[0]);
                 currentGold = myCharacterDataList[0].gold;
                 savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
@@ -202,7 +201,7 @@ namespace Lsy
             TargetRpcRefreshUI(connectionToClient, currentActiveIndex);
         }
 
-        // ?�?�?� 캐릭???�환 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //캐릭환 ?
 
         public void SelectCharacter(int profileIndex)
         {
@@ -221,7 +220,7 @@ namespace Lsy
             if (currentActiveIndex == targetIndex) return;
             if (currentSelectedCharacter == null) return;
 
-            // ���� ĳ������ ���¸� ���� �޸𸮿� ���
+            //ĳ ¸ ޸𸮿 
             if (currentActiveIndex != -1)
             {
                 CharacterSaveData backup = new CharacterSaveData();
@@ -248,12 +247,9 @@ namespace Lsy
                 savedCharacterData[currentActiveIndex] = backup;
             }
 
-            // ĳ���� ������Ʈ �ʱ�ȭ (�� �����͸� �ޱ� ���� ����)
-            // ���� ĳ������ �����Ͱ� �������� �ʵ��� "����" ���ϴ�.
             currentSelectedCharacter.myInventory.Clear();
             currentSelectedCharacter.mySkills.Clear();
             currentSelectedCharacter.unlockedNodeIds.Clear();
-            // [����] ĳ���ͺ� �������� ���� ��ȭ ���°� �ٸ� ĳ���ͷ� �������� �ʵ��� ���� ���ϴ�.
             currentSelectedCharacter.selectedWeaponId = "";
             currentSelectedCharacter.purchasedNodeCount = 0;
             currentSelectedCharacter.blacksmithWeaponLevels.Clear();
@@ -268,18 +264,16 @@ namespace Lsy
                 targetSlot.equippedConsumables.Clear();
             }
 
-            // �ε��� ��ȯ �� ������ �ε�
+            //ε ȯ ε
             currentActiveIndex = targetIndex;
 
-            // ����� �����Ͱ� �ִ��� ���� Ȯ���մϴ�.
             if (savedCharacterData.TryGetValue(targetIndex, out CharacterSaveData saved))
             {
-                // �̹� �÷����� ���� �ִ� ĳ����: ����� ������ ����
-                // �̶��� SetupFromData�� ȣ������ �ʰų�, ȣ�� �� ����� �����ͷ� ����ϴ�.
+            //̹ ÷ ִ ĳ: 
                 if (hasPlayerDatas) currentSelectedCharacter.SetupFromPlayerData(_myPlayerDatas[targetIndex]);
                 else currentSelectedCharacter.SetupFromData(myCharacterDataList[targetIndex]);
 
-                // Setup �������� �� �⺻ �����۵��� ����� ����� ���·� ��ü
+            //Setup  ⺻ ۵ · ü
                 currentSelectedCharacter.myInventory.Clear();
                 currentSelectedCharacter.mySkills.Clear();
                 currentSelectedCharacter.unlockedNodeIds.Clear();
@@ -300,14 +294,12 @@ namespace Lsy
                     targetSlot.equippedWeapon = saved.equippedWeapon;
                     targetSlot.equippedArmorId = saved.equippedArmorId;
                     targetSlot.equippedArmor = saved.equippedArmor;
-                    // [����] ����� Ȩ ���� �Ҹ�ǰ�� �����մϴ�.
                     targetSlot.equippedConsumables.Clear();
                     foreach (var item in saved.equippedConsumables) targetSlot.equippedConsumables.Add(item);
                 }
             }
             else
             {
-                // ó�� �����ϴ� ĳ����: �⺻ ������(�ʱ� ������ ��) �ε�
                 if (hasPlayerDatas)
                 {
                     PlayerData targetPd = _myPlayerDatas[targetIndex];
@@ -321,10 +313,9 @@ namespace Lsy
                     currentSelectedCharacter.SetupFromData(targetData);
                     currentGold = targetData.gold;
                 }
-                // SetupFromData ���ο��� �κ��丮�� ��ų�� ä�����Ƿ� �״�� �Ӵϴ�.
             }
 
-            //  ���� ���� �� UI �뺸
+            //UI 뺸
             AutoUnlockLv1Nodes(currentSelectedCharacter);
             TargetRpcRefreshUI(connectionToClient, targetIndex);
         }
@@ -334,7 +325,7 @@ namespace Lsy
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
         {
             currentActiveIndex = newActiveIndex;
-            Debug.Log($"<color=cyan>[?�라?�언?? currentActiveIndex: {newActiveIndex}</color>");
+ Debug.Log($"<color=cyan>[라언 currentActiveIndex: {newActiveIndex}</color>");
 
             if (InventoryUI.Instance != null)
                 InventoryUI.Instance.RefreshInventory();
@@ -345,38 +336,38 @@ namespace Lsy
             OnCharacterSwitched?.Invoke();
         }
 
-        // ?�?�?� NPC ?�호?�용 커맨??(골드 체크/차감 ?�당) ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //NPC 호용 커맨(골드 체크/차감 당) ?
 
         [Command]
         public void CmdPurchaseTreeNode(string nodeId)
         {
-            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode 진입 ??nodeId={nodeId}</color>");
+            Debug.Log($"<color=yellow>[SkillTree] CmdPurchaseTreeNode 진입 nodeId={nodeId}</color>");
 
-            if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] 거�?: currentSelectedCharacter null"); return; }
-            if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] 거�?: nodeId 비어?�음"); return; }
+ if (currentSelectedCharacter == null) { Debug.LogWarning("[SkillTree] 거: currentSelectedCharacter null"); return; }
+ if (string.IsNullOrEmpty(nodeId)) { Debug.LogWarning("[SkillTree] 거: nodeId 비어음"); return; }
 
             string characterCode = GetCurrentCharacterCode();
             if (string.IsNullOrEmpty(characterCode))
             {
-                Debug.LogWarning("[SkillTree] 거�?: characterCode 비어?�음");
+ Debug.LogWarning("[SkillTree] 거: characterCode 비어음");
                 return;
             }
 
             if (!SkillTreeRegistry.TryFind(characterCode, nodeId, out SkillTreeNodeSO node))
             {
-                Debug.LogWarning($"[SkillTree] 거�?: ?�드 �?찾음 ??character={characterCode}, node={nodeId}");
+ Debug.LogWarning($"[SkillTree] 거: 드 찾음 character={characterCode}, node={nodeId}");
                 return;
             }
 
             if (currentSelectedCharacter.unlockedNodeIds.Contains(nodeId))
             {
-                Debug.Log($"[SkillTree] 거�?: ?��? 보유 ??{nodeId}");
+ Debug.Log($"[SkillTree] 거: 보유 {nodeId}");
                 return;
             }
 
             if (node.prerequisite != null && !currentSelectedCharacter.unlockedNodeIds.Contains(node.prerequisite.nodeId))
             {
-                Debug.Log($"[SkillTree] 거�?: prereq 미충�???{nodeId} requires {node.prerequisite.nodeId}");
+ Debug.Log($"[SkillTree] 거: prereq 미충{nodeId} requires {node.prerequisite.nodeId}");
                 return;
             }
 
@@ -391,21 +382,21 @@ namespace Lsy
 
                 if (sameBranchChoice)
                 {
-                    Debug.Log($"[SkillTree] 거�?: 분기 ?�자?�일 ??{nodeId} vs ?��? 보유 {unlockedNodeId}");
+ Debug.Log($"[SkillTree] 거: 분기 자일 {nodeId} vs 보유 {unlockedNodeId}");
                     return;
                 }
             }
 
             if (currentGold < node.unlockCost)
             {
-                Debug.Log($"[SkillTree] 거�?: 골드 부�????�요 {node.unlockCost}, 보유 {currentGold}");
+ Debug.Log($"[SkillTree] 거: 골드 부요 {node.unlockCost}, 보유 {currentGold}");
                 return;
             }
 
             currentGold -= node.unlockCost;
 
             currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
-            Debug.Log($"<color=green>[SkillTree] 구매 ?�공 ??{nodeId}, ?�액 {currentGold}G</color>");
+ Debug.Log($"<color=green>[SkillTree] 구매 공 {nodeId}, 액 {currentGold}G</color>");
         }
 
         private string GetCurrentCharacterCode()
@@ -417,30 +408,30 @@ namespace Lsy
         }
 
         /// <summary>
-        /// 캐릭?�의 Lv1 ?�드 4�?기본 ?�킬)�?unlockedNodeIds???�동 추�??�니??
-        /// 캐릭??초기 ?�폰 직후, 그리�???캐릭?�로 ?�왑??직후(백업 ?�을 ?? ?�출?�세??
-        /// SyncHashSet.Add ??멱등?��?�?중복 ?�출?�어???�전?�니??
+ /// 캐릭의 Lv1 드 4기본 킬)?unlockedNodeIds동 추니
+ /// 캐릭초기 폰 직후, 그리캐릭로 왑직후(백업 을 출세
+ /// SyncHashSet.Add 멱등중복 출어전니
         /// </summary>
         [Server]
         private void AutoUnlockLv1Nodes(CharacterUnit unit)
         {
             if (unit == null)
             {
-                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: unit??null");
+                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: unitnull");
                 return;
             }
 
             string code = !string.IsNullOrEmpty(unit.heroCode) ? unit.heroCode : unit.characterName;
             if (string.IsNullOrEmpty(code))
             {
-                Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName 모두 비어?�음 ???�킬?�리 매칭 불�?");
+ Debug.LogWarning("[SkillTree] AutoUnlockLv1Nodes: heroCode/characterName 모두 비어음 킬리 매칭 불");
                 return;
             }
 
             CharacterSkillTreeSO tree = SkillTreeRegistry.GetTree(code);
             if (tree == null || tree.allNodes == null)
             {
-                Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree ?�음 ??code={code}");
+ Debug.LogWarning($"[SkillTree] AutoUnlockLv1Nodes: tree 음 code={code}");
                 return;
             }
 
@@ -452,7 +443,7 @@ namespace Lsy
                 if (string.IsNullOrEmpty(node.nodeId)) continue;
                 if (unit.unlockedNodeIds.Add(node.nodeId)) added++;
             }
-            Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 ?�드 {added}�?추�? (�?unlocked={unit.unlockedNodeIds.Count})</color>");
+ Debug.Log($"<color=cyan>[SkillTree] AutoUnlock: code={code}, Lv1 드 {added}추 (unlocked={unit.unlockedNodeIds.Count})</color>");
         }
 
         [Command]
@@ -487,10 +478,10 @@ namespace Lsy
             currentSelectedCharacter.ApplyInformantUpgrade(targetSkillName, npcLevel);
         }
 
-        // ?�?�?� ?�퍼 ?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�?�
+            //퍼 ?
 
         /// <summary>
-        /// DontDestroyOnLoad�??��??�는 PlayerData �???connection???�유??것을 반환?�니??
+ /// DontDestroyOnLoad는 PlayerData ?connection유것을 반환니
         /// </summary>
         [Server]
         private PlayerData FindPlayerDataForConnection()
@@ -505,11 +496,9 @@ namespace Lsy
         }
 
 
-        //���������� �Ѿ�� �κ��丮 ���� ������Ʈ
+            //Ѿ κ丮 Ʈ
 
         /// <summary>
-        /// ������ ����/ȹ�� ���� ��� ȣ��: myInventory �� pd.Info.Items �� ����ȭ�մϴ�.
-        /// ���� ����(Weapon/Armor/Expendables)�� �ǵ帮�� �ʽ��ϴ�.
         /// </summary>
         [Server]
         public void SyncInventoryToPlayerData()
@@ -526,38 +515,35 @@ namespace Lsy
                     pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
                     pd.Info.Gold = currentGold;
                 }
-                Debug.Log($"[SyncInv] {pd.FinalHeroCode} Items={pd.Info?.Items?.Count}");
+                Debug.Log($"[SyncInv] {pd.FinalHeroCode} Items={pd.Info.Items.Count}");
                 break;
             }
         }
 
         public void SyncAllHideoutDataToBattleData()
         {
-            // 1. ���� ���� �ִ� ��� PlayerDataPrefab(Clone) ��ü���� ã���ϴ�.
             PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
             if (allPlayerDatas != null) Debug.Log("[SyncAllHideout] found PlayerDatas");
-            // 2. ã�� ��ü�� �� "�� ��"�� ��� ������Ʈ�մϴ�.
             foreach (var pd in allPlayerDatas)
             {
-                // �� connection�� ���� PlayerData���� Ȯ��
+            //connection PlayerData Ȯ
                 if (pd.connectionToClient != connectionToClient) continue;
 
-                // �� pd�� �� ĳ���� ����Ʈ(_myPlayerDatas)���� �� ��° ĳ�������� Ȯ��
+            //pd ĳ Ʈ(_myPlayerDatas) ° ĳ Ȯ
                 int charIndex = _myPlayerDatas.IndexOf(pd);
                 if (charIndex == -1) continue;
 
-                // 3. ���� ���� (���� ������ �ִ� ĳ���� vs ����� ������)
+            //3. ( ִ ĳ vs )
                 if (charIndex == currentActiveIndex && currentSelectedCharacter != null)
                 {
-                    // [���� Ȱ��ȭ�� ĳ����] �ǽð� EquipmentSlot���� ��������
                     var slot = currentSelectedCharacter.equipmentSlot;
                     if (slot != null && pd.Info != null)
                     {
-                        // ������ ����/��
+            ///
                         pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
                         pd.Info.Armor  = !string.IsNullOrEmpty(slot.equippedArmorId)  ? slot.equippedArmor.EquipInfo  : null;
 
-                        // ������ �Ҹ�ǰ �� Expendables
+            //Ҹǰ Expendables
                         pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in slot.equippedConsumables)
                             if (item.ConsumInfo != null)
@@ -567,7 +553,7 @@ namespace Lsy
                                 pd.Info.Expendables.Add(clone);
                             }
 
-                        // ������ �κ� �� Items
+            //κ Items
                         pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
                         pd.Info.Gold = currentGold;
 
@@ -576,12 +562,11 @@ namespace Lsy
                         var __upgradedSkills = BuildUpgradedSkills(pd.FinalHeroCode, currentSelectedCharacter.mySkills);
                         if (__upgradedSkills != null) pd.Info.Skills = __upgradedSkills;
 
-                        Debug.Log($"[Sync] ���� ĳ����({pd.FinalHeroCode}) �ǽð� ���� ������Ʈ �Ϸ�");
+ Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) ǽð Ʈ Ϸ");
                     }
                 }
                 else if (savedCharacterData.TryGetValue(charIndex, out var saved))
                 {
-                    // [��Ȱ��ȭ�� ĳ����] ������ �����ص� savedCharacterData���� ��������
                     if (pd.Info != null)
                     {
                         pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
@@ -598,13 +583,12 @@ namespace Lsy
 
                         pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
 
-                        Debug.Log($"[Sync] ��� ���� ĳ����({pd.FinalHeroCode}) ����� ���� ������Ʈ �Ϸ�");
+ Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) Ʈ Ϸ");
                     }
                 }
             }
         }
 
-        // [����] ���� �� ȣ���(BattleStartBtn/ReadyOrStartButton/QuestVoteSystem)�� ����ϴ� ���� ����ȭ �������� �����մϴ�.
         // ───────── [정보상 일원화 브릿지] 강화 스킬 빌드 (순수함수) ─────────
 
         /// <summary>

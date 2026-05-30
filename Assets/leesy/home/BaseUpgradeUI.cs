@@ -26,7 +26,7 @@ namespace Lsy
         // NPC ���� ���� �� (������ ��) �ڵ� ȣ��
         private void OnNpcStateChanged()
         {
-            Debug.Log($"<color=cyan>[UpgradeUI] NPC ���� ���� ���� - Lv:{NpcState?.currentLevel} �� ��� ����</color>");
+            Debug.Log($"<color=cyan>[UpgradeUI] NPC ���� ���� ���� - Lv:{NpcState.currentLevel} �� ��� ����</color>");
             RefreshAllRows();
         }
 

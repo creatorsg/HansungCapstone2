@@ -19,10 +19,10 @@ public class RootingSystem : NetworkBehaviour
     class UnitRoot
     {
         public GamePlayerController unit;
-        public int rootId; //������ ���� Id
-        public Image unitText; // ������ ���� �Ʒ� ��Ÿ���� �̹���(�ؽ�Ʈ)
-        public Button unitBTN; //�ڽ��� unit��ư
-        public Image RPCIMG; //���������� �̹���
+        public int rootId; //  Id
+        public Image unitText; //   Ʒ Ÿ ̹(ؽƮ)
+        public Button unitBTN; //ڽ unitư
+        public Image RPCIMG; // ̹
         public UnitRoot() { }
         public UnitRoot(GamePlayerController unit, int rootId, Button unitBTN)
         {
@@ -52,15 +52,15 @@ public class RootingSystem : NetworkBehaviour
     }
 
     [SerializeField] private BattleManager _manager;
-    [SerializeField] private GameObject _panel;    //root�г�
-    [SerializeField] private List<Image> _rootIMG;  //���� �̹���
-    [SerializeField] private List<Button> _rootBTN;    //���� ���� ��ư
+    [SerializeField] private GameObject _panel;    //rootг
+    [SerializeField] private List<Image> _rootIMG;  // ̹
+    [SerializeField] private List<Button> _rootBTN;    //  ư
 
-    [SerializeField] private Transform _unitTF;    //ĳ���� ���� ��ư ��ġ
-    [SerializeField] private List<UnitRoot> _allUnit = new List<UnitRoot>();// Ŭ��� ���� ��ΰ� ������ �ִ� ����� ���� ����Ʈ
-    [SerializeField] private Button _unitPrefab;   //���� ��ư ������
-    [SerializeField] private Image _idPrefab;   // ���� ���� �� ��Ÿ���� ���� id
-    [SerializeField] private List<Transform> _selectTF;  //���� ���� �� ��Ÿ���� ���� id�� ��ġ
+    [SerializeField] private Transform _unitTF;    //ĳ  ư ġ
+    [SerializeField] private List<UnitRoot> _allUnit = new List<UnitRoot>();// Ŭ  ΰ  ִ   Ʈ
+    [SerializeField] private Button _unitPrefab;   // ư 
+    [SerializeField] private Image _idPrefab;   //    Ÿ  id
+    [SerializeField] private List<Transform> _selectTF;  //   Ÿ  id ġ
     [SerializeField] private int[] _selectRootNum = new int[4]; // 각 보상 칸별 선택 인원 수
     [SerializeField] private int endSelectUnit = 0;
 
@@ -71,14 +71,14 @@ public class RootingSystem : NetworkBehaviour
     [SyncVar(hook = nameof(StartRooting))]
     public bool isEndStage = false;
     public int selectedUnit = -1;
-    [Header("���������� ������")]
+    [Header(" ")]
     [SerializeField] private List<int> RPS;
-    [SerializeField] private List<Sprite> RPSImage; // ���������� �̹���
+    [SerializeField] private List<Sprite> RPSImage; //  ̹
     [SerializeField] private Image RPSStartIMG;
 
-    [Header("���� ������")]
-    [SerializeField] private List<RewardInfo> _rootDatas; // ��� ���� ������
-    [SerializeField] private List<RewardInfo> _currentReward; //���� ���� ������
+    [Header(" ")]
+    [SerializeField] private List<RewardInfo> _rootDatas; //   
+    [SerializeField] private List<RewardInfo> _currentReward; //  
     readonly SyncList<int> _currentRewardIndices = new SyncList<int>();
     private void Start() { _panel.SetActive(false); }
 
@@ -117,7 +117,6 @@ public class RootingSystem : NetworkBehaviour
         yield return null; // SyncList 동기화 대기
         InitRooting();
     }
-    // ���ýý��� �ʱ� ������
 
     public void InitRooting()
     {
@@ -138,7 +137,7 @@ public class RootingSystem : NetworkBehaviour
             // itemSO가 있으면 그 아이콘, 없으면 fallbackIcon 사용
             _rootIMG[i].sprite = reward.Icon;
         }
-        // ��� ���ֵ��� ���ư��� ���� ��ư ���� �� ����
+            //ֵ ư ư 
         foreach (var unit in _manager._players)
         {
             var unitBTN = Instantiate(_unitPrefab, _unitTF);
@@ -149,7 +148,6 @@ public class RootingSystem : NetworkBehaviour
             unitBTN.onClick.AddListener(() => OnClickedUnitBTN(capturedIndex));
             Debug.Log(_allUnit.Count - 1);
 
-            //�� �����϶��� Ȱ��ȭ �� Ȱ��ȭ �� �������� ���
             if (unit.isOwned)
             {
                 unitBTN.interactable = true;
@@ -163,15 +161,15 @@ public class RootingSystem : NetworkBehaviour
         }
         RootBTNActivate(false);
     }
-    // ���� ��ư�� ������ �� ������ �̺�Ʈ
+            //ư ̺Ʈ
     public void OnClickedUnitBTN(int unitIdx)
     {
-        Debug.Log("������ ������ id: " + _allUnit[unitIdx].unit.Info.Id + " ������ ������ index: " + unitIdx);
+ Debug.Log(" id: " + _allUnit[unitIdx].unit.Info.Id + " index: " + unitIdx);
         selectedUnit = unitIdx;
         RootBTNActivate(true);
     }
 
-    // ������ ��ư�� ������ �� ������ �̺�Ʈ
+            //ư ̺Ʈ
     public void OnClickedItem(int itemIndex)
     {
         if (selectedUnit == -1) return;
@@ -362,17 +360,17 @@ public class RootingSystem : NetworkBehaviour
             }
         }
     }
-    //���������� ����
+            //
     IEnumerator RockPaperScissors(List<int> RPS)
     {
-        Debug.Log("���������� ����");
+ Debug.Log(" ");
         RpcStartRPS(true);
         yield return new WaitForSeconds(1.0f);
         RpcStartRPS(false);
 
         bool isDraw = true;
         while (isDraw) {
-            Debug.Log("���������� ��");
+ Debug.Log(" ");
             List<int> hands = new List<int>();
             for (int i = 0; i < RPS.Count; i++) hands.Add(UnityEngine.Random.Range(0, 3));
 
@@ -384,21 +382,21 @@ public class RootingSystem : NetworkBehaviour
             bool hasScissors = hands.Exists(x => x == 2);
             int winner = -1;
 
-            if (hasRock && hasPaper && hasScissors) winner = -1; //��ΰ� �� �ٸ���
+            if (hasRock && hasPaper && hasScissors) winner = -1; //ΰ  ٸ
             else if (hasRock && hasScissors) winner = 0;
             else if (hasPaper && hasRock) winner = 1;
             else if (hasScissors && hasPaper) winner = 2;
             else winner = -1;
 
-            if (winner == -1) { Debug.Log("���º� ����"); continue; } // ���ºΰ� ���ý� �ٽ� ����
+ if (winner == -1) { Debug.Log("º "); continue; } // ºΰ ý ٽ 
 
-            // 4. �й��� ���� (�ڿ������� �����ؾ� �ε����� �� ����)
+            //4. й (ڿ ؾ ε )
             for (int i = RPS.Count - 1; i >= 0; i--)
             {
                 if (hands[i] != winner)
                 {
                     int loserIdx = RPS[i];
-                    Debug.Log($"�й��� Ż��: {_allUnit[loserIdx].unit.Info.Id}");
+ Debug.Log($"й Ż: {_allUnit[loserIdx].unit.Info.Id}");
 
                     RpcHideRPSIcon(loserIdx);
                     RPS.RemoveAt(i);
@@ -407,7 +405,7 @@ public class RootingSystem : NetworkBehaviour
             if (RPS.Count <= 1)
             {
                 isDraw = false;
-                Debug.Log("�¸���: " + _allUnit[RPS[0]].unit.Info.Id);
+ Debug.Log("¸: " + _allUnit[RPS[0]].unit.Info.Id);
                 //RpcHideRPSIcon(RPS[0]);
             }
         }
@@ -417,19 +415,19 @@ public class RootingSystem : NetworkBehaviour
     {
         RPSStartIMG.gameObject.SetActive(isStart);
     }
-    // ���������� �̹��� �����ֱ�
+            //̹ ֱ
     [ClientRpc]
     public void RpcShowRPS(List<int> RPS, List<int> hands)
     {
-        Debug.Log("���������� ���");
+ Debug.Log(" ");
         for(int i = 0; i < RPS.Count; i++)
         {
             _allUnit[RPS[i]].RPCIMG.sprite = RPSImage[hands[i]];
             _allUnit[RPS[i]].RPCIMG.gameObject.SetActive(true);
-            Debug.Log("���������� ���:"+ _allUnit[RPS[i]].unit.Info.Id + " hand: "+ hands[i]);
+ Debug.Log(" :"+ _allUnit[RPS[i]].unit.Info.Id + " hand: "+ hands[i]);
         }
     }
-    // ���������� �̹��� ����� ����
+            //̹ 
     [ClientRpc]
     public void RpcHideRPSIcon(int Idx)
     {

@@ -15,7 +15,7 @@ namespace Lsy
         [Header("Confirmation UI")]
         public GameObject confirmButton;
 
-        public void UpdateCharacterUI(/* Á¤º¸´Â ÀÌ ÇÔ¼ö¿¡¼­ ¹Þ½À´Ï´Ù */)
+        public void UpdateCharacterUI(/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½Ï´ï¿½ */)
         {
             if (!gameObject.activeSelf)
                 gameObject.SetActive(true);
@@ -23,9 +23,9 @@ namespace Lsy
             if (confirmButton != null)
                 confirmButton.SetActive(true);
 
-            _nameText.text = "Ä³¸¯ÅÍ";
+            _nameText.text = "Ä³ï¿½ï¿½ï¿½ï¿½";
 
-            Debug.Log("»õ·Î¿î Ä³¸¯ÅÍ Á¤º¸·Î UI ±³Ã¼ ¿Ï·á");
+            Debug.Log("ï¿½ï¿½ï¿½Î¿ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½Ã¼ ï¿½Ï·ï¿½");
         }
     }
 }

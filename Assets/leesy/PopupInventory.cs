@@ -13,10 +13,9 @@ namespace Lsy
 
         public void ClosePopup()
         {
-            // ÀåÂø Á¤º¸ µ¿±âÈ­
             if (PlayerAccount.LocalInstance?.currentSelectedCharacter != null)
             {
-                Debug.Log("µ¿±âÈ­ ÁØºñ");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½");
                 PlayerAccount.LocalInstance.currentSelectedCharacter.CmdSyncEquipmentToPlayerData();
             }
 

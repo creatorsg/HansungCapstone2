@@ -4,31 +4,31 @@ using UnityEngine;
 namespace Lsy
 {
     [System.Serializable]
-    public class PlayerInfo //ÇÃ·¹ÀÌ¾î Á¤º¸
+    public class PlayerInfo //í”Œë ˆì´ì–´ ì •ë³´
     {
-        public int Id;      //ÇÃ·¹ÀÌ¾î id
-        public string Name; //ÀÌ¸§
+        public int Id;      //í”Œë ˆì´ì–´ id
+        public string Name; //ì´ë¦„
         public List<SkillInfo> Skills;
         public List<ItemInfo> Items;
-        public int Lvl;     //·¹º§
-        public int Exp;     //°æÇèÄ¡
-        public float Hp;      //Ã¼·Â
-        public int Atk;     //°ø°İ·Â
-        public int Def;     //¹æ¾î·Â
-        public int Spd;     //½ºÇÇµå
-        public int San;     //Á¤½Å·Â
-        public int Crit;    //Ä¡¸íÅ¸ È®·ü
-        public int Ctm;     //Ä¡¸íÅ¸ °è¼ö
-        public int Dodge;     //È¸ÇÇÀ²
-        public int Acc;     //¸íÁß·ü
-        public int Res;     //»óÅÂÀÌ»óÀúÇ×
+        public int Lvl;     //ë ˆë²¨
+        public int Exp;     //ê²½í—˜ì¹˜
+        public float Hp;      //ì²´ë ¥
+        public int Atk;     //ê³µê²©ë ¥
+        public int Def;     //ë°©ì–´ë ¥
+        public int Spd;     //ìŠ¤í”¼ë“œ
+        public int San;     //ì •ì‹ ë ¥
+        public int Crit;    //ì¹˜ëª…íƒ€ í™•ë¥ 
+        public int Ctm;     //ì¹˜ëª…íƒ€ ê³„ìˆ˜
+        public int Dodge;     //íšŒí”¼ìœ¨
+        public int Acc;     //ëª…ì¤‘ë¥ 
+        public int Res;     //ìƒíƒœì´ìƒì €í•­
 
-        public int WpnId; // ÀåÂø ÁßÀÎ ¹«±â ID
-        public int ArmId; // ÀåÂø ÁßÀÎ ¹æ¾î±¸ ID
-        public int Trk1;  // Àå½Å±¸ ½½·Ô 1
-        public int Trk2;  // Àå½Å±¸ ½½·Ô 2
+        public int WpnId; // ì¥ì°© ì¤‘ì¸ ë¬´ê¸° ID
+        public int ArmId; // ì¥ì°© ì¤‘ì¸ ë°©ì–´êµ¬ ID
+        public int Trk1;  // ì¥ì‹ êµ¬ ìŠ¬ë¡¯ 1
+        public int Trk2;  // ì¥ì‹ êµ¬ ìŠ¬ë¡¯ 2
 
-        public int Gold;  //¼ÒÁöÇÑ °ñµå
+        public int Gold;  //ì†Œì§€í•œ ê³¨ë“œ
     }
 }
 

@@ -5,24 +5,27 @@ namespace Lsy
 {
     public class BlacksmithUI : BaseUpgradeUI
     {
-        [Header("¹«±â ÁÙ ¸ñ·Ï (°ËÁÙ, È°ÁÙ µî)")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½, È°ï¿½ï¿½ ï¿½ï¿½)")]
         public List<BlacksmithWeaponRow> weaponRows = new List<BlacksmithWeaponRow>();
+
+        [Header("ê³ ìœ  íŠ¹ì„± ê°•í™” í–‰")]
+        [Tooltip("UniqueTraitRow ì»´í¬ë„ŒíŠ¸ê°€ ë¶™ì€ ì˜¤ë¸Œì íŠ¸ë¥¼ ì—°ê²°í•˜ì„¸ìš”.")]
+        public UniqueTraitRow uniqueTraitRow;
 
         private void Start()
         {
-            // ÀÎ½ºÆåÅÍ ¿¬°á »óÅÂ ÃÊ±â °ËÁõ
-            if (weaponRows.Count == 0)
-                Debug.LogWarning("[BlacksmithUI] weaponRows°¡ ºñ¾îÀÖ½À´Ï´Ù. ÀÎ½ºÆåÅÍ¿¡¼­ ¿¬°áÇÏ¼¼¿ä.");
+            // weaponRowsì™€ uniqueTraitRow ë‘˜ ë‹¤ ë¹„ì–´ìˆì„ ë•Œë§Œ ê²½ê³ 
+            if (weaponRows.Count == 0 && uniqueTraitRow == null)
+                Debug.LogWarning("[BlacksmithUI] weaponRowsì™€ uniqueTraitRowê°€ ëª¨ë‘ ë¹„ì–´ìˆìŠµë‹ˆë‹¤. Inspectorì—ì„œ ì—°ê²°í•˜ì„¸ìš”.");
 
             foreach (var row in weaponRows)
             {
                 if (row == null)
-                    Debug.LogWarning("[BlacksmithUI] weaponRows¿¡ NULL Ç×¸ñÀÌ ÀÖ½À´Ï´Ù.");
+                    Debug.LogWarning("[BlacksmithUI] weaponRowsì— NULL í•­ëª©ì´ ìˆìŠµë‹ˆë‹¤.");
             }
         }
         protected override IEnumerable<BaseUpgradeRow> GetRows()
         {
-            // [¼öÁ¤] ÇÏÀÌ¾î¶óÅ°¿¡¼­ º¹»çÇÑ ¹«±â row°¡ weaponRows ¸®½ºÆ®¿¡ ºüÁ®µµ °»½Å/Å¬¸¯ ¸®½º³Ê°¡ ¿¬°áµÇµµ·Ï ÀÚ½Ä rowµµ ÇÔ²² »ç¿ëÇÕ´Ï´Ù.
             foreach (var row in weaponRows)
             {
                 if (row != null)
@@ -34,6 +37,10 @@ namespace Lsy
                 if (row != null && !weaponRows.Contains(row))
                     yield return row;
             }
+
+            // ê³ ìœ  íŠ¹ì„± ê°•í™” í–‰ â€” weaponRowsì™€ ë™ì¼í•œ RefreshNodes íë¦„ìœ¼ë¡œ ì²˜ë¦¬ë©ë‹ˆë‹¤.
+            if (uniqueTraitRow != null)
+                yield return uniqueTraitRow;
         }
     }
 }

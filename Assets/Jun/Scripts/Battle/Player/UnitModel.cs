@@ -12,13 +12,13 @@ namespace Jun
         [SerializeField] private PlayerInfo _info;
         [SerializeField] private List<ConsumableInfo> _inventory = new List<ConsumableInfo>();
         Animator anim;
-        public PlayerInfo Info => _info; //�б�����
+        public PlayerInfo Info => _info; //б
 
-        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //���õ� skill
-        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //���õ� ������    
-        private List<int> _selectedTarget = new List<int>();   // Ÿ�ٵ�
-        private bool _isEnemy = true;//Ÿ���� ������ �Ʊ�����
-        private int _targetNum = -1;   //������ Ÿ���� ��
+        [SerializeField]private int _selectedSkill = -1; public int SelectedSkill => _selectedSkill;  //õ skill
+        [SerializeField] private int _selectedItem = -1;  public int SelectedItem => _selectedItem;   //õ     
+        private List<int> _selectedTarget = new List<int>();   // Ÿٵ
+        private bool _isEnemy = true;//Ÿ  Ʊ
+        private int _targetNum = -1;   // Ÿ 
         private TargetType _selectedTargetType = TargetType.SingleEnemy;
         private float _currentHp;
         private float _maxHp;

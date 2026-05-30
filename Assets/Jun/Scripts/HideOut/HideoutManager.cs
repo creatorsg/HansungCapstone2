@@ -12,10 +12,10 @@ public class HideoutManager : NetworkBehaviour
 {
     public static HideoutManager Instance;
 
-    [Header("���� ����Ʈ")]
+    [Header(" Ʈ")]
     public readonly SyncList<PlayerData> _players = new SyncList<PlayerData>();
 
-    [Header("���� ���� ��ġ")]
+    [Header("  ġ")]
     [SerializeField] private List<Image> _spawnPoints;
 
     private void Awake()
@@ -37,7 +37,7 @@ public class HideoutManager : NetworkBehaviour
         }
     }
 
-    //���� �� �÷��̾� �߰�(�����ϱ� ����)
+ // ÷̾ ߰(ϱ )
 
     public void RegisterPlayer(PlayerData pl)
     {
@@ -67,7 +67,7 @@ public class HideoutManager : NetworkBehaviour
     [ClientRpc]
     private void RpcAllPlayersReady()
     {
-        Debug.Log("���� �Ϸ�");
+ Debug.Log(" Ϸ");
     }
 
     [Server]
