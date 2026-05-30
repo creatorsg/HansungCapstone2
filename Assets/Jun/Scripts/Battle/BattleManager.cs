@@ -126,7 +126,16 @@ namespace Jun
         public override void OnStartServer()
         {
             base.OnStartServer();
-
+            //1라운드 적 제외 비활성화
+            for (int i = 0; i < _enemys.Count; i++)
+            {
+                bool isFirstStage = (i == 0);
+                foreach (var enemy in _enemys[i].Enemys)
+                {
+                    if (enemy != null)
+                        enemy.gameObject.SetActive(isFirstStage);
+                }
+            }
             // ������ ���� ������ ������ �ʱ�ȭ 
             _players.Clear();
             _turnList.Clear();
@@ -295,16 +304,8 @@ namespace Jun
             Order = -1; // Ȯ���ϰ� �ʱ�ȭ
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
-
-            // 4단계: 프로토타입 SyncVar 플래그 초기화 (blockNext / knifeStacks)
-            foreach (var p in _players)
-            {
-                if (p == null) continue;
-                p.blockNext = false;
-                p.knifeStacks = 0;
-                Debug.Log($"[Init] {p.Info?.Name} blockNext={p.blockNext} knifeStacks={p.knifeStacks}");
-            }
-
+            // 잠시 확인을 위해
+            //StageClear();
             NextTurn();
         }
         [ClientRpc]
@@ -363,45 +364,25 @@ namespace Jun
             string currentType = _turnList[Order].type;
             int currentNum = _turnList[Order].num;
 
-            // ── 턴 시작 공통 처리: DoT 차감 → 스턴 캡처 → 효과 틱(duration 감소) ──
-            // DoT 데미지와 스턴 판정은 반드시 duration 감소 "전" 상태를 기준으로 한다.
-            bool wasStunned = false;
-            if (currentType == "Player" && currentNum >= 0 && currentNum < _players.Count
-                && _players[currentNum] != null)
+            if (currentType == "Player" && currentNum < _players.Count)
             {
                 var player = _players[currentNum];
-                if (player.Info != null && player.Info.Hp > 0)
+                if (player != null)
                 {
-                    float dot = CombatCalculator.CalcDotDamage(player.Effects);
-                    if (dot > 0f)
-                    {
-                        player.ApplyHpChange(-dot);
-                        Debug.Log($"[DoT] {player.Info.Name} -{dot:F0} HP (남은 {player.Info.Hp:F0})");
-                    }
-                    wasStunned = CombatCalculator.IsStunned(player.Effects);
+                    var next = CombatCalculator.TickEffects(player.Effects);
+                    player.Effects.Clear();
+                    foreach (var e in next) player.Effects.Add(e);
                 }
-                var next = CombatCalculator.TickEffects(player.Effects);
-                player.Effects.Clear();
-                foreach (var e in next) player.Effects.Add(e);
             }
-            else if (currentType == "Enemy" && currentNum >= 0
-                && currentNum < _enemys[StageNum - 1].Enemys.Count
-                && _enemys[StageNum - 1].Enemys[currentNum] != null)
+            else if (currentType == "Enemy" && currentNum < _enemys[StageNum - 1].Enemys.Count)
             {
                 var enemy = _enemys[StageNum - 1].Enemys[currentNum];
-                if (enemy.Info != null && enemy.Info.Hp > 0)
+                if (enemy != null)
                 {
-                    float dot = CombatCalculator.CalcDotDamage(enemy.Effects);
-                    if (dot > 0f)
-                    {
-                        enemy.GetComponent<EnemyModel>().Damaged(dot);
-                        Debug.Log($"[DoT] {enemy.Info.Name} -{dot:F0} HP (남은 {enemy.Info.Hp:F0})");
-                    }
-                    wasStunned = CombatCalculator.IsStunned(enemy.Effects);
+                    var next = CombatCalculator.TickEffects(enemy.Effects);
+                    enemy.Effects.Clear();
+                    foreach (var e in next) enemy.Effects.Add(e);
                 }
-                var next = CombatCalculator.TickEffects(enemy.Effects);
-                enemy.Effects.Clear();
-                foreach (var e in next) enemy.Effects.Add(e);
             }
 
             Debug.Log("남은 적 수: " + EnemyNum);
@@ -412,7 +393,7 @@ namespace Jun
                 return;
             }
 
-            // 죽은 유닛 턴 스킵 (DoT로 사망했을 수 있음)
+            // 죽은 유닛 턴 스킵
             if (currentType == "Player")
             {
                 if (currentNum < 0 || currentNum >= _players.Count ||
@@ -444,15 +425,6 @@ namespace Jun
                     NextTurn();
                     return;
                 }
-            }
-
-            // ── 스턴 턴 스킵 (플레이어·적 공통) ──
-            // duration 감소 전에 캡처한 wasStunned 기준 → 1턴 스턴도 정확히 1턴 스킵.
-            if (wasStunned)
-            {
-                Debug.Log($"[NextTurn] {currentType} {currentNum} 스턴 → 턴 스킵");
-                NextTurn();
-                return;
             }
 
             RpcChangeTurn(currentType, currentNum);
@@ -490,7 +462,13 @@ namespace Jun
                 yield break;
             }
 
-            // (스턴 턴 스킵은 NextTurn 공통 처리로 이동됨 — 여기 도달했다면 스턴 아님)
+            // 스턴 체크
+            if (CombatCalculator.IsStunned(enemyCtrl.Effects))
+            {
+                Debug.Log($"[ServerEnemyTurn] {enemyCtrl.Info.Name} 스턴 상태 → 스킵");
+                NextTurn();
+                yield break;
+            }
 
             // 살아있는 플레이어 체크
             if (GetAlivePlayers().Count == 0)
@@ -996,6 +974,24 @@ namespace Jun
         {
             go.SetActive(false);
         }
+        [ClientRpc]
+        private void RpcActivateStageEnemies(int stageIndex)
+        {
+            foreach (var enemy in _enemys[stageIndex].Enemys)
+            {
+                if (enemy != null)
+                    enemy.gameObject.SetActive(true);
+            }
+        }
+
+        [ClientRpc]
+        private void RpcClearTurnUI()
+        {
+            foreach (var ui in _turnUIList)
+                if (ui != null) Destroy(ui.gameObject);
+            _turnUIList.Clear();
+        }
+
         public void NextStage()
         {
             Debug.Log("NextStage");
@@ -1003,12 +999,45 @@ namespace Jun
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
-            StartCoroutine(StageClearDelay()); 
+            StartCoroutine(NextStageRoutine()); 
         }
-        private IEnumerator StageClearDelay()
+        [Server]
+        private IEnumerator NextStageRoutine()
         {
-            yield return new WaitForSeconds(2.0f);  
-            StageClear();
+            yield return new WaitForSeconds(2.0f);
+
+            if (_stageNum < _enemys.Count)
+            {
+                _stageNum++;
+
+                // 기존 적 턴 항목 제거, 플레이어 항목만 유지
+                _turnList.RemoveAll(t => t.type == "Enemy");
+
+                // 새 스테이지 적 추가
+                EnemyNum = _enemys[_stageNum - 1].Enemys.Count;
+                for (int i = 0; i < _enemys[_stageNum - 1].Enemys.Count; i++)
+                {
+                    var ec = _enemys[_stageNum - 1].Enemys[i].GetComponent<EnemyController>();
+                    _turnList.Add(new TurnData("Enemy", ec.Info.Spd, i));
+                }
+
+                // 클라이언트에 적 활성화 + 턴 UI 갱신
+                RpcActivateStageEnemies(_stageNum - 1);
+                RpcClearTurnUI();
+
+                yield return new WaitForSeconds(0.5f);
+
+                Order = -1;
+                _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
+                RpcTurnListUpdate(_turnList.ToArray());
+
+                yield return new WaitForSeconds(0.5f);
+                NextTurn();
+            }
+            else
+            {
+                StageClear();  // 마지막 스테이지 클리어 → 승리
+            }
         }
         public void StageClear()
         {
@@ -1034,6 +1063,7 @@ namespace Jun
         [ClientRpc]
         private void RpcShowBattleResult(bool isVictory, int totalPlayers)
         {
+            Debug.Log($"[RpcShowBattleResult] 호출됨 isVictory={isVictory} | panel={_battleResultPanel != null}");
             if (_battleResultPanel != null)
                 _battleResultPanel.Show(isVictory, totalPlayers);
         }

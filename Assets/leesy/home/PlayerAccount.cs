@@ -172,7 +172,16 @@ namespace Lsy
                 //savedCharacterData[0] = new CharacterSaveData { gold = currentGold };
                 var initSave = new CharacterSaveData { gold = currentGold };
                 foreach (var item in activeUnit.myInventory)
-                    initSave.inventory.Add(item); 
+                    initSave.inventory.Add(item);
+
+                // ¼Ò¸ðÇ° ½½·Ôµµ ÃÊ±â ÀúÀå¿¡ Æ÷ÇÔ
+                var initSlot = activeUnit.equipmentSlot;
+                if (initSlot != null)
+                {
+                    foreach (var item in initSlot.equippedConsumables)
+                        initSave.equippedConsumables.Add(item);
+                }
+
                 savedCharacterData[0] = initSave;
                 Debug.Log($"[PlayerAccount] PlayerData ê¸°ë°˜ ì´ˆê¸°?? code={_myPlayerDatas[0].FinalHeroCode}, pos={_myPlayerDatas[0].FinalHeroPos}");
             }
@@ -552,7 +561,11 @@ namespace Lsy
                         pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in slot.equippedConsumables)
                             if (item.ConsumInfo != null)
-                                for (int i = 0; i < item.amount; i++) pd.Info.Expendables.Add(item.ConsumInfo);
+                            {
+                                ConsumableInfo clone = item.ConsumInfo.Clone();
+                                clone.amount = item.amount;  
+                                pd.Info.Expendables.Add(clone);
+                            }
 
                         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ ï¿½ï¿½ Items
                         pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
@@ -577,7 +590,11 @@ namespace Lsy
                         pd.Info.Expendables = new List<ConsumableInfo>();
                         foreach (var item in saved.equippedConsumables)
                             if (item.ConsumInfo != null)
-                                for (int i = 0; i < item.amount; i++) pd.Info.Expendables.Add(item.ConsumInfo);
+                            {
+                                ConsumableInfo clone = item.ConsumInfo.Clone();
+                                clone.amount = item.amount;
+                                pd.Info.Expendables.Add(clone);
+                            }
 
                         pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
 
