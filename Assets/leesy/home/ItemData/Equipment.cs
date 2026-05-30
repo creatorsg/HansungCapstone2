@@ -10,5 +10,16 @@ namespace Lsy
         public ItemType itemType = ItemType.Weapon;
         public EqpInfo EqpItem;
         public List<int> priceLevel = new List<int> { 300, 200, 100 };
+
+        public InventoryItem ToInventoryItem(int amount = 1)
+        {
+            return new InventoryItem
+            {
+                itemName = EqpItem.Name,
+                amount = amount,
+                Type = itemType,
+                EquipInfo = EqpItem
+            };
+        }
     }
 }

@@ -44,10 +44,11 @@ public class RootingSystem : NetworkBehaviour
         public bool    isEquipment; // 장비여부 (true면 아이템, false면 골드)
         public int     amount;      // 골드일 경우 금액 (isEquipment=false 일 때 사용)
         public ItemSO  itemSO;      // 아이템 데이터 (isEquipment=true 일 때 연결)
+        public Equipment equipment;
         public Sprite  fallbackIcon; // itemSO가 없을 때(골드 등) 사용할 아이콘
 
         /// <summary>표시할 아이콘. itemSO가 있으면 우선 사용, 없으면 fallbackIcon.</summary>
-        public Sprite Icon => itemSO != null ? itemSO.icon : fallbackIcon;
+        public Sprite Icon => equipment?.EqpItem?.icon ?? fallbackIcon;
     }
 
     [SerializeField] private BattleManager _manager;
@@ -334,14 +335,14 @@ public class RootingSystem : NetworkBehaviour
             var winner = _manager._players[winnerIdx];
             if (winner == null) continue;
 
-            if (reward.isEquipment && reward.itemSO != null)
+            if (reward.isEquipment && reward.equipment != null)
             {
                 // ItemSO → InventoryItem 변환 후 Info.Items에 추가
                 var playerInfo = winner.Info;
                 if (playerInfo.Items == null) playerInfo.Items = new List<InventoryItem>();
-                playerInfo.Items.Add(reward.itemSO.ToInventoryItem(1));
+                playerInfo.Items.Add(reward.equipment.ToInventoryItem(1));
                 winner.Info = playerInfo;
-                Debug.Log($"[보상] {winner.Info.Name} ← {reward.itemSO.itemName} 획득");
+                Debug.Log($"[보상] {winner.Info.Name} ← {reward.equipment.EqpItem.Name} 획득");
 
                 // 씬 전환 후에도 살아남는 PlayerData에 즉시 반영
                 winner.FlushInfoToPlayerData();

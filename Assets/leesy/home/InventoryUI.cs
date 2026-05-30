@@ -51,7 +51,13 @@ namespace Lsy
                     Consum consumData = ItemManager.Instance.GetConsumData(item.itemName);
                     consumInfo = consumData != null ? consumData.ConsumItem : null;
                 }
-
+                
+                if (consumInfo != null && consumInfo.icon == null && ItemManager.Instance != null)
+                {
+                    Consum consumData = ItemManager.Instance.GetConsumData(item.itemName);
+                    if (consumData?.ConsumItem != null)
+                        consumInfo.icon = consumData.ConsumItem.icon;
+                }
                 if (equipInfo == null && item.Type != ItemType.Consumable && ItemManager.Instance != null)
                     equipInfo = ItemManager.Instance.GetEqpData(item.itemName);
 

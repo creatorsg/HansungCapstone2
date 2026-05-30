@@ -190,8 +190,24 @@ namespace Lsy
                     Debug.Log($"[ìºë¦­?? ë°©ì–´êµ??ë™ ?¥ì°©: {pd.Info.Armor.Name}");
                 }
 
-                // [?˜ì •] Inspector ê¸°ë³¸ ?Œëª¨?ˆì? ???¥ì°© ?¬ë¡¯???ë™ ?¥ì°©?˜ì? ?ŠìŠµ?ˆë‹¤.
-                // ?„íˆ¬???Œëª¨?ˆì? Inventory?ì„œ ?¥ì°©??equipmentSlot.equippedConsumablesë§??„ë‹¬?©ë‹ˆ??
+                // ¼Ò¸ğÇ° ÀÚµ¿ º¹¿ø
+                equipmentSlot.equippedConsumables.Clear();
+                if (pd.Info.Expendables != null)
+                {
+                    foreach (var consumInfo in pd.Info.Expendables)
+                    {
+                        if (consumInfo == null || consumInfo.amount <= 0) continue;
+                        var consumItem = new InventoryItem
+                        {
+                            itemName = consumInfo.Name,
+                            Type = ItemType.Consumable,
+                            ConsumInfo = consumInfo,
+                            amount = consumInfo.amount
+                        };
+                        equipmentSlot.EquipConsumable(consumItem);
+                        Debug.Log($"[Ä³¸¯ÅÍ] ¼Ò¸ğÇ° ÀÚµ¿ º¹¿ø: {consumInfo.Name} x{consumInfo.amount}");
+                    }
+                }
             }
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
@@ -199,7 +215,7 @@ namespace Lsy
 
             // ?€?€ ?¥ë¹„ ?ë™ ?¥ì°© ?„ë£Œ ???¤íƒ¯ ?¬ê³„???€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€?€
             // ì´ˆê¸° ?¥ì°© ?íƒœë¥?ê¸°ì??¼ë¡œ pd.Info??Hp/Atk/Def ?±ì„ ì¦‰ì‹œ ê°±ì‹ ?©ë‹ˆ??
-            ServerSyncToPlayerData();
+            ServerSyncToPlayerData(pd);
 
             Debug.Log($"<color=green>[ìºë¦­?? ì´ˆê¸°???„ë£Œ (PlayerData): {characterName} / code={pd.FinalHeroCode} (HP:{maxHp})</color>");
         }
@@ -526,7 +542,7 @@ namespace Lsy
         ///   ?´ë ‡ê²??´ì•¼ Home?¬ì—???¥ë¹„ë¥?ë°”ê? ?Œë§ˆ??ë°°í? ì§„ì… ?¤íƒ¯???•í™•?´ì§‘?ˆë‹¤.
         /// </summary>
         [Server]
-        private void ServerSyncToPlayerData()
+        private void ServerSyncToPlayerData(PlayerData providedPd = null)
         {
             if (equipmentSlot == null)
             {
@@ -535,14 +551,17 @@ namespace Lsy
             }
 
             // connectionToClient + FinalHeroCode ?????¼ì¹˜?˜ëŠ” PlayerData ì°¾ê¸°
-            PlayerData pd = null;
-            foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+            PlayerData pd = providedPd;
+            if (pd == null)
             {
-                if (player.connectionToClient == connectionToClient &&
-                    player.FinalHeroCode      == heroCode)
+                foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
                 {
-                    pd = player;
-                    break;
+                    if (player.connectionToClient == connectionToClient &&
+                        player.FinalHeroCode == heroCode)
+                    {
+                        pd = player;
+                        break;
+                    }
                 }
             }
 

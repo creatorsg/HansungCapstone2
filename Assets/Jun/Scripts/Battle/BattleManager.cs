@@ -296,8 +296,8 @@ namespace Jun
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
             // 잠시 확인을 위해
-            StageClear();
-            //NextTurn();
+            //StageClear();
+            NextTurn();
         }
         [ClientRpc]
         private void RpcTurnListUpdate(TurnData[] turnDataArray)

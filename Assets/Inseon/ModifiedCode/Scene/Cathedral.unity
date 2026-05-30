@@ -5552,22 +5552,27 @@ MonoBehaviour:
   - isEquipment: 1
     amount: 0
     itemSO: {fileID: 11400000, guid: 9d795266a157f544bad4259c156578ce, type: 2}
+    equipment: {fileID: 11400000, guid: 9c74fb1bd08d9b24992057a90166c12e, type: 2}
     fallbackIcon: {fileID: 0}
   - isEquipment: 1
     amount: 0
     itemSO: {fileID: 11400000, guid: 9e3a4142e13f4854d8cac8acf78c7bc9, type: 2}
+    equipment: {fileID: 11400000, guid: 47549fdfa9cd9f74f8f024747c9f05db, type: 2}
     fallbackIcon: {fileID: 0}
   - isEquipment: 1
     amount: 0
     itemSO: {fileID: 11400000, guid: 317366cbd66c9d64f95acab53061af48, type: 2}
+    equipment: {fileID: 11400000, guid: 5a766f6b4da4bce4d847cd5de82cbb5c, type: 2}
     fallbackIcon: {fileID: 0}
   - isEquipment: 0
     amount: 500
     itemSO: {fileID: 0}
+    equipment: {fileID: 0}
     fallbackIcon: {fileID: -8987809590498007947, guid: 4d3aa5a31cbb5e346990c42f3f4548d3, type: 3}
   - isEquipment: 1
     amount: 0
     itemSO: {fileID: 11400000, guid: a07ded84ef1621c4db6f6555e92694bd, type: 2}
+    equipment: {fileID: 11400000, guid: ad8c446b6a7f27443a49997827e21195, type: 2}
     fallbackIcon: {fileID: 0}
   _currentReward: []
 --- !u!4 &639979442
