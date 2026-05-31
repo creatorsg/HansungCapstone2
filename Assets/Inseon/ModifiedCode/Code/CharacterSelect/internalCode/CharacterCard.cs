@@ -25,6 +25,7 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [Header("스프라이트")]
     [Tooltip("선택 화면 카드 아이콘 및 프리뷰에 표시될 스프라이트")]
     [SerializeField] private Sprite cardIcon;
+    [SerializeField] private Sprite previewSprite;
 
     [Tooltip("배틀 씬에서 유닛에 적용할 스프라이트 (cardIcon과 다른 이미지를 쓰고 싶을 때만 채우세요. 비워두면 cardIcon을 사용합니다.)")]
     [SerializeField] private Sprite battleSprite;
@@ -66,6 +67,7 @@ public class CharacterCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public string        CharacterCode    => characterCode;
     public Sprite        CardIcon         => cardIcon;
+    public Sprite        PreviewSprite    => previewSprite;
     /// <summary>배틀 씬 전용 스프라이트. 비어있으면 CardIcon을 대신 사용합니다.</summary>
     public Sprite        BattleSprite     => battleSprite != null ? battleSprite : cardIcon;
     public GameObject    PlayerDataPrefab => playerDataPrefab;

@@ -795,7 +795,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C003
-  cardIcon: {fileID: -5016190411863081148, guid: 324ce56a31c97df4190c11c085bc704a, type: 3}
+  cardIcon: {fileID: -4296760176796813495, guid: ff6a11751bb6df240b6de7bdfa56a6e3, type: 3}
+  previewSprite: {fileID: -5016190411863081148, guid: 324ce56a31c97df4190c11c085bc704a, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 80961da7912ed7f498f5f84ec2930479, type: 3}
@@ -1168,7 +1169,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C002
-  cardIcon: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
+  cardIcon: {fileID: 2899306232824305821, guid: fed9790daa9c7324e9dc0d8005447368, type: 3}
+  previewSprite: {fileID: 5062390320939746380, guid: b5c2b035a931c164c9742d9773969513, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: b8bcd3a3c3526dc4ba400d752b178efe, type: 3}
@@ -1778,6 +1780,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: 
   cardIcon: {fileID: 0}
+  previewSprite: {fileID: 0}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 0}
   battleUnitPrefab: {fileID: 0}
@@ -2029,7 +2032,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 200}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &461060862
 MonoBehaviour:
@@ -2308,6 +2311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: 
   cardIcon: {fileID: 0}
+  previewSprite: {fileID: 0}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 0}
   battleUnitPrefab: {fileID: 0}
@@ -2493,7 +2497,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 200}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &634337891
 MonoBehaviour:
@@ -3381,8 +3385,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 97, y: -54}
-  m_SizeDelta: {x: 440, y: 830}
+  m_AnchoredPosition: {x: 85, y: -50}
+  m_SizeDelta: {x: 500, y: 830}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1208481571
 MonoBehaviour:
@@ -3404,7 +3408,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 29215518958048233, guid: 4b4348f55df197f4bbde7d9ec8048f9f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3998,7 +4002,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C004
-  cardIcon: {fileID: 2648219815020983868, guid: aab1ca1ebcc4fce49b4ecb3a7e57e961, type: 3}
+  cardIcon: {fileID: 2498668864523337785, guid: 6759e10bea941904e9f3d454dec537ef, type: 3}
+  previewSprite: {fileID: 2648219815020983868, guid: aab1ca1ebcc4fce49b4ecb3a7e57e961, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 93828e55126f8134abaea6e091ec4e0b, type: 3}
@@ -4453,7 +4458,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -850, y: -317}
+  m_AnchoredPosition: {x: -858, y: -425}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1477845545
@@ -4473,7 +4478,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 6
   m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
@@ -4654,7 +4659,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 200}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1506547265
 MonoBehaviour:
@@ -5389,7 +5394,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 151.6757, y: 200}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1830944969
 MonoBehaviour:
@@ -6094,7 +6099,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterCard
   characterCode: C001
-  cardIcon: {fileID: -2592082216237500044, guid: 9331395b1e30f4d4783a5e6e334d7708, type: 3}
+  cardIcon: {fileID: -2007969409190066755, guid: 41832fb6c4702fd4ca4da58e6564cd54, type: 3}
+  previewSprite: {fileID: -2592082216237500044, guid: 9331395b1e30f4d4783a5e6e334d7708, type: 3}
   battleSprite: {fileID: 0}
   playerDataPrefab: {fileID: 2071198089752853019, guid: 7dc11cb1ce182dc409f1f6ff1df234d8, type: 3}
   battleUnitPrefab: {fileID: 440238353247304416, guid: 519eb89d86857f840a00f7fe9075fbc0, type: 3}
