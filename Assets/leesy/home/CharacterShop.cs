@@ -242,6 +242,20 @@ namespace Lsy
             bool success = unit.ApplySkillUpgrade(skillIndex, targetLevel, skillId);
             if (success)
             {
+                bool synced = false;
+                foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+                {
+                    if (pd.connectionToClient != sender) continue;
+                    if (pd.FinalHeroCode != unit.heroCode) continue;
+
+                    synced = PlayerAccount.SyncSkillUpgradesToPlayerData(pd, unit.mySkills, "shop");
+                    break;
+                }
+                if (!synced)
+                    synced = account.SyncCurrentCharacterSkillUpgradesToPlayerData();
+                if (!synced)
+                    Debug.LogWarning($"[CharacterShop] SkillBridge sync failed after upgrade. hero={unit.heroCode}, idx={skillIndex}, lv={targetLevel}");
+
                 account.currentGold -= price;
                 Debug.Log($"<color=green>[CharacterShop][Server] 스킬 습득 성공! skillId:{skillId}</color>");
                 SendNotification(sender, $"[{skillId}] 스킬 습득 완료!");

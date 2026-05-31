@@ -419,6 +419,7 @@ namespace Lsy
                 temp.skillName = skillId;
                 temp.currentLevel = targetLevel;
                 mySkills[i] = temp;
+                ServerSyncToPlayerData();   // 강화 즉시 PlayerData 클론에 스킬 반영
                 return true;
             }
 
@@ -430,6 +431,7 @@ namespace Lsy
                 skillName = skillId,
                 currentLevel = targetLevel
             });
+            ServerSyncToPlayerData();   // 강화 즉시 PlayerData 클론에 스킬 반영
             return true;
         }
         [Server]
@@ -611,7 +613,8 @@ namespace Lsy
                 return;
             }
 
-            var info = pd.Info;
+            var info = PlayerAccount.ClonePlayerInfo(pd.Info);
+            if (info == null) info = new Jun.PlayerInfo();
             int savedGold = info.Gold; //  
             //1. 기본 탯 설(CharacterDatabase 기) ?
             //비 탯적 도기마기본값으초기합다.
@@ -688,6 +691,11 @@ namespace Lsy
             //7. 착 비 참조 ?
             info.Weapon = curWeapon;
             info.Armor  = curArmor;
+
+            // [정보상 일원화 브릿지] 강화 스킬을 base에서 매번 재구성해 PlayerData(DontDestroyOnLoad 클론)에 즉시 반영.
+            // 항상 base에서 다시 빌드 → idempotent(여러 번 호출해도 누적 X). null이면 기존 Skills 유지.
+            var upgradedSkills = PlayerAccount.BuildUpgradedSkills(heroCode, mySkills);
+            if (upgradedSkills != null) info.Skills = upgradedSkills;
 
             pd.Info = info;
 
