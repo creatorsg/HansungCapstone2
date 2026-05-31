@@ -118,6 +118,7 @@ namespace Jun
                 yield return null;
             }
             transform.position = targetPos;
+            _view.UpdateOriginPos();
         }
 
         /// <summary>
@@ -268,7 +269,7 @@ namespace Jun
         {
             if (!isOwned) return;
             IsMovePos = true;
- Debug.Log("ڸ̵" + IsMovePos);
+            Debug.Log("ڸ̵" + IsMovePos);
         }
             //ٲ (ٸ Ʊ ) Ŭ 
         public void OnClickedUnit()

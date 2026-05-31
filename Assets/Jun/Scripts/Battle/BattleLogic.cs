@@ -94,11 +94,12 @@ namespace Jun
 
                             enemyModel.Damaged(damage);
                             enemyController.RpcPlaySkillAnim("Damaged");
+                            manager.RpcOnHitEffect(isCrit);
 
                             // 데미지 + 상태이상 동시 적용 (1단계 인프라가 DoT/스턴 자동 처리)
                             if (isHit && skill.EffectDuration > 0)
-                                enemyController.AddEffect(
-                                    new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
+                            enemyController.AddEffect(
+                                 new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
 
                             manager.RpcShowCombatResult(new CombatResult
                             {
@@ -173,6 +174,7 @@ namespace Jun
 
                 if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
+                    manager.RpcStartAttackEffect();
                     caster.RpcPlaySkillAnim(skill.anim); // anim 있을 때만 호출
                                                         // 턴 종료는 EndAnim Animation Event가 처리
                 }
@@ -404,6 +406,7 @@ namespace Jun
                         else
                         {
                             player.RpcPlayDamagedAnim();
+                            manager.RpcOnHitEffect(isCrit);
                         }
 
                         manager.RpcShowCombatResult(new CombatResult

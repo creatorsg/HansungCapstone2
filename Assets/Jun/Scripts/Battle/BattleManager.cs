@@ -90,6 +90,10 @@ namespace Jun
         [Header(" ý")]
         [SerializeField] private List<GameObject> _pingList = new List<GameObject>();
 
+        [SerializeField] public  Transform _plAnimPos;
+        [SerializeField] public  Transform _emAnimPos;
+
+
 
 
         public int Order = -1;
@@ -950,6 +954,23 @@ namespace Jun
             string label = result.isCrit ? $"CRIT {result.value:F0}!" : $"{result.value:F0}";
 
             Debug.Log($"[CLIENT] {label} isEnemy:{result.isEnemy} idx:{result.targetIndex}");
+        }
+        [ClientRpc]
+        public void RpcStartAttackEffect()
+        {
+            BattleEffectManager.Instance?.StartAttack();
+        }
+
+        [ClientRpc]
+        public void RpcOnHitEffect(bool isCrit)
+        {
+            BattleEffectManager.Instance?.OnHit(isCrit);
+        }
+
+        [ClientRpc]
+        public void RpcEndAttackEffect()
+        {
+            BattleEffectManager.Instance?.EndAttack();
         }
         /// <summary>
         /// 서버에서 즉시 EnemyNum을 감소시키고, 0이 되면 바로 NextStage를 호출합니다.

@@ -21,6 +21,9 @@ namespace Jun
         // 애니메이션처리 코루틴
         private Coroutine _hpCoroutine;
         private Coroutine _pulseCoroutine;
+        // 애니메이션 전 기존 정보 저장
+        private Vector3 _originPos;
+        private Vector3 _originScale;
         void Awake()
         {
             anim = GetComponentInChildren<Animator>();
@@ -45,6 +48,8 @@ namespace Jun
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
+            _originPos = transform.position;
+            _originScale = transform.localScale;
             SetButtonsInteractable(false, SkillBtn);
             SetButtonsInteractable(false, ItemBtn);
             SetButtonsInteractable(false, EnemyBtn);
@@ -67,6 +72,11 @@ namespace Jun
                 rt.localScale = new Vector3(scaleX, scaleY, 1f);
                 yield return null;
             }
+        }
+        public void UpdateOriginPos()
+        {
+            _originPos = transform.position;
+            _originScale = transform.localScale;
         }
         public void SetButtonsInteractable(bool state, List<Button> Btn) // 버튼 활성화 설정
         {
@@ -96,12 +106,53 @@ namespace Jun
         {
             if (anim == null) { Debug.LogError("anim null!"); return; }
             Debug.Log($"SkillAnim 호출: {skill}");
+            //anim.SetBool(skill, true);
+            StartCoroutine(WindUpThenAttack(skill));
+        }
+        private IEnumerator WindUpThenAttack(string skill)
+        {
+            StartCoroutine(StepForward());  //앞으로 나오기
             anim.SetBool(skill, true);
+            anim.speed = 0f;                              // 첫 프레임에서 동결
+            yield return new WaitForSecondsRealtime(0.15f); // 0.15초 홀드
+            anim.speed = 1f;                              // 이후 공격모션 재생
         }
         public void EndAnim(string name)
         {
             anim.SetBool(name, false);
+            StartCoroutine(StepBack());
+            BattleEffectManager.Instance?.EndAttack();
             EndMyTurn?.Invoke();
+        }
+        private IEnumerator StepForward()
+        {
+            Vector3 targetPos = BattleManager.Instance._plAnimPos.position; // 오른쪽(적 방향)
+            Vector3 targetScale = _originScale * 2f;
+
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.unscaledDeltaTime / 0.12f;
+                transform.position = Vector3.Lerp(_originPos, targetPos, Mathf.SmoothStep(0, 1, t));
+                transform.localScale = Vector3.Lerp(_originScale, targetScale, t);
+                yield return null;
+            }
+        }
+        private IEnumerator StepBack()
+        {
+            Vector3 fromPos = transform.position;
+            Vector3 fromScale = transform.localScale;
+
+            float t = 0f;
+            while (t < 1f)
+            {
+                t += Time.unscaledDeltaTime / 0.2f;
+                transform.position = Vector3.Lerp(fromPos, _originPos, t);
+                transform.localScale = Vector3.Lerp(fromScale, _originScale, t);
+                yield return null;
+            }
+            transform.position = _originPos;
+            transform.localScale = _originScale;
         }
         private IEnumerator SmoothHpBar(float target)
         {
