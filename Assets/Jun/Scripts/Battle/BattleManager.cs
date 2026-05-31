@@ -44,7 +44,7 @@ namespace Jun
         [SerializeField] private TextMeshProUGUI _name; public TextMeshProUGUI Name => _name;
 
         [Header("스테이지")]
-        [SerializeField] private int _stageNum = 1; public int StageNum => _stageNum;
+        [SyncVar][SerializeField] private int _stageNum = 1; public int StageNum => _stageNum;
         [SerializeField] private List<BattleEnemyInfo> _enemys; public List<BattleEnemyInfo> Enemys => _enemys;
         [Header("적 정보창 UI")]
         [SerializeField] private GameObject _enemyPanel; public GameObject EnemyPanel => _enemyPanel;
@@ -93,8 +93,8 @@ namespace Jun
         [SerializeField] public  Transform _plAnimPos;
         [SerializeField] public  Transform _emAnimPos;
 
-
-
+        [SerializeField] private RoundUI _roundUI;
+        private bool _isChangingStage = false;
 
         public int Order = -1;
 
@@ -136,8 +136,13 @@ namespace Jun
                 bool isFirstStage = (i == 0);
                 foreach (var enemy in _enemys[i].Enemys)
                 {
-                    if (enemy != null)
-                        enemy.gameObject.SetActive(isFirstStage);
+                    if (enemy == null) continue;
+                    foreach (var sr in enemy.GetComponentsInChildren<SpriteRenderer>())
+                        sr.enabled = isFirstStage;
+                    foreach (var col in enemy.GetComponentsInChildren<Collider2D>())
+                        col.enabled = isFirstStage;
+                    foreach (var canvas in enemy.GetComponentsInChildren<Canvas>())
+                        canvas.enabled = isFirstStage;
                 }
             }
             _players.Clear();
@@ -308,6 +313,8 @@ namespace Jun
             RpcTurnListUpdate(_turnList.ToArray());
             // 잠시 확인을 위해
             //StageClear();
+            _turnUI.text = $"Round {_stageNum}";
+            RpcShowRound(_stageNum);
             NextTurn();
         }
         [ClientRpc]
@@ -358,6 +365,7 @@ namespace Jun
         [Server]
         public void NextTurn()
         {
+            if (_isChangingStage) return; 
             //̶Ʈ 
             RpcSetHighlight(Order, false);
             //// 방금 턴 끝난 유닛 Effects duration 감소
@@ -440,7 +448,11 @@ namespace Jun
                 StartCoroutine(ServerEnemyTurn(currentNum));
             }
         }
-
+        [ClientRpc]
+        void RpcShowRound(int round)
+        {
+            _roundUI.ShowRound(round);
+        }
         /// <summary>
         /// 서버 전용. 적 AI 판단 → 스킬 실행 → 애니메이션 대기 → 다음 턴.
         /// </summary>
@@ -459,7 +471,7 @@ namespace Jun
             }
 
             var enemyCtrl = enemyList[enemyIndex];
-            if (enemyCtrl == null || enemyCtrl.Info == null || enemyCtrl.Info.Hp <= 0)
+            if (enemyCtrl.Info.Hp <= 0)
             {
                 Debug.Log("[ServerEnemyTurn] 죽은 적의 턴 → 스킵");
                 NextTurn();
@@ -528,7 +540,7 @@ namespace Jun
             var enemyList = _enemys[StageNum - 1].Enemys;
             foreach (var e in enemyList)
             {
-                if (e != null && e.Info != null && e.Info.Hp > 0 && e.gameObject.activeSelf)
+                if (e != null && e.Info != null && e.Info.Hp > 0)
                     alive.Add(e);
             }
             return alive;
@@ -545,7 +557,7 @@ namespace Jun
             if (typeTurn == "Enemy")
             {
                 CurrentTurnUnit = null;
-                _turnUI.text = "Enemy" + turnNum.ToString();
+                //_turnUI.text = "Enemy" + turnNum.ToString();
                 _unitPanel.interactable = false;
                 _unitPanel.blocksRaycasts = false;
                 _unitPanel.alpha = 0.5f;
@@ -567,7 +579,7 @@ namespace Jun
                 }
 
                 CurrentTurnUnit = targetPlayer;
-                _turnUI.text = "Turn: " + targetPlayer.Info.Name;
+                //_turnUI.text = "Turn: " + targetPlayer.Info.Name;
 
                 targetPlayer.MyTurn(true);
 
@@ -986,6 +998,7 @@ namespace Jun
             if (EnemyNum <= 0)
             {
                 Debug.Log("[BattleManager] 모든 적 사망 → NextStage");
+                _isChangingStage = true;
                 NextStage();
             }
         }
@@ -993,15 +1006,25 @@ namespace Jun
         [ClientRpc]
         public void RcpEnemyDead(GameObject go)
         {
-            go.SetActive(false);
+            foreach (var sr in go.GetComponentsInChildren<SpriteRenderer>())
+                sr.enabled = false;
+            foreach (var col in go.GetComponentsInChildren<Collider2D>())
+                col.enabled = false;
+            foreach (var canvas in go.GetComponentsInChildren<Canvas>())
+                canvas.enabled = false;
         }
         [ClientRpc]
         private void RpcActivateStageEnemies(int stageIndex)
         {
             foreach (var enemy in _enemys[stageIndex].Enemys)
             {
-                if (enemy != null)
-                    enemy.gameObject.SetActive(true);
+                if (enemy == null) continue;
+                foreach (var sr in enemy.GetComponentsInChildren<SpriteRenderer>())
+                    sr.enabled = true;
+                foreach (var col in enemy.GetComponentsInChildren<Collider2D>())
+                    col.enabled = true;
+                foreach (var canvas in enemy.GetComponentsInChildren<Canvas>())
+                    canvas.enabled = true;
             }
         }
 
@@ -1020,16 +1043,19 @@ namespace Jun
             _unitPanel.interactable = false;
             _unitPanel.blocksRaycasts = false;
             _unitPanel.alpha = 0.5f;
+            
             StartCoroutine(NextStageRoutine()); 
         }
         [Server]
         private IEnumerator NextStageRoutine()
         {
-            yield return new WaitForSeconds(2.0f);
 
             if (_stageNum < _enemys.Count)
             {
                 _stageNum++;
+                RpcShowRound(_stageNum);
+                _turnUI.text = $"Round {_stageNum}";
+                yield return new WaitForSeconds(2.0f);
 
                 // 기존 적 턴 항목 제거, 플레이어 항목만 유지
                 _turnList.RemoveAll(t => t.type == "Enemy");
@@ -1053,6 +1079,7 @@ namespace Jun
                 RpcTurnListUpdate(_turnList.ToArray());
 
                 yield return new WaitForSeconds(0.5f);
+                _isChangingStage = false;
                 NextTurn();
             }
             else
