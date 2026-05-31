@@ -557,10 +557,7 @@ namespace Lsy
                         pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
                         pd.Info.Gold = currentGold;
 
-                        // [정보상 일원화 브릿지] 강화 스킬을 base에서 재구성해 주입 (active 캐릭터).
-                        // 항상 base에서 다시 빌드 → 여러 번 불려도 누적 없음(idempotent). null이면 base 유지.
-                        var __upgradedSkills = BuildUpgradedSkills(pd.FinalHeroCode, currentSelectedCharacter.mySkills);
-                        if (__upgradedSkills != null) pd.Info.Skills = __upgradedSkills;
+                        SyncSkillUpgradesToPlayerData(pd, currentSelectedCharacter.mySkills, "active");
 
  Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) ǽð Ʈ Ϸ");
                     }
@@ -582,11 +579,82 @@ namespace Lsy
                             }
 
                         pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
+                        SyncSkillUpgradesToPlayerData(pd, saved.skills, "saved");
 
  Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) Ʈ Ϸ");
                     }
                 }
             }
+        }
+
+        [Server]
+        public bool SyncCurrentCharacterSkillUpgradesToPlayerData()
+        {
+            if (currentActiveIndex < 0 || currentSelectedCharacter == null)
+            {
+                Debug.LogWarning("[SkillBridge] immediate sync skipped: current character is not ready.");
+                return false;
+            }
+
+            foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+            {
+                if (pd.connectionToClient != connectionToClient) continue;
+
+                int charIndex = ResolveCharacterIndex(pd);
+                if (charIndex != currentActiveIndex) continue;
+
+                return SyncSkillUpgradesToPlayerData(pd, currentSelectedCharacter.mySkills, "immediate");
+            }
+
+            Debug.LogWarning($"[SkillBridge] immediate sync failed: PlayerData not found. index={currentActiveIndex}, hero={currentSelectedCharacter.heroCode}");
+            return false;
+        }
+
+        public static bool SyncSkillUpgradesToPlayerData(PlayerData pd, IEnumerable<PlayerSkill> skills, string source)
+        {
+            if (pd == null || pd.Info == null) return false;
+
+            List<Jun.SkillInfo> upgradedSkills = BuildUpgradedSkills(pd.FinalHeroCode, skills);
+            if (upgradedSkills == null) return false;
+
+            Jun.PlayerInfo info = ClonePlayerInfo(pd.Info);
+            info.Skills = upgradedSkills;
+            pd.Info = info;
+
+            int skillCount = 0;
+            if (skills != null)
+                foreach (var _ in skills) skillCount++;
+
+            Debug.Log($"[SkillBridge] {source}: hero={pd.FinalHeroCode}, savedSkills={skillCount}, applied={pd.Info.Skills.Count}");
+            for (int i = 0; i < pd.Info.Skills.Count; i++)
+            {
+                Jun.SkillInfo skill = pd.Info.Skills[i];
+                int level = GetSkillLevel(skills, i);
+                Debug.Log($"[SkillBridge]   idx={i} Lv={level} name={skill?.Name} " +
+                          $"Dmg={skill?.DamageRate} Heal={skill?.HealRate} " +
+                          $"Eff={skill?.EffectValue}/{skill?.EffectDuration} Target={skill?.Target} EffType={skill?.EffectType}");
+            }
+            return true;
+        }
+
+        [Server]
+        private int ResolveCharacterIndex(PlayerData pd)
+        {
+            if (pd == null) return -1;
+
+            if (_myPlayerDatas != null)
+            {
+                int index = _myPlayerDatas.IndexOf(pd);
+                if (index >= 0) return index;
+            }
+
+            for (int i = 0; i < myHeroPositions.Count; i++)
+            {
+                if (myHeroPositions[i] == pd.FinalHeroPos)
+                    return i;
+            }
+
+            return -1;
         }
 
         // ───────── [정보상 일원화 브릿지] 강화 스킬 빌드 (순수함수) ─────────
@@ -599,7 +667,7 @@ namespace Lsy
         /// - base를 못 찾으면 null 반환 → 호출부는 기존 Info.Skills를 유지.
         /// 사용 enum/수치 필드는 Jun.SkillInfo(GameData.cs:203)만 대상으로 한다.
         /// </summary>
-        public static List<Jun.SkillInfo> BuildUpgradedSkills(string heroCode, SyncList<PlayerSkill> mySkills)
+        public static List<Jun.SkillInfo> BuildUpgradedSkills(string heroCode, IEnumerable<PlayerSkill> mySkills)
         {
             if (!CharacterRegistry.TryGet(heroCode, out var entry) || entry.Skills == null)
             {
@@ -619,7 +687,7 @@ namespace Lsy
             return result;
         }
 
-        private static int GetSkillLevel(SyncList<PlayerSkill> mySkills, int skillIndex)
+        private static int GetSkillLevel(IEnumerable<PlayerSkill> mySkills, int skillIndex)
         {
             if (mySkills == null) return 1;
             foreach (var ps in mySkills)
@@ -646,10 +714,91 @@ namespace Lsy
                 if (node.HealRate       != 0f) skill.HealRate       = node.HealRate;
                 if (node.EffectValue    != 0f) skill.EffectValue    = node.EffectValue;
                 if (node.EffectDuration != 0)  skill.EffectDuration = node.EffectDuration;
+                if (!string.IsNullOrWhiteSpace(node.skillName)) skill.Name = node.skillName;
+                if (!string.IsNullOrWhiteSpace(node.skillDescription)) skill.description = node.skillDescription;
 
                 if (node.useTargetOverride) skill.Target     = node.Target;
                 if (node.useEffectOverride) skill.EffectType = node.EffectType;
             }
+        }
+
+        public static Jun.PlayerInfo ClonePlayerInfo(Jun.PlayerInfo source)
+        {
+            if (source == null) return null;
+
+            return new Jun.PlayerInfo
+            {
+                Id = source.Id,
+                Name = source.Name,
+                Type = source.Type,
+                Skills = CloneSkillList(source.Skills),
+                Items = source.Items != null ? new List<InventoryItem>(source.Items) : null,
+                Expendables = CloneConsumableList(source.Expendables),
+                Lvl = source.Lvl,
+                Exp = source.Exp,
+                Gold = source.Gold,
+                Hp = source.Hp,
+                MaxHp = source.MaxHp,
+                San = source.San,
+                MaxSan = source.MaxSan,
+                Atk = source.Atk,
+                Def = source.Def,
+                Spd = source.Spd,
+                Crit = source.Crit,
+                Ctm = source.Ctm,
+                Dodge = source.Dodge,
+                Acc = source.Acc,
+                Res = source.Res,
+                Weapon = source.Weapon,
+                Armor = source.Armor,
+                Trk1 = source.Trk1,
+                Trk2 = source.Trk2,
+                UniqueTraitLv = source.UniqueTraitLv,
+                Statuses = CloneStatusList(source.Statuses),
+            };
+        }
+
+        private static List<Jun.SkillInfo> CloneSkillList(List<Jun.SkillInfo> source)
+        {
+            if (source == null) return null;
+
+            var result = new List<Jun.SkillInfo>(source.Count);
+            foreach (var skill in source)
+                result.Add(CloneSkillInfo(skill));
+            return result;
+        }
+
+        private static List<ConsumableInfo> CloneConsumableList(List<ConsumableInfo> source)
+        {
+            if (source == null) return null;
+
+            var result = new List<ConsumableInfo>(source.Count);
+            foreach (var item in source)
+                result.Add(item != null ? item.Clone() : null);
+            return result;
+        }
+
+        private static List<Jun.ActiveStatus> CloneStatusList(List<Jun.ActiveStatus> source)
+        {
+            if (source == null) return null;
+
+            var result = new List<Jun.ActiveStatus>(source.Count);
+            foreach (var status in source)
+            {
+                if (status == null)
+                {
+                    result.Add(null);
+                    continue;
+                }
+
+                result.Add(new Jun.ActiveStatus
+                {
+                    Type = status.Type,
+                    RemainingTurns = status.RemainingTurns,
+                    Value = status.Value,
+                });
+            }
+            return result;
         }
 
         /// <summary>Jun.SkillInfo 요소별 복제. 값/문자열은 복사, 참조 필드(icon/StatusEffects)는 브릿지가 안 건드리므로 참조 공유.</summary>
