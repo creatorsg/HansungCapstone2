@@ -91,6 +91,7 @@ namespace Jun
 
                             enemyModel.Damaged(damage);
                             enemyController.RpcPlaySkillAnim("Damaged");
+                            manager.RpcSetHitEffect(caster.Info.Name); 
                             manager.RpcOnHitEffect(isCrit);
 
                             // 데미지 + 상태이상 동시 적용 (1단계 인프라가 DoT/스턴 자동 처리)
@@ -171,6 +172,8 @@ namespace Jun
 
                 if (!string.IsNullOrEmpty(skill.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
+                    Debug.Log($"[HitEffect] Player key: {caster.Info.Name}");
+                    manager.RpcSetHitEffect(caster.Info.Name);
                     manager.RpcStartAttackEffect();
                     caster.RpcPlaySkillAnim(skill.anim); // anim 있을 때만 호출
                                                         // 턴 종료는 EndAnim Animation Event가 처리
@@ -394,17 +397,21 @@ namespace Jun
                         if (isHit && skill.EffectDuration > 0)
                             player.AddEffect(
                                 new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
+                        player.RpcPlayDamagedAnim();
+                        manager.RpcSetHitEffect(caster.Info.Name);
+                        manager.RpcOnHitEffect(isCrit);
 
-                        if (player.Info.Hp <= 0)
-                        {
-                            player.RpcPlayDeadAnim();
-                            Debug.Log($"[ENEMY ATK] {player.Info.Name} 전투불능!");
-                        }
-                        else
-                        {
-                            player.RpcPlayDamagedAnim();
-                            manager.RpcOnHitEffect(isCrit);
-                        }
+                        //if (player.Info.Hp <= 0)
+                        //{
+                        //    player.RpcPlayDeadAnim();
+                        //    Debug.Log($"[ENEMY ATK] {player.Info.Name} 전투불능!");
+                        //}
+                        //else
+                        //{
+                        //    player.RpcPlayDamagedAnim();
+                        //    manager.RpcSetHitEffect(caster.Info.Name);
+                        //    manager.RpcOnHitEffect(isCrit);
+                        //}
 
                         manager.RpcShowCombatResult(new CombatResult
                         {
@@ -469,6 +476,9 @@ namespace Jun
             // 공격 애니메이션 재생
             if (!string.IsNullOrEmpty(skill.anim))
             {
+                Debug.Log($"[HitEffect] Enemy key: {caster.Info.Name}");
+                manager.RpcSetHitEffect(caster.Info.Name);
+                manager.RpcStartAttackEffect();
                 caster.RpcPlaySkillAnim(skill.anim);
             }
         }

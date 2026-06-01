@@ -77,6 +77,7 @@ namespace Jun
 
         [SerializeField] private LoadingUI _loadingUI;
 
+
         // 동의 카운터 (서버 전용)
         private int  _agreeCount;
         private bool _resultIsVictory;
@@ -529,7 +530,11 @@ namespace Jun
 
             NextTurn();
         }
-
+        [ClientRpc]
+        public void RpcSetHitEffect(string name)
+        {
+            BattleEffectManager.Instance?.SetHitEffectKey(name);
+        }
         /// <summary>살아있는 플레이어 목록 반환</summary>
         public List<GamePlayerController> GetAlivePlayers()
         {

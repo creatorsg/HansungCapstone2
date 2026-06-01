@@ -42,11 +42,18 @@ public class EnemyView : NetworkBehaviour
         Debug.Log($"SkillAnim 호출: {skill}");
         if (skill == "Attack")
         {
-            StartCoroutine(StepForward());  
+            StartCoroutine(StepForward());
+            BattleEffectManager.Instance?.StepTargetsForward(1.5f);
             anim.SetBool(skill, true);
         }
         else if (skill == "Damaged")
         {
+            BattleEffectManager.Instance?.RegisterTarget(transform);
+            anim.SetTrigger(skill);
+        }
+        else if (skill == "Dodge")
+        {
+            BattleEffectManager.Instance?.RegisterTarget(transform, false); 
             anim.SetTrigger(skill);
         }
         else
@@ -60,6 +67,7 @@ public class EnemyView : NetworkBehaviour
         anim.SetBool("Attack", false);  // Attack Bool 리셋
         anim.Play("Idle");              // Idle 상태로 강제 전환
         StartCoroutine(StepBack());
+        BattleEffectManager.Instance?.EndAttack();
     }
     private IEnumerator StepForward()
     {

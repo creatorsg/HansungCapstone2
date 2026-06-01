@@ -856,7 +856,7 @@ MonoBehaviour:
   - Name: "\uD53C\uB9AC\uBD80\uB294 \uC0AC\uB098\uC774"
     User: 0
     Type: 2
-    anim: 
+    anim: Attack
     TagetNum: 1
     icon: {fileID: 2211368458654073353, guid: f776ec14c6a05004e9ea7e731a3a880c, type: 3}
     description: "\uC801 1\uBA85\uC744 2\uD134\uAC04 \uC870\uC885\uD574 \uD589\uB3D9\uC744
@@ -4028,7 +4028,7 @@ MonoBehaviour:
   - Name: "\uBC84\uD504\uC81C \uC8FC\uC785"
     User: 0
     Type: 3
-    anim: 
+    anim: Attack
     TagetNum: 1
     icon: {fileID: -6286060828788350423, guid: bd8095df735501342a3bf3fe08df4e5a, type: 3}
     description: "\uC544\uAD70 1\uBA85\uC758 \uACF5\uACA9\uB825\uC744 1\uD134\uAC04
@@ -4063,7 +4063,7 @@ MonoBehaviour:
   - Name: "\uC790\uAC00 \uC2E4\uD5D8"
     User: 0
     Type: 4
-    anim: 
+    anim: Attack
     TagetNum: 1
     icon: {fileID: 8234797298231545583, guid: 9b1b6cd36f725e642b26b97addc0780d, type: 3}
     description: "HP\uB97C \uB300\uAC00\uB85C 2\uD134\uAC04 \uC18D\uB3C4\uC640 \uCE58\uBA85\uD0C0\uB97C
@@ -6125,7 +6125,7 @@ MonoBehaviour:
   - Name: "\uC5C4\uD638 "
     User: 0
     Type: 4
-    anim: Damaged
+    anim: Attack
     TagetNum: 1
     icon: {fileID: 4164413579519221649, guid: 173ab9ececb20a848af4ebd322bf9692, type: 3}
     description: "\uBCF8\uC778\uACFC \uC544\uAD70\uC744 \uB2E4\uC74C \uC801 \uACF5\uACA9
@@ -6142,7 +6142,7 @@ MonoBehaviour:
   - Name: "\uCC38\uD638 \uB3CC\uACA9"
     User: 0
     Type: 0
-    anim: Dodge
+    anim: Attack
     TagetNum: 1
     icon: {fileID: 32788246762942611, guid: 6dbbba5418c31cc4eb35ce90451bc925, type: 3}
     description: "\uC801 1\uBA85\uC744 \uACF5\uACA9\uD558\uBA70 \uC804\uC5F4\uB85C

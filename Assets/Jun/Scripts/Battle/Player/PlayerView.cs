@@ -97,6 +97,7 @@ namespace Jun
         {
             if (_hpCoroutine != null) StopCoroutine(_hpCoroutine);
             _hpCoroutine = StartCoroutine(SmoothHpBar(currentHp));
+            if (currentHp <= 0) PlayDead();
         }
         public void PlSanChanged(float currentSan)
         {
@@ -113,6 +114,7 @@ namespace Jun
         private IEnumerator WindUpThenAttack(string skill)
         {
             StartCoroutine(StepForward());  //앞으로 나오기
+            BattleEffectManager.Instance?.StepTargetsForward(-1.5f);
             anim.SetBool(skill, true);
             anim.speed = 0f;                              // 첫 프레임에서 동결
             yield return new WaitForSecondsRealtime(0.15f); // 0.15초 홀드
@@ -177,6 +179,7 @@ namespace Jun
         public void PlayDamaged()
         {
             if (anim == null) return;
+            BattleEffectManager.Instance?.RegisterTarget(transform);
             anim.SetTrigger("Damaged");
         }
 
@@ -184,6 +187,7 @@ namespace Jun
         public void PlayDodge()
         {
             if (anim == null) return;
+            BattleEffectManager.Instance?.RegisterTarget(transform, false);
             anim.SetTrigger("Dodge");
         }
 
@@ -191,6 +195,11 @@ namespace Jun
         public void PlayDead()
         {
             if (anim == null) return;
+            StartCoroutine(DelayedDead());
+        }
+        private IEnumerator DelayedDead()
+        {
+            yield return new WaitForSeconds(1.0f); // Damaged 애니 끝날 때까지 대기
             anim.SetTrigger("Dead");
         }
     }
