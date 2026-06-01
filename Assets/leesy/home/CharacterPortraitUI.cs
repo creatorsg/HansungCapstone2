@@ -337,6 +337,11 @@ namespace Lsy
         {
             var account = _trackedAccount ?? PlayerAccount.LocalInstance;
 
+            // 로컬 계정 데이터가 아직 동기화되지 않은 경우(SyncList 미도착) → 갱신 생략
+            // WaitForHeroDataThenRefresh 코루틴이 데이터 준비 후 다시 호출함
+            if (account != null && account.myHeroPositions.Count == 0)
+                return;
+
             for (int i = 0; i < slots.Count; i++)
             {
                 bool isOwned    = account != null && account.myHeroPositions.Contains(i);
