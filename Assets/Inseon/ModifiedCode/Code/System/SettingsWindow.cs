@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace inseon.Core
 {
@@ -12,13 +13,26 @@ namespace inseon.Core
     {
         [SerializeField] private TMP_Dropdown resolutionDropdown;
         [SerializeField] private TMP_Dropdown screenModeDropdown;
+        // [수정] 로비 설정창에서 BGM 음량을 조절할 슬라이더
+        [SerializeField] private Slider bgmVolumeSlider;
 
         private Resolution[] _resolutions;
+        // [수정] Start 씬에서 생성되어 유지되는 BGMManager의 AudioSource
+        private AudioSource _bgmAudioSource;
 
         void OnEnable()
         {
+            // [수정] 다른 설정 초기화에서 오류가 발생해도 BGM 연결은 먼저 완료
+            InitBgmVolumeSlider();
             InitResolutionDropdown();
             InitScreenModeDropdown();
+        }
+
+        void OnDisable()
+        {
+            // [수정] 설정창을 다시 열 때 리스너가 중복 등록되지 않도록 해제
+            if (bgmVolumeSlider != null)
+                bgmVolumeSlider.onValueChanged.RemoveListener(OnBgmVolumeChanged);
         }
 
         // ── 초기화 ────────────────────────────────────────────
@@ -57,6 +71,37 @@ namespace inseon.Core
                 _                                  => 0
             };
             screenModeDropdown.RefreshShownValue();
+        }
+
+        void InitBgmVolumeSlider()
+        {
+            // [수정] 로비 설정창을 열 때 현재 BGM 음량과 슬라이더를 동기화
+            if (bgmVolumeSlider == null) return;
+
+            ResolveBgmAudioSource();
+            bgmVolumeSlider.onValueChanged.RemoveListener(OnBgmVolumeChanged);
+            bgmVolumeSlider.onValueChanged.AddListener(OnBgmVolumeChanged);
+
+            if (_bgmAudioSource != null)
+                bgmVolumeSlider.SetValueWithoutNotify(_bgmAudioSource.volume);
+        }
+
+        void ResolveBgmAudioSource()
+        {
+            // [수정] 씬 전환 후에도 유지되는 BGMManager에서 AudioSource를 탐색
+            if (_bgmAudioSource != null) return;
+
+            var bgmManager = Object.FindFirstObjectByType<Lsy.BGMManager>();
+            if (bgmManager != null)
+                _bgmAudioSource = bgmManager.GetComponent<AudioSource>();
+        }
+
+        void OnBgmVolumeChanged(float volume)
+        {
+            // [수정] 로비 SOUND 슬라이더 값을 현재 BGM에 즉시 반영
+            ResolveBgmAudioSource();
+            if (_bgmAudioSource != null)
+                _bgmAudioSource.volume = Mathf.Clamp01(volume);
         }
 
         // ── 버튼 이벤트 ───────────────────────────────────────

@@ -35,6 +35,17 @@ namespace inseon.Core
         private const int DEFAULT_WIDTH  = 1920;
         private const int DEFAULT_HEIGHT = 1080;
 
+        // [수정] Start 씬에서 Login 씬을 거치지 않고 Lobby 씬으로 이동해도
+        // ResolutionManager가 항상 존재하도록 씬 로드 전에 자동 생성합니다.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void EnsureInstance()
+        {
+            if (Instance != null) return;
+
+            var gameObject = new GameObject(nameof(ResolutionManager));
+            gameObject.AddComponent<ResolutionManager>();
+        }
+
         void Awake()
         {
             if (Instance != null)
