@@ -351,7 +351,7 @@ namespace Jun
         public void RpcShowDamage(float damage)
         {
             if (_view != null && Info != null)
-                _view.PlHPChanged(Info.Hp);
+                _view.RPCPlHPChanged(Info.Hp);
         }
         [Server]
         public void ApplyHpChange(float delta)
@@ -360,7 +360,7 @@ namespace Jun
             //info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
             info.Hp = info.Hp + delta;
             Info = info; // SyncVar 재할당으로 클라이언트 동기화
-            _view.PlHPChanged(info.Hp);
+            _view.RPCPlHPChanged(info.Hp);
         }
         [Server]
         public void ApplySanChange(float delta)

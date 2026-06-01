@@ -92,7 +92,8 @@ namespace Jun
             _hpCoroutine = StartCoroutine(SmoothHpBar(currentHp));
 
         }
-        public void PlHPChanged(float currentHp)
+        [ClientRpc]
+        public void RPCPlHPChanged(float currentHp)
         {
             if (_hpCoroutine != null) StopCoroutine(_hpCoroutine);
             _hpCoroutine = StartCoroutine(SmoothHpBar(currentHp));

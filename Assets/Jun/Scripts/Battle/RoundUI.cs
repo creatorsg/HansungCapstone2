@@ -9,7 +9,7 @@ public class RoundUI : MonoBehaviour
 
     public void ShowRound(int round)
     {
-        _roundText.text = $"ROUND {round}";
+        _roundText.text = "Round "+round;
         StopAllCoroutines();
         gameObject.SetActive(true);       
         StartCoroutine(RoundAnim());

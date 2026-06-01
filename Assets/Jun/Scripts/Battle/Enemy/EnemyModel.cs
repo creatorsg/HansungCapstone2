@@ -33,6 +33,7 @@ public class EnemyModel : NetworkBehaviour
         _currentSan = Info.San;
         _maxSan = Info.MaxSan > 0f ? Info.MaxSan : Info.San;
     }
+    [ClientRpc]
     public void Damaged(float Attack)
     {
         Debug.Log("EnemyDamaged");
@@ -41,7 +42,7 @@ public class EnemyModel : NetworkBehaviour
         IsDamaged?.Invoke(_currentHp/_maxHp);
         if (Info.Hp <= 0) _controller.CMDDead();
     }
-
+    [ClientRpc]
     public void Heal(float amount)
     {
         _currentHp = Mathf.Min(_currentHp + amount, _maxHp);

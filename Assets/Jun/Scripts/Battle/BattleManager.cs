@@ -75,6 +75,8 @@ namespace Jun
         [Header("배틀 결과창")] // [수정] 깨진 Header 문자열 복구
         [SerializeField] private BattleResultPanel _battleResultPanel;
 
+        [SerializeField] private LoadingUI _loadingUI;
+
         // 동의 카운터 (서버 전용)
         private int  _agreeCount;
         private bool _resultIsVictory;
@@ -121,30 +123,16 @@ namespace Jun
         {
             Instance = this;
             //  패널 비활성화 처리
-            _unitPanel.interactable = false;
-            _unitPanel.blocksRaycasts = false;
+            _unitPanel.interactable = true;
+            _unitPanel.blocksRaycasts = true;
             _unitPanel.alpha =  0.5f;
             EnemyNum = _enemys[StageNum - 1].Enemys.Count;
-
+            _loadingUI.StartLoading();  
         }
         public override void OnStartServer()
         {
             base.OnStartServer();
             //1라운드 적 제외 비활성화
-            for (int i = 0; i < _enemys.Count; i++)
-            {
-                bool isFirstStage = (i == 0);
-                foreach (var enemy in _enemys[i].Enemys)
-                {
-                    if (enemy == null) continue;
-                    foreach (var sr in enemy.GetComponentsInChildren<SpriteRenderer>())
-                        sr.enabled = isFirstStage;
-                    foreach (var col in enemy.GetComponentsInChildren<Collider2D>())
-                        col.enabled = isFirstStage;
-                    foreach (var canvas in enemy.GetComponentsInChildren<Canvas>())
-                        canvas.enabled = isFirstStage;
-                }
-            }
             _players.Clear();
             _turnList.Clear();
             Order = -1;
@@ -311,11 +299,32 @@ namespace Jun
         {
             _turnList.Sort((a, b) => b.speed.CompareTo(a.speed));
             RpcTurnListUpdate(_turnList.ToArray());
+            RpcSetup();
+            UpdateUnitUI(_players[0]);
             // 잠시 확인을 위해
             //StageClear();
-            _turnUI.text = $"Round {_stageNum}";
-            RpcShowRound(_stageNum);
             NextTurn();
+        }
+        [ClientRpc]
+        private void RpcSetup()
+        {
+            for (int i = 0; i < _enemys.Count; i++)
+            {
+                bool isFirstStage = (i == 0);
+                foreach (var enemy in _enemys[i].Enemys)
+                {
+                    if (enemy == null) continue;
+                    foreach (var sr in enemy.GetComponentsInChildren<SpriteRenderer>())
+                        sr.enabled = isFirstStage;
+                    foreach (var col in enemy.GetComponentsInChildren<Collider2D>())
+                        col.enabled = isFirstStage;
+                    foreach (var canvas in enemy.GetComponentsInChildren<Canvas>())
+                        canvas.enabled = isFirstStage;
+                }
+            }
+            UpdateUnitUI(_players[0]);
+            _turnUI.text = $"Round {_stageNum}";
+            _loadingUI.EndLoading();
         }
         [ClientRpc]
         private void RpcTurnListUpdate(TurnData[] turnDataArray)
@@ -558,8 +567,8 @@ namespace Jun
             {
                 CurrentTurnUnit = null;
                 //_turnUI.text = "Enemy" + turnNum.ToString();
-                _unitPanel.interactable = false;
-                _unitPanel.blocksRaycasts = false;
+                _unitPanel.interactable = true;
+                _unitPanel.blocksRaycasts = true;
                 _unitPanel.alpha = 0.5f;
                 // UI만 갱신. 적 전투 로직은 서버의 ServerEnemyTurn()에서 처리.
             }
@@ -588,8 +597,8 @@ namespace Jun
                 {
                     UpdateUnitUI(targetPlayer);
                 }
-                _unitPanel.interactable = isMyTurn;
-                _unitPanel.blocksRaycasts = isMyTurn;
+                _unitPanel.interactable = true;
+                _unitPanel.blocksRaycasts = true;
                 _unitPanel.alpha = isMyTurn ? 1.0f : 0.5f;
             }
         }
@@ -646,8 +655,8 @@ namespace Jun
             bool isUnitTurn = unit.isOwned && (CurrentTurnUnit != null && unit.Info.Id == CurrentTurnUnit.Info.Id);
 
             //õ ʿ г Ȱ/Ȱ ó
-            _unitPanel.interactable = isUnitTurn;
-            _unitPanel.blocksRaycasts = isUnitTurn;
+            _unitPanel.interactable = true;
+            _unitPanel.blocksRaycasts = true;
             _unitPanel.alpha = isUnitTurn ? 1.0f : 0.5f;
             // 선택된 유닛의 이미지 및 스탯 표시
             // GetCharacterSprite(): CharacterRegistry → SpriteRenderer 순으로 조회하므로 null-safe
@@ -675,7 +684,7 @@ namespace Jun
                 if (hasSkill)
                 {
                     _skillBTN[i].onClick.AddListener(() => unit.OnClickSkillBtn(index));
-
+                    _skillBTN[i].interactable = isUnitTurn;
                     // 버튼 자식의 TMP 텍스트에 스킬 이름 표시
                     var label = _skillBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
                     if (label != null) label.text = unit.Info.Skills[i].Name;
@@ -725,6 +734,7 @@ namespace Jun
                 if (hasItem)
                 {
                     _itemBTN[i].onClick.AddListener(() => unit.OnClickItemBtn(index));
+                    _itemBTN[i].interactable = isUnitTurn;
                     Debug.Log("아이템 버튼 연결");
 
                     var label = _itemBTN[i].GetComponentInChildren<TMPro.TextMeshProUGUI>();
@@ -853,6 +863,7 @@ namespace Jun
 
             _movePosBTN.onClick.RemoveAllListeners();
             _movePosBTN.onClick.AddListener(() => unit.OnClickMoveBtn());
+            _movePosBTN.interactable = isUnitTurn;
         }
             //̹ 
         public void UpdateEnemyUI(int index)
@@ -1034,6 +1045,8 @@ namespace Jun
             foreach (var ui in _turnUIList)
                 if (ui != null) Destroy(ui.gameObject);
             _turnUIList.Clear();
+            _enemyPanel.SetActive(false);
+            _turnUI.text = $"Round {_stageNum}";
         }
 
         public void NextStage()
@@ -1054,7 +1067,6 @@ namespace Jun
             {
                 _stageNum++;
                 RpcShowRound(_stageNum);
-                _turnUI.text = $"Round {_stageNum}";
                 yield return new WaitForSeconds(2.0f);
 
                 // 기존 적 턴 항목 제거, 플레이어 항목만 유지
