@@ -325,13 +325,34 @@ namespace Lsy
         private void TargetRpcRefreshUI(NetworkConnection target, int newActiveIndex)
         {
             currentActiveIndex = newActiveIndex;
- Debug.Log($"<color=cyan>[라언 currentActiveIndex: {newActiveIndex}</color>");
+            Debug.Log($"<color=cyan>[로컬 currentActiveIndex: {newActiveIndex}</color>");
 
             if (InventoryUI.Instance != null)
                 InventoryUI.Instance.RefreshInventory();
 
             if (GoldUI.Instance != null)
                 GoldUI.Instance.RefreshGold();
+
+            // myHeroPositions가 채워진 뒤에 OnCharacterSwitched 발화
+            // CmdRequestMyCharacters에서 보낸 SyncList 메시지가 TargetRpc보다
+            // 늦게 도착하는 경우 초상화가 어둡게 초기화되는 타이밍 버그 방지
+            StartCoroutine(WaitForHeroDataThenRefresh());
+        }
+
+        private System.Collections.IEnumerator WaitForHeroDataThenRefresh()
+        {
+            float elapsed = 0f;
+            const float maxWait = 5f;
+
+            // myHeroPositions가 채워질 때까지 대기 (최대 5초)
+            while (myHeroPositions.Count == 0 && elapsed < maxWait)
+            {
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
+            if (myHeroPositions.Count == 0)
+                Debug.LogWarning("[PlayerAccount] WaitForHeroDataThenRefresh: myHeroPositions 타임아웃 — 강제 갱신 진행");
 
             OnCharacterSwitched?.Invoke();
         }
