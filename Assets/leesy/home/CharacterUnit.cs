@@ -465,6 +465,9 @@ namespace Lsy
                 {
                     InventoryItem itemInInv = myInventory[i];
                     bool success = false;
+                    // [수정] 장비 교체 시 새 장비를 먼저 차감한 뒤 기존 장비를 반환합니다.
+                    // 기존 장비를 먼저 반환하면 같은 인벤토리 인덱스가 덮어써질 수 있습니다.
+                    InventoryItem? equipmentToReturn = null;
 
                     switch (itemInInv.Type) {
                         case ItemType.Consumable:
@@ -475,24 +478,38 @@ namespace Lsy
                             break;
 
                         case ItemType.Weapon:
-                            string oldWeapon = equipmentSlot.equippedWeaponId;
+                            // [수정] 기존 구조에 맞춰 장착 중인 장비 이름으로 동일 장비 재장착을 차단합니다.
+                            if (equipmentSlot.equippedWeaponId == itemInInv.itemName)
+                                return;
+
                             InventoryItem oldWeaponItem = equipmentSlot.equippedWeapon;
-                            if (equipmentSlot.EquipWeapon(itemInInv))  // string InventoryItem
+                            bool hadWeapon = !string.IsNullOrEmpty(equipmentSlot.equippedWeaponId);
+                            // [수정] 장비 슬롯에는 인벤토리 스택 전체가 아니라 1개만 저장합니다.
+                            InventoryItem weaponToEquip = itemInInv;
+                            weaponToEquip.amount = 1;
+                            if (equipmentSlot.EquipWeapon(weaponToEquip))  // string InventoryItem
                             {
                                 success = true;
-                                if (!string.IsNullOrEmpty(oldWeapon))
-                                    AddItemWithInfo(oldWeaponItem);
+                                if (hadWeapon)
+                                    equipmentToReturn = oldWeaponItem;
                             }
                             break;
 
                         case ItemType.Armor:
-                            string oldArmor = equipmentSlot.equippedArmorId;
+                            // [수정] 기존 구조에 맞춰 장착 중인 장비 이름으로 동일 장비 재장착을 차단합니다.
+                            if (equipmentSlot.equippedArmorId == itemInInv.itemName)
+                                return;
+
                             InventoryItem oldArmorItem = equipmentSlot.equippedArmor;
-                            if (equipmentSlot.EquipArmor(itemInInv))  // string InventoryItem
+                            bool hadArmor = !string.IsNullOrEmpty(equipmentSlot.equippedArmorId);
+                            // [수정] 장비 슬롯에는 인벤토리 스택 전체가 아니라 1개만 저장합니다.
+                            InventoryItem armorToEquip = itemInInv;
+                            armorToEquip.amount = 1;
+                            if (equipmentSlot.EquipArmor(armorToEquip))  // string InventoryItem
                             {
                                 success = true;
-                                if (!string.IsNullOrEmpty(oldArmor))
-                                    AddItemWithInfo(oldArmorItem);
+                                if (hadArmor)
+                                    equipmentToReturn = oldArmorItem;
                             }
                             break;
                     }
@@ -504,6 +521,10 @@ namespace Lsy
                             myInventory.RemoveAt(i);
                         else
                             myInventory[i] = itemInInv;
+
+                        // [수정] 새 장비 차감이 끝난 뒤 서로 다른 기존 장비를 인벤토리로 반환합니다.
+                        if (equipmentToReturn.HasValue)
+                            AddItemWithInfo(equipmentToReturn.Value);
 
  Debug.Log($"<color=green>[착 공] {itemName} (벤리 량: {itemInInv.amount})</color>");
                         ServerSyncToPlayerData();   // PlayerData즉시 반영

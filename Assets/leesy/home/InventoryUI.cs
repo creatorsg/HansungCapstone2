@@ -58,10 +58,17 @@ namespace Lsy
                     if (consumData?.ConsumItem != null)
                         consumInfo.icon = consumData.ConsumItem.icon;
                 }
-                if (equipInfo == null && item.Type != ItemType.Consumable && ItemManager.Instance != null)
-                    equipInfo = ItemManager.Instance.GetEqpData(item.itemName);
+                // [수정] 멀티 클라이언트에서는 네트워크로 받은 EquipInfo.icon이 null입니다.
+                // 아이템 이름으로 클라이언트 로컬 ItemManager의 장비 데이터를 다시 조회합니다.
+                if (item.Type != ItemType.Consumable && ItemManager.Instance != null)
+                {
+                    EqpInfo localEquipInfo = ItemManager.Instance.GetEqpData(item.itemName);
+                    if (localEquipInfo != null)
+                        equipInfo = localEquipInfo;
+                }
 
                 Sprite icon = consumInfo?.icon ?? equipInfo?.icon;
+                // [수정] 상세 데이터에서 아이콘을 찾지 못하면 로컬 ItemManager에서 한 번 더 조회합니다.
                 if (icon == null && ItemManager.Instance != null)
                     icon = ItemManager.Instance.GetIcon(item.itemName);
 
