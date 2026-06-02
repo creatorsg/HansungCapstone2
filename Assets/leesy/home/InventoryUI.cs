@@ -67,6 +67,13 @@ namespace Lsy
                         equipInfo = localEquipInfo;
                 }
 
+                // 클라이언트에서 네트워크 역직렬화 시 icon은 항상 null → ItemManager로 복원
+                if (equipInfo != null && equipInfo.icon == null && ItemManager.Instance != null)
+                {
+                    Sprite restored = ItemManager.Instance.GetIcon(item.itemName);
+                    if (restored != null) equipInfo.icon = restored;
+                }
+
                 Sprite icon = consumInfo?.icon ?? equipInfo?.icon;
                 // [수정] 상세 데이터에서 아이콘을 찾지 못하면 로컬 ItemManager에서 한 번 더 조회합니다.
                 if (icon == null && ItemManager.Instance != null)

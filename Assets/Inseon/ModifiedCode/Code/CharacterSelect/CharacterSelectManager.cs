@@ -229,6 +229,9 @@ public class CharacterSelectManager : MonoBehaviour
             );
         }
 
+        // CharacterCard.Items(ConsumableInfo 직접 할당) 소모품 아이콘을 ItemManager에 등록
+        Lsy.ItemManager.Instance?.RefreshFromCharacterRegistry();
+
         Debug.Log($"[CharacterSelectManager] 카드 초기화 완료. 등록 수: {_cardMap.Count}");
     }
 

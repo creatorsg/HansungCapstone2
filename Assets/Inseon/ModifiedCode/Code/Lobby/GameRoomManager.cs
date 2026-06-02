@@ -387,13 +387,15 @@ namespace Jun {
                 Id    = pingIndex,
                 Name  = c.characterName,
                 Hp    = c.hp,
+                MaxHp = c.hp,
+                San   = c.stress,
+                MaxSan = c.stress,
                 Atk   = c.attack,
                 Def   = c.defense,
                 Acc   = c.accuracy,
                 Dodge = c.evasion,
                 Spd   = c.speed,
                 Crit  = c.critical,
-                San   = c.stress,
                 Res   = c.effectResistance,
                 UniqueTraitLv = 0,  // 고유 특성 미강화 상태로 시작 (0 = 스탯 기여 없음)
                 Skills        = new List<SkillInfo>(entry.Skills ?? new List<SkillInfo>()),
@@ -425,7 +427,9 @@ namespace Jun {
         {
             if (eqp == null) return;
             info.Hp    += eqp.Hp;
+            info.MaxHp += eqp.Hp;
             info.San   += eqp.San;
+            info.MaxSan += eqp.San;
             info.Atk   += eqp.Atk;
             info.Def   += eqp.Def;
             info.Spd   += eqp.Spd;

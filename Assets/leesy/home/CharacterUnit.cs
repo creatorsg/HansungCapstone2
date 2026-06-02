@@ -242,6 +242,10 @@ namespace Lsy
             blacksmithWeaponLevels.OnChange -= OnBlacksmithWeaponLevelsChanged;
             blacksmithWeaponLevels.OnChange += OnBlacksmithWeaponLevelsChanged;
 
+            // 장비 슬롯(무기ID/방어구ID/소모품) 변경 → UI 갱신 연결
+            EquipmentSlot.OnEquipmentChanged -= OnEquipSlotChanged;
+            EquipmentSlot.OnEquipmentChanged += OnEquipSlotChanged;
+
             OnLocalUnitSpawned?.Invoke(this);
         }
 
@@ -252,6 +256,13 @@ namespace Lsy
             mySkills.Callback -= OnSkillsChanged;
             unlockedNodeIds.OnChange -= OnUnlockedNodeIdsChanged;
             blacksmithWeaponLevels.OnChange -= OnBlacksmithWeaponLevelsChanged;
+            EquipmentSlot.OnEquipmentChanged -= OnEquipSlotChanged;
+        }
+
+        private void OnEquipSlotChanged()
+        {
+            if (!isOwned) return;
+            OnLocalInventoryChanged?.Invoke();
         }
 
         private void OnSelectedWeaponIdChanged(string oldVal, string newVal)
@@ -636,7 +647,15 @@ namespace Lsy
 
             var info = PlayerAccount.ClonePlayerInfo(pd.Info);
             if (info == null) info = new Jun.PlayerInfo();
-            int savedGold = info.Gold; //  
+            int savedGold = info.Gold;
+
+            // ── 비율 계산용: step 1이 info를 덮어쓰기 전에 이전 max/current 캡처 ──
+            // pd.Info가 권위 있는 값 — SyncVar(this.maxSan/currentSan)보다 신뢰도 높음
+            float prevMaxHp  = info.MaxHp  > 0 ? info.MaxHp  : (info.Hp  > 0 ? info.Hp  : 1f);
+            int   prevMaxSan = info.MaxSan > 0 ? info.MaxSan : (info.San > 0 ? info.San : 1);
+            float prevCurHp  = info.Hp;    // pd.Info.Hp  = 이전 currentHp
+            int   prevCurSan = info.San;   // pd.Info.San = 이전 currentSan
+
             //1. 기본 탯 설(CharacterDatabase 기) ?
             //비 탯적 도기마기본값으초기합다.
             if (CharacterDatabase.Stats.TryGetValue(heroCode, out var c))
@@ -679,9 +698,28 @@ namespace Lsy
                 info.Res   += d.res;
             }
 
-            //4. CharacterUnit?maxHp/maxSan갱신 (Home?HP반영) ?
+            //4. CharacterUnit의 maxHp/maxSan 갱신 + currentHp/currentSan 비율 스케일
+            // 비율은 이미 캡처한 pd.Info 기반 값으로 계산 (SyncVar 타이밍 문제 회피)
+            float hpRatio  = prevMaxHp  > 0 ? Mathf.Clamp01(prevCurHp  / prevMaxHp)            : 1f;
+            float sanRatio = prevMaxSan > 0 ? Mathf.Clamp01(prevCurSan / (float)prevMaxSan)     : 1f;
+
             maxHp  = info.Hp;
             maxSan = info.San;
+            info.MaxHp  = info.Hp;
+            info.MaxSan = info.San;
+
+            // HP: maxHp > 0이면 최소 1 보장, San: maxSan=0인 경우 0 유지
+            currentHp  = maxHp  > 0 ? Mathf.Max(1f, Mathf.Floor(maxHp  * hpRatio))             : 0f;
+            currentSan = maxSan > 0 ? Mathf.Max(1,  Mathf.FloorToInt(maxSan * sanRatio))        : 0;
+            info.Hp  = currentHp;
+            info.San = currentSan;
+
+            Debug.Log($"[SyncToPlayerData] {characterName} — " +
+                      $"prevMax(Hp:{prevMaxHp}/San:{prevMaxSan}) " +
+                      $"prevCur(Hp:{prevCurHp}/San:{prevCurSan}) " +
+                      $"ratio(Hp:{hpRatio:F2}/San:{sanRatio:F2}) " +
+                      $"→ newMax(Hp:{maxHp}/San:{maxSan}) " +
+                      $"newCur(Hp:{currentHp}/San:{currentSan})");
 
             //5. 착 모Expendables ?
             info.Expendables = new List<ConsumableInfo>();
@@ -730,7 +768,9 @@ namespace Lsy
         {
             if (eqp == null) return;
             info.Hp    += eqp.Hp;
+            info.MaxHp += eqp.Hp;
             info.San   += eqp.San;
+            info.MaxSan += eqp.San;
             info.Atk   += eqp.Atk;
             info.Def   += eqp.Def;
             info.Spd   += eqp.Spd;

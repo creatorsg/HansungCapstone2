@@ -42,24 +42,21 @@ namespace Lsy
                 {
                     InventoryItem item = myChar.equipmentSlot.equippedConsumables[i];
 
-                    // [수정] 네트워크로 받은 소모품 아이콘은 null이므로 클라이언트 로컬 데이터를 우선 사용합니다.
-                    Jun.ConsumableInfo info =
-                        ItemManager.Instance?.GetConsumData(item.itemName)?.ConsumItem
-                        ?? item.ConsumInfo;
-
-                    if (info == null)
+                    if (item.ConsumInfo == null)
                     {
-                        Debug.LogWarning($"[EquipmentUI] Consumable data not found. slot:{i}, item:{item.itemName}");
+                        Debug.LogWarning($"[EquipmentUI] ConsumInfo is null. slot:{i}, item:{item.itemName}");
                         consumableSlots[i].gameObject.SetActive(false);
                         continue;
                     }
 
-                    Sprite icon = ItemManager.Instance?.GetIcon(item.itemName) ?? info.icon;
-
                     consumableSlots[i].gameObject.SetActive(true);
                     string capturedName = item.itemName;
+                    Jun.ConsumableInfo capturedInfo = item.ConsumInfo;
 
-                    consumableSlots[i].Setup(info, item.amount, icon, () =>
+                    Sprite consumIcon = capturedInfo.icon;
+                    if (consumIcon == null && ItemManager.Instance != null)
+                        consumIcon = ItemManager.Instance.GetIcon(capturedName);
+                    consumableSlots[i].Setup(capturedInfo, item.amount, consumIcon, () =>
                     {
                         myChar.CmdUnequipConsumableFromSlot(capturedName);
                     });
@@ -85,13 +82,13 @@ namespace Lsy
             }
 
             weaponSlot.gameObject.SetActive(true);
-            // [수정] 장착 장비 아이콘은 클라이언트 로컬 ItemManager에서 조회합니다.
+            // equippedWeapon은 서버 전용 필드라 클라이언트에서 항상 default → ID로 조회
             Jun.EqpInfo info = FindEquipmentInfo(myChar.equipmentSlot.equippedWeaponId);
 
             if (info != null)
             {
-                Sprite icon = ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedWeaponId) ?? info.icon;
-                weaponSlot.Setup(info, 1, icon, () => myChar.CmdUnequipWeapon());
+                Sprite weaponIcon = info.icon ?? ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedWeaponId);
+                weaponSlot.Setup(info, 1, weaponIcon, () => myChar.CmdUnequipWeapon());
             }
             else
                 Debug.LogWarning($"[EquipmentUI] Weapon data not found: {myChar.equipmentSlot.equippedWeaponId}");
@@ -108,13 +105,13 @@ namespace Lsy
             }
 
             armorSlot.gameObject.SetActive(true);
-            // [수정] 장착 방어구 아이콘은 클라이언트 로컬 ItemManager에서 조회합니다.
+            // equippedArmor는 서버 전용 필드라 클라이언트에서 항상 default → ID로 조회
             Jun.EqpInfo info = FindEquipmentInfo(myChar.equipmentSlot.equippedArmorId);
 
             if (info != null)
             {
-                Sprite icon = ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedArmorId) ?? info.icon;
-                armorSlot.Setup(info, 1, icon, () => myChar.CmdUnequipArmor());
+                Sprite armorIcon = info.icon ?? ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedArmorId);
+                armorSlot.Setup(info, 1, armorIcon, () => myChar.CmdUnequipArmor());
             }
             else
                 Debug.LogWarning($"[EquipmentUI] Armor data not found: {myChar.equipmentSlot.equippedArmorId}");

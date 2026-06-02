@@ -16,12 +16,7 @@ public class PlayerData : NetworkBehaviour
     [SyncVar] public PlayerInfo Info;
     [SyncVar] public int PingIndex;
 
-    // ────────────────────────────────────────────────────────────────────────
-    // Awake에서 DontDestroyOnLoad를 호출합니다.
-    // Start()에서 호출하면 ServerChangeScene() 이후 씬 전환이 시작될 때
-    // Start()가 아직 실행되지 않은 상태에서 오브젝트가 파괴될 수 있습니다.
-    // Awake()는 Instantiate() 직후 동기적으로 호출되므로 안전합니다.
-    // ────────────────────────────────────────────────────────────────────────
+
     private void Awake()
     {
         transform.SetParent(null); // DontDestroyOnLoad는 루트 오브젝트여야 합니다
