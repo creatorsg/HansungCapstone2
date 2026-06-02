@@ -66,7 +66,7 @@ namespace Lsy
             }
 
             _readyByPlayerNetId[playerNetId] = isReady;
-            RpcOnPlayerReadyChanged(playerNetId, isReady);
+            // [수정] 준비 상태 알림은 SyncDictionary.OnChange 한 경로로만 전달합니다.
             CheckAllReady();
         }
 
@@ -89,36 +89,47 @@ namespace Lsy
             int connectionId = sender.connectionId;
             uint authoritativeNetId = sender.identity.netId;
 
-            if (_readyConnectionIds.Contains(connectionId))
+            // [수정] 기존 호환용 토글 경로도 공통 설정 함수로 통일합니다.
+            ServerSetReady(connectionId, authoritativeNetId, !_readyConnectionIds.Contains(connectionId));
+        }
+
+        // [수정] 클라이언트가 목표 준비 상태를 명시적으로 보내도록 합니다.
+        // 같은 요청이 중복 전달되어도 준비/취소 상태가 다시 뒤집히지 않습니다.
+        [Command(requiresAuthority = false)]
+        public void CmdSetReady(bool isReady, NetworkConnectionToClient sender = null)
+        {
+            if (sender == null)
             {
-                _readyConnectionIds.Remove(connectionId);
-                _readyByPlayerNetId[authoritativeNetId] = false;
-                Debug.Log($"<color=orange>[ReadySystem][Server] conn:{connectionId}, netId:{authoritativeNetId} 준비 취소. 준비클라:{_readyConnectionIds.Count}</color>");
-                RpcOnPlayerReadyChanged(authoritativeNetId, false);
-            }
-            else
-            {
-                _readyConnectionIds.Add(connectionId);
-                _readyByPlayerNetId[authoritativeNetId] = true;
-                Debug.Log($"<color=green>[ReadySystem][Server] conn:{connectionId}, netId:{authoritativeNetId} 준비 완료. 준비클라:{_readyConnectionIds.Count}</color>");
-                RpcOnPlayerReadyChanged(authoritativeNetId, true);
+                Debug.LogWarning("[ReadySystem][Server] sender connection is null.");
+                return;
             }
 
-            CheckAllReady();
+            if (sender.identity == null)
+            {
+                Debug.LogWarning("[ReadySystem][Server] sender identity is null.");
+                return;
+            }
+
+            int connectionId = sender.connectionId;
+            uint authoritativeNetId = sender.identity.netId;
+            ServerSetReady(connectionId, authoritativeNetId, isReady);
         }
 
         [Server]
         private void CheckAllReady()
         {
             int clientCount = 0;
+            // [수정] 현재 접속 중인 모든 비호스트 클라이언트가 실제로 준비 목록에 있는지 확인합니다.
+            // 단순 Count 비교는 연결 종료 후 남은 오래된 ID 때문에 잘못 true가 될 수 있습니다.
+            bool allReady = true;
             foreach (var conn in NetworkServer.connections.Values)
             {
                 if (conn == null) continue;
                 if (conn.connectionId == 0) continue;
                 clientCount++;
+                if (!_readyConnectionIds.Contains(conn.connectionId))
+                    allReady = false;
             }
-
-            bool allReady = clientCount == 0 || _readyConnectionIds.Count == clientCount;
 
             Debug.Log($"<color=cyan>[ReadySystem][Server] 클라이언트:{clientCount}, 준비클라:{_readyConnectionIds.Count}, allReady:{allReady}</color>");
 
@@ -142,14 +153,6 @@ namespace Lsy
         }
 
         [ClientRpc]
-        private void RpcOnPlayerReadyChanged(uint playerNetId, bool isReady)
-        {
-            // 서버에서 받아온다: 특정 플레이어 준비 상태(playerNetId, isReady)
-            Debug.Log($"<color=yellow>[ReadySystem][Client] netId:{playerNetId} isReady:{isReady}</color>");
-            OnPlayerReadyChanged?.Invoke(playerNetId, isReady);
-        }
-
-        [ClientRpc]
         private void RpcOnAllReadyChanged(bool allReady)
         {
             // 서버에서 받아온다: 전체 준비 완료 여부(allReady)
@@ -161,7 +164,7 @@ namespace Lsy
         {
             _readyConnectionIds.Remove(connectionId);
             _readyByPlayerNetId[playerNetId] = false;
-            RpcOnPlayerReadyChanged(playerNetId, false);
+            // [수정] 연결 종료 상태도 SyncDictionary.OnChange를 통해 한 번만 알립니다.
             CheckAllReady();
         }
     }

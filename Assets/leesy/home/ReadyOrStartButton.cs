@@ -119,14 +119,9 @@ namespace Lsy
                 return;
             }
 
-            // 클릭 즉시 UI를 토글해 첫 클릭 반응 지연/누락 체감을 없앤다.
-            // 서버 동기화 이벤트가 도착하면 최종 상태로 다시 맞춰진다.
-            SyncClientReadyVisual(!_isReady);
-
             CacheLocalNetIdIfPossible();
-            // CmdToggleReady는 서버에서 sender.identity.netId를 권한 기준으로 사용한다.
-            // local netId 조회 타이밍 실패로 클릭이 드롭되지 않도록 파라미터 의존성을 제거한다.
-            ReadySystem.Instance.CmdToggleReady(0);
+            // [수정] UI는 서버 동기화 이벤트에서만 바꾸고, 서버에는 목표 상태를 명시적으로 요청합니다.
+            ReadySystem.Instance.CmdSetReady(!_isReady);
         }
 
         private void OnClickStartGame()
@@ -134,6 +129,13 @@ namespace Lsy
             if (QuestVoteSystem.Instance != null && !QuestVoteSystem.Instance.CanUseReadyOrStartButton)
             {
                 Debug.LogWarning("[ReadyOrStartButton] 투표가 확정되지 않아 시작할 수 없습니다.");
+                return;
+            }
+
+            // [수정] UI가 잘못 활성화되어도 모든 클라이언트가 준비하지 않았다면 전투 시작을 차단합니다.
+            if (!IsSoloHost() && (ReadySystem.Instance == null || !ReadySystem.Instance.AllReady))
+            {
+                Debug.LogWarning("[ReadyOrStartButton] 모든 클라이언트가 준비되지 않아 시작할 수 없습니다.");
                 return;
             }
 

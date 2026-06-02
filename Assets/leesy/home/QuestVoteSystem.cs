@@ -11,7 +11,7 @@ namespace Lsy
         public static QuestVoteSystem Instance;
 
         [Header("Vote Settings")]
-        [SerializeField] private int voteDurationSeconds = 30;
+        [SerializeField] private int voteDurationSeconds = 10;
 
         [Header("Quest Data (District -> StageName)")]
         [SerializeField] private QuestData[] allQuests;
