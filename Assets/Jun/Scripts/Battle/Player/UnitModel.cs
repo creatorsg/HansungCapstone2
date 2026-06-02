@@ -34,8 +34,8 @@ namespace Jun
             _info = info;
             if (_info != null)
             {
-                if (_info.MaxHp <= 0f) _info.MaxHp = info.Hp;
-                if (_info.MaxSan <= 0f) _info.MaxSan = info.San;
+                if (_info.MaxHp <= 0f) _info.MaxHp = info.MaxHp;
+                if (_info.MaxSan <= 0f) _info.MaxSan = info.MaxSan;
                 if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
             }
             _currentHp = info.Hp;

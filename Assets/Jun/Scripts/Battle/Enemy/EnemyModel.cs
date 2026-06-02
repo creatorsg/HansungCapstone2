@@ -24,8 +24,8 @@ public class EnemyModel : NetworkBehaviour
         _info = Info;
         if (_info != null)
         {
-            if (_info.MaxHp <= 0f) _info.MaxHp = Info.Hp;
-            if (_info.MaxSan <= 0f) _info.MaxSan = Info.San;
+            if (_info.MaxHp <= 0f) _info.MaxHp = Info.MaxHp;
+            if (_info.MaxSan <= 0f) _info.MaxSan = Info.MaxSan;
             if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
         }
         _currentHp = Info.Hp;

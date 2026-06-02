@@ -383,12 +383,12 @@ namespace Jun
         }
 
 
-            //ִϸ̼ 
+        //ִϸ̼ 
         [ClientRpc]
-        public void RpcPlaySkillAnim(string animName)
+        public void RpcPlaySkillAnim(string animName, bool isRevive)
         {
             //ų ص ɵ
-            _view.SkillAnim(animName);
+            _view.SkillAnim(animName, isRevive);
         }
 
             //-> ѱ
