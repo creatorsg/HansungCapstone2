@@ -9085,6 +9085,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 4169019287
       objectReference: {fileID: 0}
+    - target: {fileID: 4262263159429406538, guid: 1798ee9a7221aa545b33b1ea88a7f566, type: 3}
+      propertyPath: voteDurationSeconds
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5869016597805495628, guid: 1798ee9a7221aa545b33b1ea88a7f566, type: 3}
       propertyPath: m_LocalPosition.x
       value: 294.1077

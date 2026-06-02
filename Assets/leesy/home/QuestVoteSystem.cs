@@ -223,14 +223,14 @@ namespace Lsy
             {
                 _isVoteFinished = true;
                 _isVoteApproved = true;
-                _voteResultMessage = "과반수 찬성으로 퀘스트가 확정되었습니다.";
+                _voteResultMessage = "과반수 찬성으로 퀘스트 확정";
                 yield break;
             }
 
             _isVoteFinished = false;
             _isVoteApproved = false;
             _isQuestSelected = false;
-            _voteResultMessage = "동점 또는 거절 우세로 확정 실패. 퀘스트를 다시 선택하세요.";
+            _voteResultMessage = "퀘스트 거절. 퀘스트를 다시 선택하세요.";
 
             _lockedDistrictName = "";
             _lockedSceneName = "";

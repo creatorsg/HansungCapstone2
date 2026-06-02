@@ -39,6 +39,57 @@ namespace Jun {
         /// </summary>
         public string HomeScene = "Home";
 
+        // [수정] Home 씬이 다시 로드되어도 NPC 강화 상태를 현재 방 동안 유지합니다.
+        private struct NpcProgress
+        {
+            public int Level;
+            public int InvestedGold;
+        }
+
+        private readonly Dictionary<string, NpcProgress> _npcProgressByName = new Dictionary<string, NpcProgress>();
+
+        // [수정] NPCState가 투자 처리 후 방 단위 진행도를 저장합니다.
+        [Server]
+        public void SaveNpcProgress(string npcName, int level, int investedGold)
+        {
+            if (string.IsNullOrWhiteSpace(npcName)) return;
+
+            _npcProgressByName[npcName] = new NpcProgress
+            {
+                Level = level,
+                InvestedGold = investedGold
+            };
+        }
+
+        // [수정] Home 씬에서 NPCState가 다시 생성될 때 이전 진행도를 복원합니다.
+        [Server]
+        public bool TryGetNpcProgress(string npcName, out int level, out int investedGold)
+        {
+            level = 1;
+            investedGold = 0;
+
+            if (string.IsNullOrWhiteSpace(npcName)) return false;
+            if (!_npcProgressByName.TryGetValue(npcName, out NpcProgress progress)) return false;
+
+            level = progress.Level;
+            investedGold = progress.InvestedGold;
+            return true;
+        }
+
+        // [수정] NPC 진행도는 서버가 유지되는 현재 방에서만 공유합니다.
+        public override void OnStartServer()
+        {
+            _npcProgressByName.Clear();
+            base.OnStartServer();
+        }
+
+        // [수정] 방이 종료되면 다음 방에 진행도가 섞이지 않도록 정리합니다.
+        public override void OnStopServer()
+        {
+            _npcProgressByName.Clear();
+            base.OnStopServer();
+        }
+
         // ── PlayFab 연동 ──────────────────────────────────────────────
 
         public override void OnStopHost()
