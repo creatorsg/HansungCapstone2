@@ -81,8 +81,8 @@ namespace Jun
         [ClientRpc]
         public void RPCPlShowDamagedText(bool isHit, float damaged, Color color)
         {
+            Debug.Log(" RPCPlShowDamagedText 중");
             if (_damagedText == null) return;
-            _damagedText.transform.position = _textOriginPos;
             _damagedText.color = color;
             if (isHit) _damagedText.text = damaged.ToString();
             else _damagedText.text = "MISS";
@@ -100,7 +100,7 @@ namespace Jun
             _damagedText.gameObject.SetActive(true);
             Vector3 startPos = _damagedText.transform.position;
             float elapsed = 0f;
-            float duration = 0.5f;
+            float duration = 0.6f;
             float speed = 1f;
             Color TextColor = _damagedText.color;
             while (elapsed < duration)
@@ -156,7 +156,7 @@ namespace Jun
             if (isRevive)
             {
                 anim.SetBool(skill, true);
-                yield return 0; 
+                yield break; 
             }
             StartCoroutine(StepForward());  //앞으로 나오기
             BattleEffectManager.Instance?.StepTargetsForward(-1.5f);
