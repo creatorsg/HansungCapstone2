@@ -18965,6 +18965,15 @@ MonoBehaviour:
     prefab: {fileID: 7283660177928633032, guid: 949808ab4f3f4794ebe0353076cc83fd, type: 3}
   - characterName: Thief3
     prefab: {fileID: 2769212526097607389, guid: 441385ed416cd244c82f3830c6332984, type: 3}
+  DT:
+  - characterName: Chalk
+    time: 0.23
+  - characterName: Glue
+    time: 0.63
+  - characterName: Finn
+    time: 0.5
+  - characterName: Hamel
+    time: 0.2
 --- !u!4 &1834042900
 Transform:
   m_ObjectHideFlags: 0

@@ -34,11 +34,24 @@ namespace Jun
         private Vector3 _cameraOrigin;
         private Coroutine _shakeCoroutine;
 
+        [System.Serializable]
+        public class DelayType
+        {
+            public string characterName;
+            public float time;
+        }
+        [SerializeField] private List<DelayType> DT;
+        private Dictionary<string, float> _characterDelay;
+
         void Awake()
         {
             Instance = this;
             _cameraOrigin = _camera.transform.localPosition;
-
+            _characterDelay = new Dictionary<string, float>();
+            foreach (var entry in DT)
+            {
+                _characterDelay[entry.characterName] = entry.time;
+            }
             _hitEffectMap = new Dictionary<string, GameObject>();
             foreach (var entry in _hitEffectList)
                 _hitEffectMap[entry.characterName] = entry.prefab;
@@ -76,6 +89,8 @@ namespace Jun
                 t.localScale = Vector3.Lerp(originScale, targetScale, elapsed);
                 yield return null;
             }
+            float delay = _characterDelay.ContainsKey(_currentHitEffectName) ? _characterDelay[_currentHitEffectName] : 0.23f;
+            yield return new WaitForSeconds(delay);
             if (isHit && !string.IsNullOrEmpty(_currentHitEffectName) &&_hitEffectMap.TryGetValue(_currentHitEffectName, out var prefab))
             {
                 Instantiate(prefab, t.position, Quaternion.identity);
