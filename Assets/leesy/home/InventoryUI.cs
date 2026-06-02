@@ -61,6 +61,13 @@ namespace Lsy
                 if (equipInfo == null && item.Type != ItemType.Consumable && ItemManager.Instance != null)
                     equipInfo = ItemManager.Instance.GetEqpData(item.itemName);
 
+                // 클라이언트에서 네트워크 역직렬화 시 icon은 항상 null → ItemManager로 복원
+                if (equipInfo != null && equipInfo.icon == null && ItemManager.Instance != null)
+                {
+                    Sprite restored = ItemManager.Instance.GetIcon(item.itemName);
+                    if (restored != null) equipInfo.icon = restored;
+                }
+
                 Sprite icon = consumInfo?.icon ?? equipInfo?.icon;
                 if (icon == null && ItemManager.Instance != null)
                     icon = ItemManager.Instance.GetIcon(item.itemName);

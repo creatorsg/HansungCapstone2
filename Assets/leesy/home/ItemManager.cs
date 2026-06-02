@@ -138,11 +138,47 @@ namespace Lsy
         public Sprite GetIcon(string itemName)
         {
             if (string.IsNullOrEmpty(itemName)) return null;
-            if (_consumDict.TryGetValue(itemName, out Consum consum) && consum.ConsumItem != null)
+            if (_consumDict.TryGetValue(itemName, out Consum consum) && consum.ConsumItem?.icon != null)
                 return consum.ConsumItem.icon;
-            if (_eqpDict.TryGetValue(itemName, out Equipment equipment) && equipment.EqpItem != null)
+            if (_eqpDict.TryGetValue(itemName, out Equipment equipment) && equipment.EqpItem?.icon != null)
                 return equipment.EqpItem.icon;
+
+            // ItemManager 초기화 시점(Lobby)에 CharacterRegistry가 비어있을 수 있으므로
+            // 런타임에 CharacterRegistry를 직접 조회해 아이콘을 찾는다.
+            foreach (var entry in CharacterRegistry.All.Values)
+            {
+                if (entry.Weapon?.Name == itemName && entry.Weapon.icon != null) return entry.Weapon.icon;
+                if (entry.Armor?.Name  == itemName && entry.Armor.icon  != null) return entry.Armor.icon;
+                // CharacterCard.Items (ConsumableInfo 직접 할당) 소모품도 체크
+                if (entry.Items != null)
+                    foreach (var c in entry.Items)
+                        if (c?.Name == itemName && c.icon != null) return c.icon;
+            }
             return null;
+        }
+
+        /// <summary>
+        /// CharacterSelectManager.InitCards() 이후 CharacterRegistry가 채워진 시점에 호출해
+        /// 캐릭터 소모품 아이콘을 _consumDict에 등록합니다.
+        /// </summary>
+        public void RefreshFromCharacterRegistry()
+        {
+            foreach (var entry in CharacterRegistry.All.Values)
+            {
+                if (entry.Items == null) continue;
+                foreach (var consumInfo in entry.Items)
+                {
+                    if (consumInfo == null || string.IsNullOrEmpty(consumInfo.Name)) continue;
+                    if (_consumDict.ContainsKey(consumInfo.Name)) continue; // 이미 있으면 skip
+
+                    Consum consum = ScriptableObject.CreateInstance<Consum>();
+                    consum.name = consumInfo.Name;
+                    consum.ConsumItem = consumInfo;
+                    _consumDict[consumInfo.Name] = consum;
+                    _runtimeRegisteredItems.Add(consum);
+                }
+            }
+            Debug.Log($"[ItemManager] RefreshFromCharacterRegistry 완료 — Consum:{_consumDict.Count}, Eqp:{_eqpDict.Count}");
         }
     }
 }

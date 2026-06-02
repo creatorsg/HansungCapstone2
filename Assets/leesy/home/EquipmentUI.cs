@@ -53,7 +53,10 @@ namespace Lsy
                     string capturedName = item.itemName;
                     Jun.ConsumableInfo capturedInfo = item.ConsumInfo;
 
-                    consumableSlots[i].Setup(capturedInfo, item.amount, capturedInfo.icon, () =>
+                    Sprite consumIcon = capturedInfo.icon;
+                    if (consumIcon == null && ItemManager.Instance != null)
+                        consumIcon = ItemManager.Instance.GetIcon(capturedName);
+                    consumableSlots[i].Setup(capturedInfo, item.amount, consumIcon, () =>
                     {
                         myChar.CmdUnequipConsumableFromSlot(capturedName);
                     });
@@ -79,11 +82,14 @@ namespace Lsy
             }
 
             weaponSlot.gameObject.SetActive(true);
-            InventoryItem item = myChar.equipmentSlot.equippedWeapon;
-            Jun.EqpInfo info = item.EquipInfo ?? FindEquipmentInfo(myChar.equipmentSlot.equippedWeaponId);
+            // equippedWeapon은 서버 전용 필드라 클라이언트에서 항상 default → ID로 조회
+            Jun.EqpInfo info = FindEquipmentInfo(myChar.equipmentSlot.equippedWeaponId);
 
             if (info != null)
-                weaponSlot.Setup(info, 1, info.icon, () => myChar.CmdUnequipWeapon());
+            {
+                Sprite weaponIcon = info.icon ?? ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedWeaponId);
+                weaponSlot.Setup(info, 1, weaponIcon, () => myChar.CmdUnequipWeapon());
+            }
             else
                 Debug.LogWarning($"[EquipmentUI] Weapon data not found: {myChar.equipmentSlot.equippedWeaponId}");
         }
@@ -99,11 +105,14 @@ namespace Lsy
             }
 
             armorSlot.gameObject.SetActive(true);
-            InventoryItem item = myChar.equipmentSlot.equippedArmor;
-            Jun.EqpInfo info = item.EquipInfo ?? FindEquipmentInfo(myChar.equipmentSlot.equippedArmorId);
+            // equippedArmor는 서버 전용 필드라 클라이언트에서 항상 default → ID로 조회
+            Jun.EqpInfo info = FindEquipmentInfo(myChar.equipmentSlot.equippedArmorId);
 
             if (info != null)
-                armorSlot.Setup(info, 1, info.icon, () => myChar.CmdUnequipArmor());
+            {
+                Sprite armorIcon = info.icon ?? ItemManager.Instance?.GetIcon(myChar.equipmentSlot.equippedArmorId);
+                armorSlot.Setup(info, 1, armorIcon, () => myChar.CmdUnequipArmor());
+            }
             else
                 Debug.LogWarning($"[EquipmentUI] Armor data not found: {myChar.equipmentSlot.equippedArmorId}");
         }
