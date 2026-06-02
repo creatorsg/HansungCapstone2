@@ -363,8 +363,7 @@ namespace Jun
                         if (!isHit)
                         {
                             Debug.Log($"[MISS] {caster.Info.Name} -> {player.Info.Name}");
-                            if (player.TryGetComponent<PlayerView>(out var view0))
-                                view0.RPCPlShowDamagedText(false, 0, Color.white);
+                            player.View.RPCPlShowDamagedText(false, 0, Color.white);
                             player.RpcPlayDodgeAnim();
                             manager.RpcShowCombatResult(new CombatResult
                             {
@@ -386,19 +385,16 @@ namespace Jun
                         {
                             player.blockNext = false;
                             Debug.Log($"[BLOCK] {player.Info.Name} 엄호로 피격 1회 무효");
-                            if (player.TryGetComponent<PlayerView>(out var viewB))
-                                viewB.RPCPlShowDamagedText(false, 0, Color.white);
+                            player.View.RPCPlShowDamagedText(false, 0, Color.white);
                             player.RpcPlayDodgeAnim();
                             manager.RpcShowCombatResult(new CombatResult
                             {
                                 isHit = false, isCrit = false, value = 0,
                                 targetIndex = targetIdx, isEnemy = false
                             });
-                            if (player.TryGetComponent<PlayerView>(out var view))
-                                view.RPCPlShowDamagedText(true, damage, isCrit ? Color.red : new Color(1f, 0.5f, 0));
                             continue;
                         }
-
+                        
                         player.ApplyHpChange(-damage);
 
                         // 데미지 + 상태이상 동시 적용 (대상 = 플레이어)
@@ -408,7 +404,7 @@ namespace Jun
                         player.RpcPlayDamagedAnim();
                         manager.RpcSetHitEffect(caster.Info.Name);
                         manager.RpcOnHitEffect(isCrit);
-
+                        player.View.RPCPlShowDamagedText(true, damage, isCrit ? Color.red : new Color(1f, 0.5f, 0));
                         //if (player.Info.Hp <= 0)
                         //{
                         //    player.RpcPlayDeadAnim();

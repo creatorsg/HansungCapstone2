@@ -45,7 +45,6 @@ public class EnemyView : NetworkBehaviour
     public void RPCShowDamagedText(bool isHit, float damaged, Color color)
     {
         if (_damagedText == null) return;
-        _damagedText.transform.position = _textOriginPos;
         _damagedText.color = color;
         if (isHit) _damagedText.text = damaged.ToString();
         else _damagedText.text = "MISS";
@@ -61,7 +60,7 @@ public class EnemyView : NetworkBehaviour
         _damagedText.gameObject.SetActive(true);
         Vector3 startPos = _damagedText.transform.position;
         float elapsed = 0f;
-        float duration = 0.5f;
+        float duration = 0.6f;
         float speed = 1f;
         Color TextColor = _damagedText.color;
         while (elapsed < duration)
