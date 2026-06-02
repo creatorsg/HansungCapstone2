@@ -67,6 +67,8 @@ namespace Jun
                             {
                                 Debug.Log($"[MISS] {caster.Info.Name} -> Enemy {targetIdx}");
                                 enemyController.RpcPlaySkillAnim("Dodge");
+                                
+                                if (enemyController.TryGetComponent<EnemyView>(out var view1)) view1.RPCShowDamagedText(false, 0, Color.white);
                                 manager.RpcShowCombatResult(new CombatResult
                                 {
                                     isHit = false,
@@ -88,7 +90,7 @@ namespace Jun
                                 damage *= 1f + 0.1f * caster.knifeStacks;
 
                             Debug.Log($"[ATK] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0} dmg | crit:{isCrit}");
-
+                            if (enemyController.TryGetComponent<EnemyView>(out var view2)) view2.RPCShowDamagedText(true, damage, isCrit ?Color.red: new Color(1f,0.5f,0));
                             enemyModel.Damaged(damage);
                             enemyController.RpcPlaySkillAnim("Damaged");
                             manager.RpcSetHitEffect(caster.Info.Name); 
@@ -175,7 +177,7 @@ namespace Jun
                     Debug.Log($"[HitEffect] Player key: {caster.Info.Name}");
                     manager.RpcSetHitEffect(caster.Info.Name);
                     manager.RpcStartAttackEffect();
-                    caster.RpcPlaySkillAnim(skill.anim); // anim 있을 때만 호출
+                    caster.RpcPlaySkillAnim(skill.anim, false); // anim 있을 때만 호출
                                                         // 턴 종료는 EndAnim Animation Event가 처리
                 }
                 else
@@ -272,7 +274,7 @@ namespace Jun
                                     reviveInfo.Hp = reviveInfo.MaxHp;
                                     target.Info = reviveInfo;
                                     target.ApplyHpChange(0);
-                                    target.RpcPlaySkillAnim("Damaged");
+                                    target.RpcPlaySkillAnim("Damaged", true);
                                     Debug.Log($"[ITEM] {item.Name} → {target.Info.Name} 부활! HP={reviveInfo.MaxHp}");
                                 }
                                 else
@@ -314,7 +316,7 @@ namespace Jun
 
                 if (!string.IsNullOrEmpty(item.anim) && caster.GetComponentInChildren<Animator>() != null)
                 {
-                    caster.RpcPlaySkillAnim(item.anim); // anim 있을 때만 호출
+                    caster.RpcPlaySkillAnim(item.anim, false); // anim 있을 때만 호출
                                                         // 턴 종료는 EndAnim Animation Event가 처리
                 }
                 else
@@ -361,6 +363,8 @@ namespace Jun
                         if (!isHit)
                         {
                             Debug.Log($"[MISS] {caster.Info.Name} -> {player.Info.Name}");
+                            if (player.TryGetComponent<PlayerView>(out var view0))
+                                view0.RPCPlShowDamagedText(false, 0, Color.white);
                             player.RpcPlayDodgeAnim();
                             manager.RpcShowCombatResult(new CombatResult
                             {
@@ -382,12 +386,16 @@ namespace Jun
                         {
                             player.blockNext = false;
                             Debug.Log($"[BLOCK] {player.Info.Name} 엄호로 피격 1회 무효");
+                            if (player.TryGetComponent<PlayerView>(out var viewB))
+                                viewB.RPCPlShowDamagedText(false, 0, Color.white);
                             player.RpcPlayDodgeAnim();
                             manager.RpcShowCombatResult(new CombatResult
                             {
                                 isHit = false, isCrit = false, value = 0,
                                 targetIndex = targetIdx, isEnemy = false
                             });
+                            if (player.TryGetComponent<PlayerView>(out var view))
+                                view.RPCPlShowDamagedText(true, damage, isCrit ? Color.red : new Color(1f, 0.5f, 0));
                             continue;
                         }
 

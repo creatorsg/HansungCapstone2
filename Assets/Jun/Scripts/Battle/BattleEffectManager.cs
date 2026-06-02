@@ -95,6 +95,10 @@ namespace Jun
             {
                 Instantiate(prefab, t.position, Quaternion.identity);
             }
+            if (t.TryGetComponent<EnemyView>(out var ev))
+                ev.ShowDamagedTextNow();
+            else if (t.TryGetComponent<PlayerView>(out var pv))   
+                pv.ShowDamagedTextNow();
         }
 
         private IEnumerator StepBackTransform(Transform t, Vector3 originPos, Vector3 originScale)

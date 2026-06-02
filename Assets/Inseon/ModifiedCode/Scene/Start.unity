@@ -202,9 +202,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: inseon.Core.SettingsWindow, Assembly-CSharp
-        m_MethodName: OnQuitGame
+      - m_Target: {fileID: 1929873901}
+        m_TargetAssemblyTypeName: inseon.Start.StartSceneUI, Assembly-CSharp
+        m_MethodName: OnClickQuit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10458,9 +10458,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: inseon.Lobby.Manager.LobbyManager, Assembly-CSharp
-        m_MethodName: CloseSettingWindow
+      - m_Target: {fileID: 1929873901}
+        m_TargetAssemblyTypeName: inseon.Start.StartSceneUI, Assembly-CSharp
+        m_MethodName: OnClickCloseSetting
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

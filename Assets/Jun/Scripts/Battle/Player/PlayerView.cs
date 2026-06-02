@@ -1,9 +1,10 @@
 using Mirror;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 
 namespace Jun
@@ -24,6 +25,9 @@ namespace Jun
         // 애니메이션 전 기존 정보 저장
         private Vector3 _originPos;
         private Vector3 _originScale;
+
+        [SerializeField] private TextMeshProUGUI _damagedText;
+        private Vector3 _textOriginPos;
         void Awake()
         {
             anim = GetComponentInChildren<Animator>();
@@ -53,6 +57,7 @@ namespace Jun
             SetButtonsInteractable(false, SkillBtn);
             SetButtonsInteractable(false, ItemBtn);
             SetButtonsInteractable(false, EnemyBtn);
+            if (_damagedText != null) _textOriginPos = _damagedText.transform.position;
         }
         public void SetSel(bool IsMyTurn)
         {
@@ -72,6 +77,41 @@ namespace Jun
                 rt.localScale = new Vector3(scaleX, scaleY, 1f);
                 yield return null;
             }
+        }
+        [ClientRpc]
+        public void RPCPlShowDamagedText(bool isHit, float damaged, Color color)
+        {
+            if (_damagedText == null) return;
+            _damagedText.transform.position = _textOriginPos;
+            _damagedText.color = color;
+            if (isHit) _damagedText.text = damaged.ToString();
+            else _damagedText.text = "MISS";
+        }
+
+        public void ShowDamagedTextNow()
+        {
+            if (_damagedText == null) return;
+            StartCoroutine(FloatingTextCoroutine());
+        }
+
+        private IEnumerator FloatingTextCoroutine()
+        {
+            Debug.Log("테스트 성공");
+            _damagedText.gameObject.SetActive(true);
+            Vector3 startPos = _damagedText.transform.position;
+            float elapsed = 0f;
+            float duration = 0.5f;
+            float speed = 1f;
+            Color TextColor = _damagedText.color;
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                _damagedText.transform.position = startPos + Vector3.up * (t * speed);
+                _damagedText.alpha = Mathf.Lerp(1f, 0f, t);
+                yield return null;
+            }
+            _damagedText.gameObject.SetActive(false);
         }
         public void UpdateOriginPos()
         {
@@ -104,15 +144,20 @@ namespace Jun
             SanBar.value = currentSan;
         }
 
-        public void SkillAnim(string skill)
+        public void SkillAnim(string skill, bool isRevive)
         {
             if (anim == null) { Debug.LogError("anim null!"); return; }
             Debug.Log($"SkillAnim 호출: {skill}");
             //anim.SetBool(skill, true);
-            StartCoroutine(WindUpThenAttack(skill));
+            StartCoroutine(WindUpThenAttack(skill, isRevive));
         }
-        private IEnumerator WindUpThenAttack(string skill)
+        private IEnumerator WindUpThenAttack(string skill, bool isRevive)
         {
+            if (isRevive)
+            {
+                anim.SetBool(skill, true);
+                yield return 0; 
+            }
             StartCoroutine(StepForward());  //앞으로 나오기
             BattleEffectManager.Instance?.StepTargetsForward(-1.5f);
             anim.SetBool(skill, true);

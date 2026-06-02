@@ -9793,6 +9793,30 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2880211160050806254, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2880211160050806254, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2880211160050806254, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.044
+      objectReference: {fileID: 0}
+    - target: {fileID: 2880211160050806254, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.782
+      objectReference: {fileID: 0}
+    - target: {fileID: 2880211160050806254, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2942639277980096146, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: _damagedText
+      value: 
+      objectReference: {fileID: 901764676}
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: Info.Hp
       value: 3
@@ -10006,6 +10030,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4195269492965768940, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
   m_PrefabInstance: {fileID: 901764673}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &901764676 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1859504556771969408, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+  m_PrefabInstance: {fileID: 901764673}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &908587230
 GameObject:
   m_ObjectHideFlags: 0
