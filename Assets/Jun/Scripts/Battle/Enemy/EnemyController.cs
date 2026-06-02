@@ -13,6 +13,7 @@ namespace Jun
         [SerializeField] private EnemyView _view;
         public PlayerInfo Info;
         //[SerializeField] private EnemyView _view;
+        private bool _deadProcessed = false;
 
         [Header(" ý")]
         public Transform PingLayout; //   
@@ -55,6 +56,12 @@ namespace Jun
 
             // 현재 턴인 GamePlayerController한테 전달
             var currentUnit = BattleManager.Instance.CurrentTurnUnit;
+            // 내 턴이 아닐때도 적 정보창 갱신
+            if (currentUnit == null || !currentUnit.isOwned)
+            {
+                BattleManager.Instance.UpdateEnemyUI(index);
+                return;
+            }
             if (currentUnit == null || !currentUnit.isOwned) return;
 
             currentUnit.OnClickEnemyBtn(index);
@@ -106,6 +113,8 @@ namespace Jun
         [Command(requiresAuthority = false)]
         public void CMDDead()
         {
+            if (_deadProcessed) return;
+            _deadProcessed = true;
             Debug.Log("[EnemyController] CMDDead 호출");
             RpcPlaySkillAnim("Dead");
             StartCoroutine(DeadDelay());

@@ -247,8 +247,8 @@ public class CharacterSelectManager : MonoBehaviour
 
         if (previewImage != null)
         {
-            Sprite icon = GetCardIcon(characterCode);
-            previewImage.sprite  = icon != null ? icon : previewDefaultSprite;
+            Sprite preview = GetCard(characterCode)?.PreviewSprite;
+            previewImage.sprite = preview != null ? preview : previewDefaultSprite;
             previewImage.enabled = true;
         }
     }
