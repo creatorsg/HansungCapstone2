@@ -643,10 +643,12 @@ namespace Lsy
             PlayerData pd = providedPd;
             if (pd == null)
             {
+                // heroPos도 함께 매칭해서 이전 세션의 PlayerData가 섞이지 않도록 방지
                 foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
                 {
                     if (player.connectionToClient == connectionToClient &&
-                        player.FinalHeroCode == heroCode)
+                        player.FinalHeroCode == heroCode &&
+                        player.FinalHeroPos == heroPos)
                     {
                         pd = player;
                         break;

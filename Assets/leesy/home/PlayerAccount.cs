@@ -1,4 +1,4 @@
-﻿using Jun;
+using Jun;
 using Mirror;
 using System;
 using System.Collections.Generic;
@@ -591,65 +591,77 @@ namespace Lsy
         public void SyncAllHideoutDataToBattleData()
         {
             PlayerData[] allPlayerDatas = FindObjectsByType<PlayerData>(FindObjectsSortMode.None);
-            if (allPlayerDatas != null) Debug.Log("[SyncAllHideout] found PlayerDatas");
+            Debug.Log($"[SyncAllHideout] PlayerDatas found: {(allPlayerDatas?.Length ?? 0)}");
+
+            // 원인 2: _myPlayerDatas 미초기화 시 직접 채움 (레이스 컨디션 대응)
+            if ((_myPlayerDatas == null || _myPlayerDatas.Count == 0) && allPlayerDatas != null)
+            {
+                _myPlayerDatas = new System.Collections.Generic.List<PlayerData>();
+                foreach (var pd in allPlayerDatas)
+                    if (pd.connectionToClient == connectionToClient)
+                        _myPlayerDatas.Add(pd);
+                _myPlayerDatas.Sort((a, b) => a.FinalHeroPos.CompareTo(b.FinalHeroPos));
+                Debug.Log($"[SyncAllHideout] _myPlayerDatas 긴급 복구: {_myPlayerDatas.Count}개");
+            }
+
             foreach (var pd in allPlayerDatas)
             {
-            //connection PlayerData Ȯ
                 if (pd.connectionToClient != connectionToClient) continue;
 
-            //pd ĳ Ʈ(_myPlayerDatas) ° ĳ Ȯ
                 int charIndex = _myPlayerDatas.IndexOf(pd);
                 if (charIndex == -1) continue;
 
-            //3. ( ִ ĳ vs )
+                // 원인 3: in-place 변경 대신 Clone 후 pd.Info = 재할당 → Mirror dirty bit 발동
                 if (charIndex == currentActiveIndex && currentSelectedCharacter != null)
                 {
                     var slot = currentSelectedCharacter.equipmentSlot;
                     if (slot != null && pd.Info != null)
                     {
-            ///
-                        pd.Info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
-                        pd.Info.Armor  = !string.IsNullOrEmpty(slot.equippedArmorId)  ? slot.equippedArmor.EquipInfo  : null;
+                        var info = ClonePlayerInfo(pd.Info);
 
-            //Ҹǰ Expendables
-                        pd.Info.Expendables = new List<ConsumableInfo>();
+                        info.Weapon = !string.IsNullOrEmpty(slot.equippedWeaponId) ? slot.equippedWeapon.EquipInfo : null;
+                        info.Armor  = !string.IsNullOrEmpty(slot.equippedArmorId)  ? slot.equippedArmor.EquipInfo  : null;
+
+                        info.Expendables = new System.Collections.Generic.List<ConsumableInfo>();
                         foreach (var item in slot.equippedConsumables)
                             if (item.ConsumInfo != null)
                             {
-                                ConsumableInfo clone = item.ConsumInfo.Clone();
-                                clone.amount = item.amount;  
-                                pd.Info.Expendables.Add(clone);
+                                ConsumableInfo c = item.ConsumInfo.Clone();
+                                c.amount = item.amount;
+                                info.Expendables.Add(c);
                             }
 
-            //κ Items
-                        pd.Info.Items = new List<InventoryItem>(currentSelectedCharacter.myInventory);
-                        pd.Info.Gold = currentGold;
+                        info.Items = new System.Collections.Generic.List<InventoryItem>(currentSelectedCharacter.myInventory);
+                        info.Gold  = currentGold;
 
+                        pd.Info = info;
                         SyncSkillUpgradesToPlayerData(pd, currentSelectedCharacter.mySkills, "active");
-
- Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) ǽð Ʈ Ϸ");
+                        Debug.Log($"[Sync] 활성 캐릭터({pd.FinalHeroCode}) 동기화 완료");
                     }
                 }
                 else if (savedCharacterData.TryGetValue(charIndex, out var saved))
                 {
                     if (pd.Info != null)
                     {
-                        pd.Info.Weapon = saved.equippedWeapon.EquipInfo;
-                        pd.Info.Armor  = saved.equippedArmor.EquipInfo;
+                        var info = ClonePlayerInfo(pd.Info);
 
-                        pd.Info.Expendables = new List<ConsumableInfo>();
+                        info.Weapon = saved.equippedWeapon.EquipInfo;
+                        info.Armor  = saved.equippedArmor.EquipInfo;
+
+                        info.Expendables = new System.Collections.Generic.List<ConsumableInfo>();
                         foreach (var item in saved.equippedConsumables)
                             if (item.ConsumInfo != null)
                             {
-                                ConsumableInfo clone = item.ConsumInfo.Clone();
-                                clone.amount = item.amount;
-                                pd.Info.Expendables.Add(clone);
+                                ConsumableInfo c = item.ConsumInfo.Clone();
+                                c.amount = item.amount;
+                                info.Expendables.Add(c);
                             }
 
-                        pd.Info.Items = new List<InventoryItem>(saved.inventory ?? new List<InventoryItem>());
-                        SyncSkillUpgradesToPlayerData(pd, saved.skills, "saved");
+                        info.Items = new System.Collections.Generic.List<InventoryItem>(saved.inventory ?? new System.Collections.Generic.List<InventoryItem>());
 
- Debug.Log($"[Sync] ĳ({pd.FinalHeroCode}) Ʈ Ϸ");
+                        pd.Info = info;
+                        SyncSkillUpgradesToPlayerData(pd, saved.skills, "saved");
+                        Debug.Log($"[Sync] 비활성 캐릭터({pd.FinalHeroCode}) 동기화 완료");
                     }
                 }
             }
@@ -900,11 +912,5 @@ namespace Lsy
                 account.SyncAllHideoutDataToBattleData();
         }
 
-     
     }
 }
-
-
-
-
-

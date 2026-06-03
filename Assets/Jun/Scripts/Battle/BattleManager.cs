@@ -323,7 +323,9 @@ namespace Jun
                         canvas.enabled = isFirstStage;
                 }
             }
-            UpdateUnitUI(_players[0]);
+            // 원인 4: _players[0]이 아직 null이거나 Info 미수신 상태일 수 있으므로 null 체크
+            if (_players.Count > 0 && _players[0] != null && _players[0].Info != null)
+                UpdateUnitUI(_players[0]);
             _turnUI.text = $"Round {_stageNum}";
             _loadingUI.EndLoading();
         }

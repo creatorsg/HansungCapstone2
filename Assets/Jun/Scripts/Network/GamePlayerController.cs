@@ -107,16 +107,15 @@ namespace Jun
         // ��ġ�� ��� ������ ���� �Լ��� �и��ؼ� ȣ��
         void OnPosIndexChanged(int oldPos, int newPos)
         {
+            var mgr = BattleManager.Instance;
+            if (mgr == null || newPos < 0 || newPos >= mgr.SpawnPoints.Count) return;
+
             if (oldPos == -1)
-            {
-            //ó 
-                transform.position = BattleManager.Instance.SpawnPoints[newPos].position;
-            }
+                transform.position = mgr.SpawnPoints[newPos].position;
             else
             {
-            //߿ ڸ ٲ (ε巴 ̵)
                 StopAllCoroutines();
-                StartCoroutine(MoveRoutine(BattleManager.Instance.SpawnPoints[newPos].position));
+                StartCoroutine(MoveRoutine(mgr.SpawnPoints[newPos].position));
             }
         }
  //ε巴 ̰ ִ Լ

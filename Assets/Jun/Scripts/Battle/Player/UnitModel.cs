@@ -57,27 +57,26 @@ namespace Jun
             _isEnemy = (skill.Type == SkillType.Atk || skill.Type == SkillType.Debuff);
 
             // 자동 타깃(Self / AllAllies / AllEnemies)은 클릭 없이 타겟 채워서 즉시 발동
+            var bm = BattleManager.Instance;
+            if (bm == null) { Debug.LogWarning("[UnitModel] BattleManager null"); return; }
+
             switch (_selectedTargetType)
             {
-                // 시전자 본인 → 즉시 발동
                 case TargetType.Self:
                     _selectedTarget.Add(
-                        BattleManager.Instance._players.IndexOf(
-                            this.GetComponent<GamePlayerController>()));
+                        bm._players.IndexOf(this.GetComponent<GamePlayerController>()));
                     FireSelection();
                     return;
 
-                // 전체 아군 → 즉시 발동
                 case TargetType.AllAllies:
-                    for (int i = 0; i < BattleManager.Instance._players.Count; i++)
+                    for (int i = 0; i < bm._players.Count; i++)
                         _selectedTarget.Add(i);
                     FireSelection();
                     return;
 
-                // 전체 적 → 즉시 발동 (아이템엔 없는 스킬 전용 케이스)
                 case TargetType.AllEnemies:
                     _isEnemy = true;
-                    for (int i = 0; i < BattleManager.Instance.GetAliveEnemies().Count; i++)
+                    for (int i = 0; i < bm.GetAliveEnemies().Count; i++)
                         _selectedTarget.Add(i);
                     FireSelection();
                     return;
@@ -110,27 +109,26 @@ namespace Jun
             _selectedTargetType = item.Target;
             _isEnemy = false;
 
+            var bm2 = BattleManager.Instance;
+            if (bm2 == null) { Debug.LogWarning("[UnitModel] BattleManager null (item)"); return; }
+
             switch (item.Target)
             {
-                // 자기 자신 → 즉시 발동
                 case TargetType.Self:
                     _selectedTarget.Add(
-                        BattleManager.Instance._players.IndexOf(
-                            this.GetComponent<GamePlayerController>()));
+                        bm2._players.IndexOf(this.GetComponent<GamePlayerController>()));
                     FireSelection();
                     break;
 
-                // 전체 아군 → 즉시 발동
                 case TargetType.AllAllies:
-                    for (int i = 0; i < BattleManager.Instance._players.Count; i++)
+                    for (int i = 0; i < bm2._players.Count; i++)
                         _selectedTarget.Add(i);
                     FireSelection();
                     break;
 
-                // 전체 적 → 즉시 발동
                 case TargetType.AllEnemies:
                     _isEnemy = true;
-                    for (int i = 0; i < BattleManager.Instance.GetAliveEnemies().Count; i++)
+                    for (int i = 0; i < bm2.GetAliveEnemies().Count; i++)
                         _selectedTarget.Add(i);
                     FireSelection();
                     break;
