@@ -59,6 +59,15 @@ namespace Jun
             SetButtonsInteractable(false, EnemyBtn);
             if (_damagedText != null) _textOriginPos = _damagedText.transform.position;
         }
+        public void InitBars(float currentHp, float maxHp)
+        {
+            if (HpBar != null)
+            {
+                HpBar.minValue = 0f;
+                HpBar.maxValue = maxHp;
+                HpBar.value = currentHp;
+            }
+        }
         public void SetSel(bool IsMyTurn)
         {
             Sel.gameObject.SetActive(IsMyTurn);
