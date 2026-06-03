@@ -228,6 +228,7 @@ namespace Jun
                                     if (info.Statuses[i].Type == StatusType.Bleed)
                                         info.Statuses.RemoveAt(i);
                                 target.Info = info;
+                                manager.RpcRefreshUnitPanel(target);
                                 Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                                 break;
 
@@ -237,6 +238,7 @@ namespace Jun
                                     if (info.Statuses[i].Type == StatusType.Poison)
                                         info.Statuses.RemoveAt(i);
                                 target.Info = info;
+                                manager.RpcRefreshUnitPanel(target);
                                 Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                                 break;
 
@@ -246,6 +248,7 @@ namespace Jun
                                     if (info.Statuses[i].Type == StatusType.Stun)
                                         info.Statuses.RemoveAt(i);
                                 target.Info = info;
+                                manager.RpcRefreshUnitPanel(target);
                                 Debug.Log($"[ITEM] {item.Name} -> {target.Info.Name}");
                                 break;
 
@@ -289,7 +292,7 @@ namespace Jun
                 {
                     foreach (int targetIdx in targets)
                     {
-                        if (!TryGetEnemy(manager, targetIdx, out var enemyModel, out var enemyController)) continue;
+                        if (!TryGetEnemyByAliveIndex(manager, targetIdx, out var enemyModel, out var enemyController)) continue;
 
                         float damage = item.FixedDamage;
                         Debug.Log($"[AoE] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0}");
