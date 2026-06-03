@@ -25,6 +25,7 @@ namespace Lsy
         public InventoryItem equippedWeapon; //  ü  
         public InventoryItem equippedArmor;  //  ü  
         public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // Һ ü Ʈ 
+        public int uniqueTraitLevel = 0;
     }
 
     public class PlayerAccount : NetworkBehaviour
@@ -252,6 +253,7 @@ namespace Lsy
                     backup.equippedWeapon = slot.equippedWeapon;
                     backup.equippedArmor = slot.equippedArmor;
                     foreach (var item in slot.equippedConsumables) backup.equippedConsumables.Add(item);
+                    backup.uniqueTraitLevel = currentSelectedCharacter.uniqueTraitLevel;
                 }
 
                 savedCharacterData[currentActiveIndex] = backup;
@@ -263,6 +265,7 @@ namespace Lsy
             currentSelectedCharacter.selectedWeaponId = "";
             currentSelectedCharacter.purchasedNodeCount = 0;
             currentSelectedCharacter.blacksmithWeaponLevels.Clear();
+            currentSelectedCharacter.uniqueTraitLevel = 0;
 
             var targetSlot = currentSelectedCharacter.equipmentSlot;
             if (targetSlot != null)
@@ -297,6 +300,7 @@ namespace Lsy
                     currentSelectedCharacter.blacksmithWeaponLevels[weaponLevel.Key] = weaponLevel.Value;
                 foreach (var skill in saved.skills) currentSelectedCharacter.mySkills.Add(skill);
                 foreach (var nodeId in saved.unlockedNodeIds) currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
+                currentSelectedCharacter.uniqueTraitLevel = saved.uniqueTraitLevel;
 
                 if (targetSlot != null)
                 {

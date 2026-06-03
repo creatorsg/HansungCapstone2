@@ -196,6 +196,55 @@ namespace Jun
 
         // 신 시스템: StatusProcessor 가 누적/소비하는 상태이상 리스트
         public List<ActiveStatus> Statuses;
+
+        /// <summary>
+        /// PlayerInfo는 참조형(class)이라 SyncVar 필드를 in-place로 수정하면
+        /// Mirror가 dirty bit를 켜지 못해 원격 클라이언트로 동기화되지 않는다.
+        /// 값을 바꿀 때는 Clone()으로 새 참조를 만든 뒤 그 객체만 수정하고 재대입할 것.
+        /// Expendables는 원소까지 deep clone하여 원본 Info의 ConsumableInfo를 건드리지 않는다.
+        /// </summary>
+        public PlayerInfo Clone()
+        {
+            var c = new PlayerInfo
+            {
+                Id = this.Id,
+                Name = this.Name,
+                Type = this.Type,
+                Skills = this.Skills != null ? new List<SkillInfo>(this.Skills) : null,
+                Items = this.Items != null ? new List<InventoryItem>(this.Items) : null,
+                Lvl = this.Lvl,
+                Exp = this.Exp,
+                Gold = this.Gold,
+                Hp = this.Hp,
+                MaxHp = this.MaxHp,
+                San = this.San,
+                MaxSan = this.MaxSan,
+                Atk = this.Atk,
+                Def = this.Def,
+                Spd = this.Spd,
+                Crit = this.Crit,
+                Ctm = this.Ctm,
+                Dodge = this.Dodge,
+                Acc = this.Acc,
+                Res = this.Res,
+                Weapon = this.Weapon,
+                Armor = this.Armor,
+                Trk1 = this.Trk1,
+                Trk2 = this.Trk2,
+                UniqueTraitLv = this.UniqueTraitLv,
+                Statuses = this.Statuses != null ? new List<ActiveStatus>(this.Statuses) : null,
+            };
+
+            // Expendables는 수량이 바뀌므로 원소까지 deep clone
+            if (this.Expendables != null)
+            {
+                c.Expendables = new List<ConsumableInfo>(this.Expendables.Count);
+                foreach (var e in this.Expendables)
+                    c.Expendables.Add(e != null ? e.Clone() : null);
+            }
+
+            return c;
+        }
     }
 
     // 스킬 정보

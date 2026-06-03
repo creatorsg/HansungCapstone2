@@ -302,14 +302,17 @@ namespace Jun
                     }
                 }
                 // ── 소모품 1개 차감 ─────────────────────────────────
+                // PlayerInfo는 참조형이라 기존 Info를 in-place로 수정하면 Mirror SyncVar dirty bit가
+                // 켜지지 않아 원격 클라에 동기화되지 않는다. clone을 먼저 만들고 새 객체만 수정한 뒤 대입한다.
                 var casterInfo = caster.Info;
                 if (casterInfo.Expendables != null && itemIndex >= 0 && itemIndex < casterInfo.Expendables.Count)
                 {
-                    string usedItemName = casterInfo.Expendables[itemIndex].Name;
-                    casterInfo.Expendables[itemIndex].amount -= 1;
-                    if (casterInfo.Expendables[itemIndex].amount == 0) casterInfo.Expendables.RemoveAt(itemIndex);
-                    caster.Info = casterInfo;   // SyncVar 갱신 트리거
-                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {casterInfo.Expendables.Count}개");
+                    var newInfo = casterInfo.Clone();
+                    string usedItemName = newInfo.Expendables[itemIndex].Name;
+                    newInfo.Expendables[itemIndex].amount -= 1;
+                    if (newInfo.Expendables[itemIndex].amount <= 0) newInfo.Expendables.RemoveAt(itemIndex);
+                    caster.Info = newInfo;   // 새 참조 대입 → SyncVar dirty → 원격 클라 동기화
+                    Debug.Log($"[ITEM] {usedItemName} 소모 완료 → 남은 수량: {newInfo.Expendables.Count}개");
                 }
 
                 // 아이템 버튼 UI 갱신 (소모 후 즉시 반영)
