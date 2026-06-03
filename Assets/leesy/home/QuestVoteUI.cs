@@ -33,6 +33,8 @@ namespace Lsy
 
         private bool _hasVotedThisRound;
         private int _lastRoundId = -1;
+        // [수정] 퀘스트 창을 닫았다가 다시 열어도 현재 라운드의 로컬 투표 완료 상태를 유지합니다.
+        private static int _locallyVotedRoundId = -1;
 
         private bool IsHost => NetworkServer.active && NetworkClient.active;
 
@@ -68,6 +70,8 @@ namespace Lsy
         {
             if (!SubmitVote(true)) return;
             _hasVotedThisRound = true;
+            // [수정] UI가 비활성화/재활성화되어도 같은 투표 라운드에서는 투표 완료 상태를 복원합니다.
+            _locallyVotedRoundId = _lastRoundId;
             LockButton(acceptButton, true);
             LockButton(rejectButton, true);
         }
@@ -76,6 +80,8 @@ namespace Lsy
         {
             if (!SubmitVote(false)) return;
             _hasVotedThisRound = true;
+            // [수정] UI가 비활성화/재활성화되어도 같은 투표 라운드에서는 투표 완료 상태를 복원합니다.
+            _locallyVotedRoundId = _lastRoundId;
             LockButton(acceptButton, true);
             LockButton(rejectButton, true);
         }
@@ -94,7 +100,7 @@ namespace Lsy
             if (_lastRoundId != snapshot.VoteRoundId)
             {
                 _lastRoundId = snapshot.VoteRoundId;
-                _hasVotedThisRound = false;
+                RestoreLocalVoteState(snapshot);
             }
 
             RefreshStatusText(snapshot);
@@ -121,10 +127,25 @@ namespace Lsy
                 return;
             }
 
-            _lastRoundId = system.CurrentSnapshot.VoteRoundId;
-            _hasVotedThisRound = false;
-            RefreshStatusText(system.CurrentSnapshot);
-            RefreshState(system.CurrentSnapshot);
+            var snapshot = system.CurrentSnapshot;
+            _lastRoundId = snapshot.VoteRoundId;
+            RestoreLocalVoteState(snapshot);
+            RefreshStatusText(snapshot);
+            RefreshState(snapshot);
+        }
+
+        private void RestoreLocalVoteState(QuestVoteSystem.VoteSnapshot snapshot)
+        {
+            // [수정] 새 네트워크 세션의 초기 상태에서는 이전 세션의 로컬 투표 기록을 제거합니다.
+            if (snapshot.VoteRoundId == 0 && !snapshot.IsQuestSelected && !snapshot.IsVoteRunning && !snapshot.IsVoteFinished)
+            {
+                _locallyVotedRoundId = -1;
+                _hasVotedThisRound = false;
+                return;
+            }
+
+            // [수정] 창을 다시 열 때 투표 완료 상태를 false로 초기화하지 않고 현재 라운드 기록에서 복원합니다.
+            _hasVotedThisRound = _locallyVotedRoundId == snapshot.VoteRoundId;
         }
 
         private void SetFixedButtonLabels()
