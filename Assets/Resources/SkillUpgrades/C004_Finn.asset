@@ -12,174 +12,186 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
   m_Name: C004_Finn
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
-  groupName: "\uD540 \uC2A4\uD0AC \uAC15\uD654"
+  groupName: "핀 스킬 강화"
   characterCode: C004
   nodes:
   - skillId: 0_2
-    skillName: "\uB3C5\uC131 \uAC15\uD654"
+    skillName: "부식성 시약"
+    skillDescription: "살을 녹인다. 피해 증가 + 2턴 독."
     skillIndex: 0
     targetLevel: 2
-    DamageRate: 0
+    DamageRate: 1.1
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 1000
     requiredNpcLevel: 1
   - skillId: 0_3
-    skillName: "\uB9F9\uB3C5 \uBC30\uD569"
+    skillName: "맹독 배합"
+    skillDescription: "피해 증가 + 독 3턴으로 연장."
     skillIndex: 0
     targetLevel: 3
-    DamageRate: 0
+    DamageRate: 1.3
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 2000
     requiredNpcLevel: 2
   - skillId: 0_4
-    skillName: "\uAD34\uC800 \uC2DC\uC57D"
+    skillName: "괴저의 약병"
+    skillDescription: "괴사를 일으킨다. 큰 피해 + 강한 독 3턴."
     skillIndex: 0
     targetLevel: 4
-    DamageRate: 0
+    DamageRate: 1.5
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 3000
     requiredNpcLevel: 3
   - skillId: 1_2
-    skillName: "\uC9C0\uC18D \uC8FC\uC785"
+    skillName: "고농축 혈청"
+    skillDescription: "아군 1명 ATK +40% (1턴), 대상 SAN -5."
     skillIndex: 1
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 2
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
+    EffectValue: 40
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
     EffectType: 0
     price: 1000
     requiredNpcLevel: 1
   - skillId: 1_3
-    skillName: "\uACFC\uB2E4 \uC8FC\uC785"
+    skillName: "정제 혈청"
+    skillDescription: "ATK +50%, 부작용 완화. 대상 SAN -3."
     skillIndex: 1
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
+    EffectValue: 50
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
     EffectType: 0
     price: 2000
     requiredNpcLevel: 2
   - skillId: 1_4
-    skillName: "\uAD11\uD3ED \uC8FC\uC785"
+    skillName: "완벽한 묘약"
+    skillDescription: "ATK +60%, 부작용 없음."
     skillIndex: 1
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
+    EffectValue: 60
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
     EffectType: 0
     price: 3000
     requiredNpcLevel: 3
   - skillId: 2_2
-    skillName: "\uAC15\uB825 \uD3ED\uBC1C"
+    skillName: "강화 폭약"
+    skillDescription: "적 전체 피해 증가 + 넉백."
     skillIndex: 2
     targetLevel: 2
-    DamageRate: 1
+    DamageRate: 0.7
     HealRate: 0
     EffectValue: 0
     EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
+    useTargetOverride: 1
+    Target: 1
     useEffectOverride: 0
     EffectType: 0
     price: 1000
     requiredNpcLevel: 1
   - skillId: 2_3
-    skillName: "\uC5F0\uC1C4 \uD3ED\uBC1C"
+    skillName: "연쇄 폭발"
+    skillDescription: "피해 증가 + 스턴 50% 확률."
     skillIndex: 2
     targetLevel: 3
-    DamageRate: 1.2
+    DamageRate: 0.8
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 1
+    useEffectOverride: 1
+    EffectType: 9
     price: 2000
     requiredNpcLevel: 2
   - skillId: 2_4
-    skillName: "\uB300\uD3ED\uBC1C"
+    skillName: "대재앙 실험"
+    skillDescription: "큰 피해 + 확정 스턴 1턴."
     skillIndex: 2
     targetLevel: 4
-    DamageRate: 1.4
+    DamageRate: 1
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 1
+    useEffectOverride: 1
+    EffectType: 9
     price: 3000
     requiredNpcLevel: 3
   - skillId: 3_2
-    skillName: "\uC548\uC815 \uC2DC\uC57D"
+    skillName: "안정화 시술"
+    skillDescription: "같은 효과, HP 대가 감소."
     skillIndex: 3
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 10
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 2
     price: 1000
     requiredNpcLevel: 1
   - skillId: 3_3
-    skillName: "\uAC01\uC131 \uC2DC\uC57D"
+    skillName: "광기의 각성"
+    skillDescription: "HP·SAN 대가 모두 감소."
     skillIndex: 3
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 10
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 2
     price: 2000
     requiredNpcLevel: 2
   - skillId: 3_4
-    skillName: "\uCD08\uC6D4 \uC2DC\uC57D"
+    skillName: "초월 실험"
+    skillDescription: "대가 대폭 감소 + 지속 3턴."
     skillIndex: 3
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 10
+    EffectDuration: 3
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 2
     price: 3000
     requiredNpcLevel: 3

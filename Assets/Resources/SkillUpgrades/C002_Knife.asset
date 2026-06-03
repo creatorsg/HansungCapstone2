@@ -12,186 +12,186 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
   m_Name: C002_Knife
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
-  groupName: "\uCE7C\uC7C1\uC774 \uC2A4\uD0AC \uAC15\uD654"
+  groupName: "초크 스킬 강화"
   characterCode: C002
   nodes:
   - skillId: 0_2
-    skillName: "\uC608\uB9AC\uD55C \uD22C\uCC99"
-    skillDescription: 
+    skillName: "예리한 투척"
+    skillDescription: "더 깊이 박힌다. 피해 증가 + 2턴 출혈."
     skillIndex: 0
     targetLevel: 2
-    DamageRate: 1.5
+    DamageRate: 1.1
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 1000
     requiredNpcLevel: 1
   - skillId: 0_3
-    skillName: "\uAD00\uD1B5 \uD22C\uCC99"
-    skillDescription: 
+    skillName: "핏빛 투척"
+    skillDescription: "피해 증가 + 출혈 3턴으로 연장."
     skillIndex: 0
     targetLevel: 3
-    DamageRate: 1.7
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 2000
-    requiredNpcLevel: 2
-  - skillId: 0_4
-    skillName: "\uCC98\uD615 \uD22C\uCC99"
-    skillDescription: 
-    skillIndex: 0
-    targetLevel: 4
-    DamageRate: 1.9
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 3000
-    requiredNpcLevel: 3
-  - skillId: 1_2
-    skillName: "\uC815\uBC00 \uAE09\uC18C"
-    skillDescription: 
-    skillIndex: 1
-    targetLevel: 2
     DamageRate: 1.3
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 1000
-    requiredNpcLevel: 1
-  - skillId: 1_3
-    skillName: "\uCE58\uBA85 \uAE09\uC18C"
-    skillDescription: 
-    skillIndex: 1
-    targetLevel: 3
+    useEffectOverride: 1
+    EffectType: 10
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 0_4
+    skillName: "정맥 가르기"
+    skillDescription: "동맥을 노린다. 큰 피해 + 강한 출혈 3턴."
+    skillIndex: 0
+    targetLevel: 4
     DamageRate: 1.5
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 1_2
+    skillName: "약점 간파"
+    skillDescription: "CRIT +20%, 대상 DODGE -10%."
+    skillIndex: 1
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 10
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 0
+    useEffectOverride: 1
+    EffectType: 12
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 1_3
+    skillName: "치명적 일격"
+    skillDescription: "CRIT +30%, 대상 DODGE -15%."
+    skillIndex: 1
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 15
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 0
+    useEffectOverride: 1
+    EffectType: 12
     price: 2000
     requiredNpcLevel: 2
   - skillId: 1_4
-    skillName: "\uC808\uBA85 \uAE09\uC18C"
-    skillDescription: 
+    skillName: "처형 표식"
+    skillDescription: "CRIT +40%, 대상 DODGE -20%."
     skillIndex: 1
     targetLevel: 4
-    DamageRate: 1.7
+    DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
+    EffectValue: 20
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 12
     price: 3000
     requiredNpcLevel: 3
   - skillId: 2_2
-    skillName: "\uCF8C\uC18D \uC5F0\uC0AC"
-    skillDescription: 
+    skillName: "쌍날 난무"
+    skillDescription: "적 2명, 피해 증가 + 출혈."
     skillIndex: 2
     targetLevel: 2
-    DamageRate: 1
+    DamageRate: 0.8
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 2
     useTargetOverride: 0
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 1000
     requiredNpcLevel: 1
   - skillId: 2_3
-    skillName: "\uB09C\uBB34 \uC5F0\uC0AC"
-    skillDescription: 
+    skillName: "칼날 폭풍"
+    skillDescription: "적 3명까지 피해 + 출혈."
     skillIndex: 2
     targetLevel: 3
-    DamageRate: 1.2
+    DamageRate: 0.8
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 2
     useTargetOverride: 0
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 2000
     requiredNpcLevel: 2
   - skillId: 2_4
-    skillName: "\uD3ED\uD48D \uC5F0\uC0AC"
-    skillDescription: 
+    skillName: "무수한 칼날"
+    skillDescription: "적 3명, 피해 증가 + 출혈 3턴."
     skillIndex: 2
     targetLevel: 4
-    DamageRate: 1.4
+    DamageRate: 1
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 3
     useTargetOverride: 0
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 10
     price: 3000
     requiredNpcLevel: 3
   - skillId: 3_2
-    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv2 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
+    skillName: "신속한 회수"
+    skillDescription: "회수 중 DODGE +35%."
     skillIndex: 3
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 35
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 3
     price: 1000
     requiredNpcLevel: 1
   - skillId: 3_3
-    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv3 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
+    skillName: "그림자 회수"
+    skillDescription: "회수 시 다음 스킬 위력 보너스 대폭 증가. 회수 중 DODGE +35%."
     skillIndex: 3
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 35
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 3
     price: 2000
     requiredNpcLevel: 2
   - skillId: 3_4
-    skillName: "\uCE7C\uC7A1\uC774 4\uBC88\uC2A4\uD0AC Lv4 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
+    skillName: "칼날의 춤"
+    skillDescription: "회수 즉시 SPD 증가 + DODGE +50%."
     skillIndex: 3
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
-    EffectValue: 0
-    EffectDuration: 0
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    EffectValue: 50
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 4
+    useEffectOverride: 1
+    EffectType: 3
     price: 3000
     requiredNpcLevel: 3
