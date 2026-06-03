@@ -367,6 +367,8 @@ namespace Lsy
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
+            // PlayerData.Info에도 반영 — 미호출 시 캐릭터 스왑 후 HP가 원래대로 돌아감
+            ServerSyncToPlayerData();
             return true;
         }
 
