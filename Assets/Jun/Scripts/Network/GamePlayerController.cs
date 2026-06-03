@@ -78,6 +78,16 @@ namespace Jun
             this.FinalHeroCode  = data.FinalHeroCode;
             this.FinalHeroIndex = data.FinalHeroIndex;
             this.FinalHeroPos   = data.FinalHeroPos;
+
+            // MaxHp/MaxSan이 0인 채로 전달되면 현재값으로 초기화
+            // (배틀 전 ServerSyncToPlayerData가 MaxHp를 설정했지만 누락된 경우 대비)
+            if (this.Info.MaxHp <= 0f || this.Info.MaxSan <= 0)
+            {
+                var i = this.Info;
+                if (i.MaxHp  <= 0f) i.MaxHp  = i.Hp;
+                if (i.MaxSan <= 0)  i.MaxSan = i.San;
+                this.Info = i;
+            }
         }
 
         /// <summary>
@@ -198,6 +208,10 @@ namespace Jun
             // 서버에서 이미 FinalHeroCode가 설정된 채로 클라이언트에 스폰될 경우
             // SyncVar 훅이 트리거되지 않으므로 Start()에서도 명시적으로 적용합니다.
             ApplyCharacterSprite(FinalHeroCode);
+
+            // 사망 상태(HP=0)로 진입 시 즉시 사망 연출
+            if (Info != null && Info.Hp <= 0f)
+                _view.PlayDeadImmediate();
         }
         public void MyTurn(bool IsMyTurn)
         {
@@ -357,11 +371,27 @@ namespace Jun
         public void ApplyHpChange(float delta)
         {
             var info = Info;
-            //info.Hp = Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp);
-            info.Hp = info.Hp + delta;
+            float prevHp = info.Hp;
+            // MaxHp가 0이면 클램프 상한 없이 0 이하만 막음 (MaxHp 미설정 대비)
+            info.Hp = info.MaxHp > 0f
+                ? Mathf.Clamp(info.Hp + delta, 0f, info.MaxHp)
+                : Mathf.Max(0f, info.Hp + delta);
             Info = info; // SyncVar 재할당으로 클라이언트 동기화
             _view.RPCPlHPChanged(info.Hp);
             BattleManager.Instance.RpcRefreshUnitPanel(this);
+
+            // 이번 변경으로 처음 0이 됐을 때만 사망 처리 (중복 방지)
+            if (prevHp > 0f && info.Hp <= 0f)
+            {
+                Debug.Log($"[ApplyHpChange] {info.Name} 사망!");
+                RpcPlayDeadAnim();
+
+                if (BattleManager.Instance.GetAlivePlayers().Count == 0)
+                {
+                    Debug.Log("[ApplyHpChange] 전원 사망 → 패배");
+                    BattleManager.Instance.TriggerDefeat();
+                }
+            }
         }
         [Server]
         public void ApplySanChange(float delta)

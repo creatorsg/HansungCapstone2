@@ -25,6 +25,7 @@ namespace Lsy
         public InventoryItem equippedWeapon; //  ü  
         public InventoryItem equippedArmor;  //  ü  
         public List<InventoryItem> equippedConsumables = new List<InventoryItem>(); // Һ ü Ʈ 
+        public int uniqueTraitLevel = 0;
     }
 
     public class PlayerAccount : NetworkBehaviour
@@ -91,6 +92,11 @@ namespace Lsy
  /// <summary>myHeroPositions 1:1 하heroCode 목록 초상지 시/summary>
         public readonly SyncList<string> myHeroCodes = new SyncList<string>();
 
+        /// <summary>myHeroPositions 1:1 대응 — 각 슬롯의 현재 HP (초상화 슬라이더용)</summary>
+        public readonly SyncList<float> myHeroCurrentHps = new SyncList<float>();
+        /// <summary>myHeroPositions 1:1 대응 — 각 슬롯의 최대 HP (초상화 슬라이더용)</summary>
+        public readonly SyncList<float> myHeroMaxHps = new SyncList<float>();
+
             //버 용: ?connection택PlayerData 목록 (FinalHeroPos 렬)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
@@ -151,10 +157,15 @@ namespace Lsy
 
             myHeroPositions.Clear();
             myHeroCodes.Clear();
+            myHeroCurrentHps.Clear();
+            myHeroMaxHps.Clear();
             foreach (var pd in _myPlayerDatas)
             {
                 myHeroPositions.Add(pd.FinalHeroPos);
                 myHeroCodes.Add(pd.FinalHeroCode);
+                float maxHp = pd.Info.MaxHp > 0f ? pd.Info.MaxHp : pd.Info.Hp;
+                myHeroCurrentHps.Add(pd.Info.Hp);
+                myHeroMaxHps.Add(maxHp > 0f ? maxHp : 1f);
             }
 
             GameObject newCharObj = Instantiate(myCharacterPrefabs[0]);
@@ -242,6 +253,7 @@ namespace Lsy
                     backup.equippedWeapon = slot.equippedWeapon;
                     backup.equippedArmor = slot.equippedArmor;
                     foreach (var item in slot.equippedConsumables) backup.equippedConsumables.Add(item);
+                    backup.uniqueTraitLevel = currentSelectedCharacter.uniqueTraitLevel;
                 }
 
                 savedCharacterData[currentActiveIndex] = backup;
@@ -253,6 +265,7 @@ namespace Lsy
             currentSelectedCharacter.selectedWeaponId = "";
             currentSelectedCharacter.purchasedNodeCount = 0;
             currentSelectedCharacter.blacksmithWeaponLevels.Clear();
+            currentSelectedCharacter.uniqueTraitLevel = 0;
 
             var targetSlot = currentSelectedCharacter.equipmentSlot;
             if (targetSlot != null)
@@ -287,6 +300,7 @@ namespace Lsy
                     currentSelectedCharacter.blacksmithWeaponLevels[weaponLevel.Key] = weaponLevel.Value;
                 foreach (var skill in saved.skills) currentSelectedCharacter.mySkills.Add(skill);
                 foreach (var nodeId in saved.unlockedNodeIds) currentSelectedCharacter.unlockedNodeIds.Add(nodeId);
+                currentSelectedCharacter.uniqueTraitLevel = saved.uniqueTraitLevel;
 
                 if (targetSlot != null)
                 {
@@ -317,7 +331,39 @@ namespace Lsy
 
             //UI 뺸
             AutoUnlockLv1Nodes(currentSelectedCharacter);
+
+            // HP SyncList 갱신: 스왑 후 모든 슬롯 HP를 최신값으로 동기화
+            SyncHpSyncLists();
+
             TargetRpcRefreshUI(connectionToClient, targetIndex);
+        }
+
+        /// <summary>
+        /// 모든 캐릭터 슬롯의 HP를 myHeroCurrentHps / myHeroMaxHps SyncList에 반영합니다.
+        /// 스왑, 힐 등 HP가 변할 때마다 서버에서 호출하세요.
+        /// </summary>
+        [Server]
+        private void SyncHpSyncLists()
+        {
+            for (int i = 0; i < myHeroPositions.Count; i++)
+            {
+                float curHp = 0f, maxHp = 1f;
+
+                if (i == currentActiveIndex && currentSelectedCharacter != null)
+                {
+                    curHp = currentSelectedCharacter.currentHp;
+                    maxHp = currentSelectedCharacter.maxHp > 0f ? currentSelectedCharacter.maxHp : 1f;
+                }
+                else if (_myPlayerDatas != null && i < _myPlayerDatas.Count)
+                {
+                    var pd = _myPlayerDatas[i];
+                    maxHp = pd.Info.MaxHp > 0f ? pd.Info.MaxHp : (pd.Info.Hp > 0f ? pd.Info.Hp : 1f);
+                    curHp = pd.Info.Hp;
+                }
+
+                if (i < myHeroCurrentHps.Count) myHeroCurrentHps[i] = curHp;
+                if (i < myHeroMaxHps.Count)     myHeroMaxHps[i]     = maxHp;
+            }
         }
 
 
@@ -490,6 +536,7 @@ namespace Lsy
         {
             if (currentSelectedCharacter == null) return;
             currentSelectedCharacter.ApplyBartenderHeal();
+            SyncHpSyncLists();
         }
 
         [Command]

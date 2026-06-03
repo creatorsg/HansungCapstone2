@@ -147,10 +147,11 @@ namespace Lsy
             characterName = string.IsNullOrEmpty(pd.Info.Name) ? pd.FinalHeroCode : pd.Info.Name;
             heroCode      = pd.FinalHeroCode;
             heroPos       = pd.FinalHeroPos; // hook OnAnyUnitReady 발화
-            maxHp         = pd.Info.Hp;
-            maxSan        = pd.Info.San;
-            currentHp     = maxHp;
-            currentSan    = maxSan;
+            // MaxHp/MaxSan 사용 (Hp/San은 현재값이므로 사망 시 0일 수 있음)
+            maxHp         = pd.Info.MaxHp  > 0f ? pd.Info.MaxHp  : pd.Info.Hp;
+            maxSan        = pd.Info.MaxSan > 0  ? pd.Info.MaxSan : pd.Info.San;
+            currentHp     = pd.Info.Hp;   // 사망이면 0 유지
+            currentSan    = pd.Info.San;
             ResetBlacksmithUpgradeState();
 
             //미장이주입 (Items = 벤 체) ?
@@ -708,9 +709,9 @@ namespace Lsy
             info.MaxHp  = info.Hp;
             info.MaxSan = info.San;
 
-            // HP: maxHp > 0이면 최소 1 보장, San: maxSan=0인 경우 0 유지
-            currentHp  = maxHp  > 0 ? Mathf.Max(1f, Mathf.Floor(maxHp  * hpRatio))             : 0f;
-            currentSan = maxSan > 0 ? Mathf.Max(1,  Mathf.FloorToInt(maxSan * sanRatio))        : 0;
+            // 사망(hpRatio=0)이면 0 유지, 살아있으면 비율 그대로
+            currentHp  = maxHp  > 0 ? Mathf.Floor(maxHp  * hpRatio)             : 0f;
+            currentSan = maxSan > 0 ? Mathf.FloorToInt(maxSan * sanRatio)        : 0;
             info.Hp  = currentHp;
             info.San = currentSan;
 

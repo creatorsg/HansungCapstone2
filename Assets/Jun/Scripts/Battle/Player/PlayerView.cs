@@ -247,5 +247,12 @@ namespace Jun
             yield return new WaitForSeconds(1.0f); // Damaged 애니 끝날 때까지 대기
             anim.SetTrigger("Dead");
         }
+        /// <summary>스폰 직후 이미 사망 상태일 때 즉시 dead 연출 (딜레이 없음).</summary>
+        public void PlayDeadImmediate()
+        {
+            if (anim == null) return;
+            anim.SetTrigger("Dead");
+            if (HpBar != null) HpBar.value = 0f;
+        }
     }
 }

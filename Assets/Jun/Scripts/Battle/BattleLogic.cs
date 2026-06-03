@@ -117,7 +117,7 @@ namespace Jun
                     case SkillType.Heal:
                         foreach (int targetIdx in targets)
                         {
-                            if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
+                            if (!TryGetPlayer(manager, targetIdx, out var target, requireAlive: true)) continue;
 
                             float healAmount = CombatCalculator.CalcHeal(target.Info.MaxHp, skill.HealRate);
                             target.ApplyHpChange(healAmount);
@@ -137,7 +137,7 @@ namespace Jun
                     case SkillType.Buff:
                         foreach (int targetIdx in targets)
                         {
-                            if (!TryGetPlayer(manager, targetIdx, out var target)) continue;
+                            if (!TryGetPlayer(manager, targetIdx, out var target, requireAlive: true)) continue;
 
                             var effect = new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration);
                             target.AddEffect(effect);
@@ -407,21 +407,15 @@ namespace Jun
                         if (isHit && skill.EffectDuration > 0)
                             player.AddEffect(
                                 new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
-                        player.RpcPlayDamagedAnim();
-                        manager.RpcSetHitEffect(caster.Info.Name);
-                        manager.RpcOnHitEffect(isCrit);
+
+                        // 사망 여부는 ApplyHpChange 내부에서 처리됨. 살아있을 때만 피격 연출.
+                        if (player.Info.Hp > 0)
+                        {
+                            player.RpcPlayDamagedAnim();
+                            manager.RpcSetHitEffect(caster.Info.Name);
+                            manager.RpcOnHitEffect(isCrit);
+                        }
                         player.View.RPCPlShowDamagedText(true, damage, isCrit ? Color.red : new Color(1f, 0.5f, 0));
-                        //if (player.Info.Hp <= 0)
-                        //{
-                        //    player.RpcPlayDeadAnim();
-                        //    Debug.Log($"[ENEMY ATK] {player.Info.Name} 전투불능!");
-                        //}
-                        //else
-                        //{
-                        //    player.RpcPlayDamagedAnim();
-                        //    manager.RpcSetHitEffect(caster.Info.Name);
-                        //    manager.RpcOnHitEffect(isCrit);
-                        //}
 
                         manager.RpcShowCombatResult(new CombatResult
                         {
@@ -542,12 +536,17 @@ namespace Jun
         }
 
         private static bool TryGetPlayer(BattleManager manager, int index, out GamePlayerController player)
+            => TryGetPlayer(manager, index, out player, requireAlive: false);
+
+        private static bool TryGetPlayer(BattleManager manager, int index, out GamePlayerController player, bool requireAlive)
         {
             player = null;
             if (manager == null || manager._players == null) return false;
             if (index < 0 || index >= manager._players.Count) return false;
             player = manager._players[index];
-            return player != null && player.Info != null;
+            if (player == null || player.Info == null) return false;
+            if (requireAlive && player.Info.Hp <= 0f) return false;
+            return true;
         }
         private static bool TryGetEnemy(BattleManager manager, int index, out EnemyModel enemyModel, out EnemyController enemyController)
         {
