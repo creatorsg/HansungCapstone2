@@ -331,7 +331,39 @@ namespace Lsy
 
             //UI 뺸
             AutoUnlockLv1Nodes(currentSelectedCharacter);
+
+            // HP SyncList 갱신: 스왑 후 모든 슬롯 HP를 최신값으로 동기화
+            SyncHpSyncLists();
+
             TargetRpcRefreshUI(connectionToClient, targetIndex);
+        }
+
+        /// <summary>
+        /// 모든 캐릭터 슬롯의 HP를 myHeroCurrentHps / myHeroMaxHps SyncList에 반영합니다.
+        /// 스왑, 힐 등 HP가 변할 때마다 서버에서 호출하세요.
+        /// </summary>
+        [Server]
+        private void SyncHpSyncLists()
+        {
+            for (int i = 0; i < myHeroPositions.Count; i++)
+            {
+                float curHp = 0f, maxHp = 1f;
+
+                if (i == currentActiveIndex && currentSelectedCharacter != null)
+                {
+                    curHp = currentSelectedCharacter.currentHp;
+                    maxHp = currentSelectedCharacter.maxHp > 0f ? currentSelectedCharacter.maxHp : 1f;
+                }
+                else if (_myPlayerDatas != null && i < _myPlayerDatas.Count)
+                {
+                    var pd = _myPlayerDatas[i];
+                    maxHp = pd.Info.MaxHp > 0f ? pd.Info.MaxHp : (pd.Info.Hp > 0f ? pd.Info.Hp : 1f);
+                    curHp = pd.Info.Hp;
+                }
+
+                if (i < myHeroCurrentHps.Count) myHeroCurrentHps[i] = curHp;
+                if (i < myHeroMaxHps.Count)     myHeroMaxHps[i]     = maxHp;
+            }
         }
 
 
@@ -504,6 +536,7 @@ namespace Lsy
         {
             if (currentSelectedCharacter == null) return;
             currentSelectedCharacter.ApplyBartenderHeal();
+            SyncHpSyncLists();
         }
 
         [Command]

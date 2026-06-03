@@ -264,6 +264,17 @@ namespace Lsy
         private void RegisterUnit(CharacterUnit unit)
         {
             if (unit == null || unit.heroPos < 0) return;
+
+            // 유닛이 이전에 다른 슬롯에 등록돼 있었다면, 그 슬롯을 SyncList 값으로 복원
+            foreach (var kvp in new System.Collections.Generic.Dictionary<int, CharacterUnit>(_unitByPos))
+            {
+                if (kvp.Value == unit && kvp.Key != unit.heroPos)
+                {
+                    _unitByPos.Remove(kvp.Key);
+                    RefreshBarFromSyncList(kvp.Key); // 오염된 슬롯 복원
+                }
+            }
+
             _unitByPos[unit.heroPos] = unit;
 
             // 로컬 플레이어 슬롯은 ApplyAllPortraits가 처리하므로 중복 적용하지 않음
@@ -278,6 +289,26 @@ namespace Lsy
 
             RefreshBar(unit.heroPos, unit);
             RefreshOwnership();
+        }
+
+        /// <summary>CharacterUnit 없이 SyncList 기반으로 특정 슬롯의 HP 바를 복원합니다.</summary>
+        private void RefreshBarFromSyncList(int heroPos)
+        {
+            var account = _trackedAccount ?? PlayerAccount.LocalInstance;
+            if (account == null) return;
+
+            for (int i = 0; i < account.myHeroPositions.Count; i++)
+            {
+                if (account.myHeroPositions[i] != heroPos) continue;
+                if (i >= account.myHeroCurrentHps.Count || i >= account.myHeroMaxHps.Count) return;
+
+                if (heroPos < 0 || heroPos >= slots.Count) return;
+                var slot = slots[heroPos];
+                float maxHp = account.myHeroMaxHps[i];
+                if (slot.hpSlider != null && maxHp > 0f)
+                    slot.hpSlider.value = Mathf.Clamp01(account.myHeroCurrentHps[i] / maxHp);
+                return;
+            }
         }
 
         // ─── 초상화 이미지 적용 ───────────────────────────────────────
