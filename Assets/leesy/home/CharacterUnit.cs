@@ -367,7 +367,20 @@ namespace Lsy
             if (myInfo == null) myInfo = new PlayerInfo();
             myInfo.Hp  = maxHp;
             myInfo.San = maxSan;
-            // PlayerData.Info에도 반영 — 미호출 시 캐릭터 스왑 후 HP가 원래대로 돌아감
+
+            // ServerSyncToPlayerData()는 pd.Info.Hp를 ratio 기준으로 사용하므로
+            // 먼저 PlayerData.Info.Hp를 힐된 값으로 직접 갱신한 뒤 호출해야 함
+            foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+            {
+                if (pd.connectionToClient != connectionToClient) continue;
+                if (pd.FinalHeroCode != heroCode) continue;
+                var info = pd.Info;
+                info.Hp  = maxHp;
+                info.San = maxSan;
+                pd.Info  = info;
+                break;
+            }
+
             ServerSyncToPlayerData();
             return true;
         }
