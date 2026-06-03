@@ -212,6 +212,8 @@ namespace Jun
             // 사망 상태(HP=0)로 진입 시 즉시 사망 연출
             if (Info != null && Info.Hp <= 0f)
                 _view.PlayDeadImmediate();
+            if (Info != null)
+                _view.InitBars(Info.Hp, Info.MaxHp);
         }
         public void MyTurn(bool IsMyTurn)
         {
