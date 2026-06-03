@@ -91,6 +91,11 @@ namespace Lsy
  /// <summary>myHeroPositions 1:1 하heroCode 목록 초상지 시/summary>
         public readonly SyncList<string> myHeroCodes = new SyncList<string>();
 
+        /// <summary>myHeroPositions 1:1 대응 — 각 슬롯의 현재 HP (초상화 슬라이더용)</summary>
+        public readonly SyncList<float> myHeroCurrentHps = new SyncList<float>();
+        /// <summary>myHeroPositions 1:1 대응 — 각 슬롯의 최대 HP (초상화 슬라이더용)</summary>
+        public readonly SyncList<float> myHeroMaxHps = new SyncList<float>();
+
             //버 용: ?connection택PlayerData 목록 (FinalHeroPos 렬)
         private List<PlayerData> _myPlayerDatas = new List<PlayerData>();
 
@@ -151,10 +156,15 @@ namespace Lsy
 
             myHeroPositions.Clear();
             myHeroCodes.Clear();
+            myHeroCurrentHps.Clear();
+            myHeroMaxHps.Clear();
             foreach (var pd in _myPlayerDatas)
             {
                 myHeroPositions.Add(pd.FinalHeroPos);
                 myHeroCodes.Add(pd.FinalHeroCode);
+                float maxHp = pd.Info.MaxHp > 0f ? pd.Info.MaxHp : pd.Info.Hp;
+                myHeroCurrentHps.Add(pd.Info.Hp);
+                myHeroMaxHps.Add(maxHp > 0f ? maxHp : 1f);
             }
 
             GameObject newCharObj = Instantiate(myCharacterPrefabs[0]);

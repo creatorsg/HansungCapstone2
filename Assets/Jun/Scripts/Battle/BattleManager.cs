@@ -1122,6 +1122,10 @@ namespace Jun
         //  배틀 결과 처리
         // ──────────────────────────────────────────────────────────────────
 
+        /// <summary>외부 서버 코드(GamePlayerController 등)에서 패배를 통보할 때 사용합니다.</summary>
+        [Server]
+        public void TriggerDefeat() => ShowBattleResult(false);
+
         /// <summary>서버에서 결과창을 모든 클라이언트에 띄웁니다.</summary>
         [Server]
         private void ShowBattleResult(bool isVictory)

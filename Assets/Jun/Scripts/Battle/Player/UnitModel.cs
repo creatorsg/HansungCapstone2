@@ -34,8 +34,8 @@ namespace Jun
             _info = info;
             if (_info != null)
             {
-                if (_info.MaxHp <= 0f) _info.MaxHp = info.MaxHp;
-                if (_info.MaxSan <= 0f) _info.MaxSan = info.MaxSan;
+                if (_info.MaxHp  <= 0f) _info.MaxHp  = info.Hp;   // MaxHp 미설정 시 현재 Hp로 초기화
+                if (_info.MaxSan <= 0f) _info.MaxSan = info.San;  // MaxSan 미설정 시 현재 San으로 초기화
                 if (_info.Statuses == null) _info.Statuses = new List<ActiveStatus>();
             }
             _currentHp = info.Hp;
