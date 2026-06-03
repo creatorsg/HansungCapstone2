@@ -613,7 +613,7 @@ namespace Jun
         [ClientRpc]
         public void RpcRefreshItemButtons(GamePlayerController unit)
         {
-            if (unit == null || !unit.isOwned) return;
+            if (unit == null ) return;
 
             for (int i = 0; i < _itemBTN.Count; i++)
             {
@@ -999,6 +999,14 @@ namespace Jun
         public void RpcEndAttackEffect()
         {
             BattleEffectManager.Instance?.EndAttack();
+        }
+        [ClientRpc]
+        public void RpcRefreshUnitPanel(GamePlayerController unit)
+        {
+            if (unit == null) return;
+            // 현재 이 유닛이 패널에 표시 중일때만 텍스트 갱신
+            if (CurrentTurnUnit == unit)
+                UpdateUnitUI(unit);
         }
         /// <summary>
         /// 서버에서 즉시 EnemyNum을 감소시키고, 0이 되면 바로 NextStage를 호출합니다.

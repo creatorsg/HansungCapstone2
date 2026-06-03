@@ -33,21 +33,29 @@ public class EnemyModel : NetworkBehaviour
         _currentSan = Info.San;
         _maxSan = Info.MaxSan > 0f ? Info.MaxSan : Info.San;
     }
-    [ClientRpc]
+    [Server]
     public void Damaged(float Attack)
     {
         Debug.Log("EnemyDamaged");
         _currentHp -= Attack;
         _info.Hp = _currentHp;
-        IsDamaged?.Invoke(_currentHp/_maxHp);
-        if (Info.Hp <= 0) _controller.CMDDead();
+        _info.Hp = _currentHp;
+        if (_info.Hp <= 0) _controller.CMDDead();
+        RpcSyncEnemyHp(_currentHp);
     }
-    [ClientRpc]
+    [Server]
     public void Heal(float amount)
     {
         _currentHp = Mathf.Min(_currentHp + amount, _maxHp);
         _info.Hp = _currentHp;
-        IsDamaged?.Invoke(_currentHp / _maxHp); // HP바 갱신 (같은 이벤트 재활용)
+        RpcSyncEnemyHp(_currentHp);
         Debug.Log($"[EnemyModel] Heal +{amount:F0} -> HP={_currentHp:F0}/{_maxHp:F0}");
+    }
+    [ClientRpc]
+    private void RpcSyncEnemyHp(float currentHp)
+    {
+        _currentHp = currentHp;
+        _info.Hp = currentHp;
+        IsDamaged?.Invoke(_currentHp / _maxHp);
     }
 }

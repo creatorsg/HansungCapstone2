@@ -12,48 +12,93 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
   m_Name: C001_Glue
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
-  groupName: "\uAE00\uB8E8 \uC2A4\uD0AC \uAC15\uD654"
+  groupName: "글루 스킬 강화"
   characterCode: C001
   nodes:
   - skillId: 0_2
-    skillName: "\uAC15\uD654 \uBC29\uC5B4\uB9C9"
-    skillDescription: "\uAC15\uD654 \uC5B4\uB514\uAE4C\uC9C0\uD588"
+    skillName: "굳은 살"
+    skillDescription: "단련된 몸으로 대신 받아 피해를 30% 흘려보낸다."
     skillIndex: 0
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
+    EffectValue: 30
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
+    EffectType: 1
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 0_3
+    skillName: "무쇠 살갗"
+    skillDescription: "살갗이 무쇠처럼 단단해져 대신 받는 피해 40% 경감."
+    skillIndex: 0
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 40
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
+    EffectType: 1
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 0_4
+    skillName: "불괴의 방벽"
+    skillDescription: "무엇도 그를 무너뜨릴 수 없다. 대신 받는 피해 50% 경감."
+    skillIndex: 0
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 50
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 2
+    useEffectOverride: 1
+    EffectType: 1
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 1_2
+    skillName: "참호 구축"
+    skillDescription: "급조한 엄폐물이 더 단단해져 2턴간 유지."
+    skillIndex: 1
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
     EffectValue: 0
-    EffectDuration: 2
+    EffectDuration: 0
     useTargetOverride: 0
     Target: 0
     useEffectOverride: 0
     EffectType: 0
     price: 1000
     requiredNpcLevel: 1
-  - skillId: 0_3
-    skillName: "\uAC15\uCCA0 \uBC29\uC5B4\uB9C9"
-    skillDescription: "\uAC15\uD654 \uC5B4\uB514\uAE4C\uC9C0\uD588\u3148\u3148\u3148\u3148"
-    skillIndex: 0
+  - skillId: 1_3
+    skillName: "토치카"
+    skillDescription: "견고한 진지를 세워 엄폐가 3턴 지속."
+    skillIndex: 1
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 3
+    EffectDuration: 0
     useTargetOverride: 0
     Target: 0
     useEffectOverride: 0
     EffectType: 0
     price: 2000
     requiredNpcLevel: 2
-  - skillId: 0_4
-    skillName: "\uBD88\uAD34\uC758 \uBC29\uBCBD"
-    skillDescription: "\uAC15\uD654 \uC5B4\uB514\uAE4C\uC9C0\uD588\u3148\u3148\u3148\u3148\u3148\u3148"
-    skillIndex: 0
+  - skillId: 1_4
+    skillName: "불침의 요새"
+    skillDescription: "무너지지 않는 요새. 3턴 지속, 공격 무효 2회."
+    skillIndex: 1
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 4
+    EffectDuration: 0
     useTargetOverride: 0
     Target: 0
     useEffectOverride: 0
@@ -61,11 +106,11 @@ MonoBehaviour:
     price: 3000
     requiredNpcLevel: 3
   - skillId: 2_2
-    skillName: "\uBD84\uB178 \uB3CC\uACA9"
-    skillDescription: 344343
+    skillName: "성난 돌격"
+    skillDescription: "분노하며 복귀, ATK +20% (1턴)."
     skillIndex: 2
     targetLevel: 2
-    DamageRate: 1.1
+    DamageRate: 0
     HealRate: 0
     EffectValue: 0
     EffectDuration: 0
@@ -76,11 +121,11 @@ MonoBehaviour:
     price: 1000
     requiredNpcLevel: 1
   - skillId: 2_3
-    skillName: "\uAD11\uAE30 \uB3CC\uACA9"
-    skillDescription: "\uAC15\uD654 \uC5B4\uB514\uAE4C\uC9C0\uD588\u3148\u3148\u3148\u3148\u3148\u3148\u3148"
+    skillName: "광란의 돌격"
+    skillDescription: "광기에 차 돌진, 복귀 시 ATK +35% (1턴)."
     skillIndex: 2
     targetLevel: 3
-    DamageRate: 1.3
+    DamageRate: 0
     HealRate: 0
     EffectValue: 0
     EffectDuration: 0
@@ -91,11 +136,11 @@ MonoBehaviour:
     price: 2000
     requiredNpcLevel: 2
   - skillId: 2_4
-    skillName: "\uACB0\uC804 \uB3CC\uACA9"
-    skillDescription: 
+    skillName: "학살의 진격"
+    skillDescription: "피를 갈망하며 복귀, ATK +50% (1턴)."
     skillIndex: 2
     targetLevel: 4
-    DamageRate: 1.5
+    DamageRate: 0
     HealRate: 0
     EffectValue: 0
     EffectDuration: 0
@@ -106,92 +151,47 @@ MonoBehaviour:
     price: 3000
     requiredNpcLevel: 3
   - skillId: 3_2
-    skillName: "\uAC15\uD0C0 \uBC15\uCE58\uAE30"
-    skillDescription: 
+    skillName: "강철 박치기"
+    skillDescription: "방독면을 무기 삼아 가격, 피해 증가 + 2턴 스턴."
     skillIndex: 3
     targetLevel: 2
-    DamageRate: 0
+    DamageRate: 1.3
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 1000
     requiredNpcLevel: 1
   - skillId: 3_3
-    skillName: "\uB1CC\uC9C4\uD0D5"
-    skillDescription: 
+    skillName: "두개골 분쇄"
+    skillDescription: "두개골을 으스러뜨린다. 피해 증가 + 3턴 스턴."
     skillIndex: 3
     targetLevel: 3
-    DamageRate: 0
+    DamageRate: 1.6
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 2000
     requiredNpcLevel: 2
   - skillId: 3_4
-    skillName: "\uB450\uAC1C\uACE8 \uBD84\uC1C4"
-    skillDescription: 
+    skillName: "절명 박치기"
+    skillDescription: "치명적 일격, 큰 피해 + 3턴 스턴."
     skillIndex: 3
     targetLevel: 4
-    DamageRate: 0
+    DamageRate: 2
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 3000
-    requiredNpcLevel: 3
-  - skillId: 1_2
-    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv2 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
-    skillIndex: 1
-    targetLevel: 2
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 1000
-    requiredNpcLevel: 1
-  - skillId: 1_3
-    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv3 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
-    skillIndex: 1
-    targetLevel: 3
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 2000
-    requiredNpcLevel: 2
-  - skillId: 1_4
-    skillName: "\uAE00\uB8E8 2\uBC88\uC2A4\uD0AC Lv4 (\uC774\uB984\uC218\uC815)"
-    skillDescription:
-    skillIndex: 1
-    targetLevel: 4
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 3000
     requiredNpcLevel: 3

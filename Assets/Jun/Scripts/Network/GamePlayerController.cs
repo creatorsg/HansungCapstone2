@@ -361,6 +361,7 @@ namespace Jun
             info.Hp = info.Hp + delta;
             Info = info; // SyncVar 재할당으로 클라이언트 동기화
             _view.RPCPlHPChanged(info.Hp);
+            BattleManager.Instance.RpcRefreshUnitPanel(this);
         }
         [Server]
         public void ApplySanChange(float delta)
@@ -369,6 +370,7 @@ namespace Jun
             info.San = (int)Mathf.Clamp(info.San + delta, 0f, info.MaxSan);
             Info = info;
             _view.PlSanChanged(info.San);
+            BattleManager.Instance.RpcRefreshUnitPanel(this);
         }
         [Server]
         public void AddEffect(ActiveEffect effect)

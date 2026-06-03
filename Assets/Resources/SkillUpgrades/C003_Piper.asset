@@ -12,174 +12,186 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c86e884179d6a824e974b25ea4d9ca1d, type: 3}
   m_Name: C003_Piper
   m_EditorClassIdentifier: Assembly-CSharp::Lsy.SkillUpgradeData
-  groupName: "\uD53C\uB9AC\uBD80\uB294 \uC0AC\uB098\uC774 \uC2A4\uD0AC \uAC15\uD654"
+  groupName: "하멜 스킬 강화"
   characterCode: C003
   nodes:
   - skillId: 0_2
-    skillName: "\uCD5C\uBA74 \uC120\uC728"
+    skillName: "달콤한 가락"
+    skillDescription: "매혹 + 대상 SPD -2."
     skillIndex: 0
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 2
-    useTargetOverride: 0
+    EffectDuration: 1
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 1000
     requiredNpcLevel: 1
   - skillId: 0_3
-    skillName: "\uBABD\uD658 \uC120\uC728"
+    skillName: "홀리는 선율"
+    skillDescription: "매혹 2턴으로 연장."
     skillIndex: 0
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 2000
     requiredNpcLevel: 2
   - skillId: 0_4
-    skillName: "\uC2EC\uC5F0 \uC120\uC728"
+    skillName: "최면의 노래"
+    skillDescription: "적 1명 + 인접 1명까지 매혹 (2턴)."
     skillIndex: 0
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
+    EffectDuration: 2
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 3000
     requiredNpcLevel: 3
   - skillId: 1_2
-    skillName: "\uACE0\uC591 \uD589\uC9C4\uACE1"
+    skillName: "진군의 가락"
+    skillDescription: "아군 전체 SPD +3."
     skillIndex: 1
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 3
+    EffectDuration: 1
+    useTargetOverride: 1
+    Target: 3
+    useEffectOverride: 1
+    EffectType: 2
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 1_3
+    skillName: "승전보"
+    skillDescription: "아군 전체 SPD +4, 2턴 지속."
+    skillIndex: 1
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 4
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 3
+    useEffectOverride: 1
+    EffectType: 2
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 1_4
+    skillName: "영웅 행진곡"
+    skillDescription: "아군 전체 SPD +5 + ACC +10% (2턴)."
+    skillIndex: 1
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 5
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 3
+    useEffectOverride: 1
+    EffectType: 2
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 2_2
+    skillName: "귀를 찢는 소음"
+    skillDescription: "적 전체 ACC/DODGE -20%."
+    skillIndex: 2
+    targetLevel: 2
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 20
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 1
+    useEffectOverride: 1
+    EffectType: 8
+    price: 1000
+    requiredNpcLevel: 1
+  - skillId: 2_3
+    skillName: "광기의 협주"
+    skillDescription: "적 전체 ACC/DODGE -25%, 아군 SAN 부작용 완화(-2)."
+    skillIndex: 2
+    targetLevel: 3
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 25
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 1
+    useEffectOverride: 1
+    EffectType: 8
+    price: 2000
+    requiredNpcLevel: 2
+  - skillId: 2_4
+    skillName: "파멸의 교향곡"
+    skillDescription: "적 전체 ACC/DODGE -30%, 아군 SAN 부작용 없음."
+    skillIndex: 2
+    targetLevel: 4
+    DamageRate: 0
+    HealRate: 0
+    EffectValue: 30
+    EffectDuration: 2
+    useTargetOverride: 1
+    Target: 1
+    useEffectOverride: 1
+    EffectType: 8
+    price: 3000
+    requiredNpcLevel: 3
+  - skillId: 3_2
+    skillName: "군중의 인도자"
+    skillDescription: "조종 2턴, SAN 소모 감소."
+    skillIndex: 3
     targetLevel: 2
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
     EffectDuration: 2
-    useTargetOverride: 0
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 1000
-    requiredNpcLevel: 1
-  - skillId: 1_3
-    skillName: "\uC9C8\uC8FC \uD589\uC9C4\uACE1"
-    skillIndex: 1
-    targetLevel: 3
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 2000
-    requiredNpcLevel: 2
-  - skillId: 1_4
-    skillName: "\uC804\uC7C1 \uD589\uC9C4\uACE1"
-    skillIndex: 1
-    targetLevel: 4
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 3000
-    requiredNpcLevel: 3
-  - skillId: 2_2
-    skillName: "\uC18C\uC74C \uACF5\uD574"
-    skillIndex: 2
-    targetLevel: 2
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 1000
-    requiredNpcLevel: 1
-  - skillId: 2_3
-    skillName: "\uC774\uBA85"
-    skillIndex: 2
-    targetLevel: 3
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 2000
-    requiredNpcLevel: 2
-  - skillId: 2_4
-    skillName: "\uAD11\uAE30\uC758 \uC18C\uC74C"
-    skillIndex: 2
-    targetLevel: 4
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 5
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
-    price: 3000
-    requiredNpcLevel: 3
-  - skillId: 3_2
-    skillName: "\uC720\uD639\uC758 \uAC00\uB77D"
-    skillIndex: 3
-    targetLevel: 2
-    DamageRate: 0
-    HealRate: 0
-    EffectValue: 0
-    EffectDuration: 3
-    useTargetOverride: 0
-    Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 1000
     requiredNpcLevel: 1
   - skillId: 3_3
-    skillName: "\uC9C0\uBC30\uC758 \uAC00\uB77D"
+    skillName: "영혼 강탈"
+    skillDescription: "조종 3턴으로 연장."
     skillIndex: 3
     targetLevel: 3
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 4
-    useTargetOverride: 0
+    EffectDuration: 3
+    useTargetOverride: 1
     Target: 0
-    useEffectOverride: 0
-    EffectType: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 2000
     requiredNpcLevel: 2
   - skillId: 3_4
-    skillName: "\uD30C\uBA78\uC758 \uD569\uC8FC"
+    skillName: "죽음의 인도자"
+    skillDescription: "조종 3턴 + SAN 소모 대폭 감소."
     skillIndex: 3
     targetLevel: 4
     DamageRate: 0
     HealRate: 0
     EffectValue: 0
-    EffectDuration: 0
+    EffectDuration: 3
     useTargetOverride: 1
-    Target: 1
-    useEffectOverride: 0
-    EffectType: 0
+    Target: 0
+    useEffectOverride: 1
+    EffectType: 9
     price: 4000
     requiredNpcLevel: 3
