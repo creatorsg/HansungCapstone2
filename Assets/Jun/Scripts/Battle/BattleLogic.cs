@@ -409,12 +409,15 @@ namespace Jun
                                 new ActiveEffect(skill.EffectType, skill.EffectValue, skill.EffectDuration));
 
                         // 사망 여부는 ApplyHpChange 내부에서 처리됨. 살아있을 때만 피격 연출.
-                        if (player.Info.Hp > 0)
-                        {
-                            player.RpcPlayDamagedAnim();
-                            manager.RpcSetHitEffect(caster.Info.Name);
-                            manager.RpcOnHitEffect(isCrit);
-                        }
+                        //if (player.Info.Hp > 0)
+                        //{
+                        //    player.RpcPlayDamagedAnim();
+                        //    manager.RpcSetHitEffect(caster.Info.Name);
+                        //    manager.RpcOnHitEffect(isCrit);
+                        //}
+                        player.RpcPlayDamagedAnim();
+                        manager.RpcSetHitEffect(caster.Info.Name);
+                        manager.RpcOnHitEffect(isCrit);
                         player.View.RPCPlShowDamagedText(true, damage, isCrit ? Color.red : new Color(1f, 0.5f, 0));
 
                         manager.RpcShowCombatResult(new CombatResult

@@ -2124,11 +2124,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
-      value: 1
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Atk
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Ctm
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Def
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Spd
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Crit
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Name
@@ -2136,6 +2152,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Dodge
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.MaxHp
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
@@ -9847,7 +9867,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: Info.Atk
-      value: 100000
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: Info.Name
@@ -9856,6 +9876,10 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: Info.Type
       value: aa
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
+      propertyPath: Info.MaxHp
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: 290941ee0a7dae94b8eceb5bde5ec12b, type: 3}
       propertyPath: PingLayout
@@ -16859,11 +16883,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Hp
-      value: 3
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.Atk
+      value: 100000
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Name
       value: Thief1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.MaxHp
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Skills.Array.size
