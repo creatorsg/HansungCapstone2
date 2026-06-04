@@ -87,7 +87,7 @@ namespace Jun
 
                             // [B]2 무기회수 스택 소비: knifeStacks 있으면 ×(1+0.1*stacks) — 초크 전용(그 외엔 항상 0)
                             if (caster.knifeStacks > 0)
-                                damage *= 1f + 0.1f * caster.knifeStacks;
+                                damage = Mathf.Round(damage * (1f + 0.1f * caster.knifeStacks));
 
                             Debug.Log($"[ATK] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0} dmg | crit:{isCrit}");
                             if (enemyController.TryGetComponent<EnemyView>(out var view2)) view2.RPCShowDamagedText(true, damage, isCrit ?Color.red: new Color(1f,0.5f,0));
@@ -294,7 +294,7 @@ namespace Jun
                     {
                         if (!TryGetEnemyByAliveIndex(manager, targetIdx, out var enemyModel, out var enemyController)) continue;
 
-                        float damage = item.FixedDamage;
+                        float damage = Mathf.Round(item.FixedDamage);
                         Debug.Log($"[AoE] {caster.Info.Name} -> Enemy {targetIdx} | {damage:F0}");
 
                         enemyModel.Damaged(damage);

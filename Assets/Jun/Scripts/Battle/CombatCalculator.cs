@@ -32,7 +32,7 @@ namespace Jun
         {
             float raw = atk * rate;
             if (isCrit) raw *= (1f + ctm / 100f);
-            return Mathf.Max(1f, raw - def);
+            return Mathf.Max(1f, Mathf.Round(raw - def));
         }
 
         // 
@@ -108,7 +108,7 @@ namespace Jun
             float total = 0f;
             foreach (var e in effects)
                 if (e.type == EffectType.Bleeding && e.duration > 0) total += e.value;
-            return total;
+            return Mathf.Round(total);
         }
 
         public static List<ActiveEffect> TickEffects(IList<ActiveEffect> effects)

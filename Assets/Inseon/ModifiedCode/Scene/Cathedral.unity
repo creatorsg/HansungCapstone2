@@ -2189,7 +2189,7 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].icon
       value: 
-      objectReference: {fileID: 808039206, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -2209,7 +2209,7 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].icon
       value: 
-      objectReference: {fileID: -953674598, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -2229,7 +2229,7 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].icon
       value: 
-      objectReference: {fileID: -1019799158, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -2249,7 +2249,7 @@ PrefabInstance:
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].icon
       value: 
-      objectReference: {fileID: -31802242, guid: 81b6f433da3925a4fbec2e1097035315, type: 3}
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -4948,15 +4948,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -5023,6 +5023,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -5038,6 +5042,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -5055,6 +5063,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -5070,6 +5082,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -5201,6 +5217,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 1003584695
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5507,6 +5531,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uCD9C\uD608 \uBD80\uC5EC"
       objectReference: {fileID: 0}
@@ -5522,6 +5550,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 6439724520639469603, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -5539,6 +5571,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -5554,6 +5590,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -5685,6 +5725,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 3634704348
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6007,15 +6055,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -6129,6 +6177,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -6260,6 +6312,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 780609318
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7831,15 +7891,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -7906,6 +7966,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -7921,6 +7985,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -7938,6 +8006,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -7953,6 +8025,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -8084,6 +8160,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 3719206017
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11860,7 +11944,7 @@ Transform:
   m_GameObject: {fileID: 986477649}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalPosition: {x: 16, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13821,6 +13905,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -13836,6 +13924,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -13853,6 +13945,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -13868,6 +13964,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -14000,6 +14100,14 @@ PrefabInstance:
       propertyPath: sceneId
       value: 2557097137
       objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14034,15 +14142,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -14125,6 +14233,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 6439724520639469603, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -14141,6 +14253,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -14156,6 +14272,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -14287,6 +14407,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 1464777480
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18539,6 +18667,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -1645924996021524393, guid: 8ef694cf465f46e47a2ca17634eb6a93, type: 3}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uCD9C\uD608 \uBD80\uC5EC"
       objectReference: {fileID: 0}
@@ -18554,6 +18686,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: -2635451000553968343, guid: 8ef694cf465f46e47a2ca17634eb6a93, type: 3}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uACF5\uD3EC\uC758 \uC8FC\uC2DC"
@@ -18571,6 +18707,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7008668241340608747, guid: 8ef694cf465f46e47a2ca17634eb6a93, type: 3}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBC29\uC5B4 \uD0DC\uC138"
       objectReference: {fileID: 0}
@@ -18586,6 +18726,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7387948054701124940, guid: 8ef694cf465f46e47a2ca17634eb6a93, type: 3}
     - target: {fileID: 3351741642964181077, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -18740,7 +18884,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9015522472026063527, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.29
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9015522472026063527, guid: db24af12e57ff4f47aafb17c9d5c132a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21043,15 +21187,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -21134,6 +21278,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 6439724520639469603, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -21150,6 +21298,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -21165,6 +21317,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -21296,6 +21452,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 2154550990
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22999,15 +23163,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440238353247304416, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2793940683332584143, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Hp
@@ -23074,6 +23238,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[0].icon
+      value: 
+      objectReference: {fileID: -4405688444671850872, guid: cecc60f2ce24b4d4488785edfead74bc, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[1].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -23089,6 +23257,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[1].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[1].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[2].Name
       value: "\uBE48 \uC2A4\uD0AC"
@@ -23106,6 +23278,10 @@ PrefabInstance:
       value: Attack
       objectReference: {fileID: 0}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[2].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[3].Name
       value: "\uBE48 \uC2A4\uD0AC"
       objectReference: {fileID: 0}
@@ -23121,6 +23297,10 @@ PrefabInstance:
       propertyPath: Info.Skills.Array.data[3].anim
       value: Attack
       objectReference: {fileID: 0}
+    - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: Info.Skills.Array.data[3].icon
+      value: 
+      objectReference: {fileID: 7281359469982390378, guid: db573f803115f374aa42ec73523632bb, type: 3}
     - target: {fileID: 3351741642964181077, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: Info.Skills.Array.data[0].Target
       value: 0
@@ -23252,6 +23432,14 @@ PrefabInstance:
     - target: {fileID: 6147654108876281720, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
       propertyPath: sceneId
       value: 2823129347
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 9015522472026063527, guid: e33d063e74cc13b4596c384fcbc8dc7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
