@@ -140,7 +140,7 @@ namespace inseon.Core
         public void OnLogout()
         {
             PlayfabUserManage.Logout();
-            SceneManager.LoadScene("Login"); 
+            SceneManager.LoadScene("Start"); 
         }
     }
 }
